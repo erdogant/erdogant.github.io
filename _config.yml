@@ -4,7 +4,6 @@ locale:           en_US
 url:              https://erdogant.github.io
 theme:            jekyll-theme-cayman
 
-
 # Jekyll configuration
 
 permalink:   /:categories/:title/
