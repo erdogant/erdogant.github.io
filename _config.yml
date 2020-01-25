@@ -1,1 +1,58 @@
-theme: jekyll-theme-cayman
+# Site wide configuration
+
+title:            Erdogan Taskesen
+locale:           en_US
+url:              https://erdogant.github.io
+
+
+# Jekyll configuration
+
+permalink:   /:categories/:title/
+markdown:    kramdown
+highlighter: rouge
+sass:
+  sass_dir: _sass
+  style: compressed
+gems:
+  - jekyll-sitemap
+
+kramdown:
+  auto_ids: true
+  footnote_nr: 1
+  entity_output: as_char
+  toc_levels: 1..6
+  use_coderay: false
+
+
+# Site owner
+owner:
+  name: Erdogan Taskesen
+  avatar: erdogant.png
+  bio: "Data scientist in machine learning."
+  email: erdogant@gmail.com
+  disqus-shortname: 
+  twitter: #
+  facebook: 
+  google:
+    plus: erdogant
+    analytics:
+    scholar: 2fG38AkAAAAJ
+    verify: 
+    ad-client: 
+    ad-slot: 
+  bing-verify: 
+  github: lvdmaaten
+  stackoverflow: #http://stackoverflow.com/users/123456/username
+  linkedin: #erdogant@gmail.com
+  instagram: #
+  lastfm: #
+  tumblr: #
+  pinterest: #
+  foursquare: #
+  steam: #
+  dribbble: #
+  youtube: #
+  soundcloud: #
+
+include: [".htaccess"]
+exclude: ["lib", "config.rb", "Capfile", "config", "log", "Rakefile", "Rakefile.rb", "tmp", "less", "*.sublime-project", "*.sublime-workspace", "test", "spec", "Gruntfile.js", "package.json", "node_modules", "Gemfile", "Gemfile.lock", "LICENSE", "README.md"]
