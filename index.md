@@ -13,11 +13,6 @@ As a post-doctoral researcher I worked at [Delft University of Technology](http:
 
 My interest are in a variety of topics in machine learning. Currently, I am working on causality models, and the challanges of getting models into production.
 
----
-
-
-
-
 
 Text can be **bold**, _italic_, or ~~strikethrough~~.
 
