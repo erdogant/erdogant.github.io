@@ -107,7 +107,7 @@ For an overview of citations of my papers, please view my [Google Scholar profil
 
 ---
 
-## Hoofdstukken in boeken
+## Bookchapters
 
 1. Erdogan Taskesen. (Dissertation, 2014, January 21). **Computational Biology in Acute Myeloid Leukemia with CEBPA Abnormalities**. Erasmus University Rotterdam. http://hdl.handle.net/1765/50368
 1. Taskesen E, Wouters BJ, and Delwel R. **HAT: a novel statistical approach to discover functional regions in the genome**. Springer Series (book Chapter). doi: 10.1007/978-1-62703-607-8.
