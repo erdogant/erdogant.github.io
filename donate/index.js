@@ -130,11 +130,11 @@ function getFiatDonationAmount() {
 
 function composeDonationElements(bitcoinAmountToDonate, fiatDonationAmount) {
     var url = "bitcoin:" + address + "?amount=" + bitcoinAmountToDonate;
-    var fiatAmountToDonateMessage = " (" + fiatDonationAmount + " " + currencyCode + ") " + "to " + address;
-    var donateDisplayMessage = " Please send " + bitcoinAmountToDonate.toString() + " Bitcoin" + fiatAmountToDonateMessage;
+    var fiatAmountToDonateMessage = " = " + fiatDonationAmount + " " + currencyCode + " " + "\n" + address;
+    var donateDisplayMessage = " Send " + bitcoinAmountToDonate.toString() + " Bitcoin" + fiatAmountToDonateMessage;
     if (mbits == true) {
         var mbitprice = (bitcoinAmountToDonate * 1000).toFixed(2);
-        var donateDisplayMessage = " Please send " + mbitprice.toString() + " mBits" + fiatAmountToDonateMessage;
+        var donateDisplayMessage = " Send " + mbitprice.toString() + " mBits" + fiatAmountToDonateMessage;
     }
     return {
         url: url,
