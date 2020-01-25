@@ -1,10 +1,12 @@
 ---
-layout: page
+layout: default
 title: Publications
 excerpt: "Publications"
 image:
-  feature: sample-image-2.jpg
+feature: sample-image-2.jpg
 ---
+
+
 
 <section id="table-of-contents" class="toc">
   <header>
