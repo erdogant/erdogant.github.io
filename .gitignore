@@ -6,6 +6,12 @@ __pycache__/
 # C extensions
 *.so
 
+_site
+.sass-cache
+Gemfile.lock
+*.gem
+
+
 # Donate stuff
 donate/backup.html
 donate/_site*
