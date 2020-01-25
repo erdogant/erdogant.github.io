@@ -1,10 +1,10 @@
 ---
-layout: page
+layout: default
 title: Erdogan Taskesen
 excerpt: "Erdogan Taskesen"
 tags: [Jekyll, theme, responsive, blog, template]
 image:
-  feature: sample-image-1.jpg
+feature: sample-image-1.jpg
 ---
 
 I am a Data Scientist at [Rijkswaterstaat Datalab](http://www.rijkswaterstaat.nl) in the Netherlands, working on applications with machine learning.
