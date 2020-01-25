@@ -1,5 +1,6 @@
 ---
-layout: default
+layout: page
+#layout: default
 title: Erdogan Taskesen
 excerpt: "Erdogan Taskesen"
 tags: [Jekyll, theme, responsive, blog, template]
@@ -12,3 +13,4 @@ Before, I worked at ING, KPN, and KLM as Data Scientist consultant from BigData 
 As a post-doctoral researcher I worked at [Delft University of Technology](http://www.tudelft.nl), and [VU](https://ctg.cncr.nl/), and as a Ph.D. student at [Erasmus University Medical Center](https://www.erasmusmc.nl/), and [Weill Cornell Medicine](https://weill.cornell.edu/).
 
 My interest are in a variety of topics in machine learning. Currently, I am working on causality models, and the challanges of getting models into production.
+

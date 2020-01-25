@@ -1,16 +1,15 @@
 # Site navigation links
+- title: Home
+  url: /
 
-- title: Curriculum Vitae
+- title: Presentations
+  url: /presentations/
+
+- title: CV
   url: /cv/
 
-#- title: Research
-#  url: /research/
+- title: Blog
+  url: /blog/
 
-- title: Publications
-  url: /publications/
-
-- title: Posters
-  url: /posters/
-
-- title: Contact
-  url: /contact/
+- title: Workshops
+  url: /workshops/
