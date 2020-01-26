@@ -23,10 +23,10 @@ For an overview of citations of my papers, please view my [Google Scholar profil
 
 ## Selected Publications
 
-1. Taskesen E, Huisman SMH, Mahfouz A, Krijthe JH, Ridder J, Stolpe A, Akker E, Verheagh W, Reinders MJT., [**MEREDITH: an integration method to refine cancer (sub)typing in a pan-cancer approach and multiple omics datasets**]('./papers/2016 - Taskesen et al. - Pan-cancer subtyping in a 2D-map shows substructures that are driven by specific combinations of molecular char.pdf'). Scientific Reports, 2016, IF: 5.578
-1. K. Watanabe, Taskesen E, A. van Bochoven, D. Posthuma, **FUMA: Functional mapping and annotation of genetic associations**. Nature Communications. 2017, IF: 13.092
-1. Taskesen E, …, B. Löwenberg. **The value of allogeneic and autologous hematopoietic stem cell transplantation in prognostically favorable acute myeloid leukemia with double mutant CEBPA**. Blood. 2013 Aug 29;122(9):1576-82. doi: 10.1182/blood-2013-05-503847., IF: 10.452
-1. Taskesen E, Beekman R, de Ridder J, Wouters BJ, Peeters JK, Touw IP, Reinders MJ, Delwel R. **HAT: hypergeometric analysis of tiling-arrays with application to promoter-GeneChip data**. BMC Bioinformatics, IF: 2.672
+1. Taskesen E, Huisman SMH, Mahfouz A, Krijthe JH, Ridder J, Stolpe A, Akker E, Verheagh W, Reinders MJT., [**MEREDITH: an integration method to refine cancer (sub)typing in a pan-cancer approach and multiple omics datasets**]('/papers/2016 - Taskesen et al. - Pan-cancer subtyping in a 2D-map shows substructures that are driven by specific combinations of molecular char.pdf). Scientific Reports, 2016, IF: 5.578
+1. K. Watanabe, Taskesen E, A. van Bochoven, D. Posthuma, [**FUMA: Functional mapping and annotation of genetic associations**](/papers/FUMA_41467_2017_Article_1261.pdf). Nature Communications. 2017, IF: 13.092
+1. Taskesen E, …, B. Löwenberg. [**The value of allogeneic and autologous hematopoietic stem cell transplantation in prognostically favorable acute myeloid leukemia with double mutant CEBPA**](/papers/2013 - Taskesen et al - The value of allogeneic and autologous hematopoietic stem cell transplantation in prognostically favorable ac2.pdf). Blood. 2013 Aug 29;122(9):1576-82. doi: 10.1182/blood-2013-05-503847., IF: 10.452
+1. Taskesen E, Beekman R, de Ridder J, Wouters BJ, Peeters JK, Touw IP, Reinders MJ, Delwel R. [**HAT: hypergeometric analysis of tiling-arrays with application to promoter-GeneChip data**](/papers/2010 - Taskesen et al - HAT Hypergeometric Analysis of Tiling-arrays with application to promoter-GeneChip data.pdf). BMC Bioinformatics, IF: 2.672
 
 ---
 
