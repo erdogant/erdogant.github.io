@@ -6,5 +6,8 @@ excerpt: "Posters"
 
 ## Scientific posters
 
-![]('./posters/Poster_2007_1.jpg')
-![]('./posters/Poster_2009_1.jpg')
+<p align="center">
+  <img src='./posters/Poster_2007_1.jpg' width="300" />
+  <img src='./posters/Poster_2009_1.jpg' width="300" />
+</p>
+
