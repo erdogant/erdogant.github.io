@@ -7,6 +7,7 @@ excerpt: "Posters"
 ## Scientific posters
 
 <p align="center">
-  <img src='./posters/Poster_2007_1.jpg' width="300" />
-  <img src='./posters/Poster_2009_1.jpg' width="300" />
+   <a href='./posters/Poster_2007_1.jpg'><img src='./posters/Poster_2007_1.jpg' width="300" border="1"/></a>
+   <a href='./posters/Poster_2009_1.png'><img src='./posters/Poster_2009_1.png' width="300" border="1"/></a>
 </p>
+
