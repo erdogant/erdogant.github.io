@@ -1,10 +1,8 @@
 ---
 layout: page
-title: Posters
-excerpt: "Posters"
+title: Scientific posters
+excerpt: "Scientific posters"
 ---
-
-## Scientific posters
 
 <p align="center">
    <a href='./posters/Poster_2007_1.jpg'><img src='./posters/Poster_2007_1.jpg' width="300" border="1"/></a>
