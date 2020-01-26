@@ -115,10 +115,3 @@ For an overview of citations of my papers, please view my [Google Scholar profil
 1. Taskesen E, Wouters BJ, and Delwel R. **HAT: a novel statistical approach to discover functional regions in the genome**. Springer Series (book Chapter). doi: 10.1007/978-1-62703-607-8.
 
 ---
- 
-## Media
-
-1. Taskesen E, **TU Delft researchers develop tool to group cancer patients and offer tailor-made solutions**, http://www.tudelft.nl/en/current/latest-news/article/detail/delftse-onderzoekers-ontwikkelen-tool-om-kankerpatienten-te-groeperen-en-maatwerk-te-leveren/ 3 May 2016 by Webredactie Communication Delft University of Technology (TUdelft). 
-1. Taskesen E, Karin Klauke. **De ontdekking van twee extra acute myeloïde leukemie subgroepen door gebruik van een combinatie van genexpressie en DNA methylatie profielen**. PUR SANG, het MPN-magazine, jaargang 10, nr. 3, 2013.
-
----

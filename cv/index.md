@@ -1,70 +1,33 @@
 ---
-layout: resume
+layout: page
+title: Curriculum Vitae
+excerpt: "Curriculum Vitae"
 ---
-## Currently
 
-Current Position Description
+## Curriculum Vitae
 
-## Education
+Download my full resume (slightly outdated).
 
-`1990 - 1994`
-__University Name__
-Degree Awarded
+## Research
 
-`1995 - 1997`
-__University Name__
-Degree Awarded 
+My interest are especially in the statistics behind machine learning, and customizing models for real-world applications. Currently, I am working on causality models, and cyber security.
 
 ## Awards
 
-`2012`
-Name of Award, Organization 
+1. Best idea for PoC grant
+1. 1st prize for best poster, Dutch Bioinformatics & Systems Biology Conference (BioSB, Netherlands)
+1. Fellowship award from the American Society of Hematology(ASH)
+1. KWF academic fellowship award to work at Weill Cornell Medical College, Hematology and Medical Oncology at New York, USA
+1. Fellowship award voor de European Hematology Association (EHA)
 
-## Publications
+## Press
 
-<!-- A list is also available [online](https://scholar.google.co.uk/citations?user=LTOTl0YAAAAJ) -->
-
-### Journals
-
-`1994`
-Article Title, Journal Title
-
-`1994`
-Article Title, Journal Title
-
-### Books
-
-`1994`
-Book Title, Journal Title
-
-`1994`
-Book Title, Journal Title
-
-
-## Presentations
-
-`1994`
-Presentation Title, Conference, <a href="https://MyWebsite.tld/presentation1">Link to Presentation</a>
-
-
-## Occupation
-
-`Current`
-__Current Job Title__, Current Employer 
-
-- Task
-- Task
-
-`1994-1996`
-__Current Job Title__, Current Employer 
-
-- Task
-- Task
-
+1. Taskesen E, **TU Delft researchers develop tool to group cancer patients and offer tailor-made solutions**, http://www.tudelft.nl/en/current/latest-news/article/detail/delftse-onderzoekers-ontwikkelen-tool-om-kankerpatienten-te-groeperen-en-maatwerk-te-leveren/ 3 May 2016 by Webredactie Communication Delft University of Technology (TUdelft). 
+1. Taskesen E, Karin Klauke. **De ontdekking van twee extra acute myeloïde leukemie subgroepen door gebruik van een combinatie van genexpressie en DNA methylatie profielen**. PUR SANG, het MPN-magazine, jaargang 10, nr. 3, 2013.
 
 
 <!-- ### Footer
 
-Last updated: May 2013 -->
+Last updated: May 2020 -->
 
 
