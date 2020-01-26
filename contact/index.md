@@ -4,6 +4,12 @@ title: Contact
 excerpt: "Contact"
 ---
 
-# Contact I've Put Together
+Dr.ir. Erdogan Taskesen
 
-- [GitHub Pages Workshop](https://github.com/BioData-Club/githubPagesTutorial)
+Rijkswaterstaat, Datalab
+
+Derde Werelddreef 1
+
+2622 HA Delft
+
+Email: erdogant@gmail.com
