@@ -4,6 +4,7 @@ title: Posters
 excerpt: "Posters"
 ---
 
-# Posters I've Put Together
+## Scientific posters
 
-- [GitHub Pages Workshop](https://github.com/BioData-Club/githubPagesTutorial)
+![]('./posters/Poster_2007_1.jpg')
+![]('./posters/Poster_2009_1.jpg')
