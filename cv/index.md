@@ -8,7 +8,7 @@ Download my full resume (slightly outdated).
 
 ## Research
 
-My interest are especially in the statistics behind machine learning, and customizing models for real-world applications. Currently, I am working on causality models, and cyber security.
+My interest are especially in the statistics behind machine learning, and customizing models to let it work for real-world applications. Currently, I am working on causality models, and cyber security.
 
 ## Awards
 
