@@ -12,4 +12,4 @@ I am a Data Scientist at [Rijkswaterstaat Datalab](http://www.rijkswaterstaat.nl
 Before, I worked at ING, KPN, and KLM as Data Scientist consultant from BigData Republic [BigDataRepublic](https://www.bigdatarepublic.nl).
 As a post-doctoral researcher I worked at [Delft University of Technology](http://www.tudelft.nl), and [VU](https://ctg.cncr.nl/), and as a Ph.D. student at [Erasmus University Medical Center](https://www.erasmusmc.nl/), and [Weill Cornell Medicine](https://weill.cornell.edu/).
 
-My interest are especially in the statistics behind machine learning, and the real-world applications. Currently, I am working on causality models, and the challanges of getting models into production.
+My interest are especially in the statistics behind machine learning, and customizing models for real-world applications. Currently, I am working on causality models, and cyber security.
