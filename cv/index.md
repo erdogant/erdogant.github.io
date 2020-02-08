@@ -4,7 +4,7 @@ title: Curriculum Vitae
 excerpt: "Curriculum Vitae"
 ---
 
-Download my full resume (slightly outdated).
+See [linkedin](https://nl.linkedin.com/in/erdogant) for my full resume.
 
 ## Research
 
