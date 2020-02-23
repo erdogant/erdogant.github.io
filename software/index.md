@@ -23,7 +23,7 @@ feature: sample-image-2.jpg
 
 
 ## bnlearn
+[bnlearn](https://erdogant.github.io/bnlearn/) is for learning the graphical structure of Bayesian networks in Python!
 
-[bnlearn](https://erdogant.github.io/bnlearn/)
 
 ---
