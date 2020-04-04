@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+<meta charset="UTF-8">
+<title>d3graph</title>
+<script type="text/javascript" src="d3.v3.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<script type="application/json" id="d3graph"> {
+    "links": [
+        {
+            "weight": 54.82158881980537,
+            "edge_weight": 54.82158881980537,
+            "edge_width": 12.247324856961392,
+            "source_label": "Sprinkler_1",
+            "target_label": "Cloudy_0",
+            "source": 3,
+            "target": 0
+        },
+        {
+            "weight": 22.833715739709238,
+            "edge_weight": 22.833715739709238,
+            "edge_width": 5.684618307217716,
+            "source_label": "Rain_0",
+            "target_label": "Sprinkler_1",
+            "source": 4,
+            "target": 3
+        },
+        {
+            "weight": 24.53340465164335,
+            "edge_weight": 24.53340465164335,
+            "edge_width": 6.0333304434371575,
+            "source_label": "Wet_Grass_1",
+            "target_label": "Sprinkler_1",
+            "source": 6,
+            "target": 3
+        },
+        {
+            "weight": 54.82158881980537,
+            "edge_weight": 54.82158881980537,
+            "edge_width": 12.247324856961392,
+            "source_label": "Sprinkler_0",
+            "target_label": "Cloudy_1",
+            "source": 2,
+            "target": 1
+        },
+        {
+            "weight": 92.60959390993409,
+            "edge_weight": 92.60959390993409,
+            "edge_width": 20.0,
+            "source_label": "Rain_1",
+            "target_label": "Cloudy_1",
+            "source": 5,
+            "target": 1
+        },
+        {
+            "weight": 10.636268384000315,
+            "edge_weight": 10.636268384000315,
+            "edge_width": 3.182161596481509,
+            "source_label": "Wet_Grass_1",
+            "target_label": "Cloudy_1",
+            "source": 6,
+            "target": 1
+        },
+        {
+            "weight": 22.833715739709238,
+            "edge_weight": 22.833715739709238,
+            "edge_width": 5.684618307217716,
+            "source_label": "Rain_1",
+            "target_label": "Sprinkler_0",
+            "source": 5,
+            "target": 2
+        },
+        {
+            "weight": 67.01662541674791,
+            "edge_weight": 67.01662541674791,
+            "edge_width": 14.749286970813761,
+            "source_label": "Wet_Grass_1",
+            "target_label": "Rain_1",
+            "source": 6,
+            "target": 5
+        }
+    ],
+    "nodes": [
+        {
+            "node_name": "Cloudy_0",
+            "node_color": "#a6cee3",
+            "node_size": "12",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Cloudy_1",
+            "node_color": "#a6cee3",
+            "node_size": "12",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Sprinkler_0",
+            "node_color": "#b2df8a",
+            "node_size": "15",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Sprinkler_1",
+            "node_color": "#b2df8a",
+            "node_size": "10",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Rain_0",
+            "node_color": "#1f78b4",
+            "node_size": "12",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Rain_1",
+            "node_color": "#1f78b4",
+            "node_size": "12",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Wet_Grass_1",
+            "node_color": "#33a02c",
+            "node_size": "14",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        }
+    ]
+}
+</script>
+<form>
+<h3> Link threshold 0 <input type="range" id="thersholdSlider" name="points" value=9.0 min="9.0" max="93.0" onchange="threshold(this.value)"> 93.0 </h3>
+</form>
+<script  src="d3graphscript.js"></script>
+</body>
+</html>
