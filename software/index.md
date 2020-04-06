@@ -23,7 +23,9 @@ feature: sample-image-2.jpg
 
 
 ## bnlearn
-[bnlearn](https://erdogant.github.io/bnlearn/) is for learning the graphical structure of Bayesian networks in Python!
+[bnlearn](https://erdogant.github.io/bnlearn/) is for learning the graphical structure of Bayesian networks in Python.
 
+## classeval
+[classeval](https://erdogant.github.io/classeval/) is to evaluate the models performance for any kind of two-class or multi-class model.
 
 ---
