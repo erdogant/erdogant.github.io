@@ -26,4 +26,6 @@ feature: sample-image-2.jpg
 
 [classeval](https://erdogant.github.io/classeval/) is to evaluate the models performance for any kind of two-class or multi-class model.
 
+[distfit](https://erdogant.github.io/distfit/) is for probability density function fitting of univariate distributions of non-censored data.
+
 ---
