@@ -28,4 +28,7 @@ feature: sample-image-2.jpg
 
 [distfit](https://erdogant.github.io/distfit/) is for probability density function fitting of univariate distributions of non-censored data.
 
+[HNet](https://erdogant.github.io/hnet/) stands for graphical Hypergeometric NEtworks, which is a method where associations across variables are tested for significance by statistical inference.
+
+
 ---
