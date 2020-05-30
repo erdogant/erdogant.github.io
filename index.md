@@ -14,4 +14,4 @@ During my academic years I worked as a post-doctoral researcher at [Delft Univer
 
 My interest are especially in the statistics behind machine learning, and customizing models to let it work in real-world applications. As an example, we use deeplearning techniques for the detection of objects using satellite images or detection of trucks with dangerous goods. Currently, I am working on explainable AI, causality models, and cyber security.
 
-Also check out my latest paper, HNet: Hypergeometric networks, which is about association learning [arXiv](https://arxiv.org/abs/2005.04679)
+Also check out my latest [paper at arXiv](https://arxiv.org/abs/2005.04679), HNet: Hypergeometric networks, which is about association learning.
