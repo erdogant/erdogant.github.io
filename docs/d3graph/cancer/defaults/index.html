@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+<meta charset="UTF-8">
+<title>d3graph</title>
+<script type="text/javascript" src="d3.v3.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<script type="application/json" id="d3graph"> {
+    "links": [
+        {
+            "weight": 203.2488663345893,
+            "edge_weight": 203.2488663345893,
+            "edge_width": 19.675528043458353,
+            "source_label": "labx_brca",
+            "target_label": "sex_female",
+            "source": 36,
+            "target": 1
+        },
+        {
+            "weight": 32.10429405065078,
+            "edge_weight": 32.10429405065078,
+            "edge_width": 3.9499040003074626,
+            "source_label": "labx_cesc",
+            "target_label": "sex_female",
+            "source": 37,
+            "target": 1
+        },
+        {
+            "weight": 87.38455041672594,
+            "edge_weight": 87.38455041672594,
+            "edge_width": 9.029331977606395,
+            "source_label": "labx_ov",
+            "target_label": "sex_female",
+            "source": 9,
+            "target": 1
+        },
+        {
+            "weight": 3.472602570022237,
+            "edge_weight": 3.472602570022237,
+            "edge_width": 1.3190801889811037,
+            "source_label": "age_low_58",
+            "target_label": "sex_female",
+            "source": 11,
+            "target": 1
+        },
+        {
+            "weight": 2.04091022808525,
+            "edge_weight": 2.04091022808525,
+            "edge_width": 1.187529096157623,
+            "source_label": "survival_months_low_13.8",
+            "target_label": "sex_female",
+            "source": 13,
+            "target": 1
+        },
+        {
+            "weight": 5.301160211933279,
+            "edge_weight": 5.301160211933279,
+            "edge_width": 1.487097261530837,
+            "source_label": "death_indicator_low_1",
+            "target_label": "labx_brca",
+            "source": 14,
+            "target": 36
+        },
+        {
+            "weight": 22.880338271215194,
+            "edge_weight": 22.880338271215194,
+            "edge_width": 3.102360553020086,
+            "source_label": "age_low_45",
+            "target_label": "labx_cesc",
+            "source": 21,
+            "target": 37
+        },
+        {
+            "weight": 1.9659498917444782,
+            "edge_weight": 1.9659498917444782,
+            "edge_width": 1.1806413634547277,
+            "source_label": "survival_months_low_5.5",
+            "target_label": "labx_cesc",
+            "source": 22,
+            "target": 37
+        },
+        {
+            "weight": 16.557978534854026,
+            "edge_weight": 16.557978534854026,
+            "edge_width": 2.5214303432403575,
+            "source_label": "death_indicator_low_0",
+            "target_label": "labx_ov",
+            "source": 28,
+            "target": 9
+        },
+        {
+            "weight": 14.344471656024476,
+            "edge_weight": 14.344471656024476,
+            "edge_width": 2.318042198767671,
+            "source_label": "survival_months_low_29",
+            "target_label": "labx_ov",
+            "source": 35,
+            "target": 9
+        },
+        {
+            "weight": 11.434948539762587,
+            "edge_weight": 11.434948539762587,
+            "edge_width": 2.0507005819077295,
+            "source_label": "labx_blca",
+            "target_label": "sex_male",
+            "source": 34,
+            "target": 12
+        },
+        {
+            "weight": 12.277030208248782,
+            "edge_weight": 12.277030208248782,
+            "edge_width": 2.1280752807107595,
+            "source_label": "labx_hnsc",
+            "target_label": "sex_male",
+            "source": 39,
+            "target": 12
+        },
+        {
+            "weight": 15.154768397223327,
+            "edge_weight": 15.154768397223327,
+            "edge_width": 2.3924963385948055,
+            "source_label": "labx_kirc",
+            "target_label": "sex_male",
+            "source": 2,
+            "target": 12
+        },
+        {
+            "weight": 11.967947672820138,
+            "edge_weight": 11.967947672820138,
+            "edge_width": 2.0996752228790054,
+            "source_label": "labx_kirp",
+            "target_label": "sex_male",
+            "source": 3,
+            "target": 12
+        },
+        {
+            "weight": 3.034639554935155,
+            "edge_weight": 3.034639554935155,
+            "edge_width": 1.2788379444964937,
+            "source_label": "sex_male",
+            "target_label": "labx_lihc",
+            "source": 12,
+            "target": 6
+        },
+        {
+            "weight": 9.090332313841712,
+            "edge_weight": 9.090332313841712,
+            "edge_width": 1.8352654512327544,
+            "source_label": "sex_male",
+            "target_label": "labx_lusc",
+            "source": 12,
+            "target": 8
+        },
+        {
+            "weight": 47.30419139430409,
+            "edge_weight": 47.30419139430409,
+            "edge_width": 5.346547013468401,
+            "source_label": "labx_prad",
+            "target_label": "sex_male",
+            "source": 10,
+            "target": 12
+        },
+        {
+            "weight": 1.4417111334800485,
+            "edge_weight": 1.4417111334800485,
+            "edge_width": 1.1324716697782176,
+            "source_label": "labx_coad",
+            "target_label": "sex_male",
+            "source": 38,
+            "target": 12
+        },
+        {
+            "weight": 3.472602570022237,
+            "edge_weight": 3.472602570022237,
+            "edge_width": 1.3190801889811037,
+            "source_label": "age_low_61",
+            "target_label": "sex_male",
+            "source": 15,
+            "target": 12
+        },
+        {
+            "weight": 2.04091022808525,
+            "edge_weight": 2.04091022808525,
+            "edge_width": 1.187529096157623,
+            "source_label": "survival_months_low_10.8",
+            "target_label": "sex_male",
+            "source": 16,
+            "target": 12
+        },
+        {
+            "weight": 21.877044860661524,
+            "edge_weight": 21.877044860661524,
+            "edge_width": 3.010172908569627,
+            "source_label": "age_low_69",
+            "target_label": "labx_blca",
+            "source": 19,
+            "target": 34
+        },
+        {
+            "weight": 8.20982700267514,
+            "edge_weight": 8.20982700267514,
+            "edge_width": 1.754360194895259,
+            "source_label": "survival_months_low_6.5",
+            "target_label": "labx_blca",
+            "source": 20,
+            "target": 34
+        },
+        {
+            "weight": 3.719680918659744,
+            "edge_weight": 3.719680918659744,
+            "edge_width": 1.341782990291272,
+            "source_label": "labx_hnsc",
+            "target_label": "sex_None",
+            "source": 39,
+            "target": 0
+        },
+        {
+            "weight": 3.0119536325509864,
+            "edge_weight": 3.0119536325509864,
+            "edge_width": 1.276753447852956,
+            "source_label": "death_indicator_low_1",
+            "target_label": "labx_hnsc",
+            "source": 14,
+            "target": 39
+        },
+        {
+            "weight": 15.674622363673361,
+            "edge_weight": 15.674622363673361,
+            "edge_width": 2.440263135546865,
+            "source_label": "survival_months_low_36",
+            "target_label": "labx_kirc",
+            "source": 27,
+            "target": 2
+        },
+        {
+            "weight": 1.6246808132097565,
+            "edge_weight": 1.6246808132097565,
+            "edge_width": 1.149283844165796,
+            "source_label": "labx_lihc",
+            "target_label": "sex_None",
+            "source": 6,
+            "target": 0
+        },
+        {
+            "weight": 1.9291306282531808,
+            "edge_weight": 1.9291306282531808,
+            "edge_width": 1.1772582243490992,
+            "source_label": "death_indicator_low_1",
+            "target_label": "labx_lihc",
+            "source": 14,
+            "target": 6
+        },
+        {
+            "weight": 2.360419440534324,
+            "edge_weight": 2.360419440534324,
+            "edge_width": 1.2168872095131635,
+            "source_label": "age_low_65",
+            "target_label": "labx_lihc",
+            "source": 30,
+            "target": 6
+        },
+        {
+            "weight": 12.872541993490838,
+            "edge_weight": 12.872541993490838,
+            "edge_width": 2.1827938985612017,
+            "source_label": "labx_lusc",
+            "target_label": "sex_None",
+            "source": 8,
+            "target": 0
+        },
+        {
+            "weight": 8.060482849782598,
+            "edge_weight": 8.060482849782598,
+            "edge_width": 1.7406377030271871,
+            "source_label": "age_low_67",
+            "target_label": "labx_lusc",
+            "source": 32,
+            "target": 8
+        },
+        {
+            "weight": 6.981622407993465,
+            "edge_weight": 6.981622407993465,
+            "edge_width": 1.6415065796956423,
+            "source_label": "survival_months_low_2.7",
+            "target_label": "labx_lusc",
+            "source": 33,
+            "target": 8
+        },
+        {
+            "weight": 5.998604056303268,
+            "edge_weight": 5.998604056303268,
+            "edge_width": 1.5511819096234225,
+            "source_label": "labx_prad",
+            "target_label": "sex_None",
+            "source": 10,
+            "target": 0
+        },
+        {
+            "weight": 9.76316792687333,
+            "edge_weight": 9.76316792687333,
+            "edge_width": 1.8970889712671737,
+            "source_label": "death_indicator_low_1",
+            "target_label": "labx_prad",
+            "source": 14,
+            "target": 10
+        },
+        {
+            "weight": 8.299367747981206,
+            "edge_weight": 8.299367747981206,
+            "edge_width": 1.762587648903503,
+            "source_label": "age_low_68.5",
+            "target_label": "labx_coad",
+            "source": 24,
+            "target": 38
+        },
+        {
+            "weight": 8.093331834018064,
+            "edge_weight": 8.093331834018064,
+            "edge_width": 1.7436560329069646,
+            "source_label": "labx_lgg",
+            "target_label": "sex_None",
+            "source": 5,
+            "target": 0
+        },
+        {
+            "weight": 91.05632812936538,
+            "edge_weight": 91.05632812936538,
+            "edge_width": 9.366713380407722,
+            "source_label": "age_low_41",
+            "target_label": "labx_lgg",
+            "source": 29,
+            "target": 5
+        },
+        {
+            "weight": 6.683656470171451,
+            "edge_weight": 6.683656470171451,
+            "edge_width": 1.6141279707609693,
+            "source_label": "age_low_49",
+            "target_label": "labx_acc",
+            "source": 17,
+            "target": 23
+        },
+        {
+            "weight": 8.230201946550277,
+            "edge_weight": 8.230201946550277,
+            "edge_width": 1.7562323472107244,
+            "source_label": "survival_months_low_32.7",
+            "target_label": "labx_acc",
+            "source": 18,
+            "target": 23
+        },
+        {
+            "weight": 9.178244382665413,
+            "edge_weight": 9.178244382665413,
+            "edge_width": 1.8433432542546555,
+            "source_label": "survival_months_low_6.5",
+            "target_label": "labx_luad",
+            "source": 20,
+            "target": 7
+        },
+        {
+            "weight": 24.2922381690236,
+            "edge_weight": 24.2922381690236,
+            "edge_width": 3.232093016534396,
+            "source_label": "age_low_66",
+            "target_label": "labx_luad",
+            "source": 31,
+            "target": 7
+        },
+        {
+            "weight": 2.2126596924521844,
+            "edge_weight": 2.2126596924521844,
+            "edge_width": 1.2033103007275585,
+            "source_label": "age_low_50",
+            "target_label": "labx_kich",
+            "source": 25,
+            "target": 40
+        },
+        {
+            "weight": 14.14429139168433,
+            "edge_weight": 14.14429139168433,
+            "edge_width": 2.2996486293084595,
+            "source_label": "survival_months_low_60.3",
+            "target_label": "labx_kich",
+            "source": 26,
+            "target": 40
+        },
+        {
+            "weight": 19.537556828249368,
+            "edge_weight": 19.537556828249368,
+            "edge_width": 2.795208982105586,
+            "source_label": "death_indicator_low_0",
+            "target_label": "labx_laml",
+            "source": 28,
+            "target": 4
+        }
+    ],
+    "nodes": [
+        {
+            "node_name": "sex_None",
+            "node_color": "#33a02c",
+            "node_size": "8",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "sex_female",
+            "node_color": "#33a02c",
+            "node_size": "15",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "labx_kirc",
+            "node_color": "#b2df8a",
+            "node_size": "7",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "labx_kirp",
+            "node_color": "#b2df8a",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "labx_laml",
+            "node_color": "#b2df8a",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "labx_lgg",
+            "node_color": "#b2df8a",
+            "node_size": "8",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "labx_lihc",
+            "node_color": "#b2df8a",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "labx_luad",
+            "node_color": "#b2df8a",
+            "node_size": "7",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "labx_lusc",
+            "node_color": "#b2df8a",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "labx_ov",
+            "node_color": "#b2df8a",
+            "node_size": "7",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "labx_prad",
+            "node_color": "#b2df8a",
+            "node_size": "7",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "age_low_58",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "sex_male",
+            "node_color": "#33a02c",
+            "node_size": "13",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "survival_months_low_13.8",
+            "node_color": "#fb9a99",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "death_indicator_low_1",
+            "node_color": "#1f78b4",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "age_low_61",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "survival_months_low_10.8",
+            "node_color": "#fb9a99",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "age_low_49",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "survival_months_low_32.7",
+            "node_color": "#fb9a99",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "age_low_69",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "survival_months_low_6.5",
+            "node_color": "#fb9a99",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "age_low_45",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "survival_months_low_5.5",
+            "node_color": "#fb9a99",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "labx_acc",
+            "node_color": "#b2df8a",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "age_low_68.5",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "age_low_50",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "survival_months_low_60.3",
+            "node_color": "#fb9a99",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "survival_months_low_36",
+            "node_color": "#fb9a99",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "death_indicator_low_0",
+            "node_color": "#1f78b4",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "age_low_41",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "age_low_65",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "age_low_66",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "age_low_67",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "survival_months_low_2.7",
+            "node_color": "#fb9a99",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "labx_blca",
+            "node_color": "#b2df8a",
+            "node_size": "7",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "survival_months_low_29",
+            "node_color": "#fb9a99",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "labx_brca",
+            "node_color": "#b2df8a",
+            "node_size": "9",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "labx_cesc",
+            "node_color": "#b2df8a",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "labx_coad",
+            "node_color": "#b2df8a",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "labx_hnsc",
+            "node_color": "#b2df8a",
+            "node_size": "7",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "labx_kich",
+            "node_color": "#b2df8a",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        }
+    ]
+}
+</script>
+<form>
+<h3> Link threshold 0 <input type="range" id="thersholdSlider" name="points" value=0.0 min="0.0" max="204.0" onchange="threshold(this.value)"> 204.0 </h3>
+</form>
+<script  src="d3graphscript.js"></script>
+</body>
+</html>
