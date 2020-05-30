@@ -25,7 +25,7 @@ For an overview of citations of my papers, please view my [Google Scholar profil
 
 https://arxiv.org/abs/2005.04679
 
-1. Taskesen E, [**HNet: Graphical Hypergeometric Networks**]('/papers/2020 - Taskesen et al - HNet Hypergeometric Networks.pdf ). arXiv.org, 2020, arXiv:2005.04679
+1. Taskesen E, [**HNet: Graphical Hypergeometric Networks**]('/papers/2020 - Taskesen et al - HNet Hypergeometric Networks.pdf). arXiv.org, 2020, arXiv:2005.04679
 1. Taskesen E, Huisman SMH, Mahfouz A, Krijthe JH, Ridder J, Stolpe A, Akker E, Verheagh W, Reinders MJT., [**MEREDITH: an integration method to refine cancer (sub)typing in a pan-cancer approach and multiple omics datasets**]('/papers/2016 - Taskesen et al. - Pan-cancer subtyping in a 2D-map shows substructures that are driven by specific combinations of molecular char.pdf). Scientific Reports, 2016, IF: 5.578
 1. K. Watanabe, Taskesen E, A. van Bochoven, D. Posthuma, [**FUMA: Functional mapping and annotation of genetic associations**](/papers/FUMA_41467_2017_Article_1261.pdf). Nature Communications. 2017, IF: 13.092
 1. Taskesen E, Havermans M, van Lom K, Sanders MA, van Norden Y, Bindels E, Hoogenboezem R, Reinders MJ, Figueroa ME, Valk PJ, Löwenberg B, Melnick A, Delwel R. [**Two splice factor mutant leukemia subgroups uncovered at the boundaries of MDS and AML using combined gene expression and DNA-methylation profiling**](/papers/2014 - Taskesen et al - Two splice-factor mutant leukemia subgroups uncovered at the.pdf). Blood. 2014 Mar 25., IF: 10.452
@@ -36,7 +36,7 @@ https://arxiv.org/abs/2005.04679
 
 ## 2020
 
-1. Taskesen E, [**HNet: Graphical Hypergeometric Networks**]('/papers/2020 - Taskesen et al - HNet Hypergeometric Networks.pdf ). arXiv.org, 2020, arXiv:2005.04679
+1. Taskesen E, [**HNet: Graphical Hypergeometric Networks**]('/papers/2020 - Taskesen et al - HNet Hypergeometric Networks.pdf). arXiv.org, 2020, arXiv:2005.04679
 
 ---
 
