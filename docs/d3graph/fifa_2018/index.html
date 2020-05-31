@@ -10,75 +10,125 @@
 <script type="application/json" id="d3graph"> {
     "links": [
         {
-            "weight": 5.2459590792085775,
-            "edge_weight": 5.2459590792085775,
-            "edge_width": 12.956821655810273,
+            "weight": 5.774274034609782,
+            "edge_weight": 5.774274034609782,
+            "edge_width": 5.250674511931274,
             "source_label": "Man of the Match_No",
             "target_label": "Goal Scored_0",
             "source": 1,
             "target": 0
         },
         {
-            "weight": 1.3144147548114087,
-            "edge_weight": 1.3144147548114087,
-            "edge_width": 3.995872168986992,
+            "weight": 25.810305246764017,
+            "edge_weight": 25.810305246764017,
+            "edge_width": 20.0,
+            "source_label": "Goal Scored_0",
+            "target_label": "1st Goal_nan",
+            "source": 0,
+            "target": 2
+        },
+        {
+            "weight": 6.2077787692378745,
+            "edge_weight": 6.2077787692378745,
+            "edge_width": 5.56979471911931,
+            "source_label": "Man of the Match_No",
+            "target_label": "1st Goal_nan",
+            "source": 1,
+            "target": 2
+        },
+        {
+            "weight": 1.8434883302877971,
+            "edge_weight": 1.8434883302877971,
+            "edge_width": 2.357065634853721,
             "source_label": "PSO_No",
             "target_label": "Round_Group Stage",
-            "source": 3,
-            "target": 2
-        },
-        {
-            "weight": 1.3144147548114087,
-            "edge_weight": 1.3144147548114087,
-            "edge_width": 3.995872168986992,
-            "source_label": "Goals in PSO_0",
-            "target_label": "Round_Group Stage",
-            "source": 4,
-            "target": 2
-        },
-        {
-            "weight": 8.33609678007767,
-            "edge_weight": 8.33609678007767,
-            "edge_width": 20.0,
-            "source_label": "Goals in PSO_0",
-            "target_label": "PSO_No",
             "source": 4,
             "target": 3
+        },
+        {
+            "weight": 1.8434883302877971,
+            "edge_weight": 1.8434883302877971,
+            "edge_width": 2.357065634853721,
+            "source_label": "Goals in PSO_0",
+            "target_label": "Round_Group Stage",
+            "source": 5,
+            "target": 3
+        },
+        {
+            "weight": 8.863876872433222,
+            "edge_weight": 8.863876872433222,
+            "edge_width": 7.525054971883612,
+            "source_label": "Goals in PSO_0",
+            "target_label": "PSO_No",
+            "source": 5,
+            "target": 4
+        },
+        {
+            "weight": 2.0777284689639446,
+            "edge_weight": 2.0777284689639446,
+            "edge_width": 2.5294991877426316,
+            "source_label": "Distance Covered (Kms)_low_104",
+            "target_label": "PSO_No",
+            "source": 6,
+            "target": 4
+        },
+        {
+            "weight": 2.0777284689639446,
+            "edge_weight": 2.0777284689639446,
+            "edge_width": 2.5294991877426316,
+            "source_label": "Distance Covered (Kms)_low_104",
+            "target_label": "Goals in PSO_0",
+            "source": 6,
+            "target": 5
         }
     ],
     "nodes": [
         {
             "node_name": "Goal Scored_0",
-            "node_color": "#a6cee3",
+            "node_color": "#b2df8a",
             "node_size": "8",
             "node_size_edge": "0.10000000000000009",
             "node_color_edge": "#000000"
         },
         {
             "node_name": "Man of the Match_No",
-            "node_color": "#b2df8a",
+            "node_color": "#fb9a99",
             "node_size": "10",
             "node_size_edge": "0.10000000000000009",
             "node_color_edge": "#000000"
         },
         {
+            "node_name": "1st Goal_nan",
+            "node_color": "#a6cee3",
+            "node_size": "8",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
             "node_name": "Round_Group Stage",
-            "node_color": "#fb9a99",
+            "node_color": "#fdbf6f",
             "node_size": "13",
             "node_size_edge": "0.10000000000000009",
             "node_color_edge": "#000000"
         },
         {
             "node_name": "PSO_No",
-            "node_color": "#33a02c",
+            "node_color": "#e31a1c",
             "node_size": "15",
             "node_size_edge": "0.10000000000000009",
             "node_color_edge": "#000000"
         },
         {
             "node_name": "Goals in PSO_0",
-            "node_color": "#1f78b4",
+            "node_color": "#33a02c",
             "node_size": "15",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Distance Covered (Kms)_low_104",
+            "node_color": "#1f78b4",
+            "node_size": "6",
             "node_size_edge": "0.10000000000000009",
             "node_color_edge": "#000000"
         }
@@ -86,7 +136,7 @@
 }
 </script>
 <form>
-<h3> Link threshold 0 <input type="range" id="thersholdSlider" name="points" value=0.0 min="0.0" max="9.0" onchange="threshold(this.value)"> 9.0 </h3>
+<h3> Link threshold 0 <input type="range" id="thersholdSlider" name="points" value=0.0 min="0.0" max="26.0" onchange="threshold(this.value)"> 26.0 </h3>
 </form>
 <script  src="d3graphscript.js"></script>
 </body>
