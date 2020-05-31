@@ -1,6 +1,6 @@
 //Constants for the SVG
-var width = 600;
-var height = 600;
+var width = 500;
+var height = 500;
 
 //Set up the colour scale
 var color = d3.scale.category20();
