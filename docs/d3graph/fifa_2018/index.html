@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+<meta charset="UTF-8">
+<title>d3graph</title>
+<script type="text/javascript" src="d3.v3.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<script type="application/json" id="d3graph"> {
+    "links": [
+        {
+            "weight": 5.2459590792085775,
+            "edge_weight": 5.2459590792085775,
+            "edge_width": 12.956821655810273,
+            "source_label": "Man of the Match_No",
+            "target_label": "Goal Scored_0",
+            "source": 1,
+            "target": 0
+        },
+        {
+            "weight": 1.3144147548114087,
+            "edge_weight": 1.3144147548114087,
+            "edge_width": 3.995872168986992,
+            "source_label": "PSO_No",
+            "target_label": "Round_Group Stage",
+            "source": 3,
+            "target": 2
+        },
+        {
+            "weight": 1.3144147548114087,
+            "edge_weight": 1.3144147548114087,
+            "edge_width": 3.995872168986992,
+            "source_label": "Goals in PSO_0",
+            "target_label": "Round_Group Stage",
+            "source": 4,
+            "target": 2
+        },
+        {
+            "weight": 8.33609678007767,
+            "edge_weight": 8.33609678007767,
+            "edge_width": 20.0,
+            "source_label": "Goals in PSO_0",
+            "target_label": "PSO_No",
+            "source": 4,
+            "target": 3
+        }
+    ],
+    "nodes": [
+        {
+            "node_name": "Goal Scored_0",
+            "node_color": "#a6cee3",
+            "node_size": "8",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Man of the Match_No",
+            "node_color": "#b2df8a",
+            "node_size": "10",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Round_Group Stage",
+            "node_color": "#fb9a99",
+            "node_size": "13",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "PSO_No",
+            "node_color": "#33a02c",
+            "node_size": "15",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Goals in PSO_0",
+            "node_color": "#1f78b4",
+            "node_size": "15",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        }
+    ]
+}
+</script>
+<form>
+<h3> Link threshold 0 <input type="range" id="thersholdSlider" name="points" value=0.0 min="0.0" max="9.0" onchange="threshold(this.value)"> 9.0 </h3>
+</form>
+<script  src="d3graphscript.js"></script>
+</body>
+</html>
