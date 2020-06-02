@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+<meta charset="UTF-8">
+<title>d3graph</title>
+<script type="text/javascript" src="d3.v3.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<script type="application/json" id="d3graph"> {
+    "links": [
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "occupation_ ?",
+            "target_label": "workclass_ ?",
+            "source": 53,
+            "target": 0
+        },
+        {
+            "weight": 162.11444017459016,
+            "edge_weight": 162.11444017459016,
+            "edge_width": 10.535990451682427,
+            "source_label": "hours-per-week_low_36",
+            "target_label": "workclass_ ?",
+            "source": 6,
+            "target": 0
+        },
+        {
+            "weight": 163.24471022602762,
+            "edge_weight": 163.24471022602762,
+            "edge_width": 10.602475857959144,
+            "source_label": "hours-per-week_low_36",
+            "target_label": "occupation_ ?",
+            "source": 6,
+            "target": 53
+        },
+        {
+            "weight": 143.14313829271924,
+            "edge_weight": 143.14313829271924,
+            "edge_width": 9.420049432445191,
+            "source_label": "occupation_ Prof-specialty",
+            "target_label": "workclass_ Local-gov",
+            "source": 61,
+            "target": 25
+        },
+        {
+            "weight": 183.1482816908192,
+            "edge_weight": 183.1482816908192,
+            "edge_width": 11.77325538406567,
+            "source_label": "occupation_ Protective-serv",
+            "target_label": "workclass_ Local-gov",
+            "source": 62,
+            "target": 25
+        },
+        {
+            "weight": 239.0238531805962,
+            "edge_weight": 239.0238531805962,
+            "edge_width": 15.060000942542626,
+            "source_label": "occupation_ Prof-specialty",
+            "target_label": "education_ Bachelors",
+            "source": 61,
+            "target": 22
+        },
+        {
+            "weight": 199.68622562786314,
+            "edge_weight": 199.68622562786314,
+            "edge_width": 12.746059998535967,
+            "source_label": "occupation_ Prof-specialty",
+            "target_label": "education_ Doctorate",
+            "source": 61,
+            "target": 23
+        },
+        {
+            "weight": 313.0702499573014,
+            "edge_weight": 313.0702499573014,
+            "edge_width": 19.415601417637284,
+            "source_label": "occupation_ Prof-specialty",
+            "target_label": "education_ Masters",
+            "source": 61,
+            "target": 26
+        },
+        {
+            "weight": 288.3528274887978,
+            "edge_weight": 288.3528274887978,
+            "edge_width": 17.961658731248537,
+            "source_label": "occupation_ Prof-specialty",
+            "target_label": "education_ Prof-school",
+            "source": 61,
+            "target": 28
+        },
+        {
+            "weight": 239.0238531805962,
+            "edge_weight": 239.0238531805962,
+            "edge_width": 15.060000942542626,
+            "source_label": "occupation_ Prof-specialty",
+            "target_label": "education-num_13",
+            "source": 61,
+            "target": 34
+        },
+        {
+            "weight": 313.0702499573014,
+            "edge_weight": 313.0702499573014,
+            "edge_width": 19.415601417637284,
+            "source_label": "occupation_ Prof-specialty",
+            "target_label": "education-num_14",
+            "source": 61,
+            "target": 35
+        },
+        {
+            "weight": 288.3528274887978,
+            "edge_weight": 288.3528274887978,
+            "edge_width": 17.961658731248537,
+            "source_label": "occupation_ Prof-specialty",
+            "target_label": "education-num_15",
+            "source": 61,
+            "target": 37
+        },
+        {
+            "weight": 199.68622562786314,
+            "edge_weight": 199.68622562786314,
+            "edge_width": 12.746059998535967,
+            "source_label": "occupation_ Prof-specialty",
+            "target_label": "education-num_16",
+            "source": 61,
+            "target": 38
+        },
+        {
+            "weight": 215.2646951469276,
+            "edge_weight": 215.2646951469276,
+            "edge_width": 13.662425847411836,
+            "source_label": "earnings_ >50K",
+            "target_label": "occupation_ Prof-specialty",
+            "source": 3,
+            "target": 61
+        },
+        {
+            "weight": 194.21270913117655,
+            "edge_weight": 194.21270913117655,
+            "edge_width": 12.424093608661522,
+            "source_label": "occupation_ Machine-op-inspct",
+            "target_label": "workclass_ Private",
+            "source": 59,
+            "target": 36
+        },
+        {
+            "weight": 250.32477004416216,
+            "edge_weight": 250.32477004416216,
+            "edge_width": 15.724750086358336,
+            "source_label": "age_low_35",
+            "target_label": "workclass_ Private",
+            "source": 4,
+            "target": 36
+        },
+        {
+            "weight": 113.30285249052166,
+            "edge_weight": 113.30285249052166,
+            "edge_width": 7.664766681699634,
+            "source_label": "earnings_ >50K",
+            "target_label": "workclass_ Self-emp-inc",
+            "source": 3,
+            "target": 47
+        },
+        {
+            "weight": 105.44470688592499,
+            "edge_weight": 105.44470688592499,
+            "edge_width": 7.2025302432141896,
+            "source_label": "hours-per-week_low_50",
+            "target_label": "workclass_ Self-emp-inc",
+            "source": 10,
+            "target": 47
+        },
+        {
+            "weight": 207.35868952245966,
+            "edge_weight": 207.35868952245966,
+            "edge_width": 13.197374158835046,
+            "source_label": "earnings_ >50K",
+            "target_label": "education_ Bachelors",
+            "source": 3,
+            "target": 22
+        },
+        {
+            "weight": 179.7859322596392,
+            "edge_weight": 179.7859322596392,
+            "edge_width": 11.575473298543729,
+            "source_label": "earnings_ >50K",
+            "target_label": "education_ Masters",
+            "source": 3,
+            "target": 26
+        },
+        {
+            "weight": 135.54650549432202,
+            "edge_weight": 135.54650549432202,
+            "edge_width": 8.973195853254854,
+            "source_label": "earnings_ >50K",
+            "target_label": "education_ Prof-school",
+            "source": 3,
+            "target": 28
+        },
+        {
+            "weight": 207.35868952245966,
+            "edge_weight": 207.35868952245966,
+            "edge_width": 13.197374158835046,
+            "source_label": "earnings_ >50K",
+            "target_label": "education-num_13",
+            "source": 3,
+            "target": 34
+        },
+        {
+            "weight": 179.7859322596392,
+            "edge_weight": 179.7859322596392,
+            "edge_width": 11.575473298543729,
+            "source_label": "earnings_ >50K",
+            "target_label": "education-num_14",
+            "source": 3,
+            "target": 35
+        },
+        {
+            "weight": 135.54650549432202,
+            "edge_weight": 135.54650549432202,
+            "edge_width": 8.973195853254854,
+            "source_label": "earnings_ >50K",
+            "target_label": "education-num_15",
+            "source": 3,
+            "target": 37
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "earnings_ >50K",
+            "target_label": "marital-status_ Married-civ-spouse",
+            "source": 3,
+            "target": 49
+        },
+        {
+            "weight": 284.81324241850035,
+            "edge_weight": 284.81324241850035,
+            "edge_width": 17.75345118726342,
+            "source_label": "earnings_ >50K",
+            "target_label": "occupation_ Exec-managerial",
+            "source": 3,
+            "target": 57
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "earnings_ >50K",
+            "target_label": "relationship_ Husband",
+            "source": 3,
+            "target": 64
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "earnings_ >50K",
+            "target_label": "sex_ Male",
+            "source": 3,
+            "target": 73
+        },
+        {
+            "weight": 123.24703550384396,
+            "edge_weight": 123.24703550384396,
+            "edge_width": 8.249709233163273,
+            "source_label": "capital-gain_low_0",
+            "target_label": "earnings_ >50K",
+            "source": 5,
+            "target": 3
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "hours-per-week_low_40",
+            "target_label": "earnings_ >50K",
+            "source": 8,
+            "target": 3
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "age_low_44",
+            "target_label": "earnings_ >50K",
+            "source": 11,
+            "target": 3
+        },
+        {
+            "weight": 210.96456574326533,
+            "edge_weight": 210.96456574326533,
+            "edge_width": 13.40948111966173,
+            "source_label": "occupation_ Farming-fishing",
+            "target_label": "workclass_ Self-emp-not-inc",
+            "source": 58,
+            "target": 56
+        },
+        {
+            "weight": 128.97879070984985,
+            "edge_weight": 128.97879070984985,
+            "edge_width": 8.586865891490493,
+            "source_label": "age_low_44",
+            "target_label": "workclass_ Self-emp-not-inc",
+            "source": 11,
+            "target": 56
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "education-num_6",
+            "target_label": "education_ 10th",
+            "source": 43,
+            "target": 75
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "education-num_7",
+            "target_label": "education_ 11th",
+            "source": 44,
+            "target": 77
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "education-num_8",
+            "target_label": "education_ 12th",
+            "source": 45,
+            "target": 1
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "education-num_2",
+            "target_label": "education_ 1st-4th",
+            "source": 39,
+            "target": 9
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "education-num_3",
+            "target_label": "education_ 5th-6th",
+            "source": 40,
+            "target": 14
+        },
+        {
+            "weight": 159.44476335805953,
+            "edge_weight": 159.44476335805953,
+            "edge_width": 10.378953159976044,
+            "source_label": "native-country_ Mexico",
+            "target_label": "education_ 5th-6th",
+            "source": 78,
+            "target": 14
+        },
+        {
+            "weight": 159.44476335805953,
+            "edge_weight": 159.44476335805953,
+            "edge_width": 10.378953159976044,
+            "source_label": "native-country_ Mexico",
+            "target_label": "education-num_3",
+            "source": 78,
+            "target": 40
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "education-num_4",
+            "target_label": "education_ 7th-8th",
+            "source": 41,
+            "target": 17
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "education-num_5",
+            "target_label": "education_ 9th",
+            "source": 42,
+            "target": 19
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "education-num_12",
+            "target_label": "education_ Assoc-acdm",
+            "source": 33,
+            "target": 20
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "education-num_11",
+            "target_label": "education_ Assoc-voc",
+            "source": 32,
+            "target": 21
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "education-num_13",
+            "target_label": "education_ Bachelors",
+            "source": 34,
+            "target": 22
+        },
+        {
+            "weight": 181.81972899271747,
+            "edge_weight": 181.81972899271747,
+            "edge_width": 11.695106479933434,
+            "source_label": "occupation_ Exec-managerial",
+            "target_label": "education_ Bachelors",
+            "source": 57,
+            "target": 22
+        },
+        {
+            "weight": 181.81972899271747,
+            "edge_weight": 181.81972899271747,
+            "edge_width": 11.695106479933434,
+            "source_label": "occupation_ Exec-managerial",
+            "target_label": "education-num_13",
+            "source": 57,
+            "target": 34
+        },
+        {
+            "weight": 179.72157624290492,
+            "edge_weight": 179.72157624290492,
+            "edge_width": 11.571687711273245,
+            "source_label": "hours-per-week_low_40",
+            "target_label": "occupation_ Exec-managerial",
+            "source": 8,
+            "target": 57
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "education-num_16",
+            "target_label": "education_ Doctorate",
+            "source": 38,
+            "target": 23
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "education-num_9",
+            "target_label": "education_ HS-grad",
+            "source": 46,
+            "target": 24
+        },
+        {
+            "weight": 125.99143056943223,
+            "edge_weight": 125.99143056943223,
+            "edge_width": 8.411141645432712,
+            "source_label": "earnings_ <=50K",
+            "target_label": "education_ HS-grad",
+            "source": 2,
+            "target": 24
+        },
+        {
+            "weight": 125.99143056943223,
+            "edge_weight": 125.99143056943223,
+            "edge_width": 8.411141645432712,
+            "source_label": "earnings_ <=50K",
+            "target_label": "education-num_9",
+            "source": 2,
+            "target": 46
+        },
+        {
+            "weight": 130.454079768381,
+            "edge_weight": 130.454079768381,
+            "edge_width": 8.673646207670062,
+            "source_label": "earnings_ <=50K",
+            "target_label": "marital-status_ Divorced",
+            "source": 2,
+            "target": 48
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "earnings_ <=50K",
+            "target_label": "marital-status_ Never-married",
+            "source": 2,
+            "target": 50
+        },
+        {
+            "weight": 229.74843344501318,
+            "edge_weight": 229.74843344501318,
+            "edge_width": 14.514396775889677,
+            "source_label": "earnings_ <=50K",
+            "target_label": "occupation_ Other-service",
+            "source": 2,
+            "target": 60
+        },
+        {
+            "weight": 283.0906732374071,
+            "edge_weight": 283.0906732374071,
+            "edge_width": 17.652125215033077,
+            "source_label": "earnings_ <=50K",
+            "target_label": "relationship_ Not-in-family",
+            "source": 2,
+            "target": 65
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "earnings_ <=50K",
+            "target_label": "relationship_ Own-child",
+            "source": 2,
+            "target": 66
+        },
+        {
+            "weight": 180.60371070276742,
+            "edge_weight": 180.60371070276742,
+            "edge_width": 11.62357714060039,
+            "source_label": "earnings_ <=50K",
+            "target_label": "relationship_ Unmarried",
+            "source": 2,
+            "target": 67
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "earnings_ <=50K",
+            "target_label": "sex_ Female",
+            "source": 2,
+            "target": 72
+        },
+        {
+            "weight": 123.24703550384396,
+            "edge_weight": 123.24703550384396,
+            "edge_width": 8.249709233163273,
+            "source_label": "capital-gain_low_0",
+            "target_label": "earnings_ <=50K",
+            "source": 5,
+            "target": 2
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "hours-per-week_low_40",
+            "target_label": "earnings_ <=50K",
+            "source": 8,
+            "target": 2
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "age_low_34",
+            "target_label": "earnings_ <=50K",
+            "source": 12,
+            "target": 2
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "education-num_14",
+            "target_label": "education_ Masters",
+            "source": 35,
+            "target": 26
+        },
+        {
+            "weight": 160.04315896377983,
+            "edge_weight": 160.04315896377983,
+            "edge_width": 10.414152336411728,
+            "source_label": "education-num_1",
+            "target_label": "education_ Preschool",
+            "source": 30,
+            "target": 27
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "education-num_15",
+            "target_label": "education_ Prof-school",
+            "source": 37,
+            "target": 28
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "education-num_10",
+            "target_label": "education_ Some-college",
+            "source": 31,
+            "target": 29
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "relationship_ Not-in-family",
+            "target_label": "marital-status_ Divorced",
+            "source": 65,
+            "target": 48
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "relationship_ Unmarried",
+            "target_label": "marital-status_ Divorced",
+            "source": 67,
+            "target": 48
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "sex_ Female",
+            "target_label": "marital-status_ Divorced",
+            "source": 72,
+            "target": 48
+        },
+        {
+            "weight": 176.95552515969135,
+            "edge_weight": 176.95552515969135,
+            "edge_width": 11.408981436064304,
+            "source_label": "age_low_42",
+            "target_label": "marital-status_ Divorced",
+            "source": 13,
+            "target": 48
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "relationship_ Not-in-family",
+            "target_label": "marital-status_ Never-married",
+            "source": 65,
+            "target": 50
+        },
+        {
+            "weight": 193.19081323601847,
+            "edge_weight": 193.19081323601847,
+            "edge_width": 12.363983050414236,
+            "source_label": "sex_ Female",
+            "target_label": "relationship_ Not-in-family",
+            "source": 72,
+            "target": 65
+        },
+        {
+            "weight": 168.8574022311418,
+            "edge_weight": 168.8574022311418,
+            "edge_width": 10.932628911020684,
+            "source_label": "relationship_ Unmarried",
+            "target_label": "marital-status_ Separated",
+            "source": 67,
+            "target": 51
+        },
+        {
+            "weight": 118.9904514106969,
+            "edge_weight": 118.9904514106969,
+            "edge_width": 7.999325953146272,
+            "source_label": "relationship_ Unmarried",
+            "target_label": "marital-status_ Widowed",
+            "source": 67,
+            "target": 52
+        },
+        {
+            "weight": 120.63352247970693,
+            "edge_weight": 120.63352247970693,
+            "edge_width": 8.095975640914006,
+            "source_label": "race_ Black",
+            "target_label": "relationship_ Unmarried",
+            "source": 70,
+            "target": 67
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "sex_ Female",
+            "target_label": "relationship_ Unmarried",
+            "source": 72,
+            "target": 67
+        },
+        {
+            "weight": 201.556640910778,
+            "edge_weight": 201.556640910778,
+            "edge_width": 12.856082660671111,
+            "source_label": "sex_ Female",
+            "target_label": "marital-status_ Never-married",
+            "source": 72,
+            "target": 50
+        },
+        {
+            "weight": 234.85871487456959,
+            "edge_weight": 234.85871487456959,
+            "edge_width": 14.81499674011975,
+            "source_label": "sex_ Female",
+            "target_label": "marital-status_ Widowed",
+            "source": 72,
+            "target": 52
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "sex_ Female",
+            "target_label": "occupation_ Adm-clerical",
+            "source": 72,
+            "target": 54
+        },
+        {
+            "weight": 154.66130960215233,
+            "edge_weight": 154.66130960215233,
+            "edge_width": 10.097578044389364,
+            "source_label": "sex_ Female",
+            "target_label": "occupation_ Other-service",
+            "source": 72,
+            "target": 60
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "sex_ Female",
+            "target_label": "relationship_ Wife",
+            "source": 72,
+            "target": 68
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "hours-per-week_low_40",
+            "target_label": "sex_ Female",
+            "source": 8,
+            "target": 72
+        },
+        {
+            "weight": 110.18212496345677,
+            "edge_weight": 110.18212496345677,
+            "edge_width": 7.481197421192403,
+            "source_label": "occupation_ Craft-repair",
+            "target_label": "marital-status_ Married-civ-spouse",
+            "source": 55,
+            "target": 49
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "relationship_ Husband",
+            "target_label": "marital-status_ Married-civ-spouse",
+            "source": 64,
+            "target": 49
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "relationship_ Wife",
+            "target_label": "marital-status_ Married-civ-spouse",
+            "source": 68,
+            "target": 49
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "sex_ Male",
+            "target_label": "marital-status_ Married-civ-spouse",
+            "source": 73,
+            "target": 49
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "hours-per-week_low_40",
+            "target_label": "marital-status_ Married-civ-spouse",
+            "source": 8,
+            "target": 49
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "age_low_42",
+            "target_label": "marital-status_ Married-civ-spouse",
+            "source": 13,
+            "target": 49
+        },
+        {
+            "weight": 175.88341117493155,
+            "edge_weight": 175.88341117493155,
+            "edge_width": 11.345916919968303,
+            "source_label": "relationship_ Husband",
+            "target_label": "occupation_ Craft-repair",
+            "source": 64,
+            "target": 55
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "sex_ Male",
+            "target_label": "occupation_ Craft-repair",
+            "source": 73,
+            "target": 55
+        },
+        {
+            "weight": 101.99785836365794,
+            "edge_weight": 101.99785836365794,
+            "edge_width": 6.999777702716652,
+            "source_label": "race_ White",
+            "target_label": "relationship_ Husband",
+            "source": 71,
+            "target": 64
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "sex_ Male",
+            "target_label": "relationship_ Husband",
+            "source": 73,
+            "target": 64
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "age_low_43",
+            "target_label": "relationship_ Husband",
+            "source": 7,
+            "target": 64
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "hours-per-week_low_40",
+            "target_label": "relationship_ Husband",
+            "source": 8,
+            "target": 64
+        },
+        {
+            "weight": 159.20382724184694,
+            "edge_weight": 159.20382724184694,
+            "edge_width": 10.364780674778586,
+            "source_label": "sex_ Male",
+            "target_label": "occupation_ Transport-moving",
+            "source": 73,
+            "target": 63
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "hours-per-week_low_40",
+            "target_label": "sex_ Male",
+            "source": 8,
+            "target": 73
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "relationship_ Own-child",
+            "target_label": "marital-status_ Never-married",
+            "source": 66,
+            "target": 50
+        },
+        {
+            "weight": 284.45329515940335,
+            "edge_weight": 284.45329515940335,
+            "edge_width": 17.73227815898684,
+            "source_label": "hours-per-week_low_40",
+            "target_label": "marital-status_ Never-married",
+            "source": 8,
+            "target": 50
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "age_low_25",
+            "target_label": "marital-status_ Never-married",
+            "source": 15,
+            "target": 50
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "hours-per-week_low_40",
+            "target_label": "relationship_ Own-child",
+            "source": 8,
+            "target": 66
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "age_low_22",
+            "target_label": "relationship_ Own-child",
+            "source": 18,
+            "target": 66
+        },
+        {
+            "weight": 323.0051853474518,
+            "edge_weight": 323.0051853474518,
+            "edge_width": 20.0,
+            "source_label": "age_low_60",
+            "target_label": "marital-status_ Widowed",
+            "source": 16,
+            "target": 52
+        },
+        {
+            "weight": 220.0083610175219,
+            "edge_weight": 220.0083610175219,
+            "edge_width": 13.941460536729101,
+            "source_label": "hours-per-week_low_40",
+            "target_label": "occupation_ Other-service",
+            "source": 8,
+            "target": 60
+        },
+        {
+            "weight": 223.30261403482297,
+            "edge_weight": 223.30261403482297,
+            "edge_width": 14.135237015151242,
+            "source_label": "native-country_ United-States",
+            "target_label": "race_ White",
+            "source": 81,
+            "target": 71
+        },
+        {
+            "weight": 102.99152604995503,
+            "edge_weight": 102.99152604995503,
+            "edge_width": 7.058227804746241,
+            "source_label": "native-country_ China",
+            "target_label": "race_ Asian-Pac-Islander",
+            "source": 74,
+            "target": 69
+        },
+        {
+            "weight": 107.54674118520235,
+            "edge_weight": 107.54674118520235,
+            "edge_width": 7.326177334648058,
+            "source_label": "native-country_ India",
+            "target_label": "race_ Asian-Pac-Islander",
+            "source": 76,
+            "target": 69
+        },
+        {
+            "weight": 268.76986209926247,
+            "edge_weight": 268.76986209926247,
+            "edge_width": 16.80973808328453,
+            "source_label": "native-country_ Philippines",
+            "target_label": "race_ Asian-Pac-Islander",
+            "source": 79,
+            "target": 69
+        },
+        {
+            "weight": 107.64220179195583,
+            "edge_weight": 107.64220179195583,
+            "edge_width": 7.331792574311672,
+            "source_label": "native-country_ South",
+            "target_label": "race_ Asian-Pac-Islander",
+            "source": 80,
+            "target": 69
+        }
+    ],
+    "nodes": [
+        {
+            "node_name": "workclass_ ?",
+            "node_color": "#e31a1c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "education_ 12th",
+            "node_color": "#cab2d6",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "earnings_ <=50K",
+            "node_color": "#ff7f00",
+            "node_size": "13",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "earnings_ >50K",
+            "node_color": "#ff7f00",
+            "node_size": "8",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "age_low_35",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "capital-gain_low_0",
+            "node_color": "#1f78b4",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "hours-per-week_low_36",
+            "node_color": "#ffff99",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "age_low_43",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "hours-per-week_low_40",
+            "node_color": "#ffff99",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "education_ 1st-4th",
+            "node_color": "#cab2d6",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "hours-per-week_low_50",
+            "node_color": "#ffff99",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "age_low_44",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "age_low_34",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "age_low_42",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "education_ 5th-6th",
+            "node_color": "#cab2d6",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "age_low_25",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "age_low_60",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "education_ 7th-8th",
+            "node_color": "#cab2d6",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "age_low_22",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "education_ 9th",
+            "node_color": "#cab2d6",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "education_ Assoc-acdm",
+            "node_color": "#cab2d6",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "education_ Assoc-voc",
+            "node_color": "#cab2d6",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "education_ Bachelors",
+            "node_color": "#cab2d6",
+            "node_size": "7",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "education_ Doctorate",
+            "node_color": "#cab2d6",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "education_ HS-grad",
+            "node_color": "#cab2d6",
+            "node_size": "9",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "workclass_ Local-gov",
+            "node_color": "#e31a1c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "education_ Masters",
+            "node_color": "#cab2d6",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "education_ Preschool",
+            "node_color": "#cab2d6",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "education_ Prof-school",
+            "node_color": "#cab2d6",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "education_ Some-college",
+            "node_color": "#cab2d6",
+            "node_size": "8",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "education-num_1",
+            "node_color": "#6a3d9a",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "education-num_10",
+            "node_color": "#6a3d9a",
+            "node_size": "8",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "education-num_11",
+            "node_color": "#6a3d9a",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "education-num_12",
+            "node_color": "#6a3d9a",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "education-num_13",
+            "node_color": "#6a3d9a",
+            "node_size": "7",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "education-num_14",
+            "node_color": "#6a3d9a",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "workclass_ Private",
+            "node_color": "#e31a1c",
+            "node_size": "13",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "education-num_15",
+            "node_color": "#6a3d9a",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "education-num_16",
+            "node_color": "#6a3d9a",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "education-num_2",
+            "node_color": "#6a3d9a",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "education-num_3",
+            "node_color": "#6a3d9a",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "education-num_4",
+            "node_color": "#6a3d9a",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "education-num_5",
+            "node_color": "#6a3d9a",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "education-num_6",
+            "node_color": "#6a3d9a",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "education-num_7",
+            "node_color": "#6a3d9a",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "education-num_8",
+            "node_color": "#6a3d9a",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "education-num_9",
+            "node_color": "#6a3d9a",
+            "node_size": "9",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "workclass_ Self-emp-inc",
+            "node_color": "#e31a1c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "marital-status_ Divorced",
+            "node_color": "#b15928",
+            "node_size": "7",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "marital-status_ Married-civ-spouse",
+            "node_color": "#b15928",
+            "node_size": "10",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "marital-status_ Never-married",
+            "node_color": "#b15928",
+            "node_size": "9",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "marital-status_ Separated",
+            "node_color": "#b15928",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "marital-status_ Widowed",
+            "node_color": "#b15928",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "occupation_ ?",
+            "node_color": "#1f78b4",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "occupation_ Adm-clerical",
+            "node_color": "#1f78b4",
+            "node_size": "7",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "occupation_ Craft-repair",
+            "node_color": "#1f78b4",
+            "node_size": "7",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "workclass_ Self-emp-not-inc",
+            "node_color": "#e31a1c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "occupation_ Exec-managerial",
+            "node_color": "#1f78b4",
+            "node_size": "7",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "occupation_ Farming-fishing",
+            "node_color": "#1f78b4",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "occupation_ Machine-op-inspct",
+            "node_color": "#1f78b4",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "occupation_ Other-service",
+            "node_color": "#1f78b4",
+            "node_size": "7",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "occupation_ Prof-specialty",
+            "node_color": "#1f78b4",
+            "node_size": "7",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "occupation_ Protective-serv",
+            "node_color": "#1f78b4",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "occupation_ Transport-moving",
+            "node_color": "#1f78b4",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "relationship_ Husband",
+            "node_color": "#33a02c",
+            "node_size": "10",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "relationship_ Not-in-family",
+            "node_color": "#33a02c",
+            "node_size": "8",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "relationship_ Own-child",
+            "node_color": "#33a02c",
+            "node_size": "7",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "relationship_ Unmarried",
+            "node_color": "#33a02c",
+            "node_size": "7",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "relationship_ Wife",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "race_ Asian-Pac-Islander",
+            "node_color": "#b2df8a",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "race_ Black",
+            "node_color": "#b2df8a",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "race_ White",
+            "node_color": "#b2df8a",
+            "node_size": "14",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "sex_ Female",
+            "node_color": "#fb9a99",
+            "node_size": "9",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "sex_ Male",
+            "node_color": "#fb9a99",
+            "node_size": "12",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "native-country_ China",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "education_ 10th",
+            "node_color": "#cab2d6",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "native-country_ India",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "education_ 11th",
+            "node_color": "#cab2d6",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "native-country_ Mexico",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "native-country_ Philippines",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "native-country_ South",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "native-country_ United-States",
+            "node_color": "#a6cee3",
+            "node_size": "15",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        }
+    ]
+}
+</script>
+<form>
+<h3> Link threshold 0 <input type="range" id="thersholdSlider" name="points" value=100.0 min="100.0" max="324.0" onchange="threshold(this.value)"> 324.0 </h3>
+</form>
+<script  src="d3graphscript.js"></script>
+</body>
+</html>
