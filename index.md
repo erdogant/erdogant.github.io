@@ -8,7 +8,7 @@ image:
 feature: sample-image-1.jpg
 ---
 
-I am a Data Scientist at the [Ministry of Infrastructure and Water Management, dutch: Rijkswaterstaat](http://www.rijkswaterstaat.nl) of the Netherlands. I work on the (statistical) development, and applications with machine learning. Before, I worked as Data Scientist (consultant, [BigDataRepublic](https://www.bigdatarepublic.nl)) in among others the financial (ING), telecom (KPN), flight (KLM) and the cybersecurity sector.
+I am a Data Scientist at the [Ministry of Infrastructure and Water Management, dutch: Rijkswaterstaat](http://www.rijkswaterstaat.nl) of the Netherlands. I work on the (statistical) development, and applications with machine learning. Before, I worked in the cybersecurity sector and as Data Science consultant ([BigDataRepublic](https://www.bigdatarepublic.nl)) in among others the financial (ING), telecom (KPN), flight (KLM).
 
 During my academic years I worked as a post-doctoral researcher at [Delft University of Technology](http://www.tudelft.nl), and later at the [VU](https://ctg.cncr.nl/). I worked on the statistical development of methods for the analysis of cancer genomics and the genetics of Neuroscience. My Ph.D. was at the [Erasmus University Medical Center](https://www.erasmusmc.nl/), in colloboration with [Weill Cornell Medicine](https://weill.cornell.edu/) where I developed methods to refine patient stratification in Acute Myeloid Leukemias.
 

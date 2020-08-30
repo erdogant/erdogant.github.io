@@ -21,6 +21,7 @@ feature: sample-image-2.jpg
 
 ---
 
+[hgboost](https://erdogant.github.io/hgboost/) is to minimize the function for xgboost, catboost or lightboost over a hyper-parameter space by using cross-validation, and evaluating the results on an independent validation set. hgboost can be applied for classification and regression tasks.
 
 [bnlearn](https://erdogant.github.io/bnlearn/) is for learning the graphical structure of Bayesian networks in Python.
 
