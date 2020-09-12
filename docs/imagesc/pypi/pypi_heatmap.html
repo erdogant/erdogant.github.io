@@ -39,7 +39,7 @@ var svg = d3.select("#d3_heatmap")
         "translate(" + margin.left + "," + margin.top + ")");
 
 //Read the data
-//d3.csv("d3heatmap.html", function(data) {
+//d3.csv("pypi_heatmap.html", function(data) {
 
 var data = 
 	[
@@ -445,7 +445,7 @@ var data =
   // Build color scale
   var myColor = d3.scaleSequential()
     .interpolator(d3.interpolateGreens)
-    .domain([750, 2164.0])
+    .domain([700, 2164.0])
 
   // create a tooltip
   var tooltip = d3.select("#d3_heatmap")
