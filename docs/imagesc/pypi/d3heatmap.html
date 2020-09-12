@@ -1,0 +1,522 @@
+<!-- Code from d3-graph-gallery.com -->
+<!--
+    Hi! Very good that you are inspecting this! I find some issues, let me now!
+    Library     : pip install imagesc
+    Author      : E.Taskesen
+    Mail        : erdogant@gmail.com
+    Github      : https://github.com/erdogant/imagesc
+ -->
+
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<!-- Load d3.js -->
+<!-- <script src="https://d3js.org/d3.v4.js"></script>  -->
+<script src="d3.v4.js"></script>
+
+<!-- Create a div where the graph will take place -->
+<div id="d3_heatmap"></div>
+
+<!-- Load color palettes -->
+<!-- <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script> -->
+<script src="d3.scale.chromatic.v1.min.js"></script>
+
+
+<script>
+
+// set the dimensions and margins of the graph
+var margin = {top: 80, right: 25, bottom: 30, left: 40},
+  width = 700 - margin.left - margin.right,
+  height = 200 - margin.top - margin.bottom;
+
+// append the svg object to the body of the page
+var svg = d3.select("#d3_heatmap")
+.append("svg")
+  .attr("width", width + margin.left + margin.right)
+  .attr("height", height + margin.top + margin.bottom)
+.append("g")
+  .attr("transform",
+        "translate(" + margin.left + "," + margin.top + ")");
+
+//Read the data
+//d3.csv("d3heatmap.html", function(data) {
+
+var data = 
+	[
+		{group : "Sep_37", variable : "Saturday", value : "0.0"},
+{group : "Sep_38", variable : "Saturday", value : "0.0"},
+{group : "Sep_39", variable : "Saturday", value : "0.0"},
+{group : "Oct_40", variable : "Saturday", value : "0.0"},
+{group : "Oct_41", variable : "Saturday", value : "0.0"},
+{group : "Oct_42", variable : "Saturday", value : "0.0"},
+{group : "Oct_43", variable : "Saturday", value : "0.0"},
+{group : "Nov_44", variable : "Saturday", value : "0.0"},
+{group : "Nov_45", variable : "Saturday", value : "0.0"},
+{group : "Nov_46", variable : "Saturday", value : "0.0"},
+{group : "Nov_47", variable : "Saturday", value : "0.0"},
+{group : "Nov_48", variable : "Saturday", value : "0.0"},
+{group : "Dec_49", variable : "Saturday", value : "0.0"},
+{group : "Dec_50", variable : "Saturday", value : "0.0"},
+{group : "Dec_51", variable : "Saturday", value : "0.0"},
+{group : "Dec_52", variable : "Saturday", value : "0.0"},
+{group : "Jan_1", variable : "Saturday", value : "0.0"},
+{group : "Jan_2", variable : "Saturday", value : "0.0"},
+{group : "Jan_3", variable : "Saturday", value : "0.0"},
+{group : "Jan_4", variable : "Saturday", value : "0.0"},
+{group : "Feb_5", variable : "Saturday", value : "0.0"},
+{group : "Feb_6", variable : "Saturday", value : "0.0"},
+{group : "Feb_7", variable : "Saturday", value : "0.0"},
+{group : "Feb_8", variable : "Saturday", value : "0.0"},
+{group : "Feb_9", variable : "Saturday", value : "0.0"},
+{group : "Mar_10", variable : "Saturday", value : "0.0"},
+{group : "Mar_11", variable : "Saturday", value : "0.0"},
+{group : "Mar_12", variable : "Saturday", value : "0.0"},
+{group : "Mar_13", variable : "Saturday", value : "0.0"},
+{group : "Apr_14", variable : "Saturday", value : "0.0"},
+{group : "Apr_15", variable : "Saturday", value : "0.0"},
+{group : "Apr_16", variable : "Saturday", value : "0.0"},
+{group : "Apr_17", variable : "Saturday", value : "0.0"},
+{group : "May_18", variable : "Saturday", value : "1222.0"},
+{group : "May_19", variable : "Saturday", value : "877.0"},
+{group : "May_20", variable : "Saturday", value : "1132.0"},
+{group : "May_21", variable : "Saturday", value : "1147.0"},
+{group : "May_22", variable : "Saturday", value : "803.0"},
+{group : "Jun_23", variable : "Saturday", value : "911.0"},
+{group : "Jun_24", variable : "Saturday", value : "480.0"},
+{group : "Jun_25", variable : "Saturday", value : "608.0"},
+{group : "Jun_26", variable : "Saturday", value : "872.0"},
+{group : "Jul_27", variable : "Saturday", value : "1271.0"},
+{group : "Jul_28", variable : "Saturday", value : "1145.0"},
+{group : "Jul_29", variable : "Saturday", value : "1332.0"},
+{group : "Jul_30", variable : "Saturday", value : "876.0"},
+{group : "Aug_31", variable : "Saturday", value : "1082.0"},
+{group : "Aug_32", variable : "Saturday", value : "932.0"},
+{group : "Aug_33", variable : "Saturday", value : "1054.0"},
+{group : "Aug_34", variable : "Saturday", value : "1137.0"},
+{group : "Aug_35", variable : "Saturday", value : "1329.0"},
+{group : "Sep_36", variable : "Saturday", value : "1127.0"},
+{group : "Sep_37", variable : "Saturday", value : "0.0"},
+{group : "Sep_37", variable : "Friday", value : "0.0"},
+{group : "Sep_38", variable : "Friday", value : "0.0"},
+{group : "Sep_39", variable : "Friday", value : "0.0"},
+{group : "Oct_40", variable : "Friday", value : "0.0"},
+{group : "Oct_41", variable : "Friday", value : "0.0"},
+{group : "Oct_42", variable : "Friday", value : "0.0"},
+{group : "Oct_43", variable : "Friday", value : "0.0"},
+{group : "Nov_44", variable : "Friday", value : "0.0"},
+{group : "Nov_45", variable : "Friday", value : "0.0"},
+{group : "Nov_46", variable : "Friday", value : "0.0"},
+{group : "Nov_47", variable : "Friday", value : "0.0"},
+{group : "Nov_48", variable : "Friday", value : "0.0"},
+{group : "Dec_49", variable : "Friday", value : "0.0"},
+{group : "Dec_50", variable : "Friday", value : "0.0"},
+{group : "Dec_51", variable : "Friday", value : "0.0"},
+{group : "Dec_52", variable : "Friday", value : "0.0"},
+{group : "Jan_1", variable : "Friday", value : "0.0"},
+{group : "Jan_2", variable : "Friday", value : "0.0"},
+{group : "Jan_3", variable : "Friday", value : "0.0"},
+{group : "Jan_4", variable : "Friday", value : "0.0"},
+{group : "Feb_5", variable : "Friday", value : "0.0"},
+{group : "Feb_6", variable : "Friday", value : "0.0"},
+{group : "Feb_7", variable : "Friday", value : "0.0"},
+{group : "Feb_8", variable : "Friday", value : "0.0"},
+{group : "Feb_9", variable : "Friday", value : "0.0"},
+{group : "Mar_10", variable : "Friday", value : "0.0"},
+{group : "Mar_11", variable : "Friday", value : "0.0"},
+{group : "Mar_12", variable : "Friday", value : "0.0"},
+{group : "Mar_13", variable : "Friday", value : "0.0"},
+{group : "Apr_14", variable : "Friday", value : "0.0"},
+{group : "Apr_15", variable : "Friday", value : "0.0"},
+{group : "Apr_16", variable : "Friday", value : "0.0"},
+{group : "Apr_17", variable : "Friday", value : "0.0"},
+{group : "May_18", variable : "Friday", value : "1339.0"},
+{group : "May_19", variable : "Friday", value : "770.0"},
+{group : "May_20", variable : "Friday", value : "1587.0"},
+{group : "May_21", variable : "Friday", value : "831.0"},
+{group : "May_22", variable : "Friday", value : "1219.0"},
+{group : "Jun_23", variable : "Friday", value : "1061.0"},
+{group : "Jun_24", variable : "Friday", value : "675.0"},
+{group : "Jun_25", variable : "Friday", value : "1055.0"},
+{group : "Jun_26", variable : "Friday", value : "1034.0"},
+{group : "Jul_27", variable : "Friday", value : "913.0"},
+{group : "Jul_28", variable : "Friday", value : "774.0"},
+{group : "Jul_29", variable : "Friday", value : "1765.0"},
+{group : "Jul_30", variable : "Friday", value : "1740.0"},
+{group : "Aug_31", variable : "Friday", value : "936.0"},
+{group : "Aug_32", variable : "Friday", value : "1277.0"},
+{group : "Aug_33", variable : "Friday", value : "1028.0"},
+{group : "Aug_34", variable : "Friday", value : "816.0"},
+{group : "Aug_35", variable : "Friday", value : "1523.0"},
+{group : "Sep_36", variable : "Friday", value : "1519.0"},
+{group : "Sep_37", variable : "Friday", value : "1122.0"},
+{group : "Sep_37", variable : "Thursday", value : "0.0"},
+{group : "Sep_38", variable : "Thursday", value : "0.0"},
+{group : "Sep_39", variable : "Thursday", value : "0.0"},
+{group : "Oct_40", variable : "Thursday", value : "0.0"},
+{group : "Oct_41", variable : "Thursday", value : "0.0"},
+{group : "Oct_42", variable : "Thursday", value : "0.0"},
+{group : "Oct_43", variable : "Thursday", value : "0.0"},
+{group : "Nov_44", variable : "Thursday", value : "0.0"},
+{group : "Nov_45", variable : "Thursday", value : "0.0"},
+{group : "Nov_46", variable : "Thursday", value : "0.0"},
+{group : "Nov_47", variable : "Thursday", value : "0.0"},
+{group : "Nov_48", variable : "Thursday", value : "0.0"},
+{group : "Dec_49", variable : "Thursday", value : "0.0"},
+{group : "Dec_50", variable : "Thursday", value : "0.0"},
+{group : "Dec_51", variable : "Thursday", value : "0.0"},
+{group : "Dec_52", variable : "Thursday", value : "0.0"},
+{group : "Jan_1", variable : "Thursday", value : "0.0"},
+{group : "Jan_2", variable : "Thursday", value : "0.0"},
+{group : "Jan_3", variable : "Thursday", value : "0.0"},
+{group : "Jan_4", variable : "Thursday", value : "0.0"},
+{group : "Feb_5", variable : "Thursday", value : "0.0"},
+{group : "Feb_6", variable : "Thursday", value : "0.0"},
+{group : "Feb_7", variable : "Thursday", value : "0.0"},
+{group : "Feb_8", variable : "Thursday", value : "0.0"},
+{group : "Feb_9", variable : "Thursday", value : "0.0"},
+{group : "Mar_10", variable : "Thursday", value : "0.0"},
+{group : "Mar_11", variable : "Thursday", value : "0.0"},
+{group : "Mar_12", variable : "Thursday", value : "0.0"},
+{group : "Mar_13", variable : "Thursday", value : "0.0"},
+{group : "Apr_14", variable : "Thursday", value : "0.0"},
+{group : "Apr_15", variable : "Thursday", value : "0.0"},
+{group : "Apr_16", variable : "Thursday", value : "0.0"},
+{group : "Apr_17", variable : "Thursday", value : "0.0"},
+{group : "May_18", variable : "Thursday", value : "0.0"},
+{group : "May_19", variable : "Thursday", value : "587.0"},
+{group : "May_20", variable : "Thursday", value : "1747.0"},
+{group : "May_21", variable : "Thursday", value : "1192.0"},
+{group : "May_22", variable : "Thursday", value : "1183.0"},
+{group : "Jun_23", variable : "Thursday", value : "1204.0"},
+{group : "Jun_24", variable : "Thursday", value : "567.0"},
+{group : "Jun_25", variable : "Thursday", value : "687.0"},
+{group : "Jun_26", variable : "Thursday", value : "836.0"},
+{group : "Jul_27", variable : "Thursday", value : "634.0"},
+{group : "Jul_28", variable : "Thursday", value : "840.0"},
+{group : "Jul_29", variable : "Thursday", value : "1297.0"},
+{group : "Jul_30", variable : "Thursday", value : "1334.0"},
+{group : "Aug_31", variable : "Thursday", value : "919.0"},
+{group : "Aug_32", variable : "Thursday", value : "1541.0"},
+{group : "Aug_33", variable : "Thursday", value : "899.0"},
+{group : "Aug_34", variable : "Thursday", value : "687.0"},
+{group : "Aug_35", variable : "Thursday", value : "912.0"},
+{group : "Sep_36", variable : "Thursday", value : "789.0"},
+{group : "Sep_37", variable : "Thursday", value : "1053.0"},
+{group : "Sep_37", variable : "Wednesday", value : "0.0"},
+{group : "Sep_38", variable : "Wednesday", value : "0.0"},
+{group : "Sep_39", variable : "Wednesday", value : "0.0"},
+{group : "Oct_40", variable : "Wednesday", value : "0.0"},
+{group : "Oct_41", variable : "Wednesday", value : "0.0"},
+{group : "Oct_42", variable : "Wednesday", value : "0.0"},
+{group : "Oct_43", variable : "Wednesday", value : "0.0"},
+{group : "Nov_44", variable : "Wednesday", value : "0.0"},
+{group : "Nov_45", variable : "Wednesday", value : "0.0"},
+{group : "Nov_46", variable : "Wednesday", value : "0.0"},
+{group : "Nov_47", variable : "Wednesday", value : "0.0"},
+{group : "Nov_48", variable : "Wednesday", value : "0.0"},
+{group : "Dec_49", variable : "Wednesday", value : "0.0"},
+{group : "Dec_50", variable : "Wednesday", value : "0.0"},
+{group : "Dec_51", variable : "Wednesday", value : "0.0"},
+{group : "Dec_52", variable : "Wednesday", value : "0.0"},
+{group : "Jan_1", variable : "Wednesday", value : "0.0"},
+{group : "Jan_2", variable : "Wednesday", value : "0.0"},
+{group : "Jan_3", variable : "Wednesday", value : "0.0"},
+{group : "Jan_4", variable : "Wednesday", value : "0.0"},
+{group : "Feb_5", variable : "Wednesday", value : "0.0"},
+{group : "Feb_6", variable : "Wednesday", value : "0.0"},
+{group : "Feb_7", variable : "Wednesday", value : "0.0"},
+{group : "Feb_8", variable : "Wednesday", value : "0.0"},
+{group : "Feb_9", variable : "Wednesday", value : "0.0"},
+{group : "Mar_10", variable : "Wednesday", value : "0.0"},
+{group : "Mar_11", variable : "Wednesday", value : "0.0"},
+{group : "Mar_12", variable : "Wednesday", value : "0.0"},
+{group : "Mar_13", variable : "Wednesday", value : "0.0"},
+{group : "Apr_14", variable : "Wednesday", value : "0.0"},
+{group : "Apr_15", variable : "Wednesday", value : "0.0"},
+{group : "Apr_16", variable : "Wednesday", value : "0.0"},
+{group : "Apr_17", variable : "Wednesday", value : "0.0"},
+{group : "May_18", variable : "Wednesday", value : "0.0"},
+{group : "May_19", variable : "Wednesday", value : "508.0"},
+{group : "May_20", variable : "Wednesday", value : "2115.0"},
+{group : "May_21", variable : "Wednesday", value : "898.0"},
+{group : "May_22", variable : "Wednesday", value : "1204.0"},
+{group : "Jun_23", variable : "Wednesday", value : "770.0"},
+{group : "Jun_24", variable : "Wednesday", value : "804.0"},
+{group : "Jun_25", variable : "Wednesday", value : "1055.0"},
+{group : "Jun_26", variable : "Wednesday", value : "1169.0"},
+{group : "Jul_27", variable : "Wednesday", value : "677.0"},
+{group : "Jul_28", variable : "Wednesday", value : "1199.0"},
+{group : "Jul_29", variable : "Wednesday", value : "2057.0"},
+{group : "Jul_30", variable : "Wednesday", value : "2164.0"},
+{group : "Aug_31", variable : "Wednesday", value : "921.0"},
+{group : "Aug_32", variable : "Wednesday", value : "848.0"},
+{group : "Aug_33", variable : "Wednesday", value : "1120.0"},
+{group : "Aug_34", variable : "Wednesday", value : "878.0"},
+{group : "Aug_35", variable : "Wednesday", value : "873.0"},
+{group : "Sep_36", variable : "Wednesday", value : "1691.0"},
+{group : "Sep_37", variable : "Wednesday", value : "687.0"},
+{group : "Sep_37", variable : "Tuesday", value : "0.0"},
+{group : "Sep_38", variable : "Tuesday", value : "0.0"},
+{group : "Sep_39", variable : "Tuesday", value : "0.0"},
+{group : "Oct_40", variable : "Tuesday", value : "0.0"},
+{group : "Oct_41", variable : "Tuesday", value : "0.0"},
+{group : "Oct_42", variable : "Tuesday", value : "0.0"},
+{group : "Oct_43", variable : "Tuesday", value : "0.0"},
+{group : "Nov_44", variable : "Tuesday", value : "0.0"},
+{group : "Nov_45", variable : "Tuesday", value : "0.0"},
+{group : "Nov_46", variable : "Tuesday", value : "0.0"},
+{group : "Nov_47", variable : "Tuesday", value : "0.0"},
+{group : "Nov_48", variable : "Tuesday", value : "0.0"},
+{group : "Dec_49", variable : "Tuesday", value : "0.0"},
+{group : "Dec_50", variable : "Tuesday", value : "0.0"},
+{group : "Dec_51", variable : "Tuesday", value : "0.0"},
+{group : "Dec_52", variable : "Tuesday", value : "0.0"},
+{group : "Jan_1", variable : "Tuesday", value : "0.0"},
+{group : "Jan_2", variable : "Tuesday", value : "0.0"},
+{group : "Jan_3", variable : "Tuesday", value : "0.0"},
+{group : "Jan_4", variable : "Tuesday", value : "0.0"},
+{group : "Feb_5", variable : "Tuesday", value : "0.0"},
+{group : "Feb_6", variable : "Tuesday", value : "0.0"},
+{group : "Feb_7", variable : "Tuesday", value : "0.0"},
+{group : "Feb_8", variable : "Tuesday", value : "0.0"},
+{group : "Feb_9", variable : "Tuesday", value : "0.0"},
+{group : "Mar_10", variable : "Tuesday", value : "0.0"},
+{group : "Mar_11", variable : "Tuesday", value : "0.0"},
+{group : "Mar_12", variable : "Tuesday", value : "0.0"},
+{group : "Mar_13", variable : "Tuesday", value : "0.0"},
+{group : "Apr_14", variable : "Tuesday", value : "0.0"},
+{group : "Apr_15", variable : "Tuesday", value : "0.0"},
+{group : "Apr_16", variable : "Tuesday", value : "0.0"},
+{group : "Apr_17", variable : "Tuesday", value : "0.0"},
+{group : "May_18", variable : "Tuesday", value : "0.0"},
+{group : "May_19", variable : "Tuesday", value : "622.0"},
+{group : "May_20", variable : "Tuesday", value : "795.0"},
+{group : "May_21", variable : "Tuesday", value : "967.0"},
+{group : "May_22", variable : "Tuesday", value : "1126.0"},
+{group : "Jun_23", variable : "Tuesday", value : "875.0"},
+{group : "Jun_24", variable : "Tuesday", value : "949.0"},
+{group : "Jun_25", variable : "Tuesday", value : "1070.0"},
+{group : "Jun_26", variable : "Tuesday", value : "1014.0"},
+{group : "Jul_27", variable : "Tuesday", value : "863.0"},
+{group : "Jul_28", variable : "Tuesday", value : "585.0"},
+{group : "Jul_29", variable : "Tuesday", value : "1962.0"},
+{group : "Jul_30", variable : "Tuesday", value : "1182.0"},
+{group : "Aug_31", variable : "Tuesday", value : "1297.0"},
+{group : "Aug_32", variable : "Tuesday", value : "788.0"},
+{group : "Aug_33", variable : "Tuesday", value : "1192.0"},
+{group : "Aug_34", variable : "Tuesday", value : "988.0"},
+{group : "Aug_35", variable : "Tuesday", value : "1217.0"},
+{group : "Sep_36", variable : "Tuesday", value : "1237.0"},
+{group : "Sep_37", variable : "Tuesday", value : "743.0"},
+{group : "Sep_37", variable : "Monday", value : "0.0"},
+{group : "Sep_38", variable : "Monday", value : "0.0"},
+{group : "Sep_39", variable : "Monday", value : "0.0"},
+{group : "Oct_40", variable : "Monday", value : "0.0"},
+{group : "Oct_41", variable : "Monday", value : "0.0"},
+{group : "Oct_42", variable : "Monday", value : "0.0"},
+{group : "Oct_43", variable : "Monday", value : "0.0"},
+{group : "Nov_44", variable : "Monday", value : "0.0"},
+{group : "Nov_45", variable : "Monday", value : "0.0"},
+{group : "Nov_46", variable : "Monday", value : "0.0"},
+{group : "Nov_47", variable : "Monday", value : "0.0"},
+{group : "Nov_48", variable : "Monday", value : "0.0"},
+{group : "Dec_49", variable : "Monday", value : "0.0"},
+{group : "Dec_50", variable : "Monday", value : "0.0"},
+{group : "Dec_51", variable : "Monday", value : "0.0"},
+{group : "Dec_52", variable : "Monday", value : "0.0"},
+{group : "Jan_1", variable : "Monday", value : "0.0"},
+{group : "Jan_2", variable : "Monday", value : "0.0"},
+{group : "Jan_3", variable : "Monday", value : "0.0"},
+{group : "Jan_4", variable : "Monday", value : "0.0"},
+{group : "Feb_5", variable : "Monday", value : "0.0"},
+{group : "Feb_6", variable : "Monday", value : "0.0"},
+{group : "Feb_7", variable : "Monday", value : "0.0"},
+{group : "Feb_8", variable : "Monday", value : "0.0"},
+{group : "Feb_9", variable : "Monday", value : "0.0"},
+{group : "Mar_10", variable : "Monday", value : "0.0"},
+{group : "Mar_11", variable : "Monday", value : "0.0"},
+{group : "Mar_12", variable : "Monday", value : "0.0"},
+{group : "Mar_13", variable : "Monday", value : "0.0"},
+{group : "Apr_14", variable : "Monday", value : "0.0"},
+{group : "Apr_15", variable : "Monday", value : "0.0"},
+{group : "Apr_16", variable : "Monday", value : "0.0"},
+{group : "Apr_17", variable : "Monday", value : "0.0"},
+{group : "May_18", variable : "Monday", value : "0.0"},
+{group : "May_19", variable : "Monday", value : "900.0"},
+{group : "May_20", variable : "Monday", value : "789.0"},
+{group : "May_21", variable : "Monday", value : "798.0"},
+{group : "May_22", variable : "Monday", value : "1821.0"},
+{group : "Jun_23", variable : "Monday", value : "1053.0"},
+{group : "Jun_24", variable : "Monday", value : "831.0"},
+{group : "Jun_25", variable : "Monday", value : "725.0"},
+{group : "Jun_26", variable : "Monday", value : "1248.0"},
+{group : "Jul_27", variable : "Monday", value : "722.0"},
+{group : "Jul_28", variable : "Monday", value : "522.0"},
+{group : "Jul_29", variable : "Monday", value : "935.0"},
+{group : "Jul_30", variable : "Monday", value : "1421.0"},
+{group : "Aug_31", variable : "Monday", value : "1175.0"},
+{group : "Aug_32", variable : "Monday", value : "866.0"},
+{group : "Aug_33", variable : "Monday", value : "817.0"},
+{group : "Aug_34", variable : "Monday", value : "936.0"},
+{group : "Aug_35", variable : "Monday", value : "1430.0"},
+{group : "Sep_36", variable : "Monday", value : "1572.0"},
+{group : "Sep_37", variable : "Monday", value : "1486.0"},
+{group : "Sep_37", variable : "Sunday", value : "0.0"},
+{group : "Sep_38", variable : "Sunday", value : "0.0"},
+{group : "Sep_39", variable : "Sunday", value : "0.0"},
+{group : "Oct_40", variable : "Sunday", value : "0.0"},
+{group : "Oct_41", variable : "Sunday", value : "0.0"},
+{group : "Oct_42", variable : "Sunday", value : "0.0"},
+{group : "Oct_43", variable : "Sunday", value : "0.0"},
+{group : "Nov_44", variable : "Sunday", value : "0.0"},
+{group : "Nov_45", variable : "Sunday", value : "0.0"},
+{group : "Nov_46", variable : "Sunday", value : "0.0"},
+{group : "Nov_47", variable : "Sunday", value : "0.0"},
+{group : "Nov_48", variable : "Sunday", value : "0.0"},
+{group : "Dec_49", variable : "Sunday", value : "0.0"},
+{group : "Dec_50", variable : "Sunday", value : "0.0"},
+{group : "Dec_51", variable : "Sunday", value : "0.0"},
+{group : "Dec_52", variable : "Sunday", value : "0.0"},
+{group : "Jan_1", variable : "Sunday", value : "0.0"},
+{group : "Jan_2", variable : "Sunday", value : "0.0"},
+{group : "Jan_3", variable : "Sunday", value : "0.0"},
+{group : "Jan_4", variable : "Sunday", value : "0.0"},
+{group : "Feb_5", variable : "Sunday", value : "0.0"},
+{group : "Feb_6", variable : "Sunday", value : "0.0"},
+{group : "Feb_7", variable : "Sunday", value : "0.0"},
+{group : "Feb_8", variable : "Sunday", value : "0.0"},
+{group : "Feb_9", variable : "Sunday", value : "0.0"},
+{group : "Mar_10", variable : "Sunday", value : "0.0"},
+{group : "Mar_11", variable : "Sunday", value : "0.0"},
+{group : "Mar_12", variable : "Sunday", value : "0.0"},
+{group : "Mar_13", variable : "Sunday", value : "0.0"},
+{group : "Apr_14", variable : "Sunday", value : "0.0"},
+{group : "Apr_15", variable : "Sunday", value : "0.0"},
+{group : "Apr_16", variable : "Sunday", value : "0.0"},
+{group : "Apr_17", variable : "Sunday", value : "0.0"},
+{group : "May_18", variable : "Sunday", value : "0.0"},
+{group : "May_19", variable : "Sunday", value : "1002.0"},
+{group : "May_20", variable : "Sunday", value : "806.0"},
+{group : "May_21", variable : "Sunday", value : "1086.0"},
+{group : "May_22", variable : "Sunday", value : "1841.0"},
+{group : "Jun_23", variable : "Sunday", value : "960.0"},
+{group : "Jun_24", variable : "Sunday", value : "823.0"},
+{group : "Jun_25", variable : "Sunday", value : "638.0"},
+{group : "Jun_26", variable : "Sunday", value : "731.0"},
+{group : "Jul_27", variable : "Sunday", value : "552.0"},
+{group : "Jul_28", variable : "Sunday", value : "572.0"},
+{group : "Jul_29", variable : "Sunday", value : "985.0"},
+{group : "Jul_30", variable : "Sunday", value : "788.0"},
+{group : "Aug_31", variable : "Sunday", value : "1016.0"},
+{group : "Aug_32", variable : "Sunday", value : "1167.0"},
+{group : "Aug_33", variable : "Sunday", value : "974.0"},
+{group : "Aug_34", variable : "Sunday", value : "665.0"},
+{group : "Aug_35", variable : "Sunday", value : "1009.0"},
+{group : "Sep_36", variable : "Sunday", value : "1244.0"},
+{group : "Sep_37", variable : "Sunday", value : "852.0"},
+
+	]
+
+  // Labels of row and columns -> unique identifier of the column called 'group' and 'variable'
+  var myGroups = d3.map(data, function(d){return d.group;}).keys()
+  var myVars = d3.map(data, function(d){return d.variable;}).keys()
+
+  // Build X scales and axis:
+  var x = d3.scaleBand()
+    .range([ 0, width ])
+    .domain(myGroups)
+    .padding(0.05);
+  svg.append("g")
+    .style("font-size", 10)
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x).tickSize(0))
+    .select(".domain").remove()
+
+  // Build Y scales and axis:
+  var y = d3.scaleBand()
+    .range([ height, 0 ])
+    .domain(myVars)
+    .padding(0.05);
+  svg.append("g")
+    .style("font-size", 10)
+    .call(d3.axisLeft(y).tickSize(0))
+    .select(".domain").remove()
+
+  // Build color scale
+  var myColor = d3.scaleSequential()
+    .interpolator(d3.interpolateGreens)
+    .domain([750, 2164.0])
+
+  // create a tooltip
+  var tooltip = d3.select("#d3_heatmap")
+    .append("div")
+    .style("opacity", 0)
+    .attr("class", "tooltip")
+    .style("background-color", "white")
+    .style("border", "solid")
+    .style("border-width", "2px")
+    .style("border-radius", "5px")
+    .style("padding", "5px")
+
+  // Three function that change the tooltip when user hover / move / leave a cell
+  var mouseover = function(d) {
+    tooltip
+      .style("opacity", 0.8)
+    d3.select(this)
+      .style("stroke", "black")
+      .style("opacity", 0.8)
+  }
+  var mousemove = function(d) {
+    tooltip
+      .html("Exact value: " + d.value)
+      .style("left", (d3.mouse(this)[0]+70) + "px")
+      .style("top", (d3.mouse(this)[1]) + "px")
+  }
+  var mouseleave = function(d) {
+    tooltip
+      .style("opacity", 0)
+    d3.select(this)
+      .style("stroke", "none")
+      .style("opacity", 0.8)
+  }
+
+  // add the squares
+  svg.selectAll()
+    .data(data, function(d) {return d.group+':'+d.variable;})
+    .enter()
+    .append("rect")
+      .attr("x", function(d) { return x(d.group) })
+      .attr("y", function(d) { return y(d.variable) })
+      .attr("rx", 4)
+      .attr("ry", 4)
+      .attr("width", x.bandwidth() )
+      .attr("height", y.bandwidth() )
+      .style("fill", function(d) { return myColor(d.value)} )
+      .style("stroke-width", 4)
+      .style("stroke", "none")
+      .style("opacity", 0.8)
+    .on("mouseover", mouseover)
+    .on("mousemove", mousemove)
+    .on("mouseleave", mouseleave)
+//})
+
+// Add title to graph
+svg.append("text")
+        .attr("x", 0)
+        .attr("y", -50)
+        .attr("text-anchor", "left")
+        .style("font-size", "22px")
+        .text("");
+
+// Add subtitle to graph
+svg.append("text")
+        .attr("x", 0)
+        .attr("y", -20)
+        .attr("text-anchor", "left")
+        .style("font-size", "14px")
+        .style("fill", "grey")
+        .style("max-width", 400)
+        .text("140097 Pypi downloads last year");
+
+
+</script>
