@@ -43,8 +43,7 @@ var svg = d3.select("#d3_heatmap")
 
 var data = 
 	[
-		{group : "39", variable : "Fri", value : "0.0"},
-{group : "40", variable : "Fri", value : "0.0"},
+		{group : "40", variable : "Fri", value : "0.0"},
 {group : "41", variable : "Fri", value : "0.0"},
 {group : "42", variable : "Fri", value : "0.0"},
 {group : "43", variable : "Fri", value : "0.0"},
@@ -94,8 +93,8 @@ var data =
 {group : "35", variable : "Fri", value : "1523.0"},
 {group : "36", variable : "Fri", value : "1519.0"},
 {group : "37", variable : "Fri", value : "1122.0"},
-{group : "38", variable : "Fri", value : "0.0"},
-{group : "39", variable : "Thu", value : "0.0"},
+{group : "38", variable : "Fri", value : "980.0"},
+{group : "39", variable : "Fri", value : "0.0"},
 {group : "40", variable : "Thu", value : "0.0"},
 {group : "41", variable : "Thu", value : "0.0"},
 {group : "42", variable : "Thu", value : "0.0"},
@@ -147,7 +146,7 @@ var data =
 {group : "36", variable : "Thu", value : "789.0"},
 {group : "37", variable : "Thu", value : "1053.0"},
 {group : "38", variable : "Thu", value : "1015.0"},
-{group : "39", variable : "Wed", value : "0.0"},
+{group : "39", variable : "Thu", value : "575.0"},
 {group : "40", variable : "Wed", value : "0.0"},
 {group : "41", variable : "Wed", value : "0.0"},
 {group : "42", variable : "Wed", value : "0.0"},
@@ -199,7 +198,7 @@ var data =
 {group : "36", variable : "Wed", value : "1691.0"},
 {group : "37", variable : "Wed", value : "687.0"},
 {group : "38", variable : "Wed", value : "1148.0"},
-{group : "39", variable : "Tue", value : "0.0"},
+{group : "39", variable : "Wed", value : "799.0"},
 {group : "40", variable : "Tue", value : "0.0"},
 {group : "41", variable : "Tue", value : "0.0"},
 {group : "42", variable : "Tue", value : "0.0"},
@@ -251,7 +250,7 @@ var data =
 {group : "36", variable : "Tue", value : "1237.0"},
 {group : "37", variable : "Tue", value : "743.0"},
 {group : "38", variable : "Tue", value : "890.0"},
-{group : "39", variable : "Mon", value : "0.0"},
+{group : "39", variable : "Tue", value : "635.0"},
 {group : "40", variable : "Mon", value : "0.0"},
 {group : "41", variable : "Mon", value : "0.0"},
 {group : "42", variable : "Mon", value : "0.0"},
@@ -303,7 +302,7 @@ var data =
 {group : "36", variable : "Mon", value : "1572.0"},
 {group : "37", variable : "Mon", value : "1486.0"},
 {group : "38", variable : "Mon", value : "1168.0"},
-{group : "39", variable : "Sun", value : "0.0"},
+{group : "39", variable : "Mon", value : "854.0"},
 {group : "40", variable : "Sun", value : "0.0"},
 {group : "41", variable : "Sun", value : "0.0"},
 {group : "42", variable : "Sun", value : "0.0"},
@@ -355,7 +354,7 @@ var data =
 {group : "36", variable : "Sun", value : "1244.0"},
 {group : "37", variable : "Sun", value : "852.0"},
 {group : "38", variable : "Sun", value : "1069.0"},
-{group : "39", variable : "Sat", value : "0.0"},
+{group : "39", variable : "Sun", value : "1084.0"},
 {group : "40", variable : "Sat", value : "0.0"},
 {group : "41", variable : "Sat", value : "0.0"},
 {group : "42", variable : "Sat", value : "0.0"},
@@ -407,6 +406,7 @@ var data =
 {group : "36", variable : "Sat", value : "1329.0"},
 {group : "37", variable : "Sat", value : "1127.0"},
 {group : "38", variable : "Sat", value : "1505.0"},
+{group : "39", variable : "Sat", value : "1401.0"},
 
 	]
 
@@ -438,7 +438,7 @@ var data =
   // Build color scale
   var myColor = d3.scaleSequential()
     .interpolator(d3.interpolateGreens)
-    .domain([700.0, 2164.0])
+    .domain([700, 2164.0])
 
   // create a tooltip
   var tooltip = d3.select("#d3_heatmap")
@@ -509,7 +509,7 @@ svg.append("text")
         .style("font-size", "14px")
         .style("fill", "grey")
         .style("max-width", 400)
-        .text("146892 Pypi downloads last year across 28 libraries");
+        .text("153220 Pypi downloads last year across 28 libraries");
 
 
 </script>
