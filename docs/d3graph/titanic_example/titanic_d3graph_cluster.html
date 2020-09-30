@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+<meta charset="UTF-8">
+<title>d3graph</title>
+<script type="text/javascript" src="d3.v3.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<script type="application/json" id="d3graph"> {
+    "links": [
+        {
+            "weight": 13.420531825197997,
+            "edge_weight": 13.420531825197997,
+            "edge_width": 4.242474276293285,
+            "source_label": "Pclass_1",
+            "target_label": "Survived_1",
+            "source": 12,
+            "target": 1
+        },
+        {
+            "weight": 56.31879516128448,
+            "edge_weight": 56.31879516128448,
+            "edge_width": 14.60693055691193,
+            "source_label": "Sex_female",
+            "target_label": "Survived_1",
+            "source": 42,
+            "target": 1
+        },
+        {
+            "weight": 3.5107548205748595,
+            "edge_weight": 3.5107548205748595,
+            "edge_width": 1.848217667105654,
+            "source_label": "SibSp_1",
+            "target_label": "Survived_1",
+            "source": 45,
+            "target": 1
+        },
+        {
+            "weight": 3.252284157676368,
+            "edge_weight": 3.252284157676368,
+            "edge_width": 1.7857697338537637,
+            "source_label": "Embarked_C",
+            "target_label": "Survived_1",
+            "source": 7,
+            "target": 1
+        },
+        {
+            "weight": 18.210165465165286,
+            "edge_weight": 18.210165465165286,
+            "edge_width": 5.399676097558203,
+            "source_label": "Fare_low_26",
+            "target_label": "Survived_1",
+            "source": 27,
+            "target": 1
+        },
+        {
+            "weight": 13.322970992723338,
+            "edge_weight": 13.322970992723338,
+            "edge_width": 4.218903042768925,
+            "source_label": "Embarked_C",
+            "target_label": "Pclass_1",
+            "source": 7,
+            "target": 12
+        },
+        {
+            "weight": 15.180325039646913,
+            "edge_weight": 15.180325039646913,
+            "edge_width": 4.667649992410027,
+            "source_label": "Age_low_37",
+            "target_label": "Pclass_1",
+            "source": 28,
+            "target": 12
+        },
+        {
+            "weight": 78.64059448152668,
+            "edge_weight": 78.64059448152668,
+            "edge_width": 20.0,
+            "source_label": "Fare_low_60.3",
+            "target_label": "Pclass_1",
+            "source": 29,
+            "target": 12
+        },
+        {
+            "weight": 3.876989753501538,
+            "edge_weight": 3.876989753501538,
+            "edge_width": 1.9367020404942794,
+            "source_label": "SibSp_1",
+            "target_label": "Sex_female",
+            "source": 45,
+            "target": 42
+        },
+        {
+            "weight": 3.114252828811645,
+            "edge_weight": 3.114252828811645,
+            "edge_width": 1.752420605891032,
+            "source_label": "Parch_2",
+            "target_label": "Sex_female",
+            "source": 5,
+            "target": 42
+        },
+        {
+            "weight": 10.89189897122853,
+            "edge_weight": 10.89189897122853,
+            "edge_width": 3.631542676116918,
+            "source_label": "Fare_low_23",
+            "target_label": "Sex_female",
+            "source": 32,
+            "target": 42
+        },
+        {
+            "weight": 6.71826989225252,
+            "edge_weight": 6.71826989225252,
+            "edge_width": 2.623170943637554,
+            "source_label": "Parch_1",
+            "target_label": "SibSp_1",
+            "source": 4,
+            "target": 45
+        },
+        {
+            "weight": 20.046230386467016,
+            "edge_weight": 20.046230386467016,
+            "edge_width": 5.843279477399484,
+            "source_label": "Fare_low_26",
+            "target_label": "SibSp_1",
+            "source": 27,
+            "target": 45
+        },
+        {
+            "weight": 5.826458897775132,
+            "edge_weight": 5.826458897775132,
+            "edge_width": 2.4077045041124716,
+            "source_label": "Fare_low_29.7",
+            "target_label": "Embarked_C",
+            "source": 40,
+            "target": 7
+        },
+        {
+            "weight": 4.467920570445577,
+            "edge_weight": 4.467920570445577,
+            "edge_width": 2.0794741748602554,
+            "source_label": "Pclass_2",
+            "target_label": "Cabin_nan",
+            "source": 23,
+            "target": 6
+        },
+        {
+            "weight": 5.8511841986448925,
+            "edge_weight": 5.8511841986448925,
+            "edge_width": 2.4136782727445976,
+            "source_label": "Embarked_S",
+            "target_label": "Pclass_2",
+            "source": 9,
+            "target": 23
+        },
+        {
+            "weight": 61.12383105658937,
+            "edge_weight": 61.12383105658937,
+            "edge_width": 15.767853647749437,
+            "source_label": "Pclass_3",
+            "target_label": "Cabin_nan",
+            "source": 34,
+            "target": 6
+        },
+        {
+            "weight": 1.4992202077999381,
+            "edge_weight": 1.4992202077999381,
+            "edge_width": 1.3622198450558538,
+            "source_label": "Sex_male",
+            "target_label": "Cabin_nan",
+            "source": 43,
+            "target": 6
+        },
+        {
+            "weight": 1.698232254077824,
+            "edge_weight": 1.698232254077824,
+            "edge_width": 1.4103022496232311,
+            "source_label": "Embarked_Q",
+            "target_label": "Cabin_nan",
+            "source": 8,
+            "target": 6
+        },
+        {
+            "weight": 54.36406518937991,
+            "edge_weight": 54.36406518937991,
+            "edge_width": 14.134657048413576,
+            "source_label": "Fare_low_10.5",
+            "target_label": "Cabin_nan",
+            "source": 22,
+            "target": 6
+        },
+        {
+            "weight": 7.266690616957568,
+            "edge_weight": 7.266690616957568,
+            "edge_width": 2.75567240599417,
+            "source_label": "Age_low_26",
+            "target_label": "Cabin_nan",
+            "source": 39,
+            "target": 6
+        },
+        {
+            "weight": 2.1888281707768553,
+            "edge_weight": 2.1888281707768553,
+            "edge_width": 1.52883292043945,
+            "source_label": "Embarked_S",
+            "target_label": "Survived_0",
+            "source": 9,
+            "target": 0
+        },
+        {
+            "weight": 18.293497011560103,
+            "edge_weight": 18.293497011560103,
+            "edge_width": 5.419809457331741,
+            "source_label": "Pclass_3",
+            "target_label": "Survived_0",
+            "source": 34,
+            "target": 0
+        },
+        {
+            "weight": 1.4345131104557423,
+            "edge_weight": 1.4345131104557423,
+            "edge_width": 1.3465862545718892,
+            "source_label": "Sex_male",
+            "target_label": "Pclass_3",
+            "source": 43,
+            "target": 34
+        },
+        {
+            "weight": 1.6160844499215388,
+            "edge_weight": 1.6160844499215388,
+            "edge_width": 1.3904548884828463,
+            "source_label": "SibSp_4",
+            "target_label": "Pclass_3",
+            "source": 2,
+            "target": 34
+        },
+        {
+            "weight": 10.779521183509306,
+            "edge_weight": 10.779521183509306,
+            "edge_width": 3.6043915847404815,
+            "source_label": "Embarked_Q",
+            "target_label": "Pclass_3",
+            "source": 8,
+            "target": 34
+        },
+        {
+            "weight": 2.0450065171759513,
+            "edge_weight": 2.0450065171759513,
+            "edge_width": 1.4940848181847157,
+            "source_label": "Cabin_G6",
+            "target_label": "Pclass_3",
+            "source": 25,
+            "target": 34
+        },
+        {
+            "weight": 13.748929821732387,
+            "edge_weight": 13.748929821732387,
+            "edge_width": 4.321817037818557,
+            "source_label": "Age_low_24",
+            "target_label": "Pclass_3",
+            "source": 30,
+            "target": 34
+        },
+        {
+            "weight": 72.30131771747664,
+            "edge_weight": 72.30131771747664,
+            "edge_width": 18.46839587987544,
+            "source_label": "Fare_low_8.1",
+            "target_label": "Pclass_3",
+            "source": 31,
+            "target": 34
+        },
+        {
+            "weight": 56.31879516128448,
+            "edge_weight": 56.31879516128448,
+            "edge_width": 14.60693055691193,
+            "source_label": "Sex_male",
+            "target_label": "Survived_0",
+            "source": 43,
+            "target": 0
+        },
+        {
+            "weight": 1.9263811053061601,
+            "edge_weight": 1.9263811053061601,
+            "edge_width": 1.4654242664634862,
+            "source_label": "Parch_0",
+            "target_label": "Survived_0",
+            "source": 3,
+            "target": 0
+        },
+        {
+            "weight": 18.210165465165286,
+            "edge_weight": 18.210165465165286,
+            "edge_width": 5.399676097558203,
+            "source_label": "Fare_low_10.5",
+            "target_label": "Survived_0",
+            "source": 22,
+            "target": 0
+        },
+        {
+            "weight": 5.716433341607245,
+            "edge_weight": 5.716433341607245,
+            "edge_width": 2.3811217248116243,
+            "source_label": "SibSp_0",
+            "target_label": "Sex_male",
+            "source": 44,
+            "target": 43
+        },
+        {
+            "weight": 9.357684110027096,
+            "edge_weight": 9.357684110027096,
+            "edge_width": 3.2608679303954213,
+            "source_label": "Parch_0",
+            "target_label": "Sex_male",
+            "source": 3,
+            "target": 43
+        },
+        {
+            "weight": 10.89189897122853,
+            "edge_weight": 10.89189897122853,
+            "edge_width": 3.631542676116918,
+            "source_label": "Fare_low_10.5",
+            "target_label": "Sex_male",
+            "source": 22,
+            "target": 43
+        },
+        {
+            "weight": 2.107097143477852,
+            "edge_weight": 2.107097143477852,
+            "edge_width": 1.509086254879262,
+            "source_label": "Parch_2",
+            "target_label": "SibSp_4",
+            "source": 5,
+            "target": 2
+        },
+        {
+            "weight": 4.846362364526644,
+            "edge_weight": 4.846362364526644,
+            "edge_width": 2.170907793018233,
+            "source_label": "Ticket_3101295",
+            "target_label": "SibSp_4",
+            "source": 14,
+            "target": 2
+        },
+        {
+            "weight": 4.308980982813919,
+            "edge_weight": 4.308980982813919,
+            "edge_width": 2.0410734966238913,
+            "source_label": "Ticket_347082",
+            "target_label": "SibSp_4",
+            "source": 15,
+            "target": 2
+        },
+        {
+            "weight": 3.1279574752882398,
+            "edge_weight": 3.1279574752882398,
+            "edge_width": 1.7557317238291914,
+            "source_label": "Ticket_382652",
+            "target_label": "SibSp_4",
+            "source": 18,
+            "target": 2
+        },
+        {
+            "weight": 1.4586860088654425,
+            "edge_weight": 1.4586860088654425,
+            "edge_width": 1.3524265597325043,
+            "source_label": "Ticket_347077",
+            "target_label": "SibSp_4",
+            "source": 26,
+            "target": 2
+        },
+        {
+            "weight": 6.8298965329381,
+            "edge_weight": 6.8298965329381,
+            "edge_width": 2.6501405537607865,
+            "source_label": "Age_low_6.5",
+            "target_label": "SibSp_4",
+            "source": 36,
+            "target": 2
+        },
+        {
+            "weight": 2.262036766821222,
+            "edge_weight": 2.262036766821222,
+            "edge_width": 1.5465205197514023,
+            "source_label": "Ticket_382652",
+            "target_label": "Embarked_Q",
+            "source": 18,
+            "target": 8
+        },
+        {
+            "weight": 8.240727254910547,
+            "edge_weight": 8.240727254910547,
+            "edge_width": 2.991005013067149,
+            "source_label": "Fare_low_7.8",
+            "target_label": "Embarked_Q",
+            "source": 41,
+            "target": 8
+        },
+        {
+            "weight": 2.1775195143572743,
+            "edge_weight": 2.1775195143572743,
+            "edge_width": 1.5261006868724403,
+            "source_label": "SibSp_5",
+            "target_label": "Parch_2",
+            "source": 10,
+            "target": 5
+        },
+        {
+            "weight": 4.32186906676374,
+            "edge_weight": 4.32186906676374,
+            "edge_width": 2.0441873285660455,
+            "source_label": "SibSp_8",
+            "target_label": "Parch_2",
+            "source": 11,
+            "target": 5
+        },
+        {
+            "weight": 1.435232311950382,
+            "edge_weight": 1.435232311950382,
+            "edge_width": 1.3467600176072305,
+            "source_label": "Ticket_CA 2144",
+            "target_label": "Parch_2",
+            "source": 20,
+            "target": 5
+        },
+        {
+            "weight": 4.32186906676374,
+            "edge_weight": 4.32186906676374,
+            "edge_width": 2.0441873285660455,
+            "source_label": "Ticket_CA. 2343",
+            "target_label": "Parch_2",
+            "source": 21,
+            "target": 5
+        },
+        {
+            "weight": 8.973358403197313,
+            "edge_weight": 8.973358403197313,
+            "edge_width": 3.1680127265670572,
+            "source_label": "Age_low_16.5",
+            "target_label": "Parch_2",
+            "source": 37,
+            "target": 5
+        },
+        {
+            "weight": 13.154205673291717,
+            "edge_weight": 13.154205673291717,
+            "edge_width": 4.178128413706908,
+            "source_label": "Fare_low_32.9",
+            "target_label": "Parch_2",
+            "source": 38,
+            "target": 5
+        },
+        {
+            "weight": 30.387914139918603,
+            "edge_weight": 30.387914139918603,
+            "edge_width": 8.341887131767328,
+            "source_label": "Parch_0",
+            "target_label": "SibSp_0",
+            "source": 3,
+            "target": 44
+        },
+        {
+            "weight": 36.400472500990034,
+            "edge_weight": 36.400472500990034,
+            "edge_width": 9.79455428940425,
+            "source_label": "Fare_low_9.5",
+            "target_label": "SibSp_0",
+            "source": 33,
+            "target": 44
+        },
+        {
+            "weight": 29.75853935691235,
+            "edge_weight": 29.75853935691235,
+            "edge_width": 8.18982672383224,
+            "source_label": "Fare_low_10.5",
+            "target_label": "Parch_0",
+            "source": 22,
+            "target": 3
+        },
+        {
+            "weight": 7.879272458944017,
+            "edge_weight": 7.879272458944017,
+            "edge_width": 2.9036755470497306,
+            "source_label": "Age_low_30",
+            "target_label": "Parch_0",
+            "source": 35,
+            "target": 3
+        },
+        {
+            "weight": 8.3727301859397,
+            "edge_weight": 8.3727301859397,
+            "edge_width": 3.022897646968118,
+            "source_label": "Fare_low_26",
+            "target_label": "Parch_1",
+            "source": 27,
+            "target": 4
+        },
+        {
+            "weight": 1.6197366065950698,
+            "edge_weight": 1.6197366065950698,
+            "edge_width": 1.3913372696150665,
+            "source_label": "Ticket_19950",
+            "target_label": "SibSp_3",
+            "source": 13,
+            "target": 46
+        },
+        {
+            "weight": 2.881436162636808,
+            "edge_weight": 2.881436162636808,
+            "edge_width": 1.696170819295624,
+            "source_label": "Ticket_347088",
+            "target_label": "SibSp_3",
+            "source": 16,
+            "target": 46
+        },
+        {
+            "weight": 1.6197366065950698,
+            "edge_weight": 1.6197366065950698,
+            "edge_width": 1.3913372696150665,
+            "source_label": "Ticket_349909",
+            "target_label": "SibSp_3",
+            "source": 17,
+            "target": 46
+        },
+        {
+            "weight": 4.044701282853293,
+            "edge_weight": 4.044701282853293,
+            "edge_width": 1.9772220680791661,
+            "source_label": "Ticket_4133",
+            "target_label": "SibSp_3",
+            "source": 19,
+            "target": 46
+        },
+        {
+            "weight": 2.434378307891325,
+            "edge_weight": 2.434378307891325,
+            "edge_width": 1.5881591836236746,
+            "source_label": "Cabin_C23 C25 C27",
+            "target_label": "SibSp_3",
+            "source": 24,
+            "target": 46
+        }
+    ],
+    "nodes": [
+        {
+            "node_name": "Survived_0",
+            "node_color": "#a6cee3",
+            "node_size": "13",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Survived_1",
+            "node_color": "#1f78b4",
+            "node_size": "10",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "SibSp_4",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Parch_0",
+            "node_color": "#fb9a99",
+            "node_size": "14",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Parch_1",
+            "node_color": "#1f78b4",
+            "node_size": "7",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Parch_2",
+            "node_color": "#fdbf6f",
+            "node_size": "7",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Cabin_nan",
+            "node_color": "#33a02c",
+            "node_size": "15",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Embarked_C",
+            "node_color": "#b2df8a",
+            "node_size": "8",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Embarked_Q",
+            "node_color": "#33a02c",
+            "node_size": "7",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Embarked_S",
+            "node_color": "#a6cee3",
+            "node_size": "14",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "SibSp_5",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "SibSp_8",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Pclass_1",
+            "node_color": "#b2df8a",
+            "node_size": "8",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Ticket_19950",
+            "node_color": "#e31a1c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Ticket_3101295",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Ticket_347082",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Ticket_347088",
+            "node_color": "#e31a1c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Ticket_349909",
+            "node_color": "#e31a1c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Ticket_382652",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Ticket_4133",
+            "node_color": "#e31a1c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Ticket_CA 2144",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Ticket_CA. 2343",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Fare_low_10.5",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Pclass_2",
+            "node_color": "#a6cee3",
+            "node_size": "8",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Cabin_C23 C25 C27",
+            "node_color": "#e31a1c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Cabin_G6",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Ticket_347077",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Fare_low_26",
+            "node_color": "#1f78b4",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Age_low_37",
+            "node_color": "#b2df8a",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Fare_low_60.3",
+            "node_color": "#b2df8a",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Age_low_24",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Fare_low_8.1",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Fare_low_23",
+            "node_color": "#1f78b4",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Fare_low_9.5",
+            "node_color": "#fb9a99",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Pclass_3",
+            "node_color": "#33a02c",
+            "node_size": "12",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Age_low_30",
+            "node_color": "#fb9a99",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Age_low_6.5",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Age_low_16.5",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Fare_low_32.9",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Age_low_26",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Fare_low_29.7",
+            "node_color": "#b2df8a",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Fare_low_7.8",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Sex_female",
+            "node_color": "#1f78b4",
+            "node_size": "10",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Sex_male",
+            "node_color": "#a6cee3",
+            "node_size": "13",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "SibSp_0",
+            "node_color": "#fb9a99",
+            "node_size": "13",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "SibSp_1",
+            "node_color": "#1f78b4",
+            "node_size": "8",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "SibSp_3",
+            "node_color": "#e31a1c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        }
+    ]
+}
+</script>
+<form>
+<h3> Link threshold 0 <input type="range" id="thersholdSlider" name="points" value=0.0 min="0.0" max="79.0" onchange="threshold(this.value)"> 79.0 </h3>
+</form>
+<script  src="d3graphscript.js"></script>
+</body>
+</html>
