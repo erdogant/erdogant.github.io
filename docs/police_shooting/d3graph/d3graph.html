@@ -1,0 +1,4540 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+<meta charset="UTF-8">
+<title>d3graph</title>
+<script type="text/javascript" src="d3.v3.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<script type="application/json" id="d3graph"> {
+    "links": [
+        {
+            "weight": 49.26604462438365,
+            "edge_weight": 49.26604462438365,
+            "edge_width": 6.68601934491575,
+            "source_label": "armed_gun",
+            "target_label": "manner_of_death_shot",
+            "source": 202,
+            "target": 1
+        },
+        {
+            "weight": 2.2025517030770105,
+            "edge_weight": 2.2025517030770105,
+            "edge_width": 1.2542065572212495,
+            "source_label": "threat_level_attack",
+            "target_label": "manner_of_death_shot",
+            "source": 51,
+            "target": 1
+        },
+        {
+            "weight": 1.7044623433558066,
+            "edge_weight": 1.7044623433558066,
+            "edge_width": 1.1967197880587475,
+            "source_label": "flee_Car",
+            "target_label": "manner_of_death_shot",
+            "source": 55,
+            "target": 1
+        },
+        {
+            "weight": 1.8305011481226707,
+            "edge_weight": 1.8305011481226707,
+            "edge_width": 1.2112665024860663,
+            "source_label": "armed_gun",
+            "target_label": "gender_M",
+            "source": 202,
+            "target": 43
+        },
+        {
+            "weight": 9.164845940844664,
+            "edge_weight": 9.164845940844664,
+            "edge_width": 2.0577567513309845,
+            "source_label": "armed_gun",
+            "target_label": "signs_of_mental_illness_0",
+            "source": 202,
+            "target": 49
+        },
+        {
+            "weight": 164.623929515871,
+            "edge_weight": 164.623929515871,
+            "edge_width": 20.0,
+            "source_label": "threat_level_attack",
+            "target_label": "armed_gun",
+            "source": 51,
+            "target": 202
+        },
+        {
+            "weight": 1.977530606498887,
+            "edge_weight": 1.977530606498887,
+            "edge_width": 1.2282358441690369,
+            "source_label": "flee_Foot",
+            "target_label": "armed_gun",
+            "source": 56,
+            "target": 202
+        },
+        {
+            "weight": 3.8064322271362396,
+            "edge_weight": 3.8064322271362396,
+            "edge_width": 1.4393177378785393,
+            "source_label": "age_low_36",
+            "target_label": "armed_gun",
+            "source": 193,
+            "target": 202
+        },
+        {
+            "weight": 2.470549943453838,
+            "edge_weight": 2.470549943453838,
+            "edge_width": 1.2851374588352145,
+            "source_label": "flee_Car",
+            "target_label": "armed_gun and car",
+            "source": 55,
+            "target": 213
+        },
+        {
+            "weight": 51.141566753569606,
+            "edge_weight": 51.141566753569606,
+            "edge_width": 6.902481924562153,
+            "source_label": "flee_Car",
+            "target_label": "armed_vehicle",
+            "source": 55,
+            "target": 22
+        },
+        {
+            "weight": 62.79520402257233,
+            "edge_weight": 62.79520402257233,
+            "edge_width": 8.247481456296118,
+            "source_label": "flee_Car",
+            "target_label": "armed_nan",
+            "source": 55,
+            "target": 246
+        },
+        {
+            "weight": 28.50171618360846,
+            "edge_weight": 28.50171618360846,
+            "edge_width": 4.289513311224617,
+            "source_label": "flee_Car",
+            "target_label": "signs_of_mental_illness_0",
+            "source": 55,
+            "target": 49
+        },
+        {
+            "weight": 5.657503044264388,
+            "edge_weight": 5.657503044264388,
+            "edge_width": 1.652958279863319,
+            "source_label": "age_low_33",
+            "target_label": "flee_Car",
+            "source": 199,
+            "target": 55
+        },
+        {
+            "weight": 23.828764844219428,
+            "edge_weight": 23.828764844219428,
+            "edge_width": 3.75018664280226,
+            "source_label": "armed_knife",
+            "target_label": "manner_of_death_shot and Tasered",
+            "source": 224,
+            "target": 109
+        },
+        {
+            "weight": 1.3641311531426281,
+            "edge_weight": 1.3641311531426281,
+            "edge_width": 1.1574406101587509,
+            "source_label": "armed_unarmed",
+            "target_label": "manner_of_death_shot and Tasered",
+            "source": 268,
+            "target": 109
+        },
+        {
+            "weight": 4.072191682079879,
+            "edge_weight": 4.072191682079879,
+            "edge_width": 1.469990251034911,
+            "source_label": "threat_level_other",
+            "target_label": "manner_of_death_shot and Tasered",
+            "source": 52,
+            "target": 109
+        },
+        {
+            "weight": 2.552832652330342,
+            "edge_weight": 2.552832652330342,
+            "edge_width": 1.2946340822802456,
+            "source_label": "state_CA",
+            "target_label": "armed_knife",
+            "source": 3,
+            "target": 224
+        },
+        {
+            "weight": 16.09471969253408,
+            "edge_weight": 16.09471969253408,
+            "edge_width": 2.8575651489880523,
+            "source_label": "signs_of_mental_illness_1",
+            "target_label": "armed_knife",
+            "source": 50,
+            "target": 224
+        },
+        {
+            "weight": 75.26803770059148,
+            "edge_weight": 75.26803770059148,
+            "edge_width": 9.687028189139212,
+            "source_label": "threat_level_other",
+            "target_label": "armed_knife",
+            "source": 52,
+            "target": 224
+        },
+        {
+            "weight": 32.80815597692551,
+            "edge_weight": 32.80815597692551,
+            "edge_width": 4.7865392072389366,
+            "source_label": "flee_Not fleeing",
+            "target_label": "armed_knife",
+            "source": 57,
+            "target": 224
+        },
+        {
+            "weight": 2.419609122359918,
+            "edge_weight": 2.419609122359918,
+            "edge_width": 1.2792581458845953,
+            "source_label": "armed_unarmed",
+            "target_label": "race_B",
+            "source": 268,
+            "target": 65
+        },
+        {
+            "weight": 9.088598997167416,
+            "edge_weight": 9.088598997167416,
+            "edge_width": 2.0489567431296978,
+            "source_label": "threat_level_other",
+            "target_label": "armed_unarmed",
+            "source": 52,
+            "target": 268
+        },
+        {
+            "weight": 4.025971788442047,
+            "edge_weight": 4.025971788442047,
+            "edge_width": 1.4646558018955824,
+            "source_label": "threat_level_undetermined",
+            "target_label": "armed_unarmed",
+            "source": 53,
+            "target": 268
+        },
+        {
+            "weight": 6.825735842221172,
+            "edge_weight": 6.825735842221172,
+            "edge_width": 1.787789365638361,
+            "source_label": "age_low_31",
+            "target_label": "armed_unarmed",
+            "source": 197,
+            "target": 268
+        },
+        {
+            "weight": 2.5984429900976056,
+            "edge_weight": 2.5984429900976056,
+            "edge_width": 1.2998981797910176,
+            "source_label": "threat_level_other",
+            "target_label": "armed_machete",
+            "source": 52,
+            "target": 235
+        },
+        {
+            "weight": 4.411011908937583,
+            "edge_weight": 4.411011908937583,
+            "edge_width": 1.5090950417492874,
+            "source_label": "threat_level_other",
+            "target_label": "armed_unknown weapon",
+            "source": 52,
+            "target": 12
+        },
+        {
+            "weight": 2.9019863362777336,
+            "edge_weight": 2.9019863362777336,
+            "edge_width": 1.3349315044989327,
+            "source_label": "threat_level_other",
+            "target_label": "state_CA",
+            "source": 52,
+            "target": 3
+        },
+        {
+            "weight": 2.9479570906824644,
+            "edge_weight": 2.9479570906824644,
+            "edge_width": 1.3402371993408584,
+            "source_label": "threat_level_other",
+            "target_label": "armed_nan",
+            "source": 52,
+            "target": 246
+        },
+        {
+            "weight": 5.411230150909885,
+            "edge_weight": 5.411230150909885,
+            "edge_width": 1.6245347998291817,
+            "source_label": "armed_vehicle",
+            "target_label": "signs_of_mental_illness_0",
+            "source": 22,
+            "target": 49
+        },
+        {
+            "weight": 11.344759323368173,
+            "edge_weight": 11.344759323368173,
+            "edge_width": 2.309350516525088,
+            "source_label": "race_B",
+            "target_label": "signs_of_mental_illness_0",
+            "source": 65,
+            "target": 49
+        },
+        {
+            "weight": 11.847495075553033,
+            "edge_weight": 11.847495075553033,
+            "edge_width": 2.3673735470747954,
+            "source_label": "flee_Foot",
+            "target_label": "signs_of_mental_illness_0",
+            "source": 56,
+            "target": 49
+        },
+        {
+            "weight": 1.7355863747015408,
+            "edge_weight": 1.7355863747015408,
+            "edge_width": 1.2003119547462273,
+            "source_label": "flee_Other",
+            "target_label": "signs_of_mental_illness_0",
+            "source": 58,
+            "target": 49
+        },
+        {
+            "weight": 9.784095016924546,
+            "edge_weight": 9.784095016924546,
+            "edge_width": 2.129227117031272,
+            "source_label": "age_low_34",
+            "target_label": "signs_of_mental_illness_0",
+            "source": 196,
+            "target": 49
+        },
+        {
+            "weight": 59.886668806816274,
+            "edge_weight": 59.886668806816274,
+            "edge_width": 7.911794115689677,
+            "source_label": "state_CA",
+            "target_label": "race_H",
+            "source": 3,
+            "target": 76
+        },
+        {
+            "weight": 4.935952679332568,
+            "edge_weight": 4.935952679332568,
+            "edge_width": 1.5696808549225973,
+            "source_label": "state_CA",
+            "target_label": "city_Anaheim",
+            "source": 3,
+            "target": 154
+        },
+        {
+            "weight": 14.973691080027915,
+            "edge_weight": 14.973691080027915,
+            "edge_width": 2.728182113968446,
+            "source_label": "state_CA",
+            "target_label": "city_Bakersfield",
+            "source": 3,
+            "target": 203
+        },
+        {
+            "weight": 11.619808616942146,
+            "edge_weight": 11.619808616942146,
+            "edge_width": 2.3410952124102726,
+            "source_label": "state_CA",
+            "target_label": "city_Fresno",
+            "source": 3,
+            "target": 218
+        },
+        {
+            "weight": 10.782486780437099,
+            "edge_weight": 10.782486780437099,
+            "edge_width": 2.2444560728855283,
+            "source_label": "state_CA",
+            "target_label": "city_Long Beach",
+            "source": 3,
+            "target": 231
+        },
+        {
+            "weight": 69.66618991796055,
+            "edge_weight": 69.66618991796055,
+            "edge_width": 9.040493337353121,
+            "source_label": "state_CA",
+            "target_label": "city_Los Angeles",
+            "source": 3,
+            "target": 232
+        },
+        {
+            "weight": 4.10285083818407,
+            "edge_weight": 4.10285083818407,
+            "edge_width": 1.4735287643463884,
+            "source_label": "state_CA",
+            "target_label": "city_Modesto",
+            "source": 3,
+            "target": 239
+        },
+        {
+            "weight": 4.10285083818407,
+            "edge_weight": 4.10285083818407,
+            "edge_width": 1.4735287643463884,
+            "source_label": "state_CA",
+            "target_label": "city_Oakland",
+            "source": 3,
+            "target": 241
+        },
+        {
+            "weight": 7.438490485603234,
+            "edge_weight": 7.438490485603234,
+            "edge_width": 1.8585101791828875,
+            "source_label": "state_CA",
+            "target_label": "city_Sacramento",
+            "source": 3,
+            "target": 252
+        },
+        {
+            "weight": 9.109624330294032,
+            "edge_weight": 9.109624330294032,
+            "edge_width": 2.0513833729069146,
+            "source_label": "state_CA",
+            "target_label": "city_San Bernardino",
+            "source": 3,
+            "target": 255
+        },
+        {
+            "weight": 10.782486780437099,
+            "edge_weight": 10.782486780437099,
+            "edge_width": 2.2444560728855283,
+            "source_label": "state_CA",
+            "target_label": "city_San Diego",
+            "source": 3,
+            "target": 256
+        },
+        {
+            "weight": 8.273765579751556,
+            "edge_weight": 8.273765579751556,
+            "edge_width": 1.9549130948190867,
+            "source_label": "state_CA",
+            "target_label": "city_San Francisco",
+            "source": 3,
+            "target": 258
+        },
+        {
+            "weight": 12.45753132824709,
+            "edge_weight": 12.45753132824709,
+            "edge_width": 2.4377806187275812,
+            "source_label": "state_CA",
+            "target_label": "city_San Jose",
+            "source": 3,
+            "target": 259
+        },
+        {
+            "weight": 4.935952679332568,
+            "edge_weight": 4.935952679332568,
+            "edge_width": 1.5696808549225973,
+            "source_label": "state_CA",
+            "target_label": "city_Santa Ana",
+            "source": 3,
+            "target": 260
+        },
+        {
+            "weight": 5.521743524324789,
+            "edge_weight": 5.521743524324789,
+            "edge_width": 1.6372896532764185,
+            "source_label": "state_CA",
+            "target_label": "city_Stockton",
+            "source": 3,
+            "target": 266
+        },
+        {
+            "weight": 5.4978373656979045,
+            "edge_weight": 5.4978373656979045,
+            "edge_width": 1.6345305342634866,
+            "source_label": "state_CA",
+            "target_label": "name_nan",
+            "source": 3,
+            "target": 0
+        },
+        {
+            "weight": 2.43938878412956,
+            "edge_weight": 2.43938878412956,
+            "edge_width": 1.2815410070380644,
+            "source_label": "city_Hemet",
+            "target_label": "state_CA",
+            "source": 66,
+            "target": 3
+        },
+        {
+            "weight": 3.270572567186393,
+            "edge_weight": 3.270572567186393,
+            "edge_width": 1.3774717257648172,
+            "source_label": "city_Redding",
+            "target_label": "state_CA",
+            "source": 167,
+            "target": 3
+        },
+        {
+            "weight": 5.889828710698274,
+            "edge_weight": 5.889828710698274,
+            "edge_width": 1.679772046702837,
+            "source_label": "signs_of_mental_illness_1",
+            "target_label": "armed_toy weapon",
+            "source": 50,
+            "target": 257
+        },
+        {
+            "weight": 19.464914374744826,
+            "edge_weight": 19.464914374744826,
+            "edge_width": 3.2465347182986357,
+            "source_label": "signs_of_mental_illness_1",
+            "target_label": "race_W",
+            "source": 50,
+            "target": 110
+        },
+        {
+            "weight": 59.94917935126191,
+            "edge_weight": 59.94917935126191,
+            "edge_width": 7.919008743283368,
+            "source_label": "flee_Not fleeing",
+            "target_label": "signs_of_mental_illness_1",
+            "source": 57,
+            "target": 50
+        },
+        {
+            "weight": 9.784095016924546,
+            "edge_weight": 9.784095016924546,
+            "edge_width": 2.129227117031272,
+            "source_label": "age_low_37",
+            "target_label": "signs_of_mental_illness_1",
+            "source": 195,
+            "target": 50
+        },
+        {
+            "weight": 2.3117033759790333,
+            "edge_weight": 2.3117033759790333,
+            "edge_width": 1.2668042505896275,
+            "source_label": "flee_Not fleeing",
+            "target_label": "race_W",
+            "source": 57,
+            "target": 110
+        },
+        {
+            "weight": 35.77236407261074,
+            "edge_weight": 35.77236407261074,
+            "edge_width": 5.128652009330626,
+            "source_label": "age_low_37",
+            "target_label": "flee_Not fleeing",
+            "source": 195,
+            "target": 57
+        },
+        {
+            "weight": 5.435463752426344,
+            "edge_weight": 5.435463752426344,
+            "edge_width": 1.6273317105223404,
+            "source_label": "city_Atlanta",
+            "target_label": "race_B",
+            "source": 187,
+            "target": 65
+        },
+        {
+            "weight": 5.923895665097209,
+            "edge_weight": 5.923895665097209,
+            "edge_width": 1.6837038695883875,
+            "source_label": "city_Baltimore",
+            "target_label": "race_B",
+            "source": 204,
+            "target": 65
+        },
+        {
+            "weight": 3.318501301027272,
+            "edge_weight": 3.318501301027272,
+            "edge_width": 1.3830033999609972,
+            "source_label": "city_Baton Rouge",
+            "target_label": "race_B",
+            "source": 205,
+            "target": 65
+        },
+        {
+            "weight": 8.943231473875022,
+            "edge_weight": 8.943231473875022,
+            "edge_width": 2.0321792129694227,
+            "source_label": "city_Chicago",
+            "target_label": "race_B",
+            "source": 208,
+            "target": 65
+        },
+        {
+            "weight": 2.1776658875631965,
+            "edge_weight": 2.1776658875631965,
+            "edge_width": 1.251334371530184,
+            "source_label": "city_New York",
+            "target_label": "race_B",
+            "source": 240,
+            "target": 65
+        },
+        {
+            "weight": 2.0684765466488413,
+            "edge_weight": 2.0684765466488413,
+            "edge_width": 1.238732330724368,
+            "source_label": "city_Philadelphia",
+            "target_label": "race_B",
+            "source": 245,
+            "target": 65
+        },
+        {
+            "weight": 5.231788526546314,
+            "edge_weight": 5.231788526546314,
+            "edge_width": 1.6038246219532541,
+            "source_label": "city_St. Louis",
+            "target_label": "race_B",
+            "source": 265,
+            "target": 65
+        },
+        {
+            "weight": 4.109005819017571,
+            "edge_weight": 4.109005819017571,
+            "edge_width": 1.47423913881127,
+            "source_label": "city_Washington",
+            "target_label": "race_B",
+            "source": 272,
+            "target": 65
+        },
+        {
+            "weight": 2.909125215511182,
+            "edge_weight": 2.909125215511182,
+            "edge_width": 1.335755435174348,
+            "source_label": "state_DC",
+            "target_label": "race_B",
+            "source": 5,
+            "target": 65
+        },
+        {
+            "weight": 1.95608329171713,
+            "edge_weight": 1.95608329171713,
+            "edge_width": 1.225760511560638,
+            "source_label": "state_GA",
+            "target_label": "race_B",
+            "source": 8,
+            "target": 65
+        },
+        {
+            "weight": 7.619481888325476,
+            "edge_weight": 7.619481888325476,
+            "edge_width": 1.87939922406133,
+            "source_label": "state_IL",
+            "target_label": "race_B",
+            "source": 13,
+            "target": 65
+        },
+        {
+            "weight": 9.07435229097029,
+            "edge_weight": 9.07435229097029,
+            "edge_width": 2.0473124656632233,
+            "source_label": "state_LA",
+            "target_label": "race_B",
+            "source": 17,
+            "target": 65
+        },
+        {
+            "weight": 6.641357188854624,
+            "edge_weight": 6.641357188854624,
+            "edge_width": 1.7665093826840805,
+            "source_label": "state_MD",
+            "target_label": "race_B",
+            "source": 19,
+            "target": 65
+        },
+        {
+            "weight": 2.27259195389756,
+            "edge_weight": 2.27259195389756,
+            "edge_width": 1.2622902226367452,
+            "source_label": "state_NY",
+            "target_label": "race_B",
+            "source": 33,
+            "target": 65
+        },
+        {
+            "weight": 11.478376474456873,
+            "edge_weight": 11.478376474456873,
+            "edge_width": 2.3247718825327586,
+            "source_label": "flee_Foot",
+            "target_label": "race_B",
+            "source": 56,
+            "target": 65
+        },
+        {
+            "weight": 3.823146721924581,
+            "edge_weight": 3.823146721924581,
+            "edge_width": 1.4412468341035682,
+            "source_label": "body_camera_1",
+            "target_label": "race_B",
+            "source": 61,
+            "target": 65
+        },
+        {
+            "weight": 47.2386136750284,
+            "edge_weight": 47.2386136750284,
+            "edge_width": 6.452024274144243,
+            "source_label": "age_low_31",
+            "target_label": "race_B",
+            "source": 197,
+            "target": 65
+        },
+        {
+            "weight": 86.177248474261,
+            "edge_weight": 86.177248474261,
+            "edge_width": 10.946110057184029,
+            "source_label": "threat_level_undetermined",
+            "target_label": "armed_undetermined",
+            "source": 53,
+            "target": 2
+        },
+        {
+            "weight": 1.3914907989552243,
+            "edge_weight": 1.3914907989552243,
+            "edge_width": 1.1605983119094505,
+            "source_label": "threat_level_undetermined",
+            "target_label": "city_Santa Ana",
+            "source": 53,
+            "target": 260
+        },
+        {
+            "weight": 8.970126883128161,
+            "edge_weight": 8.970126883128161,
+            "edge_width": 2.035283335057338,
+            "source_label": "threat_level_undetermined",
+            "target_label": "flee_nan",
+            "source": 53,
+            "target": 59
+        },
+        {
+            "weight": 1.9125438336907978,
+            "edge_weight": 1.9125438336907978,
+            "edge_width": 1.2207354237442247,
+            "source_label": "armed_undetermined",
+            "target_label": "name_nan",
+            "source": 2,
+            "target": 0
+        },
+        {
+            "weight": 3.9919500175625413,
+            "edge_weight": 3.9919500175625413,
+            "edge_width": 1.460729193846488,
+            "source_label": "armed_undetermined",
+            "target_label": "flee_nan",
+            "source": 2,
+            "target": 59
+        },
+        {
+            "weight": 2.511929734075177,
+            "edge_weight": 2.511929734075177,
+            "edge_width": 1.2899132895672203,
+            "source_label": "state_TX",
+            "target_label": "name_nan",
+            "source": 41,
+            "target": 0
+        },
+        {
+            "weight": 9.959930052659455,
+            "edge_weight": 9.959930052659455,
+            "edge_width": 2.149521042032262,
+            "source_label": "gender_F",
+            "target_label": "armed_vehicle",
+            "source": 32,
+            "target": 22
+        },
+        {
+            "weight": 3.367666763415836,
+            "edge_weight": 3.367666763415836,
+            "edge_width": 1.3886778106504387,
+            "source_label": "city_Honolulu",
+            "target_label": "race_A",
+            "source": 221,
+            "target": 54
+        },
+        {
+            "weight": 4.978898048164915,
+            "edge_weight": 4.978898048164915,
+            "edge_width": 1.574637376190278,
+            "source_label": "state_HI",
+            "target_label": "race_A",
+            "source": 9,
+            "target": 54
+        },
+        {
+            "weight": 26.680899558134342,
+            "edge_weight": 26.680899558134342,
+            "edge_width": 4.079364543753525,
+            "source_label": "state_HI",
+            "target_label": "city_Honolulu",
+            "source": 9,
+            "target": 221
+        },
+        {
+            "weight": 19.90848326007528,
+            "edge_weight": 19.90848326007528,
+            "edge_width": 3.2977290303653155,
+            "source_label": "state_HI",
+            "target_label": "race_O",
+            "source": 9,
+            "target": 98
+        },
+        {
+            "weight": 4.9775596701249425,
+            "edge_weight": 4.9775596701249425,
+            "edge_width": 1.574482907864596,
+            "source_label": "city_Hilo",
+            "target_label": "state_HI",
+            "source": 122,
+            "target": 9
+        },
+        {
+            "weight": 30.03195068962549,
+            "edge_weight": 30.03195068962549,
+            "edge_width": 4.46612466839381,
+            "source_label": "state_GA",
+            "target_label": "city_Atlanta",
+            "source": 8,
+            "target": 187
+        },
+        {
+            "weight": 31.9099318947783,
+            "edge_weight": 31.9099318947783,
+            "edge_width": 4.682871061234976,
+            "source_label": "state_MD",
+            "target_label": "city_Baltimore",
+            "source": 19,
+            "target": 204
+        },
+        {
+            "weight": 16.381376652351957,
+            "edge_weight": 16.381376652351957,
+            "edge_width": 2.8906495386788875,
+            "source_label": "state_LA",
+            "target_label": "city_Baton Rouge",
+            "source": 17,
+            "target": 205
+        },
+        {
+            "weight": 68.28034134326766,
+            "edge_weight": 68.28034134326766,
+            "edge_width": 8.88054622032949,
+            "source_label": "state_IL",
+            "target_label": "city_Chicago",
+            "source": 13,
+            "target": 208
+        },
+        {
+            "weight": 2.0381753915664644,
+            "edge_weight": 2.0381753915664644,
+            "edge_width": 1.235235135946803,
+            "source_label": "flee_Foot",
+            "target_label": "city_Chicago",
+            "source": 56,
+            "target": 208
+        },
+        {
+            "weight": 1.3281014156750095,
+            "edge_weight": 1.3281014156750095,
+            "edge_width": 1.1532822535097635,
+            "source_label": "age_low_26",
+            "target_label": "city_Chicago",
+            "source": 200,
+            "target": 208
+        },
+        {
+            "weight": 40.50065028687792,
+            "edge_weight": 40.50065028687792,
+            "edge_width": 5.674365128530684,
+            "source_label": "state_NY",
+            "target_label": "city_New York",
+            "source": 33,
+            "target": 240
+        },
+        {
+            "weight": 25.276714125072164,
+            "edge_weight": 25.276714125072164,
+            "edge_width": 3.9173010861101494,
+            "source_label": "state_PA",
+            "target_label": "city_Philadelphia",
+            "source": 37,
+            "target": 245
+        },
+        {
+            "weight": 46.45815315746796,
+            "edge_weight": 46.45815315746796,
+            "edge_width": 6.361947759282418,
+            "source_label": "state_MO",
+            "target_label": "city_St. Louis",
+            "source": 23,
+            "target": 265
+        },
+        {
+            "weight": 35.284553327148615,
+            "edge_weight": 35.284553327148615,
+            "edge_width": 5.072351542010734,
+            "source_label": "state_DC",
+            "target_label": "city_Washington",
+            "source": 5,
+            "target": 272
+        },
+        {
+            "weight": 3.1332891445488595,
+            "edge_weight": 3.1332891445488595,
+            "edge_width": 1.3616272186036535,
+            "source_label": "city_Athens",
+            "target_label": "state_GA",
+            "source": 71,
+            "target": 8
+        },
+        {
+            "weight": 3.1332891445488595,
+            "edge_weight": 3.1332891445488595,
+            "edge_width": 1.3616272186036535,
+            "source_label": "city_Savannah",
+            "target_label": "state_GA",
+            "source": 170,
+            "target": 8
+        },
+        {
+            "weight": 3.0653216168907336,
+            "edge_weight": 3.0653216168907336,
+            "edge_width": 1.353782775640215,
+            "source_label": "flee_Foot",
+            "target_label": "state_IL",
+            "source": 56,
+            "target": 13
+        },
+        {
+            "weight": 12.909063874066707,
+            "edge_weight": 12.909063874066707,
+            "edge_width": 2.4898940532434644,
+            "source_label": "state_LA",
+            "target_label": "city_Shreveport",
+            "source": 17,
+            "target": 262
+        },
+        {
+            "weight": 2.594710483014643,
+            "edge_weight": 2.594710483014643,
+            "edge_width": 1.2994673940918497,
+            "source_label": "city_Bossier City",
+            "target_label": "state_LA",
+            "source": 75,
+            "target": 17
+        },
+        {
+            "weight": 11.179244237014638,
+            "edge_weight": 11.179244237014638,
+            "edge_width": 2.290247664042065,
+            "source_label": "city_New Orleans",
+            "target_label": "state_LA",
+            "source": 150,
+            "target": 17
+        },
+        {
+            "weight": 1.3565765325617791,
+            "edge_weight": 1.3565765325617791,
+            "edge_width": 1.1565686968745872,
+            "source_label": "city_Landover",
+            "target_label": "state_MD",
+            "source": 131,
+            "target": 19
+        },
+        {
+            "weight": 3.2184323105306336,
+            "edge_weight": 3.2184323105306336,
+            "edge_width": 1.3714539804748538,
+            "source_label": "city_Silver Spring",
+            "target_label": "state_MD",
+            "source": 172,
+            "target": 19
+        },
+        {
+            "weight": 2.7560403589345377,
+            "edge_weight": 2.7560403589345377,
+            "edge_width": 1.318087212313249,
+            "source_label": "city_Bronx",
+            "target_label": "state_NY",
+            "source": 79,
+            "target": 33
+        },
+        {
+            "weight": 5.42189877918746,
+            "edge_weight": 5.42189877918746,
+            "edge_width": 1.625766114971944,
+            "source_label": "city_Brooklyn",
+            "target_label": "state_NY",
+            "source": 80,
+            "target": 33
+        },
+        {
+            "weight": 3.734382985455786,
+            "edge_weight": 3.734382985455786,
+            "edge_width": 1.4310022056472629,
+            "source_label": "city_Syracuse",
+            "target_label": "state_NY",
+            "source": 177,
+            "target": 33
+        },
+        {
+            "weight": 26.15213308364211,
+            "edge_weight": 26.15213308364211,
+            "edge_width": 4.018337188587738,
+            "source_label": "age_low_31",
+            "target_label": "flee_Foot",
+            "source": 197,
+            "target": 56
+        },
+        {
+            "weight": 3.7169773886521322,
+            "edge_weight": 3.7169773886521322,
+            "edge_width": 1.428993346180465,
+            "source_label": "body_camera_1",
+            "target_label": "city_Las Vegas",
+            "source": 61,
+            "target": 230
+        },
+        {
+            "weight": 1.8254515995429639,
+            "edge_weight": 1.8254515995429639,
+            "edge_width": 1.2106837110091735,
+            "source_label": "body_camera_1",
+            "target_label": "city_San Diego",
+            "source": 61,
+            "target": 256
+        },
+        {
+            "weight": 3.6215404367785573,
+            "edge_weight": 3.6215404367785573,
+            "edge_width": 1.4179785314391906,
+            "source_label": "body_camera_1",
+            "target_label": "state_NV",
+            "source": 61,
+            "target": 31
+        },
+        {
+            "weight": 6.647313808848373,
+            "edge_weight": 6.647313808848373,
+            "edge_width": 1.7671968634179813,
+            "source_label": "city_Albuquerque",
+            "target_label": "race_H",
+            "source": 132,
+            "target": 76
+        },
+        {
+            "weight": 2.431884010839935,
+            "edge_weight": 2.431884010839935,
+            "edge_width": 1.2806748468575717,
+            "source_label": "city_Bakersfield",
+            "target_label": "race_H",
+            "source": 203,
+            "target": 76
+        },
+        {
+            "weight": 9.305464676197696,
+            "edge_weight": 9.305464676197696,
+            "edge_width": 2.0739862021742774,
+            "source_label": "city_Los Angeles",
+            "target_label": "race_H",
+            "source": 232,
+            "target": 76
+        },
+        {
+            "weight": 6.673621586396276,
+            "edge_weight": 6.673621586396276,
+            "edge_width": 1.7702331642454499,
+            "source_label": "city_San Antonio",
+            "target_label": "race_H",
+            "source": 254,
+            "target": 76
+        },
+        {
+            "weight": 6.4602061646546005,
+            "edge_weight": 6.4602061646546005,
+            "edge_width": 1.7456019151614526,
+            "source_label": "state_AZ",
+            "target_label": "race_H",
+            "source": 278,
+            "target": 76
+        },
+        {
+            "weight": 20.32890729553481,
+            "edge_weight": 20.32890729553481,
+            "edge_width": 3.3462520895415997,
+            "source_label": "state_NM",
+            "target_label": "race_H",
+            "source": 30,
+            "target": 76
+        },
+        {
+            "weight": 10.179438351790692,
+            "edge_weight": 10.179438351790692,
+            "edge_width": 2.174855497938877,
+            "source_label": "state_TX",
+            "target_label": "race_H",
+            "source": 41,
+            "target": 76
+        },
+        {
+            "weight": 12.151738393565136,
+            "edge_weight": 12.151738393565136,
+            "edge_width": 2.4024876587305535,
+            "source_label": "age_low_33",
+            "target_label": "race_H",
+            "source": 199,
+            "target": 76
+        },
+        {
+            "weight": 63.89475618578316,
+            "edge_weight": 63.89475618578316,
+            "edge_width": 8.374385796159975,
+            "source_label": "state_NM",
+            "target_label": "city_Albuquerque",
+            "source": 30,
+            "target": 132
+        },
+        {
+            "weight": 44.99267754458142,
+            "edge_weight": 44.99267754458142,
+            "edge_width": 6.192810521903087,
+            "source_label": "state_TX",
+            "target_label": "city_San Antonio",
+            "source": 41,
+            "target": 254
+        },
+        {
+            "weight": 9.502939132337936,
+            "edge_weight": 9.502939132337936,
+            "edge_width": 2.0967776315715625,
+            "source_label": "state_AZ",
+            "target_label": "city_Glendale",
+            "source": 278,
+            "target": 219
+        },
+        {
+            "weight": 25.54096308861626,
+            "edge_weight": 25.54096308861626,
+            "edge_width": 3.9477992665514914,
+            "source_label": "state_AZ",
+            "target_label": "city_Mesa",
+            "source": 278,
+            "target": 236
+        },
+        {
+            "weight": 104.89682169360776,
+            "edge_weight": 104.89682169360776,
+            "edge_width": 13.106621546695637,
+            "source_label": "state_AZ",
+            "target_label": "city_Phoenix",
+            "source": 278,
+            "target": 247
+        },
+        {
+            "weight": 36.566189518658135,
+            "edge_weight": 36.566189518658135,
+            "edge_width": 5.2202710316638665,
+            "source_label": "state_AZ",
+            "target_label": "city_Tucson",
+            "source": 278,
+            "target": 270
+        },
+        {
+            "weight": 3.825859233151964,
+            "edge_weight": 3.825859233151964,
+            "edge_width": 1.4415598974198907,
+            "source_label": "city_Buckeye",
+            "target_label": "state_AZ",
+            "source": 81,
+            "target": 278
+        },
+        {
+            "weight": 2.484850891306642,
+            "edge_weight": 2.484850891306642,
+            "edge_width": 1.2867879965790427,
+            "source_label": "city_Chandler",
+            "target_label": "state_AZ",
+            "source": 85,
+            "target": 278
+        },
+        {
+            "weight": 6.515362319128341,
+            "edge_weight": 6.515362319128341,
+            "edge_width": 1.7519677390005686,
+            "source_label": "city_Flagstaff",
+            "target_label": "state_AZ",
+            "source": 104,
+            "target": 278
+        },
+        {
+            "weight": 5.169621246483536,
+            "edge_weight": 5.169621246483536,
+            "edge_width": 1.5966496120706302,
+            "source_label": "city_Kingman",
+            "target_label": "state_AZ",
+            "source": 127,
+            "target": 278
+        },
+        {
+            "weight": 5.169621246483536,
+            "edge_weight": 5.169621246483536,
+            "edge_width": 1.5966496120706302,
+            "source_label": "city_Scottsdale",
+            "target_label": "state_AZ",
+            "source": 171,
+            "target": 278
+        },
+        {
+            "weight": 7.862980623127491,
+            "edge_weight": 7.862980623127491,
+            "edge_width": 1.9075025257796399,
+            "source_label": "city_Tempe",
+            "target_label": "state_AZ",
+            "source": 180,
+            "target": 278
+        },
+        {
+            "weight": 16.577265248246025,
+            "edge_weight": 16.577265248246025,
+            "edge_width": 2.913257936698135,
+            "source_label": "state_NM",
+            "target_label": "city_Las Cruces",
+            "source": 30,
+            "target": 229
+        },
+        {
+            "weight": 1.9661751425916465,
+            "edge_weight": 1.9661751425916465,
+            "edge_width": 1.2269252581875696,
+            "source_label": "city_Farmington",
+            "target_label": "state_NM",
+            "source": 102,
+            "target": 30
+        },
+        {
+            "weight": 2.6574202715951265,
+            "edge_weight": 2.6574202715951265,
+            "edge_width": 1.3067050173616448,
+            "source_label": "city_Hobbs",
+            "target_label": "state_NM",
+            "source": 123,
+            "target": 30
+        },
+        {
+            "weight": 6.336787356499269,
+            "edge_weight": 6.336787356499269,
+            "edge_width": 1.7313575865158701,
+            "source_label": "state_TX",
+            "target_label": "city_Amarillo",
+            "source": 41,
+            "target": 143
+        },
+        {
+            "weight": 4.407144572234841,
+            "edge_weight": 4.407144572234841,
+            "edge_width": 1.5086486947475592,
+            "source_label": "state_TX",
+            "target_label": "city_Arlington",
+            "source": 41,
+            "target": 176
+        },
+        {
+            "weight": 21.91941385482365,
+            "edge_weight": 21.91941385482365,
+            "edge_width": 3.5298197198087085,
+            "source_label": "state_TX",
+            "target_label": "city_Austin",
+            "source": 41,
+            "target": 201
+        },
+        {
+            "weight": 10.592329441127106,
+            "edge_weight": 10.592329441127106,
+            "edge_width": 2.2225091453792114,
+            "source_label": "state_TX",
+            "target_label": "city_Dallas",
+            "source": 41,
+            "target": 211
+        },
+        {
+            "weight": 11.639592104330998,
+            "edge_weight": 11.639592104330998,
+            "edge_width": 2.343378515095937,
+            "source_label": "state_TX",
+            "target_label": "city_El Paso",
+            "source": 41,
+            "target": 215
+        },
+        {
+            "weight": 13.766944991901829,
+            "edge_weight": 13.766944991901829,
+            "edge_width": 2.5889060333778344,
+            "source_label": "state_TX",
+            "target_label": "city_Fort Worth",
+            "source": 41,
+            "target": 217
+        },
+        {
+            "weight": 57.48422517341526,
+            "edge_weight": 57.48422517341526,
+            "edge_width": 7.6345171173282775,
+            "source_label": "state_TX",
+            "target_label": "city_Houston",
+            "source": 41,
+            "target": 222
+        },
+        {
+            "weight": 3.1665621498568584,
+            "edge_weight": 3.1665621498568584,
+            "edge_width": 1.3654674081964493,
+            "source_label": "city_Corpus Christi",
+            "target_label": "state_TX",
+            "source": 92,
+            "target": 41
+        },
+        {
+            "weight": 3.1665621498568584,
+            "edge_weight": 3.1665621498568584,
+            "edge_width": 1.3654674081964493,
+            "source_label": "city_Garland",
+            "target_label": "state_TX",
+            "source": 111,
+            "target": 41
+        },
+        {
+            "weight": 2.112474630547213,
+            "edge_weight": 2.112474630547213,
+            "edge_width": 1.2438103506484914,
+            "source_label": "city_Irving",
+            "target_label": "state_TX",
+            "source": 126,
+            "target": 41
+        },
+        {
+            "weight": 1.3028564653402634,
+            "edge_weight": 1.3028564653402634,
+            "edge_width": 1.1503686184278483,
+            "source_label": "city_Midland",
+            "target_label": "state_TX",
+            "source": 140,
+            "target": 41
+        },
+        {
+            "weight": 2.3000719614376366,
+            "edge_weight": 2.3000719614376366,
+            "edge_width": 1.2654618158844395,
+            "source_label": "city_Odessa",
+            "target_label": "state_TX",
+            "source": 158,
+            "target": 41
+        },
+        {
+            "weight": 4.346414880134019,
+            "edge_weight": 4.346414880134019,
+            "edge_width": 1.5016396034610804,
+            "source_label": "state_AK",
+            "target_label": "race_N",
+            "source": 275,
+            "target": 87
+        },
+        {
+            "weight": 4.028963028303975,
+            "edge_weight": 4.028963028303975,
+            "edge_width": 1.4650010345573454,
+            "source_label": "state_ND",
+            "target_label": "race_N",
+            "source": 27,
+            "target": 87
+        },
+        {
+            "weight": 17.812935000227828,
+            "edge_weight": 17.812935000227828,
+            "edge_width": 3.0558722295090157,
+            "source_label": "state_AK",
+            "target_label": "city_Anchorage",
+            "source": 275,
+            "target": 165
+        },
+        {
+            "weight": 15.553128825590818,
+            "edge_weight": 15.553128825590818,
+            "edge_width": 2.7950576720848845,
+            "source_label": "city_Fairbanks",
+            "target_label": "state_AK",
+            "source": 101,
+            "target": 275
+        },
+        {
+            "weight": 8.855338607585862,
+            "edge_weight": 8.855338607585862,
+            "edge_width": 2.022035095620231,
+            "source_label": "city_Wasilla",
+            "target_label": "state_AK",
+            "source": 186,
+            "target": 275
+        },
+        {
+            "weight": 4.164878859469675,
+            "edge_weight": 4.164878859469675,
+            "edge_width": 1.4806877017371574,
+            "source_label": "city_Hilo",
+            "target_label": "race_O",
+            "source": 122,
+            "target": 98
+        },
+        {
+            "weight": 3.220837272631089,
+            "edge_weight": 3.220837272631089,
+            "edge_width": 1.3717315481410068,
+            "source_label": "state_KY",
+            "target_label": "race_W",
+            "source": 16,
+            "target": 110
+        },
+        {
+            "weight": 2.851774545849304,
+            "edge_weight": 2.851774545849304,
+            "edge_width": 1.329136332308925,
+            "source_label": "state_OR",
+            "target_label": "race_W",
+            "source": 36,
+            "target": 110
+        },
+        {
+            "weight": 1.4459409493442927,
+            "edge_weight": 1.4459409493442927,
+            "edge_width": 1.1668826525908735,
+            "source_label": "race_W",
+            "target_label": "state_TN",
+            "source": 110,
+            "target": 40
+        },
+        {
+            "weight": 3.458768745087264,
+            "edge_weight": 3.458768745087264,
+            "edge_width": 1.399192306670838,
+            "source_label": "race_W",
+            "target_label": "body_camera_0",
+            "source": 110,
+            "target": 60
+        },
+        {
+            "weight": 48.171130017948066,
+            "edge_weight": 48.171130017948066,
+            "edge_width": 6.5596502466719215,
+            "source_label": "age_low_38",
+            "target_label": "race_W",
+            "source": 194,
+            "target": 110
+        },
+        {
+            "weight": 35.76669574204873,
+            "edge_weight": 35.76669574204873,
+            "edge_width": 5.12799780139746,
+            "source_label": "state_KY",
+            "target_label": "city_Louisville",
+            "source": 16,
+            "target": 233
+        },
+        {
+            "weight": 25.08996556284351,
+            "edge_weight": 25.08996556284351,
+            "edge_width": 3.895747581144139,
+            "source_label": "state_OR",
+            "target_label": "city_Portland",
+            "source": 36,
+            "target": 248
+        },
+        {
+            "weight": 6.737111688088507,
+            "edge_weight": 6.737111688088507,
+            "edge_width": 1.7775608470173285,
+            "source_label": "city_Eugene",
+            "target_label": "state_OR",
+            "source": 99,
+            "target": 36
+        },
+        {
+            "weight": 3.0703130475599263,
+            "edge_weight": 3.0703130475599263,
+            "edge_width": 1.3543588594634692,
+            "source_label": "city_Hillsboro",
+            "target_label": "state_OR",
+            "source": 120,
+            "target": 36
+        },
+        {
+            "weight": 3.0703130475599263,
+            "edge_weight": 3.0703130475599263,
+            "edge_width": 1.3543588594634692,
+            "source_label": "city_Medford",
+            "target_label": "state_OR",
+            "source": 138,
+            "target": 36
+        },
+        {
+            "weight": 2.3780606640085464,
+            "edge_weight": 2.3780606640085464,
+            "edge_width": 1.2744628484390927,
+            "source_label": "city_Salem",
+            "target_label": "state_OR",
+            "source": 169,
+            "target": 36
+        },
+        {
+            "weight": 18.627473368006033,
+            "edge_weight": 18.627473368006033,
+            "edge_width": 3.1498818247926335,
+            "source_label": "state_TN",
+            "target_label": "city_Memphis",
+            "source": 40,
+            "target": 234
+        },
+        {
+            "weight": 5.321995559019617,
+            "edge_weight": 5.321995559019617,
+            "edge_width": 1.6142358277969802,
+            "source_label": "city_Chattanooga",
+            "target_label": "state_TN",
+            "source": 88,
+            "target": 40
+        },
+        {
+            "weight": 6.027290897641527,
+            "edge_weight": 6.027290897641527,
+            "edge_width": 1.6956371858694368,
+            "source_label": "city_Knoxville",
+            "target_label": "state_TN",
+            "source": 129,
+            "target": 40
+        },
+        {
+            "weight": 2.1365793445983137,
+            "edge_weight": 2.1365793445983137,
+            "edge_width": 1.246592385850286,
+            "source_label": "city_Morristown",
+            "target_label": "state_TN",
+            "source": 146,
+            "target": 40
+        },
+        {
+            "weight": 6.920120619260449,
+            "edge_weight": 6.920120619260449,
+            "edge_width": 1.7986827440738051,
+            "source_label": "city_Nashville",
+            "target_label": "state_TN",
+            "source": 149,
+            "target": 40
+        },
+        {
+            "weight": 1.600261959457692,
+            "edge_weight": 1.600261959457692,
+            "edge_width": 1.1846935455805947,
+            "source_label": "state_MO",
+            "target_label": "body_camera_0",
+            "source": 23,
+            "target": 60
+        },
+        {
+            "weight": 14.642118843859999,
+            "edge_weight": 14.642118843859999,
+            "edge_width": 2.689913846981276,
+            "source_label": "state_CO",
+            "target_label": "city_Aurora",
+            "source": 4,
+            "target": 198
+        },
+        {
+            "weight": 18.97597638530026,
+            "edge_weight": 18.97597638530026,
+            "edge_width": 3.1901041505994776,
+            "source_label": "state_CO",
+            "target_label": "city_Colorado Springs",
+            "source": 4,
+            "target": 209
+        },
+        {
+            "weight": 45.73704859795566,
+            "edge_weight": 45.73704859795566,
+            "edge_width": 6.278721786782395,
+            "source_label": "state_CO",
+            "target_label": "city_Denver",
+            "source": 4,
+            "target": 212
+        },
+        {
+            "weight": 5.53585639241895,
+            "edge_weight": 5.53585639241895,
+            "edge_width": 1.6389184838758193,
+            "source_label": "state_CO",
+            "target_label": "city_Lakewood",
+            "source": 4,
+            "target": 228
+        },
+        {
+            "weight": 21.913165092079765,
+            "edge_weight": 21.913165092079765,
+            "edge_width": 3.5290985215449875,
+            "source_label": "state_CO",
+            "target_label": "city_Pueblo",
+            "source": 4,
+            "target": 249
+        },
+        {
+            "weight": 7.804432753044473,
+            "edge_weight": 7.804432753044473,
+            "edge_width": 1.9007452485426748,
+            "source_label": "state_CO",
+            "target_label": "city_Westminster",
+            "source": 4,
+            "target": 273
+        },
+        {
+            "weight": 1.5411929978770966,
+            "edge_weight": 1.5411929978770966,
+            "edge_width": 1.1778761267926225,
+            "source_label": "city_Adams County",
+            "target_label": "state_CO",
+            "source": 64,
+            "target": 4
+        },
+        {
+            "weight": 1.5411929978770966,
+            "edge_weight": 1.5411929978770966,
+            "edge_width": 1.1778761267926225,
+            "source_label": "city_Arvada",
+            "target_label": "state_CO",
+            "source": 70,
+            "target": 4
+        },
+        {
+            "weight": 1.5411929978770966,
+            "edge_weight": 1.5411929978770966,
+            "edge_width": 1.1778761267926225,
+            "source_label": "city_Boulder",
+            "target_label": "state_CO",
+            "source": 78,
+            "target": 4
+        },
+        {
+            "weight": 4.422931553639422,
+            "edge_weight": 4.422931553639422,
+            "edge_width": 1.5104707424144395,
+            "source_label": "city_Centennial",
+            "target_label": "state_CO",
+            "source": 84,
+            "target": 4
+        },
+        {
+            "weight": 1.5411929978770966,
+            "edge_weight": 1.5411929978770966,
+            "edge_width": 1.1778761267926225,
+            "source_label": "city_Fort Collins",
+            "target_label": "state_CO",
+            "source": 105,
+            "target": 4
+        },
+        {
+            "weight": 2.9808796175061207,
+            "edge_weight": 2.9808796175061207,
+            "edge_width": 1.3440369386101678,
+            "source_label": "city_Grand Junction",
+            "target_label": "state_CO",
+            "source": 113,
+            "target": 4
+        },
+        {
+            "weight": 4.422931553639422,
+            "edge_weight": 4.422931553639422,
+            "edge_width": 1.5104707424144395,
+            "source_label": "city_Greeley",
+            "target_label": "state_CO",
+            "source": 115,
+            "target": 4
+        },
+        {
+            "weight": 1.5411929978770966,
+            "edge_weight": 1.5411929978770966,
+            "edge_width": 1.1778761267926225,
+            "source_label": "city_Loveland",
+            "target_label": "state_CO",
+            "source": 136,
+            "target": 4
+        },
+        {
+            "weight": 1.5411929978770966,
+            "edge_weight": 1.5411929978770966,
+            "edge_width": 1.1778761267926225,
+            "source_label": "city_Northglenn",
+            "target_label": "state_CO",
+            "source": 157,
+            "target": 4
+        },
+        {
+            "weight": 18.77443940694158,
+            "edge_weight": 18.77443940694158,
+            "edge_width": 3.1668438469481437,
+            "source_label": "state_MT",
+            "target_label": "city_Billings",
+            "source": 25,
+            "target": 206
+        },
+        {
+            "weight": 7.091224355897678,
+            "edge_weight": 7.091224355897678,
+            "edge_width": 1.8184306082249517,
+            "source_label": "city_Great Falls",
+            "target_label": "state_MT",
+            "source": 114,
+            "target": 25
+        },
+        {
+            "weight": 2.5323449383722854,
+            "edge_weight": 2.5323449383722854,
+            "edge_width": 1.2922695015880714,
+            "source_label": "city_Missoula",
+            "target_label": "state_MT",
+            "source": 142,
+            "target": 25
+        },
+        {
+            "weight": 22.138249641362695,
+            "edge_weight": 22.138249641362695,
+            "edge_width": 3.5550765579638264,
+            "source_label": "state_NC",
+            "target_label": "city_Charlotte",
+            "source": 26,
+            "target": 207
+        },
+        {
+            "weight": 2.7265415729364197,
+            "edge_weight": 2.7265415729364197,
+            "edge_width": 1.3146826226183457,
+            "source_label": "state_NC",
+            "target_label": "city_Fayetteville",
+            "source": 26,
+            "target": 216
+        },
+        {
+            "weight": 4.168879489211904,
+            "edge_weight": 4.168879489211904,
+            "edge_width": 1.4811494326976922,
+            "source_label": "city_Durham",
+            "target_label": "state_NC",
+            "source": 96,
+            "target": 26
+        },
+        {
+            "weight": 1.9251032863028894,
+            "edge_weight": 1.9251032863028894,
+            "edge_width": 1.2221849675640781,
+            "source_label": "city_Lenoir",
+            "target_label": "state_NC",
+            "source": 133,
+            "target": 26
+        },
+        {
+            "weight": 2.695932227791827,
+            "edge_weight": 2.695932227791827,
+            "edge_width": 1.3111498582173404,
+            "source_label": "city_Raleigh",
+            "target_label": "state_NC",
+            "source": 164,
+            "target": 26
+        },
+        {
+            "weight": 38.1459917544727,
+            "edge_weight": 38.1459917544727,
+            "edge_width": 5.402603227042444,
+            "source_label": "state_OH",
+            "target_label": "city_Columbus",
+            "source": 34,
+            "target": 210
+        },
+        {
+            "weight": 6.697864623335939,
+            "edge_weight": 6.697864623335939,
+            "edge_width": 1.7730311639239185,
+            "source_label": "city_Akron",
+            "target_label": "state_OH",
+            "source": 69,
+            "target": 34
+        },
+        {
+            "weight": 6.697864623335939,
+            "edge_weight": 6.697864623335939,
+            "edge_width": 1.7730311639239185,
+            "source_label": "city_Cincinnati",
+            "target_label": "state_OH",
+            "source": 90,
+            "target": 34
+        },
+        {
+            "weight": 6.697864623335939,
+            "edge_weight": 6.697864623335939,
+            "edge_width": 1.7730311639239185,
+            "source_label": "city_Cleveland",
+            "target_label": "state_OH",
+            "source": 91,
+            "target": 34
+        },
+        {
+            "weight": 3.569684761049756,
+            "edge_weight": 3.569684761049756,
+            "edge_width": 1.4119936309344785,
+            "source_label": "city_Dayton",
+            "target_label": "state_OH",
+            "source": 93,
+            "target": 34
+        },
+        {
+            "weight": 3.569684761049756,
+            "edge_weight": 3.569684761049756,
+            "edge_width": 1.4119936309344785,
+            "source_label": "city_Toledo",
+            "target_label": "state_OH",
+            "source": 182,
+            "target": 34
+        },
+        {
+            "weight": 18.004119785550717,
+            "edge_weight": 18.004119785550717,
+            "edge_width": 3.0779377392548795,
+            "source_label": "state_MI",
+            "target_label": "city_Detroit",
+            "source": 20,
+            "target": 214
+        },
+        {
+            "weight": 1.3607627009932548,
+            "edge_weight": 1.3607627009932548,
+            "edge_width": 1.1570518417031181,
+            "source_label": "state_SC",
+            "target_label": "city_Greenville",
+            "source": 38,
+            "target": 220
+        },
+        {
+            "weight": 2.9718616734715977,
+            "edge_weight": 2.9718616734715977,
+            "edge_width": 1.3429961364791543,
+            "source_label": "city_Aiken",
+            "target_label": "state_SC",
+            "source": 68,
+            "target": 38
+        },
+        {
+            "weight": 4.776737305200819,
+            "edge_weight": 4.776737305200819,
+            "edge_width": 1.5513050810153683,
+            "source_label": "city_Myrtle Beach",
+            "target_label": "state_SC",
+            "source": 148,
+            "target": 38
+        },
+        {
+            "weight": 2.9718616734715977,
+            "edge_weight": 2.9718616734715977,
+            "edge_width": 1.3429961364791543,
+            "source_label": "city_North Charleston",
+            "target_label": "state_SC",
+            "source": 155,
+            "target": 38
+        },
+        {
+            "weight": 29.852521230212577,
+            "edge_weight": 29.852521230212577,
+            "edge_width": 4.445415894530429,
+            "source_label": "state_IN",
+            "target_label": "city_Indianapolis",
+            "source": 14,
+            "target": 223
+        },
+        {
+            "weight": 6.364463033511394,
+            "edge_weight": 6.364463033511394,
+            "edge_width": 1.7345517628714995,
+            "source_label": "city_Evansville",
+            "target_label": "state_IN",
+            "source": 100,
+            "target": 14
+        },
+        {
+            "weight": 2.8251190464717846,
+            "edge_weight": 2.8251190464717846,
+            "edge_width": 1.3260598993160895,
+            "source_label": "city_Fort Wayne",
+            "target_label": "state_IN",
+            "source": 108,
+            "target": 14
+        },
+        {
+            "weight": 6.364463033511394,
+            "edge_weight": 6.364463033511394,
+            "edge_width": 1.7345517628714995,
+            "source_label": "city_Gary",
+            "target_label": "state_IN",
+            "source": 112,
+            "target": 14
+        },
+        {
+            "weight": 4.591937230698028,
+            "edge_weight": 4.591937230698028,
+            "edge_width": 1.5299764599219539,
+            "source_label": "city_Muncie",
+            "target_label": "state_IN",
+            "source": 147,
+            "target": 14
+        },
+        {
+            "weight": 2.8251190464717846,
+            "edge_weight": 2.8251190464717846,
+            "edge_width": 1.3260598993160895,
+            "source_label": "city_Terre Haute",
+            "target_label": "state_IN",
+            "source": 181,
+            "target": 14
+        },
+        {
+            "weight": 2.6161507400631603,
+            "edge_weight": 2.6161507400631603,
+            "edge_width": 1.3019419121350029,
+            "source_label": "state_MS",
+            "target_label": "city_Jackson",
+            "source": 24,
+            "target": 225
+        },
+        {
+            "weight": 5.482937500552441,
+            "edge_weight": 5.482937500552441,
+            "edge_width": 1.6328108727379944,
+            "source_label": "city_Gulfport",
+            "target_label": "state_MS",
+            "source": 116,
+            "target": 24
+        },
+        {
+            "weight": 1.5902632986399137,
+            "edge_weight": 1.5902632986399137,
+            "edge_width": 1.1835395544439693,
+            "source_label": "city_Hattiesburg",
+            "target_label": "state_MS",
+            "source": 118,
+            "target": 24
+        },
+        {
+            "weight": 27.121931740571295,
+            "edge_weight": 27.121931740571295,
+            "edge_width": 4.1302660833471005,
+            "source_label": "state_FL",
+            "target_label": "city_Jacksonville",
+            "source": 7,
+            "target": 226
+        },
+        {
+            "weight": 30.21729422882187,
+            "edge_weight": 30.21729422882187,
+            "edge_width": 4.487516013231025,
+            "source_label": "state_FL",
+            "target_label": "city_Miami",
+            "source": 7,
+            "target": 237
+        },
+        {
+            "weight": 20.80509926539378,
+            "edge_weight": 20.80509926539378,
+            "edge_width": 3.4012115808739227,
+            "source_label": "state_FL",
+            "target_label": "city_Orlando",
+            "source": 7,
+            "target": 244
+        },
+        {
+            "weight": 10.022591019046502,
+            "edge_weight": 10.022591019046502,
+            "edge_width": 2.1567530305096057,
+            "source_label": "state_FL",
+            "target_label": "city_Tampa",
+            "source": 7,
+            "target": 269
+        },
+        {
+            "weight": 2.889548562818003,
+            "edge_weight": 2.889548562818003,
+            "edge_width": 1.3334960042260997,
+            "source_label": "city_Deltona",
+            "target_label": "state_FL",
+            "source": 94,
+            "target": 7
+        },
+        {
+            "weight": 1.7055656005391864,
+            "edge_weight": 1.7055656005391864,
+            "edge_width": 1.1968471200119202,
+            "source_label": "city_Fort Lauderdale",
+            "target_label": "state_FL",
+            "source": 106,
+            "target": 7
+        },
+        {
+            "weight": 2.889548562818003,
+            "edge_weight": 2.889548562818003,
+            "edge_width": 1.3334960042260997,
+            "source_label": "city_Fort Pierce",
+            "target_label": "state_FL",
+            "source": 107,
+            "target": 7
+        },
+        {
+            "weight": 4.334004169818524,
+            "edge_weight": 4.334004169818524,
+            "edge_width": 1.500207226669396,
+            "source_label": "city_Lakeland",
+            "target_label": "state_FL",
+            "source": 130,
+            "target": 7
+        },
+        {
+            "weight": 1.7055656005391864,
+            "edge_weight": 1.7055656005391864,
+            "edge_width": 1.1968471200119202,
+            "source_label": "city_St. Petersburg",
+            "target_label": "state_FL",
+            "source": 175,
+            "target": 7
+        },
+        {
+            "weight": 2.889548562818003,
+            "edge_weight": 2.889548562818003,
+            "edge_width": 1.3334960042260997,
+            "source_label": "city_Tallahassee",
+            "target_label": "state_FL",
+            "source": 179,
+            "target": 7
+        },
+        {
+            "weight": 2.119208146220496,
+            "edge_weight": 2.119208146220496,
+            "edge_width": 1.244587496463007,
+            "source_label": "state_KS",
+            "target_label": "city_Kansas City",
+            "source": 15,
+            "target": 227
+        },
+        {
+            "weight": 36.933961397971984,
+            "edge_weight": 36.933961397971984,
+            "edge_width": 5.26271726489079,
+            "source_label": "state_MO",
+            "target_label": "city_Kansas City",
+            "source": 23,
+            "target": 227
+        },
+        {
+            "weight": 18.878521367228636,
+            "edge_weight": 18.878521367228636,
+            "edge_width": 3.178856421616175,
+            "source_label": "state_KS",
+            "target_label": "city_Wichita",
+            "source": 15,
+            "target": 274
+        },
+        {
+            "weight": 1.9777691694164312,
+            "edge_weight": 1.9777691694164312,
+            "edge_width": 1.2282633778055299,
+            "source_label": "city_Overland Park",
+            "target_label": "state_KS",
+            "source": 160,
+            "target": 15
+        },
+        {
+            "weight": 6.141195860380767,
+            "edge_weight": 6.141195860380767,
+            "edge_width": 1.7087834781394005,
+            "source_label": "city_Topeka",
+            "target_label": "state_KS",
+            "source": 183,
+            "target": 15
+        },
+        {
+            "weight": 5.583177781271004,
+            "edge_weight": 5.583177781271004,
+            "edge_width": 1.6443800616114084,
+            "source_label": "state_MO",
+            "target_label": "city_Springfield",
+            "source": 23,
+            "target": 264
+        },
+        {
+            "weight": 88.64502052616461,
+            "edge_weight": 88.64502052616461,
+            "edge_width": 11.230926906861088,
+            "source_label": "state_NV",
+            "target_label": "city_Las Vegas",
+            "source": 31,
+            "target": 230
+        },
+        {
+            "weight": 12.29071017752191,
+            "edge_weight": 12.29071017752191,
+            "edge_width": 2.4185270273870048,
+            "source_label": "state_NV",
+            "target_label": "city_Reno",
+            "source": 31,
+            "target": 250
+        },
+        {
+            "weight": 8.836199099594705,
+            "edge_weight": 8.836199099594705,
+            "edge_width": 2.0198261175396963,
+            "source_label": "city_Henderson",
+            "target_label": "state_NV",
+            "source": 119,
+            "target": 31
+        },
+        {
+            "weight": 6.259822810021606,
+            "edge_weight": 6.259822810021606,
+            "edge_width": 1.722474756496103,
+            "source_label": "city_North Las Vegas",
+            "target_label": "state_NV",
+            "source": 156,
+            "target": 31
+        },
+        {
+            "weight": 7.123137403047399,
+            "edge_weight": 7.123137403047399,
+            "edge_width": 1.8221138388319957,
+            "source_label": "city_Sparks",
+            "target_label": "state_NV",
+            "source": 173,
+            "target": 31
+        },
+        {
+            "weight": 22.896918819767553,
+            "edge_weight": 22.896918819767553,
+            "edge_width": 3.6426380347921548,
+            "source_label": "state_WI",
+            "target_label": "city_Milwaukee",
+            "source": 46,
+            "target": 238
+        },
+        {
+            "weight": 2.915281512553644,
+            "edge_weight": 2.915281512553644,
+            "edge_width": 1.3364659615489205,
+            "source_label": "city_Eau Claire",
+            "target_label": "state_WI",
+            "source": 97,
+            "target": 46
+        },
+        {
+            "weight": 2.915281512553644,
+            "edge_weight": 2.915281512553644,
+            "edge_width": 1.3364659615489205,
+            "source_label": "city_Waukesha",
+            "target_label": "state_WI",
+            "source": 188,
+            "target": 46
+        },
+        {
+            "weight": 44.18445936520485,
+            "edge_weight": 44.18445936520485,
+            "edge_width": 6.09953036844475,
+            "source_label": "state_OK",
+            "target_label": "city_Oklahoma City",
+            "source": 35,
+            "target": 242
+        },
+        {
+            "weight": 36.195907057458115,
+            "edge_weight": 36.195907057458115,
+            "edge_width": 5.177535040708663,
+            "source_label": "state_OK",
+            "target_label": "city_Tulsa",
+            "source": 35,
+            "target": 271
+        },
+        {
+            "weight": 1.893974955268371,
+            "edge_weight": 1.893974955268371,
+            "edge_width": 1.2185923046298672,
+            "source_label": "city_Chickasha",
+            "target_label": "state_OK",
+            "source": 89,
+            "target": 35
+        },
+        {
+            "weight": 3.422759013563071,
+            "edge_weight": 3.422759013563071,
+            "edge_width": 1.3950362589992042,
+            "source_label": "city_Tahlequah",
+            "target_label": "state_OK",
+            "source": 178,
+            "target": 35
+        },
+        {
+            "weight": 22.80114331953686,
+            "edge_weight": 22.80114331953686,
+            "edge_width": 3.631584146637895,
+            "source_label": "state_NE",
+            "target_label": "city_Omaha",
+            "source": 28,
+            "target": 243
+        },
+        {
+            "weight": 4.615942114591343,
+            "edge_weight": 4.615942114591343,
+            "edge_width": 1.5327469732690369,
+            "source_label": "city_Lincoln",
+            "target_label": "state_NE",
+            "source": 134,
+            "target": 28
+        },
+        {
+            "weight": 2.6257136256884412,
+            "edge_weight": 2.6257136256884412,
+            "edge_width": 1.303045608465267,
+            "source_label": "city_Harrisburg",
+            "target_label": "state_PA",
+            "source": 117,
+            "target": 37
+        },
+        {
+            "weight": 4.34135056548179,
+            "edge_weight": 4.34135056548179,
+            "edge_width": 1.5010551077642802,
+            "source_label": "city_Pittsburgh",
+            "target_label": "state_PA",
+            "source": 163,
+            "target": 37
+        },
+        {
+            "weight": 5.744911870982045,
+            "edge_weight": 5.744911870982045,
+            "edge_width": 1.6630465319936105,
+            "source_label": "state_VA",
+            "target_label": "city_Richmond",
+            "source": 44,
+            "target": 251
+        },
+        {
+            "weight": 2.8787236288178506,
+            "edge_weight": 2.8787236288178506,
+            "edge_width": 1.3322466491256124,
+            "source_label": "city_Newport News",
+            "target_label": "state_VA",
+            "source": 152,
+            "target": 44
+        },
+        {
+            "weight": 8.237565060113997,
+            "edge_weight": 8.237565060113997,
+            "edge_width": 1.9507350274194302,
+            "source_label": "city_Norfolk",
+            "target_label": "state_VA",
+            "source": 153,
+            "target": 44
+        },
+        {
+            "weight": 2.8787236288178506,
+            "edge_weight": 2.8787236288178506,
+            "edge_width": 1.3322466491256124,
+            "source_label": "city_Roanoke",
+            "target_label": "state_VA",
+            "source": 168,
+            "target": 44
+        },
+        {
+            "weight": 8.237565060113997,
+            "edge_weight": 8.237565060113997,
+            "edge_width": 1.9507350274194302,
+            "source_label": "city_Virginia Beach",
+            "target_label": "state_VA",
+            "source": 185,
+            "target": 44
+        },
+        {
+            "weight": 25.292468225032128,
+            "edge_weight": 25.292468225032128,
+            "edge_width": 3.9191193387792453,
+            "source_label": "state_UT",
+            "target_label": "city_Salt Lake City",
+            "source": 42,
+            "target": 253
+        },
+        {
+            "weight": 9.359315793604825,
+            "edge_weight": 9.359315793604825,
+            "edge_width": 2.080201405721808,
+            "source_label": "city_Ogden",
+            "target_label": "state_UT",
+            "source": 159,
+            "target": 42
+        },
+        {
+            "weight": 7.400892977491042,
+            "edge_weight": 7.400892977491042,
+            "edge_width": 1.8541708789594482,
+            "source_label": "city_West Jordan",
+            "target_label": "state_UT",
+            "source": 189,
+            "target": 42
+        },
+        {
+            "weight": 16.155952047111235,
+            "edge_weight": 16.155952047111235,
+            "edge_width": 2.8646322548479803,
+            "source_label": "state_WA",
+            "target_label": "city_Seattle",
+            "source": 45,
+            "target": 261
+        },
+        {
+            "weight": 17.742590718888273,
+            "edge_weight": 17.742590718888273,
+            "edge_width": 3.04775347454197,
+            "source_label": "state_WA",
+            "target_label": "city_Spokane",
+            "source": 45,
+            "target": 263
+        },
+        {
+            "weight": 12.991370042959655,
+            "edge_weight": 12.991370042959655,
+            "edge_width": 2.4993933843162006,
+            "source_label": "state_WA",
+            "target_label": "city_Tacoma",
+            "source": 45,
+            "target": 267
+        },
+        {
+            "weight": 3.569684761049756,
+            "edge_weight": 3.569684761049756,
+            "edge_width": 1.4119936309344785,
+            "source_label": "city_Federal Way",
+            "target_label": "state_WA",
+            "source": 103,
+            "target": 45
+        },
+        {
+            "weight": 2.0110158279179635,
+            "edge_weight": 2.0110158279179635,
+            "edge_width": 1.2321005265929923,
+            "source_label": "city_Kirkland",
+            "target_label": "state_WA",
+            "source": 128,
+            "target": 45
+        },
+        {
+            "weight": 9.838786381708228,
+            "edge_weight": 9.838786381708228,
+            "edge_width": 2.1355392973682736,
+            "source_label": "city_Vancouver",
+            "target_label": "state_WA",
+            "source": 184,
+            "target": 45
+        },
+        {
+            "weight": 2.0110158279179635,
+            "edge_weight": 2.0110158279179635,
+            "edge_width": 1.2321005265929923,
+            "source_label": "city_Yakima",
+            "target_label": "state_WA",
+            "source": 192,
+            "target": 45
+        },
+        {
+            "weight": 1.5659729109161737,
+            "edge_weight": 1.5659729109161737,
+            "edge_width": 1.1807360897951282,
+            "source_label": "month_December",
+            "target_label": "race_nan",
+            "source": 62,
+            "target": 121
+        },
+        {
+            "weight": 17.982944527677244,
+            "edge_weight": 17.982944527677244,
+            "edge_width": 3.075493805977505,
+            "source_label": "age_low_42",
+            "target_label": "race_nan",
+            "source": 63,
+            "target": 121
+        },
+        {
+            "weight": 8.836199099594705,
+            "edge_weight": 8.836199099594705,
+            "edge_width": 2.0198261175396963,
+            "source_label": "city_Huntsville",
+            "target_label": "state_AL",
+            "source": 67,
+            "target": 276
+        },
+        {
+            "weight": 9.783322809526652,
+            "edge_weight": 9.783322809526652,
+            "edge_width": 2.1291379930466663,
+            "source_label": "city_Birmingham",
+            "target_label": "state_AL",
+            "source": 73,
+            "target": 276
+        },
+        {
+            "weight": 2.7560403589345377,
+            "edge_weight": 2.7560403589345377,
+            "edge_width": 1.318087212313249,
+            "source_label": "city_Homewood",
+            "target_label": "state_AL",
+            "source": 124,
+            "target": 276
+        },
+        {
+            "weight": 1.5942447773644617,
+            "edge_weight": 1.5942447773644617,
+            "edge_width": 1.1839990750980374,
+            "source_label": "city_Montgomery",
+            "target_label": "state_AL",
+            "source": 144,
+            "target": 276
+        },
+        {
+            "weight": 2.7560403589345377,
+            "edge_weight": 2.7560403589345377,
+            "edge_width": 1.318087212313249,
+            "source_label": "city_Phenix City",
+            "target_label": "state_AL",
+            "source": 162,
+            "target": 276
+        },
+        {
+            "weight": 1.5139131701028183,
+            "edge_weight": 1.5139131701028183,
+            "edge_width": 1.1747276372064759,
+            "source_label": "city_Atlantic City",
+            "target_label": "state_NJ",
+            "source": 72,
+            "target": 29
+        },
+        {
+            "weight": 1.5139131701028183,
+            "edge_weight": 1.5139131701028183,
+            "edge_width": 1.1747276372064759,
+            "source_label": "city_Camden",
+            "target_label": "state_NJ",
+            "source": 82,
+            "target": 29
+        },
+        {
+            "weight": 7.675173600710438,
+            "edge_weight": 7.675173600710438,
+            "edge_width": 1.88582685908636,
+            "source_label": "city_Newark",
+            "target_label": "state_NJ",
+            "source": 151,
+            "target": 29
+        },
+        {
+            "weight": 5.353360424940163,
+            "edge_weight": 5.353360424940163,
+            "edge_width": 1.6178557903032993,
+            "source_label": "city_Paterson",
+            "target_label": "state_NJ",
+            "source": 161,
+            "target": 29
+        },
+        {
+            "weight": 13.031619902636692,
+            "edge_weight": 13.031619902636692,
+            "edge_width": 2.5040388045543924,
+            "source_label": "city_Boise",
+            "target_label": "state_ID",
+            "source": 74,
+            "target": 11
+        },
+        {
+            "weight": 4.324758177027657,
+            "edge_weight": 4.324758177027657,
+            "edge_width": 1.499140104389281,
+            "source_label": "city_Idaho Falls",
+            "target_label": "state_ID",
+            "source": 125,
+            "target": 11
+        },
+        {
+            "weight": 1.5795732709595707,
+            "edge_weight": 1.5795732709595707,
+            "edge_width": 1.182305769498343,
+            "source_label": "city_Meridian",
+            "target_label": "state_ID",
+            "source": 139,
+            "target": 11
+        },
+        {
+            "weight": 13.82115231564321,
+            "edge_weight": 13.82115231564321,
+            "edge_width": 2.595162348326184,
+            "source_label": "city_Boston",
+            "target_label": "state_MA",
+            "source": 77,
+            "target": 18
+        },
+        {
+            "weight": 4.696656015715539,
+            "edge_weight": 4.696656015715539,
+            "edge_width": 1.542062533442273,
+            "source_label": "city_Lynn",
+            "target_label": "state_MA",
+            "source": 137,
+            "target": 18
+        },
+        {
+            "weight": 9.16414435899685,
+            "edge_weight": 9.16414435899685,
+            "edge_width": 2.0576757785638558,
+            "source_label": "city_Casper",
+            "target_label": "state_WY",
+            "source": 83,
+            "target": 48
+        },
+        {
+            "weight": 4.652659148866947,
+            "edge_weight": 4.652659148866947,
+            "edge_width": 1.5369846539834264,
+            "source_label": "city_Charleston",
+            "target_label": "state_WV",
+            "source": 86,
+            "target": 47
+        },
+        {
+            "weight": 3.9165566526890525,
+            "edge_weight": 3.9165566526890525,
+            "edge_width": 1.4520277010756075,
+            "source_label": "city_Morgantown",
+            "target_label": "state_WV",
+            "source": 145,
+            "target": 47
+        },
+        {
+            "weight": 3.5258004710034783,
+            "edge_weight": 3.5258004710034783,
+            "edge_width": 1.4069287444788379,
+            "source_label": "city_Des Moines",
+            "target_label": "state_IA",
+            "source": 95,
+            "target": 10
+        },
+        {
+            "weight": 12.424585936668441,
+            "edge_weight": 12.424585936668441,
+            "edge_width": 2.4339782405324115,
+            "source_label": "city_Little Rock",
+            "target_label": "state_AR",
+            "source": 135,
+            "target": 277
+        },
+        {
+            "weight": 3.1322389403626514,
+            "edge_weight": 3.1322389403626514,
+            "edge_width": 1.3615060097393248,
+            "source_label": "city_West Memphis",
+            "target_label": "state_AR",
+            "source": 190,
+            "target": 277
+        },
+        {
+            "weight": 9.65389474359132,
+            "edge_weight": 9.65389474359132,
+            "edge_width": 2.114200108499728,
+            "source_label": "city_Minneapolis",
+            "target_label": "state_MN",
+            "source": 141,
+            "target": 21
+        },
+        {
+            "weight": 13.683096112487872,
+            "edge_weight": 13.683096112487872,
+            "edge_width": 2.5792286510340263,
+            "source_label": "city_St. Paul",
+            "target_label": "state_MN",
+            "source": 174,
+            "target": 21
+        },
+        {
+            "weight": 11.345743716454377,
+            "edge_weight": 11.345743716454377,
+            "edge_width": 2.309464129829623,
+            "source_label": "city_Rapid City",
+            "target_label": "state_SD",
+            "source": 166,
+            "target": 39
+        },
+        {
+            "weight": 7.258638309162562,
+            "edge_weight": 7.258638309162562,
+            "edge_width": 1.8377526176156103,
+            "source_label": "city_Wilmington",
+            "target_label": "state_DE",
+            "source": 191,
+            "target": 6
+        }
+    ],
+    "nodes": [
+        {
+            "node_name": "name_nan",
+            "node_color": "#b15928",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "manner_of_death_shot",
+            "node_color": "#6a3d9a",
+            "node_size": "14",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "armed_undetermined",
+            "node_color": "#1f78b4",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_CA",
+            "node_color": "#33a02c",
+            "node_size": "7",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_CO",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_DC",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_DE",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_FL",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_GA",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_HI",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_IA",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_ID",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "armed_unknown weapon",
+            "node_color": "#1f78b4",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_IL",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_IN",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_KS",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_KY",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_LA",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_MA",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_MD",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_MI",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_MN",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "armed_vehicle",
+            "node_color": "#1f78b4",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_MO",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_MS",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_MT",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_NC",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_ND",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_NE",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_NJ",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_NM",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_NV",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "gender_F",
+            "node_color": "#cab2d6",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_NY",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_OH",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_OK",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_OR",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_PA",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_SC",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_SD",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_TN",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_TX",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_UT",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "gender_M",
+            "node_color": "#cab2d6",
+            "node_size": "15",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_VA",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_WA",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_WI",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_WV",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_WY",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "signs_of_mental_illness_0",
+            "node_color": "#b2df8a",
+            "node_size": "13",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "signs_of_mental_illness_1",
+            "node_color": "#b2df8a",
+            "node_size": "8",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "threat_level_attack",
+            "node_color": "#fb9a99",
+            "node_size": "12",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "threat_level_other",
+            "node_color": "#fb9a99",
+            "node_size": "8",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "threat_level_undetermined",
+            "node_color": "#fb9a99",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "race_A",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "flee_Car",
+            "node_color": "#ff7f00",
+            "node_size": "7",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "flee_Foot",
+            "node_color": "#ff7f00",
+            "node_size": "7",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "flee_Not fleeing",
+            "node_color": "#ff7f00",
+            "node_size": "11",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "flee_Other",
+            "node_color": "#ff7f00",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "flee_nan",
+            "node_color": "#ff7f00",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "body_camera_0",
+            "node_color": "#e31a1c",
+            "node_size": "14",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "body_camera_1",
+            "node_color": "#e31a1c",
+            "node_size": "7",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "month_December",
+            "node_color": "#ffff99",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "age_low_42",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Adams County",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "race_B",
+            "node_color": "#a6cee3",
+            "node_size": "8",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Hemet",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Huntsville",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Aiken",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Akron",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Arvada",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Athens",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Atlantic City",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Birmingham",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Boise",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Bossier City",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "race_H",
+            "node_color": "#a6cee3",
+            "node_size": "7",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Boston",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Boulder",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Bronx",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Brooklyn",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Buckeye",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Camden",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Casper",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Centennial",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Chandler",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Charleston",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "race_N",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Chattanooga",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Chickasha",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Cincinnati",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Cleveland",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Corpus Christi",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Dayton",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Deltona",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Des Moines",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Durham",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Eau Claire",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "race_O",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Eugene",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Evansville",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Fairbanks",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Farmington",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Federal Way",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Flagstaff",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Fort Collins",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Fort Lauderdale",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Fort Pierce",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Fort Wayne",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "manner_of_death_shot and Tasered",
+            "node_color": "#6a3d9a",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "race_W",
+            "node_color": "#a6cee3",
+            "node_size": "10",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Garland",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Gary",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Grand Junction",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Great Falls",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Greeley",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Gulfport",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Harrisburg",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Hattiesburg",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Henderson",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Hillsboro",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "race_nan",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Hilo",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Hobbs",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Homewood",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Idaho Falls",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Irving",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Kingman",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Kirkland",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Knoxville",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Lakeland",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Landover",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Albuquerque",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Lenoir",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Lincoln",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Little Rock",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Loveland",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Lynn",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Medford",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Meridian",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Midland",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Minneapolis",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Missoula",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Amarillo",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Montgomery",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Morgantown",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Morristown",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Muncie",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Myrtle Beach",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Nashville",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_New Orleans",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Newark",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Newport News",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Norfolk",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Anaheim",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_North Charleston",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_North Las Vegas",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Northglenn",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Odessa",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Ogden",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Overland Park",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Paterson",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Phenix City",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Pittsburgh",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Raleigh",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Anchorage",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Rapid City",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Redding",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Roanoke",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Salem",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Savannah",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Scottsdale",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Silver Spring",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Sparks",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_St. Paul",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_St. Petersburg",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Arlington",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Syracuse",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Tahlequah",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Tallahassee",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Tempe",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Terre Haute",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Toledo",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Topeka",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Vancouver",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Virginia Beach",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Wasilla",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Atlanta",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Waukesha",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_West Jordan",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_West Memphis",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Wilmington",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Yakima",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "age_low_36",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "age_low_38",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "age_low_37",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "age_low_34",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "age_low_31",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Aurora",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "age_low_33",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "age_low_26",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Austin",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "armed_gun",
+            "node_color": "#1f78b4",
+            "node_size": "11",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Bakersfield",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Baltimore",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Baton Rouge",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Billings",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Charlotte",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Chicago",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Colorado Springs",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Columbus",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Dallas",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Denver",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "armed_gun and car",
+            "node_color": "#1f78b4",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Detroit",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_El Paso",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Fayetteville",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Fort Worth",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Fresno",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Glendale",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Greenville",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Honolulu",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Houston",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Indianapolis",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "armed_knife",
+            "node_color": "#1f78b4",
+            "node_size": "7",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Jackson",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Jacksonville",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Kansas City",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Lakewood",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Las Cruces",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Las Vegas",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Long Beach",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Los Angeles",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Louisville",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Memphis",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "armed_machete",
+            "node_color": "#1f78b4",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Mesa",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Miami",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Milwaukee",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Modesto",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_New York",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Oakland",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Oklahoma City",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Omaha",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Orlando",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Philadelphia",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "armed_nan",
+            "node_color": "#1f78b4",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Phoenix",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Portland",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Pueblo",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Reno",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Richmond",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Sacramento",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Salt Lake City",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_San Antonio",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_San Bernardino",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_San Diego",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "armed_toy weapon",
+            "node_color": "#1f78b4",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_San Francisco",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_San Jose",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Santa Ana",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Seattle",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Shreveport",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Spokane",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Springfield",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_St. Louis",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Stockton",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Tacoma",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "armed_unarmed",
+            "node_color": "#1f78b4",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Tampa",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Tucson",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Tulsa",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Washington",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Westminster",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "city_Wichita",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_AK",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_AL",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_AR",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "state_AZ",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        }
+    ]
+}
+</script>
+<form>
+<h3> Link threshold 0 <input type="range" id="thersholdSlider" name="points" value=0.0 min="0.0" max="165.0" onchange="threshold(this.value)"> 165.0 </h3>
+</form>
+<script  src="d3graphscript.js"></script>
+</body>
+</html>
