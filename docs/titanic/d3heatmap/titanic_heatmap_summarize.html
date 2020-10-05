@@ -1,0 +1,533 @@
+<!--
+    Hi! Very good that you are inspecting this page! If you find some issues, let me now!
+    Library     : pip install d3heatmap
+    Author      : E.Taskesen
+    Mail        : erdogant@gmail.com
+    Github      : https://github.com/erdogant/d3heatmap
+	References  : d3-graph-gallery.com
+ -->
+
+<!DOCTYPE html>
+<html class="d3heatmap">
+<meta charset="utf-8">
+<title>"Hnet d3heatmap"</title>
+<style>
+
+
+.d3heatmap body {
+  background: #fcfcfa;
+  color: #333;
+  font-family: "PT Serif", serif;
+  margin: 1em auto 4em auto;
+  position: relative;
+  width: 960px;
+}
+
+.d3heatmap header,
+.d3heatmap footer,
+.d3heatmap aside,
+.d3heatmap h1,
+.d3heatmap h2,
+.d3heatmap h3,
+.d3heatmap h4 {
+  font-family: "PT Sans", sans-serif;
+}
+
+.d3heatmap h1,
+.d3heatmap h2,
+.d3heatmap h3,
+.d3heatmap h4 {
+  color: #000;
+}
+
+.d3heatmap header,
+.d3heatmap footer {
+  color: #636363;
+}
+
+h1 {
+  font-size: 64px;
+  font-weight: 300;
+  letter-spacing: -2px;
+  margin: .3em 0 .1em 0;
+}
+
+h2 {
+  margin-top: 2em;
+}
+
+h1, h2 {
+  text-rendering: optimizeLegibility;
+}
+
+h2 a[name],
+h2 a[id] {
+  color: #ccc;
+  right: 100%;
+  padding: 0 .3em;
+  position: absolute;
+}
+
+header,
+footer {
+  font-size: small;
+}
+
+.d3heatmap header aside,
+.d3heatmap footer aside {
+  float: left;
+  margin-right: .5em;
+}
+
+.d3heatmap header aside:after,
+.d3heatmap footer aside:after {
+  padding-left: .5em;
+  content: "/";
+}
+
+footer {
+  margin-top: 8em;
+}
+
+h1 ~ aside {
+  font-size: small;
+  right: 0;
+  position: absolute;
+  width: 180px;
+}
+
+.attribution {
+  font-size: small;
+  margin-bottom: 2em;
+}
+
+body > p, li > p {
+  line-height: 1.5em;
+}
+
+body > p {
+  width: 720px;
+}
+
+body > blockquote {
+  width: 640px;
+}
+
+blockquote q {
+  display: block;
+  font-style: oblique;
+}
+
+ul {
+  padding: 0;
+}
+
+li {
+  width: 690px;
+  margin-left: 30px;
+}
+
+a {
+  color: steelblue;
+}
+
+a:not(:hover) {
+  text-decoration: none;
+}
+
+pre, code, textarea {
+  font-family: "Menlo", monospace;
+}
+
+code {
+  line-height: 1em;
+}
+
+textarea {
+  font-size: 100%;
+}
+
+body > pre {
+  border-left: solid 2px #ccc;
+  padding-left: 18px;
+  margin: 2em 0 2em -20px;
+}
+
+.html .value,
+.javascript .string,
+.javascript .regexp {
+  color: #756bb1;
+}
+
+.html .tag,
+.css .tag,
+.javascript .keyword {
+  color: #3182bd;
+}
+
+.comment {
+  color: #636363;
+}
+
+.html .doctype,
+.javascript .number {
+  color: #31a354;
+}
+
+.html .attribute,
+.css .attribute,
+.javascript .class,
+.javascript .special {
+  color: #e6550d;
+}
+
+svg {
+  font: 10px sans-serif;
+}
+
+.axis path, .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+sup, sub {
+  line-height: 0;
+}
+
+q:before {
+  content: "“";
+}
+
+q:after {
+  content: "”";
+}
+
+blockquote q {
+  line-height: 1.5em;
+  display: inline;
+}
+
+blockquote q:before,
+blockquote q:after {
+  content: "";
+}
+
+.background {
+  fill: #eee;
+}
+
+line {
+  stroke: #fff;
+}
+
+text.active {
+  fill: red;
+}
+
+</style>
+<script src="d3.v2.min.js" charset="utf-8"></script>
+
+<h1><i>Hnet d3heatmap</i></h1>
+
+<aside style="margin-top:80px;">
+<p>Order: <select id="order">
+  <option value="name">by Name</option>
+  <option value="count">by Frequency</option>
+  <option value="cluster">by Clustering</option>
+</select>
+
+<p>Use the drop-down menu to reorder the matrix and explore the data.
+</aside>
+
+<script>
+
+var margin = {top: 80, right: 0, bottom: 10, left: 80},
+    width = 700,
+    height = 700;
+
+var x = d3.scale.ordinal().rangeBands([0, width]),
+    z = d3.scale.linear().domain([0, 4]).clamp(true),
+    c = d3.scale.category10().domain(d3.range(10));
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .style("margin-left", -margin.left + "px")
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+//Read the data from url
+//d3.json("https://bost.ocks.org/mike/miserables/miserables.json", function(data) {
+//d3.json("index.html", function(data) {
+
+
+//Store data in variable
+var data = 
+	
+{
+"nodes":
+[
+{"name":"Age","cluster":0},
+{"name":"Cabin","cluster":1},
+{"name":"Embarked","cluster":1},
+{"name":"Fare","cluster":1},
+{"name":"Parch","cluster":0},
+{"name":"Pclass","cluster":1},
+{"name":"Sex","cluster":2},
+{"name":"SibSp","cluster":0},
+{"name":"Survived","cluster":2},
+{"name":"Ticket","cluster":3},
+],
+"links":
+[
+{"source":0,"target":0,"value":0.0},
+{"source":0,"target":1,"value":0.0},
+{"source":0,"target":2,"value":0.0},
+{"source":0,"target":3,"value":0.0},
+{"source":0,"target":4,"value":0.0},
+{"source":0,"target":5,"value":0.0},
+{"source":0,"target":6,"value":0.0},
+{"source":0,"target":7,"value":0.0},
+{"source":0,"target":8,"value":0.0},
+{"source":0,"target":9,"value":0.0},
+{"source":1,"target":0,"value":0.022930096058984356},
+{"source":1,"target":1,"value":0.0},
+{"source":1,"target":2,"value":0.000824762374851686},
+{"source":1,"target":3,"value":2.633397200586687},
+{"source":1,"target":4,"value":0.0},
+{"source":1,"target":5,"value":5.274128416759362},
+{"source":1,"target":6,"value":0.006354596388924289},
+{"source":1,"target":7,"value":0.0},
+{"source":1,"target":8,"value":0.0},
+{"source":1,"target":9,"value":0.0},
+{"source":2,"target":0,"value":0.0},
+{"source":2,"target":1,"value":0.0},
+{"source":2,"target":2,"value":0.0},
+{"source":2,"target":3,"value":0.08254429051548247},
+{"source":2,"target":4,"value":0.0},
+{"source":2,"target":5,"value":1.9744726157143044},
+{"source":2,"target":6,"value":0.0},
+{"source":2,"target":7,"value":0.0},
+{"source":2,"target":8,"value":0.05718792412452873},
+{"source":2,"target":9,"value":3.4088975942660042e-15},
+{"source":3,"target":0,"value":0.0},
+{"source":3,"target":1,"value":0.0},
+{"source":3,"target":2,"value":0.0},
+{"source":3,"target":3,"value":0.0},
+{"source":3,"target":4,"value":0.0},
+{"source":3,"target":5,"value":0.0},
+{"source":3,"target":6,"value":0.0},
+{"source":3,"target":7,"value":0.0},
+{"source":3,"target":8,"value":0.0},
+{"source":3,"target":9,"value":0.0},
+{"source":4,"target":0,"value":0.4155696528999014},
+{"source":4,"target":1,"value":0.0},
+{"source":4,"target":2,"value":0.0},
+{"source":4,"target":3,"value":2.3906924990873786},
+{"source":4,"target":4,"value":0.0},
+{"source":4,"target":5,"value":0.0},
+{"source":4,"target":6,"value":0.718079982608449},
+{"source":4,"target":7,"value":2.5809870341019097},
+{"source":4,"target":8,"value":0.0},
+{"source":4,"target":9,"value":2.318410173479248e-06},
+{"source":5,"target":0,"value":1.2354799408712198},
+{"source":5,"target":1,"value":0.0022610303287140085},
+{"source":5,"target":2,"value":1.9797227940949034},
+{"source":5,"target":3,"value":11.144720763662354},
+{"source":5,"target":4,"value":0.0},
+{"source":5,"target":5,"value":0.0},
+{"source":5,"target":6,"value":0.00542828190888675},
+{"source":5,"target":7,"value":3.810948254675131e-09},
+{"source":5,"target":8,"value":0.7976098665941218},
+{"source":5,"target":9,"value":0.0},
+{"source":6,"target":0,"value":0.0},
+{"source":6,"target":1,"value":0.0},
+{"source":6,"target":2,"value":0.0},
+{"source":6,"target":3,"value":0.7255323350983873},
+{"source":6,"target":4,"value":0.718079982608449},
+{"source":6,"target":5,"value":0.00542828190888675},
+{"source":6,"target":6,"value":0.0},
+{"source":6,"target":7,"value":0.21383538898772692},
+{"source":6,"target":8,"value":5.074825413965981},
+{"source":6,"target":9,"value":0.0},
+{"source":7,"target":0,"value":3.55409592611596e-07},
+{"source":7,"target":1,"value":1.047821242697317e-06},
+{"source":7,"target":2,"value":0.0},
+{"source":7,"target":3,"value":1.3819548291569481},
+{"source":7,"target":4,"value":2.0429054688564383},
+{"source":7,"target":5,"value":3.810948254675131e-09},
+{"source":7,"target":6,"value":0.21383538898772692},
+{"source":7,"target":7,"value":0.0},
+{"source":7,"target":8,"value":0.005456550496051381},
+{"source":7,"target":9,"value":0.013639297005730367},
+{"source":8,"target":0,"value":0.0},
+{"source":8,"target":1,"value":0.0},
+{"source":8,"target":2,"value":0.18370202990209172},
+{"source":8,"target":3,"value":1.817408965811313},
+{"source":8,"target":4,"value":0.014637419269923997},
+{"source":8,"target":5,"value":2.444552612457033},
+{"source":8,"target":6,"value":10.616901134299596},
+{"source":8,"target":7,"value":0.005456550496051381},
+{"source":8,"target":8,"value":0.0},
+{"source":8,"target":9,"value":0.0},
+{"source":9,"target":0,"value":0.0},
+{"source":9,"target":1,"value":0.0},
+{"source":9,"target":2,"value":0.0},
+{"source":9,"target":3,"value":0.0},
+{"source":9,"target":4,"value":0.0},
+{"source":9,"target":5,"value":0.0},
+{"source":9,"target":6,"value":0.0},
+{"source":9,"target":7,"value":0.0},
+{"source":9,"target":8,"value":0.0},
+{"source":9,"target":9,"value":0.0},
+]
+}
+
+//Store data in variable
+//var data = 
+//    {
+//      "nodes":
+//          [
+//              {"name":"Name A","cluster":1},
+//              {"name":"Name B","cluster":2},
+//              {"name":"Name C","cluster":2},
+//              {"name":"Name D","cluster":3},
+//              ],
+//          "links":
+//          [
+//              {"source":0,"target":1,"value":1},
+//              {"source":2,"target":2,"value":1},
+//              {"source":3,"target":1,"value":1},
+//          ]
+//      }
+
+  var matrix = [],
+      nodes = data.nodes,
+      n = nodes.length;
+
+  // Compute index per node.
+  nodes.forEach(function(node, i) {
+    node.index = i;
+    node.count = 0;
+    matrix[i] = d3.range(n).map(function(j) { return {x: j, y: i, z: 0}; });
+  });
+
+  // Convert links to matrix; count character occurrences.
+  data.links.forEach(function(link) {
+    matrix[link.source][link.target].z += link.value;
+    matrix[link.target][link.source].z += link.value;
+    matrix[link.source][link.source].z += link.value;
+    matrix[link.target][link.target].z += link.value;
+    nodes[link.source].count += link.value;
+    nodes[link.target].count += link.value;
+  });
+
+  // Precompute the orders.
+  var orders = {
+    name: d3.range(n).sort(function(a, b) { return d3.ascending(nodes[a].name, nodes[b].name); }),
+    count: d3.range(n).sort(function(a, b) { return nodes[b].count - nodes[a].count; }),
+    cluster: d3.range(n).sort(function(a, b) { return nodes[b].cluster - nodes[a].cluster; })
+  };
+
+  // The default sort order.
+  x.domain(orders.name);
+
+  svg.append("rect")
+      .attr("class", "background")
+      .attr("width", width)
+      .attr("height", height);
+
+  var row = svg.selectAll(".row")
+      .data(matrix)
+    .enter().append("g")
+      .attr("class", "row")
+      .attr("transform", function(d, i) { return "translate(0," + x(i) + ")"; })
+      .each(row);
+
+  row.append("line")
+      .attr("x2", width);
+
+  row.append("text")
+      .attr("x", -6)
+      .attr("y", x.rangeBand() / 2)
+      .attr("dy", ".32em")
+      .attr("text-anchor", "end")
+      .text(function(d, i) { return nodes[i].name; });
+
+  var column = svg.selectAll(".column")
+      .data(matrix)
+    .enter().append("g")
+      .attr("class", "column")
+      .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; });
+
+  column.append("line")
+      .attr("x1", -width);
+
+  column.append("text")
+      .attr("x", 6)
+      .attr("y", x.rangeBand() / 2)
+      .attr("dy", ".32em")
+      .attr("text-anchor", "start")
+      .text(function(d, i) { return nodes[i].name; });
+
+  function row(row) {
+    var cell = d3.select(this).selectAll(".cell")
+        .data(row.filter(function(d) { return d.z; }))
+      .enter().append("rect")
+        .attr("class", "cell")
+        .attr("x", function(d) { return x(d.x); })
+        .attr("width", x.rangeBand())
+        .attr("height", x.rangeBand())
+        .style("fill-opacity", function(d) { return z(d.z); })
+        .style("fill", function(d) { return nodes[d.x].cluster == nodes[d.y].cluster ? c(nodes[d.x].cluster) : null; })
+        .on("mouseover", mouseover)
+        .on("mouseout", mouseout);
+  }
+
+  function mouseover(p) {
+    d3.selectAll(".row text").classed("active", function(d, i) { return i == p.y; });
+    d3.selectAll(".column text").classed("active", function(d, i) { return i == p.x; });
+  }
+
+  function mouseout() {
+    d3.selectAll("text").classed("active", false);
+  }
+
+  d3.select("#order").on("change", function() {
+    clearTimeout(timeout);
+    order(this.value);
+  });
+
+  function order(value) {
+    x.domain(orders[value]);
+
+    var t = svg.transition().duration(2500);
+
+    t.selectAll(".row")
+        .delay(function(d, i) { return x(i) * 4; })
+        .attr("transform", function(d, i) { return "translate(0," + x(i) + ")"; })
+      .selectAll(".cell")
+        .delay(function(d) { return x(d.x) * 4; })
+        .attr("x", function(d) { return x(d.x); });
+
+    t.selectAll(".column")
+        .delay(function(d, i) { return x(i) * 4; })
+        .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; });
+  }
+
+  var timeout = setTimeout(function() {
+    order("cluster");
+    d3.select("#order").property("selectedIndex", 2).node().focus();
+  }, 5000);
+
+//});
+
+</script>
+
+<p>This heatmap is created in d3js using https://github.com/erdogant/d3heatmap.
+
+A network can be represented by an adjacency matrix, where each cell ij represents an edge from vertex i to vertex j.
+
+Given this two-dimensional representation of a graph, a natural visualization is to show the matrix! However, the effectiveness of a matrix diagram is heavily dependent on the order of rows and columns: if related nodes are placed closed to each other, it is easier to identify clusters and bridges.
+While path-following is harder in a matrix view than in a node-link diagram, matrices have other advantages. As networks get large and highly connected, node-link diagrams often devolve into giant hairballs of line crossings. Line crossings are impossible with matrix views. Matrix cells can also be encoded to show additional data; here color depicts clusters computed by a community-detection algorithm.

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+<meta charset="UTF-8">
+<title>d3graph</title>
+<script type="text/javascript" src="d3.v3.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<script type="application/json" id="d3graph"> {
+    "links": [
+        {
+            "weight": 0.22930096058984356,
+            "edge_weight": 0.22930096058984356,
+            "edge_width": 1.039092215440805,
+            "source_label": "Age",
+            "target_label": "Cabin",
+            "source": 0,
+            "target": 1
+        },
+        {
+            "weight": 4.155696528999014,
+            "edge_weight": 4.155696528999014,
+            "edge_width": 1.7084810443023983,
+            "source_label": "Age",
+            "target_label": "Parch",
+            "source": 0,
+            "target": 4
+        },
+        {
+            "weight": 12.354799408712198,
+            "edge_weight": 12.354799408712198,
+            "edge_width": 3.106299419640117,
+            "source_label": "Age",
+            "target_label": "Pclass",
+            "source": 0,
+            "target": 5
+        },
+        {
+            "weight": 3.55409592611596e-06,
+            "edge_weight": 3.55409592611596e-06,
+            "edge_width": 1.000000605917582,
+            "source_label": "Age",
+            "target_label": "SibSp",
+            "source": 0,
+            "target": 7
+        },
+        {
+            "weight": 52.741284167593626,
+            "edge_weight": 52.741284167593626,
+            "edge_width": 9.991561300051595,
+            "source_label": "Pclass",
+            "target_label": "Cabin",
+            "source": 5,
+            "target": 1
+        },
+        {
+            "weight": 1.0478212426973171e-05,
+            "edge_weight": 1.0478212426973171e-05,
+            "edge_width": 1.000001786370788,
+            "source_label": "Cabin",
+            "target_label": "SibSp",
+            "source": 1,
+            "target": 7
+        },
+        {
+            "weight": 0.00824762374851686,
+            "edge_weight": 0.00824762374851686,
+            "edge_width": 1.0014060904220476,
+            "source_label": "Embarked",
+            "target_label": "Cabin",
+            "source": 2,
+            "target": 1
+        },
+        {
+            "weight": 26.33397200586687,
+            "edge_weight": 26.33397200586687,
+            "edge_width": 5.4895289771894475,
+            "source_label": "Fare",
+            "target_label": "Cabin",
+            "source": 3,
+            "target": 1
+        },
+        {
+            "weight": 0.06354596388924288,
+            "edge_weight": 0.06354596388924288,
+            "edge_width": 1.0108335896385334,
+            "source_label": "Sex",
+            "target_label": "Cabin",
+            "source": 6,
+            "target": 1
+        },
+        {
+            "weight": 23.906924990873787,
+            "edge_weight": 23.906924990873787,
+            "edge_width": 5.075755547932933,
+            "source_label": "Fare",
+            "target_label": "Parch",
+            "source": 3,
+            "target": 4
+        },
+        {
+            "weight": 7.18079982608449,
+            "edge_weight": 7.18079982608449,
+            "edge_width": 2.224213684567636,
+            "source_label": "Sex",
+            "target_label": "Parch",
+            "source": 6,
+            "target": 4
+        },
+        {
+            "weight": 25.8098703410191,
+            "edge_weight": 25.8098703410191,
+            "edge_width": 5.4001778678769945,
+            "source_label": "SibSp",
+            "target_label": "Parch",
+            "source": 7,
+            "target": 4
+        },
+        {
+            "weight": 0.14637419269923999,
+            "edge_weight": 0.14637419269923999,
+            "edge_width": 1.0249545028562173,
+            "source_label": "Parch",
+            "target_label": "Survived",
+            "source": 4,
+            "target": 8
+        },
+        {
+            "weight": 2.3184101734792483e-05,
+            "edge_weight": 2.3184101734792483e-05,
+            "edge_width": 1.0000039525255258,
+            "source_label": "Ticket",
+            "target_label": "Parch",
+            "source": 9,
+            "target": 4
+        },
+        {
+            "weight": 19.744726157143045,
+            "edge_weight": 19.744726157143045,
+            "edge_width": 4.366165962712168,
+            "source_label": "Pclass",
+            "target_label": "Embarked",
+            "source": 5,
+            "target": 2
+        },
+        {
+            "weight": 111.44720763662355,
+            "edge_weight": 111.44720763662355,
+            "edge_width": 20.0,
+            "source_label": "Fare",
+            "target_label": "Pclass",
+            "source": 3,
+            "target": 5
+        },
+        {
+            "weight": 0.05428281908886749,
+            "edge_weight": 0.05428281908886749,
+            "edge_width": 1.0092543688133606,
+            "source_label": "Sex",
+            "target_label": "Pclass",
+            "source": 6,
+            "target": 5
+        },
+        {
+            "weight": 3.810948254675131e-08,
+            "edge_weight": 3.810948254675131e-08,
+            "edge_width": 1.0000000064970687,
+            "source_label": "SibSp",
+            "target_label": "Pclass",
+            "source": 7,
+            "target": 5
+        },
+        {
+            "weight": 7.976098665941219,
+            "edge_weight": 7.976098665941219,
+            "edge_width": 2.3597996564167163,
+            "source_label": "Survived",
+            "target_label": "Pclass",
+            "source": 8,
+            "target": 5
+        },
+        {
+            "weight": 13.81954829156948,
+            "edge_weight": 13.81954829156948,
+            "edge_width": 3.356016118375446,
+            "source_label": "Fare",
+            "target_label": "SibSp",
+            "source": 3,
+            "target": 7
+        },
+        {
+            "weight": 2.138353889877269,
+            "edge_weight": 2.138353889877269,
+            "edge_width": 1.3645557817844938,
+            "source_label": "SibSp",
+            "target_label": "Sex",
+            "source": 7,
+            "target": 6
+        },
+        {
+            "weight": 0.0545655049605138,
+            "edge_weight": 0.0545655049605138,
+            "edge_width": 1.0093025623183858,
+            "source_label": "Survived",
+            "target_label": "SibSp",
+            "source": 8,
+            "target": 7
+        },
+        {
+            "weight": 0.13639297005730366,
+            "edge_weight": 0.13639297005730366,
+            "edge_width": 1.0232528610276026,
+            "source_label": "Ticket",
+            "target_label": "SibSp",
+            "source": 9,
+            "target": 7
+        },
+        {
+            "weight": 0.5718792412452873,
+            "edge_weight": 0.5718792412452873,
+            "edge_width": 1.0974964363314366,
+            "source_label": "Survived",
+            "target_label": "Embarked",
+            "source": 8,
+            "target": 2
+        },
+        {
+            "weight": 0.8254429051548248,
+            "edge_weight": 0.8254429051548248,
+            "edge_width": 1.1407250619421336,
+            "source_label": "Fare",
+            "target_label": "Embarked",
+            "source": 3,
+            "target": 2
+        },
+        {
+            "weight": 3.408897594266004e-14,
+            "edge_weight": 3.408897594266004e-14,
+            "edge_width": 1.0000000000000058,
+            "source_label": "Ticket",
+            "target_label": "Embarked",
+            "source": 9,
+            "target": 2
+        },
+        {
+            "weight": 18.174089658113132,
+            "edge_weight": 18.174089658113132,
+            "edge_width": 4.098397087076727,
+            "source_label": "Fare",
+            "target_label": "Survived",
+            "source": 3,
+            "target": 8
+        },
+        {
+            "weight": 50.748254139659814,
+            "edge_weight": 50.748254139659814,
+            "edge_width": 9.651780956211931,
+            "source_label": "Survived",
+            "target_label": "Sex",
+            "source": 8,
+            "target": 6
+        },
+        {
+            "weight": 7.255323350983873,
+            "edge_weight": 7.255323350983873,
+            "edge_width": 2.2369187760913736,
+            "source_label": "Fare",
+            "target_label": "Sex",
+            "source": 3,
+            "target": 6
+        }
+    ],
+    "nodes": [
+        {
+            "node_name": "Age",
+            "node_color": "#a6cee3",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Cabin",
+            "node_color": "#1f78b4",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Embarked",
+            "node_color": "#b2df8a",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Fare",
+            "node_color": "#33a02c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Parch",
+            "node_color": "#fb9a99",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Pclass",
+            "node_color": "#e31a1c",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Sex",
+            "node_color": "#fdbf6f",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "SibSp",
+            "node_color": "#ff7f00",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Survived",
+            "node_color": "#cab2d6",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        },
+        {
+            "node_name": "Ticket",
+            "node_color": "#6a3d9a",
+            "node_size": "6",
+            "node_size_edge": "0.10000000000000009",
+            "node_color_edge": "#000000"
+        }
+    ]
+}
+</script>
+<form>
+<h3> Link threshold 0 <input type="range" id="thersholdSlider" name="points" value=0.0 min="0.0" max="112.0" onchange="threshold(this.value)"> 112.0 </h3>
+</form>
+<script  src="d3graphscript.js"></script>
+</body>
+</html>
