@@ -20,5 +20,5 @@ Email: [erdogant at gmail.com](mailto:erdogant at gmail.com)
 <div class="github-card" data-github="erdogant" data-width="400" data-height="150" data-theme="default"></div>
 <script src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
 
-<div class="github-card" data-user="erdogant" data-repo="bnlearn"></div>
-<script src="https://cdn.jsdelivr.net/gh/lepture/github-cards@latest/jsdelivr/widget.js"></script>
+<div class="github-card" data-github="erdogant/bnlearn" data-width="400" data-height="" data-theme="default"></div>
+<script src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
