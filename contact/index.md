@@ -6,7 +6,7 @@ image:
   feature: sample-image-5.jpg
 ---
 
-**Dr.ir. Erdogan Taskesen**
+**Erdogan Taskesen**
 
 Rijkswaterstaat, Datalab
 
