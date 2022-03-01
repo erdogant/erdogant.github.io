@@ -21,6 +21,9 @@ feature: sample-image-2.jpg
 
 ---
 
+<div class="github-card" data-github="erdogant/bnlearn" data-width="400" data-height="150" data-theme="default"></div>
+<script src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
+
 
 [hgboost](https://erdogant.github.io/hgboost/) is to minimize the function for xgboost, catboost or lightboost over a hyper-parameter space by using cross-validation, and evaluating the results on an independent validation set. hgboost can be applied for classification and regression tasks.
 
