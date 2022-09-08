@@ -23,7 +23,7 @@
 <script>
     var text = "Keira";
 
-    var width = 1000,
+    var width = 900,
     		height = 400,
     		radius = 3,
     		collisionStrength = 0.05;
@@ -128,7 +128,7 @@
     
     // Slosh the nodes around with the mouse
     d3.select("body")
-    	.on("touchmove", mousemove);
+    	.on("mousemove", mousemove);
     
     function mousemove() {
     	var p = d3.mouse(this);
