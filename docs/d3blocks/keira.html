@@ -23,13 +23,21 @@
 <script>
     var text = "Keira";
 
-    // CHANGE TOUCH OR MOUSE MOVE BASED ON OS TYPE
+    // Default mousemove
     var mouse_or_touch="mousemove"
-    if (navigator.platform.indexOf("Mac") === 0 || navigator.platform === "iPhone") {
+    // CHANGE TOUCH OR MOUSE MOVE BASED ON OS TYPE
+   	function getPlatform() {
+   		const allPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE', 'Android', 'iPhone', 'iPad', 'iPod'];
+   		return allPlatforms.find(item => item === navigator.platform);
+   	}
+    // Change into touchmove
+    if (navigator.platform === "Android" || navigator.platform === "iPad" || navigator.platform === "iPhone") {
         mouse_or_touch="touchmove"
     }
+    
+	/// console.log(getPlatform(), mouse_or_touch);
 
-    var width = 900,
+    var width = 1000,
     		height = 400,
     		radius = 3,
     		collisionStrength = 0.05;

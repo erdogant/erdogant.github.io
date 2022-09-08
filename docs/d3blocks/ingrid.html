@@ -23,6 +23,20 @@
 <script>
     var text = "Ingrid";
 
+    // Default mousemove
+    var mouse_or_touch="mousemove"
+    // CHANGE TOUCH OR MOUSE MOVE BASED ON OS TYPE
+   	function getPlatform() {
+   		const allPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE', 'Android', 'iPhone', 'iPad', 'iPod'];
+   		return allPlatforms.find(item => item === navigator.platform);
+   	}
+    // Change into touchmove
+    if (navigator.platform === "Android" || navigator.platform === "iPad" || navigator.platform === "iPhone") {
+        mouse_or_touch="touchmove"
+    }
+    
+	/// console.log(getPlatform(), mouse_or_touch);
+
     var width = 900,
     		height = 400,
     		radius = 3,
@@ -126,9 +140,10 @@
         })
     }
     
+   
     // Slosh the nodes around with the mouse
     d3.select("body")
-    	.on("touchmove", mousemove);
+    	.on(mouse_or_touch, mousemove);
     
     function mousemove() {
     	var p = d3.mouse(this);
