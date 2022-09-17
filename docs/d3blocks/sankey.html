@@ -5,6 +5,27 @@
     <title>Sankey - D3blocks</title>
 </head>
 <body>
+
+    <form>
+        <b>Link-color:</b>
+    	<select id="linkColorOptions" onchange="link_color_changed(this.value)">
+    	  <option value="source" >Source</option>
+    	  <option value="target" >Target</option>
+    	  <option value="source-target" selected="selected">Source-Target</option>
+    	  <option value="#D3D3D3">Static color</option>
+    	</select>
+
+        <b>Align:</b>
+    	<select id="AlignOptions" onchange="align_changed(this.value)">
+    	  <option value="left" >Left</option>
+    	  <option value="right" >Right</option>
+    	  <option value="justify" selected="selected">Justify</option>
+    	  <option value="center" >Center</option>
+    	</select>
+    </form>
+    <br>
+
+
     <script>
 	(function () {
   'use strict';
@@ -2274,26 +2295,58 @@
             value
         }))
 
-        chart = SankeyChart({
-            links
-        }, {
-            nodeGroup: d => d.id.split(/\W/)[0], // take first word for color
-            align: "justify",
-            linkColor: "source-target", // source, target, source-target, or static color
-            linkStrokeOpacity: 0.5,
-            format: (value) => `${value.toFixed(1)} TWh`,
-            width: 650,
-            height: 500,
-            marginTop: 5,
-            marginRight: 1,
-            marginBottom: 5,
-            marginLeft: 1,
-            nodeWidth: 15,
-            nodePadding: 15,
-            nodeStroke: "currentColor",
-        })
+        // Required for the input selection form
+        let linkColor="source-target" // source, target, source-target
+        let align="justify"     // "left", "right", "justify", "center"
 
-        document.body.append(chart)
+        // We need to redraw the chart after changing the selection
+        function drawchart() {
+
+            // Set all sankey parameters
+            chart = SankeyChart({
+                links
+            }, {
+                nodeGroup: d => d.id.split(/\W/)[0], // take first word for color
+                align: align,
+                linkColor: linkColor,
+                linkStrokeOpacity: 0.5,
+                format: (value) => `${value.toFixed(1)} TWh`,
+                width: 650,
+                height: 500,
+                marginTop: 5,
+                marginRight: 1,
+                marginBottom: 5,
+                marginLeft: 1,
+                nodeWidth: 15,
+                nodePadding: 15,
+                nodeStroke: "currentColor",
+            })
+    
+      		// To update the chart based on the selection, we remove the chart and create a new one.
+      		for (let svg of document.body.getElementsByTagName("svg")) {
+                svg.remove()
+      		}
+      		
+      		// Now we can again create the chart with the updated parameters
+            document.body.append(chart)
+      		}
+            
+            // Lets draw it 
+            drawchart();
+      
+        // link_color selection changes. Listen if changes are made (onchange=link_color_changed())
+        function link_color_changed(linkColor_value) {
+            //console.log(linkColor_value)
+            linkColor = linkColor_value
+            drawchart();
+        }
+
+        // align selection changes. Listen if changes are made (onchange=align_changed())
+        function align_changed(align_value) {
+            align = align_value
+            drawchart();
+        }
+
     </script>
 
 </body>
