@@ -1,6 +1,5 @@
 .. raw:: html
 
-	<!-- add start -->
 	<hr>
 	<center>
 		<script async src="https://media.ethicalads.io/media/client/ethicalads.min.js"></script>
@@ -9,4 +8,3 @@
 		<!-- <div data-ea-publisher="erdogantgithubio" data-ea-type="text"></div> -->
 	</center>
 	<hr>
-	<!-- add stop -->
