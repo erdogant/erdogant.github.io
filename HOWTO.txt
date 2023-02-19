@@ -1,1 +1,6 @@
 Add new section in: _data/navigation.yml
+
+* Change left submenu:
+	* open [_config.yml]
+	* Fill in if exist or create new entry point
+	* Add new line in: [_includes\_author-bio.html]
