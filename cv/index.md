@@ -12,11 +12,11 @@ My interest are especially in the statistics behind machine learning, and custom
 
 ## Awards
 
-1. Best idea for PoC grant
-1. 1st prize for best poster, Dutch Bioinformatics & Systems Biology Conference (BioSB, Netherlands)
 1. Fellowship award from the American Society of Hematology(ASH)
 1. KWF academic fellowship award to work at Weill Cornell Medical College, Hematology and Medical Oncology at New York, USA
 1. Fellowship award voor de European Hematology Association (EHA)
+1. 1st prize Best Proof Of Concept.
+1. 1st prize for best poster, Dutch Bioinformatics & Systems Biology Conference (BioSB, Netherlands)
 
 ## Press
 

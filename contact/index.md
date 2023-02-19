@@ -10,10 +10,6 @@ image:
 
 Rijkswaterstaat, Datalab
 
-Derde Werelddreef 1
-
-2622 HA Delft
-
 Email: [erdogant at gmail.com](mailto:erdogant at gmail.com)
 
 

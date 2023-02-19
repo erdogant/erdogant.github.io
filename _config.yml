@@ -12,9 +12,11 @@ owner:
   email: erdogant@gmail.com
   # Do not include the @ symbol in your Twitter username
   twitter: 
-  linkedin: #username
+  linkedin: erdogant
   github: erdogant
   orcid: 0000-0002-3430-9618
+  medium: erdogant
+  stackoverflow: 13730780/erdogant
   researchgate: #username
   mendeley: #username
   google:
@@ -25,7 +27,6 @@ owner:
   facebook: #username
   instagram: #username
   bing-verify:
-  stackoverflow: #123456/username from a "https://stackoverflow.com/users/123456/username" link
   xing: #username
   lastfm: #username
   tumblr: #username
