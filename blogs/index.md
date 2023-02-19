@@ -22,7 +22,7 @@ feature: sample-image-2.jpg
 Follow [me on Medium](https://erdogant.medium.com) to receive my content, and use my [referral link](https://erdogant.medium.com/membership) to support my content.
 
 
-## Selected Blogs
+## The top popular reads:
 
 1. Taskesen E, [**How to Find the Best Theoretical Distribution for Your Data.**](https://towardsdatascience.com/how-to-find-the-best-theoretical-distribution-for-your-data-a26e5673b4bd). Medium, Feb. 2023
 1. Taskesen E, [**D3Blocks: The Python Library to Create Interactive and Standalone D3js Charts.**](https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4). Medium, Sep. 2022
