@@ -19,7 +19,7 @@ feature: sample-image-2.jpg
 </section><!-- /#table-of-contents -->
 
 
-Follow [me on Medium](https://erdogant.medium.com) to receive my content, and use my [referral link](https://erdogant.medium.com/membership) to support me.
+Follow [me on Medium](https://erdogant.medium.com) to receive my content, and use my [referral link](https://erdogant.medium.com/membership) to support my content.
 
 
 ## Selected Blogs
