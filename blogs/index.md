@@ -22,96 +22,76 @@ feature: sample-image-2.jpg
 Follow [me on Medium](https://erdogant.medium.com) to receive my content, and use my [referral link](https://erdogant.medium.com/membership) to support me.
 
 
----
+## Selected Blogs
 
-
-## 2020
-
-1. Taskesen E, [**HNet: Graphical Hypergeometric Networks**](/papers/2020 - Taskesen et al - HNet Hypergeometric Networks.pdf). arXiv.org, 2020, arXiv:2005.04679
-
----
-
-## 2019
-
-1. Karlsson Linnér R,..., Taskesen E,...,Beauchamp JP. **Genome-wide association analyses of risk tolerance and risky behaviors in over 1 million individuals identify hundreds of loci and shared genetic influences**. Nat Genet. 2019 Feb;51(2):245-257. doi: 10.1038/s41588-018-0309-3. Epub 2019 Jan 14. PubMed PMID: 30643258; PubMed Central PMCID: PMC6713272.
+1. Taskesen E, [**How to Find the Best Theoretical Distribution for Your Data.**](https://towardsdatascience.com/how-to-find-the-best-theoretical-distribution-for-your-data-a26e5673b4bd). Medium, Feb. 2023
+1. Taskesen E, [**D3Blocks: The Python Library to Create Interactive and Standalone D3js Charts.**](https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4). Medium, Sep. 2022
+1. Taskesen E, [**A Step-by-Step Guide in detecting causal relationships using Bayesian Structure Learning in Python.**](https://towardsdatascience.com/a-step-by-step-guide-in-detecting-causal-relationships-using-bayesian-structure-learning-in-python-c20c6b31cee5). Medium, Sep. 2021
 
 ---
 
-## 2018
-1. Taskesen E, Huisman SMH, Mahfouz A, Krijthe JH, de Ridder J, van de Stolpe A, van den Akker E, Verhaegh W, Reinders MJT. **Pan-cancer subtyping in a 2D-map shows substructures that are driven by specific combinations of molecular characteristics**. Sci Rep. 2018 Nov 23;8(1):17304. doi:10.1038/s41598-018-35518-w. PubMed PMID: 30470773; PubMed Central PMCID: PMC6251860
+
+## 2023
+
+1. Taskesen E, [**Outlier Detection Using Distribution Fitting in Univariate Datasets.**](https://towardsdatascience.com/outlier-detection-using-distribution-fitting-in-univariate-data-sets-ac8b7a14d40e). Medium, Feb. 2023
+*Learn how to detect outliers using Probability Density Functions for fast and lightweight models and explainable results.*
+
+1. Taskesen E, [**How to Find the Best Theoretical Distribution for Your Data.**](https://towardsdatascience.com/how-to-find-the-best-theoretical-distribution-for-your-data-a26e5673b4bd). Medium, Feb. 2023
+*Knowing the underlying data distribution is an essential step for data modeling and has many applications, such as anomaly detection, synthetic data creation, and data compression.*
 
 ---
 
-## 2017
 
-1. Taskesen E, A. Mishra, R. Ferrari, IFGC, J.H. Veldink, M.A. van Es, D. Geschwind, G. Smit, D. Posthuma, Y. Pijnenburg, **Joint analysis of genetic with epigenetic profiles reveals candidate markers in FTD-MND, and convergence in pathways**. Scientific Reports, 2017, IF: 4.874
-1. K. Watanabe, Taskesen E, A. van Bochoven, D. Posthuma, [**FUMA: Functional mapping and annotation of genetic associations**](/papers/FUMA_41467_2017_Article_1261.pdf). Nature Communications. 2017, IF: 13.092
-1. R. Karlsson Linnér,…, Taskesen E,…, Philipp D Koellinger, **An epigenome-wide association study of educational attainment**. Mol Psychiatry. 2017, IF: 13.204
-1. S. Sniekers,…, Taskesen E,…, Danielle Posthuma, [**Meta-Analysis On 78,308 Individuals Identifies 15 Novel Loci And 36 Novel Genes For Intelligence**](/papers/XXXX.pdf). Nature genetics, 2017, IF: 32.197
-1. A. R Hammerslag,…, Taskesen E,…, Danielle Posthuma, [**Genome-wide association analysis of insomnia identifies novel risk genes and genetic overlap with psychiatric and metabolic traits**](/papers/emss-72665.pdf). Nature genetics, 2017, IF: 32.197
+## 2022
 
----
+1. Taskesen E, [**The Starters Guide to Release your Python Package in PyPi**](https://towardsdatascience.com/the-starters-guide-to-release-your-python-package-in-pypi-efd72cbc0011). Medium, Dec. 2022
+*A step-by-step guide to effectively release your Python package in the Python Package Index (PyPI) to pip install it*
 
-## 2016
+1. Taskesen E, [**Get the Most Out of Your Scatterplot by Making It Interactive Using D3js and Python.**](https://towardsdatascience.com/get-the-most-out-of-your-scatterplot-by-making-it-interactive-using-d3js-19939e3b046). Medium, Nov. 2022
+*Scatterplots are extremely useful for visualizing relationships between two sets of numerical variables. It is even more insightful when it is interactive with zooming and brushing capabilities.*
 
-1. Taskesen E, Huisman SMH, Mahfouz A, Krijthe JH, Ridder J, Stolpe A, Akker E, Verheagh W, Reinders MJT., [**MEREDITH: an integration method to refine cancer (sub)typing in a pan-cancer approach and multiple omics datasets**](/papers/2016 - Taskesen et al. - Pan-cancer subtyping in a 2D-map shows substructures that are driven by specific combinations of molecular char.pdf). Scientific Reports, 2016, IF: 5.578
-1. Taskesen E and Reinders MJT, [**2D representation of transcriptomes by t-SNE exposes relatedness between human tissues**](/papers/2016 - Taskesen et al - 2D Representation of Transcriptomes by t-SNE Exposes Relatedness between Human Tissues.PDF). Plos One, 2016, IF: 3.234
-1. Taskesen E, Famili F, Brugman MH., Naber BEA., Fodde R, Staal FJT, [**High levels of canonical Wnt signaling lead to loss of stemness and increased differentiation in hematopoietic stem cells**](/papers/2016 - Taskesen et al - High levels of Canonical Wnt Signaling leads...pdf). Stem Cell Reports, 2016, IF: 7.023
+1. Taskesen E, [**Hands-on Guide to Create beautiful Sankey Charts in d3js with Python.**](https://towardsdatascience.com/hands-on-guide-to-create-beautiful-sankey-charts-in-d3js-with-python-8ddab43edb43). Medium, Oct. 2022
+*The Sankey chart is a great way to discover the most prominent contributions just by looking at how individual items flow across states.*
 
----
+1. Taskesen E, [**How to Create Storytelling Moving Bubbles Charts in d3js with Python.**](https://towardsdatascience.com/how-to-create-storytelling-moving-bubbles-charts-in-d3js-with-python-b31cec7b8226). Medium, Sep. 2022
+*The MovingBubble chart is one of those mindblowing charts to look at. It is a great way to conceptually better understand how individual items are distributed across states and move across time. Learn how to create them with Python and your own data set.*
 
-## 2015
+1. Taskesen E, [**A Hands-on Guide To Create Explainable Gradient Boosting Classification models using Bayesian Hyperparameter Optimization.**](https://erdogant.medium.com/hands-on-guide-for-hyperparameter-tuning-with-bayesian-optimization-for-classification-models-2002224bfa3d). Medium, Sep. 2022
+*Boosted decision tree algorithms, such as XGBoost, CatBoost, and LightBoost are popular methods for the classification task. Learn how to split the data, optimize hyperparameters, prevent overtraining, select the best-performing model, and create explainable results.*
 
-1. Taskesen E, Staal FJT and Reinders MJT, [**An integrated approach of gene expression and DNA-methylation profiles of WNT signaling genes uncovers novel prognostic markers in Acute Myeloid Leukemia**](/papers/2014 - Taskesen et al - An integrated approach of gene expression and....pdf). BMC Bioinformatics. 2015 Feb 23, IF: 2.672
-1. Taskesen E, Babaei S, Reinders MJT and Ridder J, [**Integration of Gene Expression and DNA-methylation Profiles Improves Molecular Subtype Classification in Acute Myeloid Leukemia**](/papers/2014 - Taskesen et al - Integration of gene expression and DNAmethylation improves....pdf). BMC Bioinformatics. 2015 Feb 23, IF: 2.672
+1. Taskesen E, [**D3Blocks: The Python Library to Create Interactive and Standalone D3js Charts.**](https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4). Medium, Sep. 2022
+*Create interactive, stand-alone, and visually attractive charts that are built on the graphics of d3 javascript (d3js) but configurable with Python.*
 
----
+1. Taskesen E, [**A Guide to Find the Best Boosting Model using Bayesian Hyperparameter Tuning but without Overfitting.**](https://towardsdatascience.com/a-guide-to-find-the-best-boosting-model-using-bayesian-hyperparameter-tuning-but-without-c98b6a1ecac8). Medium, Aug. 2022
+*With boosted decision tree algorithms, such as XGBoost, CatBoost, and LightBoost you may outperform other models but overfitting is a real danger. Learn how to split the data, optimize hyperparameters, and find the best-performing model without overtraining it using the HGBoost library.*
 
-## 2014
+1. Taskesen E, [**Quantitative comparisons between t-SNE, UMAP, PCA, and Other Mappings.**](https://towardsdatascience.com/the-similarity-between-t-sne-umap-pca-and-other-mappings-c6453b80f303). Medium, May. 2022
+*Low dimensional projections are useful to understand the relationships between samples better but how similar is one map to another?*
 
-1. Taskesen E, Havermans M, van Lom K, Sanders MA, van Norden Y, Bindels E, Hoogenboezem R, Reinders MJ, Figueroa ME, Valk PJ, Löwenberg B, Melnick A, Delwel R. [**Two splice factor mutant leukemia subgroups uncovered at the boundaries of MDS and AML using combined gene expression and DNA-methylation profiling**](/papers/2014 - Taskesen et al - Two splice-factor mutant leukemia subgroups uncovered at the.pdf). Blood. 2014 Mar 25., IF: 10.452
+1. Taskesen E, [**What are PCA loadings and how to effectively use Biplots?**](https://towardsdatascience.com/what-are-pca-loadings-and-biplots-9a7897f2e559). Medium, April. 2022
+*A practical guide for getting the most out of Principal Component Analysis.*
 
----
-
-## 2013
-
-1. Taskesen E, …, B. Löwenberg. [**The value of allogeneic and autologous hematopoietic stem cell transplantation in prognostically favorable acute myeloid leukemia with double mutant CEBPA**](/papers/2013 - Taskesen et al - The value of allogeneic and autologous hematopoietic stem cell transplantation in prognostically favorable ac2.pdf). Blood. 2013 Aug 29;122(9):1576-82. doi: 10.1182/blood-2013-05-503847., IF: 10.452
+1. Taskesen E, [**Creating beautiful stand-alone interactive D3 charts with Python.**](https://towardsdatascience.com/creating-beautiful-stand-alone-interactive-d3-charts-with-python-804117cb95a7). Medium, Feb. 2022
+*With application to D3 force-directed network graphs.*
 
 ---
 
-## 2012
+## 2021
 
-1. Taskesen E, Hoogeboezem R, Delwel R, Reinders MJT. [**Hypergeometric Analysis of Tiling-array and Sequence Data: Detection and Interpretation of Peaks**](/papers/2013 - Taskesen et al - HATSEQ.pdf). Advances and Applications in Bioinformatics and Chemistry. 25;6:55-62. doi:10.2147/AABC.S51271, IF: 2.672
-1. Bindels EM, Havermans M, Lugthart S, Erpelinck C, Wocjtowicz E, Krivtsov AV, Rombouts E, Armstrong SA, Taskesen E, Haanstra JR, Beverloo HB, Döhner H, Hudson WA, Kersey JH, Delwel R, Kumar AR. [**EVI1 is critical for the pathogenesis of a subset of MLL-AF9-rearranged AMLs**](/papers/Bindels et al. - 2012 - EVI1 is critical for the pathogenesis of a subset of MLL-AF9-rearranged AMLs.pdf). Blood, IF: 10.452
-1. Zebisch A, Wölfler A, Fried I, Wolf O, Lind K, Bodner C, Haller M, Drasche A, Pirkebner D, Matallanas D, Rath O, Blyth K, Delwel R, Taskesen E, Quehenberger F, Kolch W, Troppmair J, Sill H. [**Frequent loss of RAF kinase inhibitor protein expression in acute myeloid leukemia**](/papers/Zebisch et al - 2012 - Frequent loss of RAF kinase inhibitor protein expression.pdf). Leukemia, IF: 10.431
-1. Horos R, Ijspeert H, Pospisilova D, Sendtner R, Andrieu-Soler C, Taskesen E, Nieradka A, Cmejla R, Sendtner M, Touw IP, von Lindern M. [**Ribosomal deficiencies in Diamond-Blackfan anemia impair translation of transcripts essential for differentiation of murine and human erythroblasts**](/papers/Horos et al. - 2012 - Ribosomal deficiencies in Diamond-Blackfan anemia impair translation of transcripts essential for differentiation.pdf). Blood, IF: 10.452
+1. Taskesen E, [**Detection of Duplicate Images Using Image Hash Functions.**](https://towardsdatascience.com/detection-of-duplicate-images-using-image-hash-functions-4d9c53f04a75). Medium, Jan. 2021
+*Automate the search for (near-)identical photos with the Python library undouble.*
 
----
+1. Taskesen E, [**A step-by-step guide for clustering images.**](https://towardsdatascience.com/a-step-by-step-guide-for-clustering-images-4b45f9906128). Medium, Dec. 2021
+*For the detection and exploration of image clusters. Learn how to carefully pre-process images, utilize well-known feature extraction approaches, and evaluate the goodness of the clustering. A theoretical background followed by a hands-on tutorial.*
 
-## 2011
+1. Taskesen E, [**A step-by-step guide in designing knowledge-driven models using Bayesian theorem.**](https://towardsdatascience.com/a-step-by-step-guide-in-designing-knowledge-driven-models-using-bayesian-theorem-7433f6fd64be). Medium, Sep. 2021
+*In case you don’t have data but there is expert knowledge. A starter's guide to convert knowledge into computer-aided models.*
 
-1. Beekman R, Valkhof M, Erkeland SJ, Taskesen E, Rockova V, Peeters JK, Valk PJ, Löwenberg B, Touw IP. [**Retroviral integration mutagenesis in mice and comparative analysis in human AML identify reduced PTP4A3 expression as a prognostic indicator**](/papers/Beekman et al. - 2011 - Retroviral integration mutagenesis in mice and comparative analysis in human AML identify reduced PTP4A3 express.pdf). PLoS One, IF: 3.234
-1. Meenhuis A, van Veelen PA, de Looper H, van Boxtel N, van den Berge IJ, Sun SM, Taskesen E, Stern P, de Ru AH, van Adrichem AJ, Demmers J, Jongen-Lavrencic M, Löwenberg B, Touw IP, Sharp PA, Erkeland SJ. [**MiR-17/20/93/106 promote hematopoietic cell expansion by targeting sequestosome 1-regulated pathways in mice**](/papers/Meenhuis et al. - 2011 - MiR-172093106 promote hematopoietic cell expansion by targeting sequestosome 1-regulated pathways in mice.pdf). Blood, IF: 10.452
-1. Smith LL, Yeung J, Zeisig BB, Popov N, Huijbers I, Barnes J, Wilson AJ, Taskesen E, Delwel R, Gil J, Van Lohuizen M, So CW. [**Functional crosstalk between Bmi1 and MLL/Hoxa9 axis in establishment of normal hematopoietic and leukemic stem cells**](/papers/Smith et al. - 2011 - Functional crosstalk between Bmi1 and MLLHoxa9 axis in establishment of normal hematopoietic and leukemic stem cel.pdf). Cell Stem Cell., IF: 23.563
+1. Taskesen E, [**A Step-by-Step Guide in detecting causal relationships using Bayesian Structure Learning in Python.**](https://towardsdatascience.com/a-step-by-step-guide-in-detecting-causal-relationships-using-bayesian-structure-learning-in-python-c20c6b31cee5). Medium, Sep. 2021
+*The starter's guide to effectively determine causalities across variables.*
 
----
+1. Taskesen E, [**Explore and understand your data with a network of significant associations.**](https://towardsdatascience.com/explore-and-understand-your-data-with-a-network-of-significant-associations-9a03cf79d254). Medium, Aug. 2020
+*Explore to understand your data can make the difference between an unsuccessful project or finishing successfully!*
 
-## 2010
-
-1. Taskesen E, Bullinger L, Corbacioglu A, Sanders MA, Erpelinck CA, Wouters BJ, van der Poel-van de Luytgaarde SC, Damm F, Krauter J, Ganser A, Schlenk RF, Löwenberg B, Delwel R, Döhner H, Valk PJ, Döhner K. [**Prognostic impact, concurrent genetic mutations, and gene expression features of AML with CEBPA mutations in a cohort of 1182 cytogenetically normal AML patients: further evidence for CEBPA double mutant AML as a distinctive disease entity**](/papers/2011 - Taskesen et al - Prognostic impact, concurrent genetic mutations, and gene expression features of AML with CEBPA mutations in a.pdf). Blood, IF: 10.452
-1. Taskesen E, Beekman R, de Ridder J, Wouters BJ, Peeters JK, Touw IP, Reinders MJ, Delwel R. [**HAT: hypergeometric analysis of tiling-arrays with application to promoter-GeneChip data**](/papers/2010 - Taskesen et al - HAT Hypergeometric Analysis of Tiling-arrays with application to promoter-GeneChip data.pdf). BMC Bioinformatics, IF: 2.672
-
----
-
-## 2007
-
-1. Taskesen E, Wessels LFA, van Vliet M, and Reinders MJT, **Novel approaches for cross-species subtype identification**. MSc. Thesis, pp. 26, Delft University of Technology, March 23 2007.
-
----
-
-## Bookchapters
-
-1. Erdogan Taskesen. (Dissertation, 2014, January 21). **Computational Biology in Acute Myeloid Leukemia with CEBPA Abnormalities**. Erasmus University Rotterdam. http://hdl.handle.net/1765/50368
-1. Taskesen E, Wouters BJ, and Delwel R. [**HAT: a novel statistical approach to discover functional regions in the genome**](/papers/2013 - Taskesen et al - Tiling Arrays.pdf). Springer Series (book Chapter). doi: 10.1007/978-1-62703-607-8.
 
 ---
