@@ -27,10 +27,16 @@ body {
   position: relative;
   width: 1000px;
 }
+div {
+  position: relative;
+  margin-bottom: 30px;
+  z-index: 1;
+}
 form {
   position: absolute;
-  right: 10px;
-  top: 10px;
+  left: 10px;
+  bottom: -20px;
+  z-index: 2;
 }
 .node {
   border: solid 1px #FFFFFF;
@@ -100,5 +106,6 @@ const div = d3.select("body").append("div")
         .style("width", (d) => Math.max(0, d.x1 - d.x0 - 1) + "px")
         .style("height", (d) => Math.max(0, d.y1 - d.y0  - 1) + "px")
   });
+
 
 </script>
