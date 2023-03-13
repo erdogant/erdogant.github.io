@@ -14,6 +14,12 @@ Forked      : Mike Bostock; http://bl.ocks.org/mbostock/4063582
     <title>Treemap - D3blocks</title>
 </head>
 
+<form>
+  <label><input type="radio" name="mode" value="size" checked> Size</label>
+  <label><input type="radio" name="mode" value="count"> Count</label>
+</form>
+
+
 <style>
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -28,17 +34,14 @@ form {
 }
 .node {
   border: solid 1px #FFFFFF;
-  font: 10px sans-serif;
+  font: 8px sans-serif;
   position: absolute;
   line-height: 12px;
   overflow: hidden;
   text-indent: 2px;
 }
 </style>
-<form>
-  <label><input type="radio" name="mode" value="size" checked> Size</label>
-  <label><input type="radio" name="mode" value="count"> Count</label>
-</form>
+
 
 <script>
 	// https://d3js.org Version 4.13.0. Copyright 2018 Mike Bostock.
@@ -46,11 +49,10 @@ form {
 </script>
 
 <script>
-'use strict';
 
 const margin = {top: 40, right: 10, bottom: 10, left: 10},
-      width = 1000 - margin.left - margin.right,
-      height = 600 - margin.top - margin.bottom,
+      width = 800 - margin.left - margin.right,
+      height = 500 - margin.top - margin.bottom,
       color = d3.scaleOrdinal().range(d3.schemeCategory20c);
 
 const treemap = d3.treemap().size([width, height]);
