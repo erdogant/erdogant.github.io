@@ -9671,12 +9671,12 @@ function d3graphscript(config = {
     .data(graph.nodes)
     .enter().append("g")
     .attr("class", "node")
-    .call(drag)
+    .call(d.drag()
 			.on("start", dragstarted_node)
 			.on("drag", dragged_node)
-			.on("end", dragended_node)
+			.on("end", dragended_node))
 		.on("click", clicked_node)
-//		.on("contextmenu", cmdclick)
+		.on("contextmenu", cmdclick)
 		.on('dblclick', connectedNodes); // HIGHLIGHT ON/OFF
 	  //node.exit().remove();
 
