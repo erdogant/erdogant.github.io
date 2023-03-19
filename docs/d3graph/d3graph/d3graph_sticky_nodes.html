@@ -9852,6 +9852,7 @@ function d3graphscript(config = {
   //*************************************************************
 
 
+  //************** STICKY NODES *********************************
 
 //getting rid of d3.event.active fixed the dragging for v7
 //see:https://observablehq.com/@d3/d3v6-migration-guide#events
@@ -9876,7 +9877,6 @@ function dragended_node(event, d) {
 
 }
 
-
 function clicked_node(event, d) {
     var nodeidx = d.index;
     d.fx = null;
@@ -9886,7 +9886,7 @@ function clicked_node(event, d) {
 //     d.classed("dbox-showing", false);
 }
 
-  //*************************************************************
+  //************** STICKY NODES END ***************************
 
   //adjust threshold
   function threshold() {
