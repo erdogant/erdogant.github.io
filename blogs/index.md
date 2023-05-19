@@ -25,13 +25,24 @@ Follow [me on Medium](https://erdogant.medium.com) to receive my content, and us
 ## The top popular reads:
 
 1. Taskesen E, [**How to Find the Best Theoretical Distribution for Your Data.**](https://towardsdatascience.com/how-to-find-the-best-theoretical-distribution-for-your-data-a26e5673b4bd). Medium, Feb. 2023
+
 1. Taskesen E, [**D3Blocks: The Python Library to Create Interactive and Standalone D3js Charts.**](https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4). Medium, Sep. 2022
+
 1. Taskesen E, [**A Step-by-Step Guide in detecting causal relationships using Bayesian Structure Learning in Python.**](https://towardsdatascience.com/a-step-by-step-guide-in-detecting-causal-relationships-using-bayesian-structure-learning-in-python-c20c6b31cee5). Medium, Sep. 2021
 
 ---
 
 
 ## 2023
+
+1. Taskesen E, [**From Clusters To Insights; The Next Step.**](https://towardsdatascience.com/from-clusters-to-insights-the-next-step-1c166814e0c6). Medium, May. 2023
+*Learn how to quantitatively detect which features drive the formation of the clusters.*
+
+1. Taskesen E, [From Data to Clusters: When is Your Clustering Good Enough?**](https://towardsdatascience.com/from-data-to-clusters-when-is-your-clustering-good-enough-5895440a978a). Medium, April. 2023
+*Hidden gems can be found using clustering approaches but you need the right clustering method and evaluation approach to make sensible clusters. Learn how to find them in four steps.*
+
+1. Taskesen E, [**Outlier Detection Using Principal Component Analysis and Hotelling’s T2 and SPE/DmodX Methods.**](https://towardsdatascience.com/outlier-detection-using-principal-component-analysis-and-hotellings-t2-and-spe-dmodx-methods-625b3c90897). Medium, March. 2023
+*Learn how to detect outliers using PCA.*
 
 1. Taskesen E, [**Outlier Detection Using Distribution Fitting in Univariate Datasets.**](https://towardsdatascience.com/outlier-detection-using-distribution-fitting-in-univariate-data-sets-ac8b7a14d40e). Medium, Feb. 2023
 *Learn how to detect outliers using Probability Density Functions for fast and lightweight models and explainable results.*
