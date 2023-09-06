@@ -6,11 +6,16 @@ Github      : https://github.com/d3blocks/d3blocks
 Licensed    : GPL3
 Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
 -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Sankey - D3blocks</title>
+
+    <script async src='https://media.ethicalads.io/media/client/ethicalads.min.js'></script>
+<div data-ea-publisher='erdogantgithubio' data-ea-type='text' data-ea-style='stickybox'></div>
+
 </head>
 <body>
 
@@ -20,7 +25,7 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
     	  <option value="source" >Source</option>
     	  <option value="target" >Target</option>
     	  <option value="source-target" selected="selected">Source-Target</option>
-    	  <option value="#D3D3D3">Static color</option>
+    	  <option value="#d3d3d3">Static color</option>
     	</select>
 
         <b>Align:</b>
@@ -2238,7 +2243,22 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
           .attr("height", d => d.y1 - d.y0)
           .attr("width", d => d.x1 - d.x0);
 
-      if (G) node.attr("fill", ({index: i}) => color(G[i]));
+        // SET THE NODE COLORS
+        let node_color = {};
+        data.nodes.forEach(item => {
+          node_color[item.name] = item.color;
+        });
+        // console.log(node_color)
+    
+      let CUSTOM_NODE_COLORS = true; // Set this to true or false as needed
+
+      if (CUSTOM_NODE_COLORS) {
+          if (G) node.attr("fill", ({index: i}) => node_color[G[i]] );
+      } else {
+          if (G) node.attr("fill", ({index: i}) => color(G[i]));
+      }
+
+      
       if (Tt) node.append("title").text(({index: i}) => Tt[i]);
 
       const link = svg.append("g")
@@ -2256,17 +2276,17 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
           .attr("x2", d => d.target.x0)
           .call(gradient => gradient.append("stop")
               .attr("offset", "0%")
-              .attr("stop-color", ({source: {index: i}}) => color(G[i])))
+              .attr("stop-color", ({source: {index: i}}) => CUSTOM_NODE_COLORS ? node_color[G[i]] : color(G[i]) ))
           .call(gradient => gradient.append("stop")
               .attr("offset", "100%")
-              .attr("stop-color", ({target: {index: i}}) => color(G[i])));
+              .attr("stop-color", ({target: {index: i}}) => CUSTOM_NODE_COLORS ? node_color[G[i]] : color(G[i]) ))
 
       link.append("path")
           .attr("d", linkPath)
           .attr("stroke", linkColor === "source-target" ? ({index: i}) => `url(#${uid}-link-${i})`
-              : linkColor === "source" ? ({source: {index: i}}) => color(G[i])
-                  : linkColor === "target" ? ({target: {index: i}}) => color(G[i])
-                      : linkColor)
+              : linkColor === "source" ? ({source: {index: i}}) => CUSTOM_NODE_COLORS ? node_color[G[i]] : color(G[i])
+              : linkColor === "target" ? ({target: {index: i}}) => CUSTOM_NODE_COLORS ? node_color[G[i]] : color(G[i])
+              : linkColor)
           .attr("stroke-width", ({width}) => Math.max(1, width))
           .call(Lt ? path => path.append("title").text(({index: i}) => Lt[i]) : () => {
           });
@@ -2295,7 +2315,7 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
 
 })();
 
-	const data = {"nodes":[{"name":"Agricultural waste"},{"name":"Agriculture"},{"name":"Bio-conversion"},{"name":"Biofuel imports"},{"name":"Biomass imports"},{"name":"Coal"},{"name":"Coal imports"},{"name":"Coal reserves"},{"name":"District heating"},{"name":"Domestic aviation"},{"name":"Electricity grid"},{"name":"Gas"},{"name":"Gas imports"},{"name":"Gas reserves"},{"name":"Geothermal"},{"name":"H2"},{"name":"H2 conversion"},{"name":"Heating and cooling - commercial"},{"name":"Heating and cooling - homes"},{"name":"Hydro"},{"name":"Industry"},{"name":"International aviation"},{"name":"International shipping"},{"name":"Lighting & appliances - commercial"},{"name":"Lighting & appliances - homes"},{"name":"Liquid"},{"name":"Losses"},{"name":"Marine algae"},{"name":"National navigation"},{"name":"Ngas"},{"name":"Nuclear"},{"name":"Oil"},{"name":"Oil imports"},{"name":"Oil reserves"},{"name":"Other waste"},{"name":"Over generation / exports"},{"name":"Pumped heat"},{"name":"Rail transport"},{"name":"Road transport"},{"name":"Solar"},{"name":"Solar PV"},{"name":"Solar Thermal"},{"name":"Solid"},{"name":"Thermal generation"},{"name":"Tidal"},{"name":"UK land based bioenergy"},{"name":"Wave"},{"name":"Wind"}], "links":[{"source":0,"target":2,"value":124.729},{"source":2,"target":25,"value":0.597},{"source":2,"target":26,"value":26.862},{"source":2,"target":42,"value":280.322},{"source":2,"target":11,"value":81.144},{"source":3,"target":25,"value":35.0},{"source":4,"target":42,"value":35.0},{"source":6,"target":5,"value":11.606},{"source":7,"target":5,"value":63.965},{"source":5,"target":42,"value":75.571},{"source":8,"target":20,"value":10.639},{"source":8,"target":17,"value":22.505},{"source":8,"target":18,"value":46.184},{"source":10,"target":35,"value":104.453},{"source":10,"target":18,"value":113.726},{"source":10,"target":16,"value":27.14},{"source":10,"target":20,"value":342.165},{"source":10,"target":38,"value":37.797},{"source":10,"target":1,"value":4.412},{"source":10,"target":17,"value":40.858},{"source":10,"target":26,"value":56.691},{"source":10,"target":37,"value":7.863},{"source":10,"target":23,"value":90.008},{"source":10,"target":24,"value":93.494},{"source":12,"target":29,"value":40.719},{"source":13,"target":29,"value":82.233},{"source":11,"target":17,"value":0.129},{"source":11,"target":26,"value":1.401},{"source":11,"target":43,"value":151.891},{"source":11,"target":1,"value":2.096},{"source":11,"target":20,"value":48.58},{"source":14,"target":10,"value":7.013},{"source":16,"target":15,"value":20.897},{"source":16,"target":26,"value":6.242},{"source":15,"target":38,"value":20.897},{"source":19,"target":10,"value":6.995},{"source":25,"target":20,"value":121.066},{"source":25,"target":22,"value":128.69},{"source":25,"target":38,"value":135.835},{"source":25,"target":9,"value":14.458},{"source":25,"target":21,"value":206.267},{"source":25,"target":1,"value":3.64},{"source":25,"target":28,"value":33.218},{"source":25,"target":37,"value":4.413},{"source":27,"target":2,"value":4.375},{"source":29,"target":11,"value":122.952},{"source":30,"target":43,"value":839.978},{"source":32,"target":31,"value":504.287},{"source":33,"target":31,"value":107.703},{"source":31,"target":25,"value":611.99},{"source":34,"target":42,"value":56.587},{"source":34,"target":2,"value":77.81},{"source":36,"target":18,"value":193.026},{"source":36,"target":17,"value":70.672},{"source":40,"target":10,"value":59.901},{"source":41,"target":18,"value":19.263},{"source":39,"target":41,"value":19.263},{"source":39,"target":40,"value":59.901},{"source":42,"target":1,"value":0.882},{"source":42,"target":43,"value":400.12},{"source":42,"target":20,"value":46.477},{"source":43,"target":10,"value":525.531},{"source":43,"target":26,"value":787.129},{"source":43,"target":8,"value":79.329},{"source":44,"target":10,"value":9.452},{"source":45,"target":2,"value":182.01},{"source":46,"target":10,"value":19.013},{"source":47,"target":10,"value":289.366}]}
+	const data = {"nodes":[{"name":"Agricultural_waste", "color":"#d3d3d3"},{"name":"Bio-conversion", "color":"#000000"},{"name":"Liquid", "color":"#d3d3d3"},{"name":"Losses", "color":"#d3d3d3"},{"name":"Solid", "color":"#d3d3d3"},{"name":"Gas", "color":"#d3d3d3"},{"name":"Biofuel_imports", "color":"#d3d3d3"},{"name":"Biomass_imports", "color":"#d3d3d3"},{"name":"Coal_imports", "color":"#d3d3d3"},{"name":"Coal", "color":"#d3d3d3"},{"name":"Coal_reserves", "color":"#d3d3d3"},{"name":"District_heating", "color":"#d3d3d3"},{"name":"Industry", "color":"#000000"},{"name":"Heating_and_cooling_-_commercial", "color":"#d3d3d3"},{"name":"Heating_and_cooling_-_homes", "color":"#d3d3d3"},{"name":"Electricity_grid", "color":"#7FFFD4"},{"name":"Over_generation_/_exports", "color":"#d3d3d3"},{"name":"H2_conversion", "color":"#d3d3d3"},{"name":"Road_transport", "color":"#d3d3d3"},{"name":"Agriculture", "color":"#d3d3d3"},{"name":"Rail_transport", "color":"#d3d3d3"},{"name":"Lighting_&_appliances_-_commercial", "color":"#d3d3d3"},{"name":"Lighting_&_appliances_-_homes", "color":"#d3d3d3"},{"name":"Gas_imports", "color":"#d3d3d3"},{"name":"Ngas", "color":"#d3d3d3"},{"name":"Gas_reserves", "color":"#d3d3d3"},{"name":"Thermal_generation", "color":"#d3d3d3"},{"name":"Geothermal", "color":"#d3d3d3"},{"name":"H2", "color":"#d3d3d3"},{"name":"Hydro", "color":"#d3d3d3"},{"name":"International_shipping", "color":"#d3d3d3"},{"name":"Domestic_aviation", "color":"#d3d3d3"},{"name":"International_aviation", "color":"#d3d3d3"},{"name":"National_navigation", "color":"#d3d3d3"},{"name":"Marine_algae", "color":"#d3d3d3"},{"name":"Nuclear", "color":"#FF0000"},{"name":"Oil_imports", "color":"#d3d3d3"},{"name":"Oil", "color":"#d3d3d3"},{"name":"Oil_reserves", "color":"#d3d3d3"},{"name":"Other_waste", "color":"#d3d3d3"},{"name":"Pumped_heat", "color":"#d3d3d3"},{"name":"Solar_PV", "color":"#d3d3d3"},{"name":"Solar_Thermal", "color":"#d3d3d3"},{"name":"Solar", "color":"#d3d3d3"},{"name":"Tidal", "color":"#d3d3d3"},{"name":"UK_land_based_bioenergy", "color":"#d3d3d3"},{"name":"Wave", "color":"#d3d3d3"},{"name":"Wind", "color":"#FF0000"}], "links":[{"source":0,"target":1,"value":124.729},{"source":1,"target":2,"value":0.597},{"source":1,"target":3,"value":26.862},{"source":1,"target":4,"value":280.322},{"source":1,"target":5,"value":81.144},{"source":6,"target":2,"value":35.0},{"source":7,"target":4,"value":35.0},{"source":8,"target":9,"value":11.606},{"source":10,"target":9,"value":63.965},{"source":9,"target":4,"value":75.571},{"source":11,"target":12,"value":10.639},{"source":11,"target":13,"value":22.505},{"source":11,"target":14,"value":46.184},{"source":15,"target":16,"value":104.453},{"source":15,"target":14,"value":113.726},{"source":15,"target":17,"value":27.14},{"source":15,"target":12,"value":342.165},{"source":15,"target":18,"value":37.797},{"source":15,"target":19,"value":4.412},{"source":15,"target":13,"value":40.858},{"source":15,"target":3,"value":56.691},{"source":15,"target":20,"value":7.863},{"source":15,"target":21,"value":90.008},{"source":15,"target":22,"value":93.494},{"source":23,"target":24,"value":40.719},{"source":25,"target":24,"value":82.233},{"source":5,"target":13,"value":0.129},{"source":5,"target":3,"value":1.401},{"source":5,"target":26,"value":151.891},{"source":5,"target":19,"value":2.096},{"source":5,"target":12,"value":48.58},{"source":27,"target":15,"value":7.013},{"source":17,"target":28,"value":20.897},{"source":17,"target":3,"value":6.242},{"source":28,"target":18,"value":20.897},{"source":29,"target":15,"value":6.995},{"source":2,"target":12,"value":121.066},{"source":2,"target":30,"value":128.69},{"source":2,"target":18,"value":135.835},{"source":2,"target":31,"value":14.458},{"source":2,"target":32,"value":206.267},{"source":2,"target":19,"value":3.64},{"source":2,"target":33,"value":33.218},{"source":2,"target":20,"value":4.413},{"source":34,"target":1,"value":4.375},{"source":24,"target":5,"value":122.952},{"source":35,"target":26,"value":839.978},{"source":36,"target":37,"value":504.287},{"source":38,"target":37,"value":107.703},{"source":37,"target":2,"value":611.99},{"source":39,"target":4,"value":56.587},{"source":39,"target":1,"value":77.81},{"source":40,"target":14,"value":193.026},{"source":40,"target":13,"value":70.672},{"source":41,"target":15,"value":59.901},{"source":42,"target":14,"value":19.263},{"source":43,"target":42,"value":19.263},{"source":43,"target":41,"value":59.901},{"source":4,"target":19,"value":0.882},{"source":4,"target":26,"value":400.12},{"source":4,"target":12,"value":46.477},{"source":26,"target":15,"value":525.531},{"source":26,"target":3,"value":787.129},{"source":26,"target":11,"value":79.329},{"source":44,"target":15,"value":9.452},{"source":45,"target":1,"value":182.01},{"source":46,"target":15,"value":19.013},{"source":47,"target":15,"value":289.366}]}
 
         const links = data.links.map(({source, target, value}) => ({
             source: data.nodes[source].name,
@@ -2314,11 +2334,12 @@ Forked      : Mike Bostock; https://observablehq.com/@d3/sankey
             chart = SankeyChart({
                 links
             }, {
-                nodeGroup: d => d.id.split(/\W/)[0], // take first word for color
+                //nodeGroup: d => d.id.split(/\W/)[0], // take first word for color
+                nodeGroup: d => d.id, // take the whole id for color
                 align: align,
                 linkColor: linkColor,
                 linkStrokeOpacity: 0.5,
-                format: (value) => `${value.toFixed(1)} TWh`,
+                format: (value) => `${value.toFixed(1)}`,
                 width: 650,
                 height: 500,
                 marginTop: 5,
