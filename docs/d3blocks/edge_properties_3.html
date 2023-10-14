@@ -4,6 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <title>d3graph</title>
+
+    <script async src='https://media.ethicalads.io/media/client/ethicalads.min.js'></script>
+<div data-ea-publisher='erdogantgithubio' data-ea-type='text' data-ea-style='stickybox'></div>
+
     <style type="text/css">
         .node text {
   font-size: 10px;
@@ -9595,8 +9599,6 @@ function d3graphscript(config = {
     collision: 0.5
     }) {
 
-  // console.log('d3graphscript config = ', config);
-
   //Constants for the SVG
   var width = config.width;
   var height = config.height;
@@ -9636,9 +9638,7 @@ function d3graphscript(config = {
   var svg = d3.select("body").append("svg")
     .attr("width", width)
     .attr("height", height)
-    .call(d3.behavior.zoom().on("zoom", function () {
-      svg.attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")")
-    }))
+    .call(d3.behavior.zoom().on("zoom", function () { svg.attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")") }))
     .on("dblclick.zoom", null)
     .append("g")
 
@@ -9658,9 +9658,10 @@ function d3graphscript(config = {
     .attr("class", "link")
     .attr('marker-start', function(d){ return 'url(#marker_' + d.marker_start + ')' })
 	.attr("marker-end", function(d) {
-		if (config.directed) {return 'url(#marker_' + d.marker_end + ')' }})
+    	if (config.directed) {return 'url(#marker_' + d.marker_end + ')' }})
     .style("stroke-width", function(d) {return d.edge_width;})          // LINK-WIDTH
     .style("stroke", function(d) {return d.color;})                     // EDGE-COLORS
+    .style("stroke-dasharray", function(d) {return d.edge_style;})      // EDGE-STYLE
 //  .style("stroke-width", 1); // WIDTH OF THE LINKS
   ;
 
@@ -9674,7 +9675,6 @@ function d3graphscript(config = {
      .style("font-family", "Arial")
      //.attr("transform", "rotate(90)")
      .text(function(d) { return d.label; });
-
 
   //Do the same with the circles for the nodes
   var node = svg.selectAll(".node")
@@ -9690,7 +9690,7 @@ function d3graphscript(config = {
   node.append("circle")
     .attr("r", function(d) { return d.node_size; })					// NODE SIZE
     .style("fill", function(d) {return d.node_color;})				// NODE-COLOR
-    .style("opacity", 0.95)
+    .style("opacity", function(d) {return d.node_opacity;}) 	    // NODE-OPACITY
     .style("stroke-width", function(d) {return d.node_size_edge;})	// NODE-EDGE-SIZE
     .style("stroke", function(d) {return d.node_color_edge;})		// NODE-COLOR-EDGE
   //  .style("stroke", '#000')										// NODE-EDGE-COLOR (all black)
@@ -9701,8 +9701,9 @@ function d3graphscript(config = {
     .attr("dy", ".35em")
     .text(function(d) {return d.node_name}) // NODE-TEXT
     .style("font-size", function(d) {return d.node_fontsize + "px";}) // set font size equal to node edge size
-	.style("fill", function(d) {return d.node_fontcolor;}); // set the text fill color to the same as node color
-  //  .style("stroke", "gray");
+	.style("fill", function(d) {return d.node_fontcolor;}) // set the text fill color to the same as node color
+	.style("font-family", "monospace");
+//  .style("stroke", "gray");
 
   let showInHover = ["node_tooltip"]; // Tooltip
   node.append("title")
@@ -9731,7 +9732,7 @@ function d3graphscript(config = {
 
   });
 
-  // --------- MARKER -----------
+  // --------- MARKER FOR EDGE ENDINGS -----------
 
   var data_marker = [
     { id: 0, name: 'circle', path: 'M 0, 0  m -5, 0  a 5,5 0 1,0 10,0  a 5,5 0 1,0 -10,0', viewbox: '-6 -6 12 12' }
@@ -9823,6 +9824,7 @@ function d3graphscript(config = {
 		d3.selectAll(".node")
 		.select("circle")
 		.style("fill", function(d) {return d.node_color;})
+		.style("opacity", function(d) {return d.node_opacity;})
 		.style("stroke", function(d) {return d.node_color_edge;})
 		.style("stroke-width", function(d) {return d.edge_width;})
 		.attr("r", function(d) { return d.node_size; })
@@ -9867,6 +9869,8 @@ function d3graphscript(config = {
 
     // console.log('Setting threshold', thresh)
     graph.links.splice(0, graph.links.length);
+    linkText = linkText.data([]);   // CLEAR EDGE-LABELS: Clear the linkText selection
+    linkText.exit().remove();       // CLEAR EDGE-LABELS: Clear the linkText elements from the DOM
 
     for (var i = 0; i < graphRec.links.length; i++) {
       if (graphRec.links[i].edge_weight > thresh) {
@@ -9881,6 +9885,7 @@ function d3graphscript(config = {
   //Restart the visualisation after any node and link changes
   function restart() {
 
+    // Update EDGE-LINKS
     link = link.data(graph.links);
     link.exit().remove();
     link.enter().insert("line", ".node").attr("class", "link");
@@ -9889,19 +9894,31 @@ function d3graphscript(config = {
 	link.style("marker-end", function(d) {                                    // Include the markers.
 		if (config.directed) {return 'url(#marker_' + d.marker_end + ')' }})
     link.style("stroke", function(d) {return d.color;});                      // EDGE-COLOR AFTER BREAKING WITH SLIDER
+    link.style("stroke-dasharray", function(d) {return d.edge_style;})      // EDGE-STYLE
+
+    // Update EDGE-LABELS
+    linkText = linkText.data(graph.links);
+    linkText.exit().remove();
+    linkText.enter().append("text")
+      .attr("class", "link-text")
+      .attr("font-size", function(d) {return d.label_fontsize + "px";})
+      .style("fill", function(d) {return d.label_color;})
+      .style("font-family", "Arial")
+      .text(function(d) { return d.label; });
 
     node = node.data(graph.nodes);
     node.enter().insert("circle", ".cursor").attr("class", "node").attr("r", 5).call(force.drag);
     force.start();
   }
+
 }
 
-        graph = {"links":[{"marker_color":"#808080","marker_start":"","marker_end":"","weight":2.0,"color":"#808080","label":"(2)","label_color":"#808080","label_fontsize":8,"edge_width":0.5,"edge_distance":50.0,"edge_weight":2.0,"source":0,"target":1,"source_label":"Amy","target_label":"Bernadette"},{"marker_color":"#808080","marker_start":"","marker_end":"","weight":5.0,"color":"#808080","label":"(5)","label_color":"#808080","label_fontsize":8,"edge_width":1.7375,"edge_distance":68.75,"edge_weight":5.0,"source":1,"target":2,"source_label":"Bernadette","target_label":"Howard"},{"marker_color":"#808080","marker_start":"","marker_end":"","weight":2.0,"color":"#808080","label":"(2)","label_color":"#808080","label_fontsize":8,"edge_width":0.5,"edge_distance":50.0,"edge_weight":2.0,"source":1,"target":3,"source_label":"Bernadette","target_label":"Rajesh"},{"marker_color":"#808080","marker_start":"","marker_end":"square","weight":10.0,"color":"#808080","label":"(10)","label_color":"#808080","label_fontsize":8,"edge_width":3.8001,"edge_distance":100.0,"edge_weight":10.0,"source":3,"target":4,"source_label":"Rajesh","target_label":"Penny"},{"marker_color":"#808080","marker_start":"","marker_end":"","weight":3.0,"color":"#808080","label":"(3)","label_color":"#808080","label_fontsize":8,"edge_width":0.9125,"edge_distance":56.25,"edge_weight":3.0,"source":4,"target":0,"source_label":"Penny","target_label":"Amy"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":5.0,"color":"#808080","label":"(5)","label_color":"#808080","label_fontsize":8,"edge_width":1.7375,"edge_distance":68.75,"edge_weight":5.0,"source":4,"target":5,"source_label":"Penny","target_label":"Leonard"},{"marker_color":"#808080","marker_start":"","marker_end":"","weight":5.0,"color":"#808080","label":"(5)","label_color":"#808080","label_fontsize":8,"edge_width":1.7375,"edge_distance":68.75,"edge_weight":5.0,"source":6,"target":0,"source_label":"Sheldon","target_label":"Amy"},{"marker_color":"#808080","marker_start":"","marker_end":"stub","weight":2.0,"color":"#808080","label":"(2)","label_color":"#808080","label_fontsize":8,"edge_width":0.5,"edge_distance":50.0,"edge_weight":2.0,"source":6,"target":2,"source_label":"Sheldon","target_label":"Howard"},{"marker_color":"#808080","marker_start":"","marker_end":"circle","weight":3.0,"color":"#808080","label":"(3)","label_color":"#808080","label_fontsize":8,"edge_width":0.9125,"edge_distance":56.25,"edge_weight":3.0,"source":6,"target":5,"source_label":"Sheldon","target_label":"Leonard"}],"nodes":[{"name":"Amy","group":"0","node_name":"Amy","node_tooltip":"Amy","node_color":"#e41a1c","node_size":"11.1355","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#e41a1c","node_fontsize":"12"},{"name":"Bernadette","group":"0","node_name":"Bernadette","node_tooltip":"Bernadette","node_color":"#377eb8","node_size":"13.4066","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#377eb8","node_fontsize":"12"},{"name":"Howard","group":"0","node_name":"Howard","node_tooltip":"Howard","node_color":"#4daf4a","node_size":"11.1355","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#4daf4a","node_fontsize":"12"},{"name":"Rajesh","group":"0","node_name":"Rajesh","node_tooltip":"Rajesh","node_color":"#ffff33","node_size":"11.1355","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#ffff33","node_fontsize":"12"},{"name":"Penny","group":"0","node_name":"Penny","node_tooltip":"Penny","node_color":"#ff7f00","node_size":"12.2711","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#ff7f00","node_fontsize":"12"},{"name":"Leonard","group":"0","node_name":"Leonard","node_tooltip":"Leonard","node_color":"#984ea3","node_size":"11.1355","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#984ea3","node_fontsize":"12"},{"name":"Sheldon","group":"0","node_name":"Sheldon","node_tooltip":"Sheldon","node_color":"#a65628","node_size":"10.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#a65628","node_fontsize":"12"}]}
+        graph = {"links":[{"marker_color":"#808080","marker_start":"","marker_end":"","weight":2.0,"color":"#808080","label":"2","label_color":"#808080","label_fontsize":8,"edge_width":0.5,"edge_distance":50.0,"edge_style":0,"edge_weight":2.0,"source":0,"target":1,"source_label":"Amy","target_label":"Bernadette"},{"marker_color":"#808080","marker_start":"","marker_end":"","weight":5.0,"color":"#808080","label":"5","label_color":"#808080","label_fontsize":8,"edge_width":1.7375,"edge_distance":68.75,"edge_style":0,"edge_weight":5.0,"source":1,"target":2,"source_label":"Bernadette","target_label":"Howard"},{"marker_color":"#808080","marker_start":"","marker_end":"","weight":2.0,"color":"#808080","label":"2","label_color":"#808080","label_fontsize":8,"edge_width":0.5,"edge_distance":50.0,"edge_style":0,"edge_weight":2.0,"source":1,"target":3,"source_label":"Bernadette","target_label":"Rajesh"},{"marker_color":"#808080","marker_start":"","marker_end":"square","weight":10.0,"color":"#808080","label":"10","label_color":"#808080","label_fontsize":8,"edge_width":3.8001,"edge_distance":100.0,"edge_style":0,"edge_weight":10.0,"source":3,"target":4,"source_label":"Rajesh","target_label":"Penny"},{"marker_color":"#808080","marker_start":"","marker_end":"","weight":3.0,"color":"#808080","label":"3","label_color":"#808080","label_fontsize":8,"edge_width":0.9125,"edge_distance":56.25,"edge_style":0,"edge_weight":3.0,"source":4,"target":0,"source_label":"Penny","target_label":"Amy"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":5.0,"color":"#808080","label":"5","label_color":"#808080","label_fontsize":8,"edge_width":1.7375,"edge_distance":68.75,"edge_style":0,"edge_weight":5.0,"source":4,"target":5,"source_label":"Penny","target_label":"Leonard"},{"marker_color":"#808080","marker_start":"","marker_end":"","weight":5.0,"color":"#808080","label":"5","label_color":"#808080","label_fontsize":8,"edge_width":1.7375,"edge_distance":68.75,"edge_style":0,"edge_weight":5.0,"source":6,"target":0,"source_label":"Sheldon","target_label":"Amy"},{"marker_color":"#808080","marker_start":"","marker_end":"stub","weight":2.0,"color":"#808080","label":"2","label_color":"#808080","label_fontsize":8,"edge_width":0.5,"edge_distance":50.0,"edge_style":0,"edge_weight":2.0,"source":6,"target":2,"source_label":"Sheldon","target_label":"Howard"},{"marker_color":"#808080","marker_start":"","marker_end":"circle","weight":3.0,"color":"#808080","label":"3","label_color":"#808080","label_fontsize":8,"edge_width":0.9125,"edge_distance":56.25,"edge_style":0,"edge_weight":3.0,"source":6,"target":5,"source_label":"Sheldon","target_label":"Leonard"}],"nodes":[{"name":"Amy","group":"0","node_name":"Amy","node_marker":"circle","node_tooltip":"Amy","node_color":"#66c2a5","node_opacity":"0.99","node_size":"9.1355","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#66c2a5","node_fontsize":"12"},{"name":"Bernadette","group":"0","node_name":"Bernadette","node_marker":"circle","node_tooltip":"Bernadette","node_color":"#fc8d62","node_opacity":"0.99","node_size":"11.4066","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#fc8d62","node_fontsize":"12"},{"name":"Howard","group":"0","node_name":"Howard","node_marker":"circle","node_tooltip":"Howard","node_color":"#8da0cb","node_opacity":"0.35","node_size":"9.1355","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#8da0cb","node_fontsize":"12"},{"name":"Rajesh","group":"0","node_name":"Rajesh","node_marker":"circle","node_tooltip":"Rajesh","node_color":"#ffd92f","node_opacity":"0.35","node_size":"9.1355","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#ffd92f","node_fontsize":"12"},{"name":"Penny","group":"0","node_name":"Penny","node_marker":"circle","node_tooltip":"Penny","node_color":"#a6d854","node_opacity":"0.99","node_size":"10.2711","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#a6d854","node_fontsize":"12"},{"name":"Leonard","group":"0","node_name":"Leonard","node_marker":"circle","node_tooltip":"Leonard","node_color":"#e78ac3","node_opacity":"0.35","node_size":"9.1355","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#e78ac3","node_fontsize":"12"},{"name":"Sheldon","group":"0","node_name":"Sheldon","node_marker":"circle","node_tooltip":"Sheldon","node_color":"#e5c494","node_opacity":"0.99","node_size":"8.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#e5c494","node_fontsize":"12"}]}
 
         window.addEventListener('DOMContentLoaded', function () {
             d3graphscript({
-                width: 500,
-                height: 600,
+                width: 1500,
+                height: 800,
                 charge: -450,
                 distance: 50,
                 directed: true,
@@ -9910,11 +9927,12 @@ function d3graphscript(config = {
         });
     </script>
 
+
 <!-- SLIDER -->
 
 
     
-	<div style="max-width:500px;">
+	<div style="max-width:1500px;">
         <form>
             <h3>
                 Edge Threshold
