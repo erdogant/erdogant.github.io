@@ -31,21 +31,25 @@ My interest are especially in the statistics behind machine learning, and custom
 1. Taskesen E, Karin Klauke. [**De ontdekking van twee extra acute myeloïde leukemie subgroepen door gebruik van een combinatie van genexpressie en DNA methylatie profielen**](1309485-PurSang_dec2013.pdf). PUR SANG, het MPN-magazine, jaargang 10, nr. 3, 2013.
 
 
-## Speaker - 2024 (events, conferences, master classes)
+---
 
-1. Taskesen E, Kunstmatige intelligentie bij het opsporen van dreigingen in systemen, [Beheer de Toekomst 2024](https://www.beheerdetoekomst.nl/jaarlijks-evenement/event-2024/programma-beheer-de-toekomst-2024/parallelsessies-beheer-de-toekomst-2024)
+## Speaker (Events, Conferences, Masterclasses)
 
-2. Taskesen E, Tilburg University | TIAS | Advanced Program Cyber Security & Governance. 
+**2024**
 
-3. Taskesen E, IenW | Rijkswaterstaat | getConnect | The challenges of Artificial Intelligence from start to production.
+1. **Kunstmatige intelligentie bij het opsporen van dreigingen in systemen**, [Beheer de Toekomst](https://www.beheerdetoekomst.nl/jaarlijks-evenement/event-2024/programma-beheer-de-toekomst-2024/parallelsessies-beheer-de-toekomst-2024)
 
-4. Taskesen E, Flevum, The challanges of using A.I. from start to production.
+1. Tilburg University | TIAS | **Advanced Program Cyber Security & Governance.**
 
-5. Taskesen E, Master class | IenW | Unsupervised clustering techniques and its applications
+1. IenW | Rijkswaterstaat | getConnect | **The challenges of Artificial Intelligence from start to production.**
 
-6. Taskesen E, Master class | IenW | Causal approaches using Bayesian techniques and its applications.
+1. Flevum, **The challanges of using A.I. from start to production.**
 
-7. Taskesen E, Tilburg University | Guest lecture | Cybersecurity for my course Programming & Algorithmic Thinking.
+1. Masterclass | IenW | **Unsupervised clustering techniques and its applications.**
+
+1. Masterclass | IenW | **Causal approaches using Bayesian techniques and its applications.**
+
+1. Tilburg University | Guest lecture | **Cybersecurity for my course Programming & Algorithmic Thinking.**
 
 
 <!-- ### Footer

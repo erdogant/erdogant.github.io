@@ -29,7 +29,6 @@ Follow and read [my blogs on Substack](https://erdogant.substack.com) or alterna
 1. Taskesen E, **An Extensive Starter Guide For Causal Discovery Using Bayesian Modeling**, [Medium](https://towardsdatascience.com/an-extensive-starters-guide-for-causal-discovery-using-bayesian-modeling-cfd40839a308), Okt. 2024
 
 1. Taskesen E, **D3Blocks: The Python Library to Create Interactive and Standalone D3js Charts**, [Substack with podcast](https://erdogant.substack.com/p/d3blocks-the-python-library-to-create), [Medium](https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4), Sep. 2022
-*Create interactive, stand-alone, and visually attractive charts that are built on the graphics of d3 javascript (d3js) but configurable with Python.*
 
 1. Taskesen E, **A Step-by-Step Guide in detecting causal relationships using Bayesian Structure Learning in Python**, [Medium](https://towardsdatascience.com/a-step-by-step-guide-in-detecting-causal-relationships-using-bayesian-structure-learning-in-python-c20c6b31cee5), Sep. 2021
 
