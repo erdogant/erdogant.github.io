@@ -19,18 +19,6 @@ excerpt: "Curriculum Vitae"
 
 See [linkedin](https://nl.linkedin.com/in/erdogant) for my full resume.
 
-## Research
-
-My interest are especially in the statistics behind machine learning, and customizing models to let it work in real-world applications. My focus areas are especially on causality models, Cyber Security, Unsupervised methods.
-
-
-## Press
-
-1. Taskesen E, [**TU Delft researchers develop tool to group cancer patients and offer tailor-made solutions**](http://www.tudelft.nl/en/current/latest-news/article/detail/delftse-onderzoekers-ontwikkelen-tool-om-kankerpatienten-te-groeperen-en-maatwerk-te-leveren/), 3 May 2016 by Webredactie Communication Delft University of Technology (TUdelft). 
-
-1. Taskesen E, Karin Klauke. [**De ontdekking van twee extra acute myeloïde leukemie subgroepen door gebruik van een combinatie van genexpressie en DNA methylatie profielen**](1309485-PurSang_dec2013.pdf). PUR SANG, het MPN-magazine, jaargang 10, nr. 3, 2013.
-
-
 ---
 
 ## Speaker (Events, Conferences, Masterclasses)
@@ -50,6 +38,15 @@ My interest are especially in the statistics behind machine learning, and custom
 1. IenW, *Masterclass*, **Unsupervised clustering techniques and its applications.**
 
 1. IenW, *Masterclass*, **Causal approaches using Bayesian techniques and its applications.**
+
+
+---
+
+## Press
+
+1. Taskesen E, [**TU Delft researchers develop tool to group cancer patients and offer tailor-made solutions**](http://www.tudelft.nl/en/current/latest-news/article/detail/delftse-onderzoekers-ontwikkelen-tool-om-kankerpatienten-te-groeperen-en-maatwerk-te-leveren/), 3 May 2016 by Webredactie Communication Delft University of Technology (TUdelft). 
+
+1. Taskesen E, Karin Klauke. [**De ontdekking van twee extra acute myeloïde leukemie subgroepen door gebruik van een combinatie van genexpressie en DNA methylatie profielen**](1309485-PurSang_dec2013.pdf). PUR SANG, het MPN-magazine, jaargang 10, nr. 3, 2013.
 
 
 
