@@ -39,17 +39,18 @@ My interest are especially in the statistics behind machine learning, and custom
 
 1. **Kunstmatige intelligentie bij het opsporen van dreigingen in systemen**, [Beheer de Toekomst](https://www.beheerdetoekomst.nl/jaarlijks-evenement/event-2024/programma-beheer-de-toekomst-2024/parallelsessies-beheer-de-toekomst-2024)
 
-1. Tilburg University | TIAS | **Advanced Program Cyber Security & Governance.**
+1. Tilburg University, *TIAS*, **Advanced Program Cyber Security & Governance.**
 
-1. IenW | Rijkswaterstaat | getConnect | **The challenges of Artificial Intelligence from start to production.**
+1. Tilburg University, *Guest lecture*, **Cybersecurity for Programming & Algorithmic Thinking.**
+
+1. IenW, Rijkswaterstaat, *GetConnect*, **The challenges of Artificial Intelligence from start to production.**
 
 1. Flevum, **The challanges of using A.I. from start to production.**
 
-1. Masterclass | IenW | **Unsupervised clustering techniques and its applications.**
+1. IenW, *Masterclass*, **Unsupervised clustering techniques and its applications.**
 
-1. Masterclass | IenW | **Causal approaches using Bayesian techniques and its applications.**
+1. IenW, *Masterclass*, **Causal approaches using Bayesian techniques and its applications.**
 
-1. Tilburg University | Guest lecture | **Cybersecurity for my course Programming & Algorithmic Thinking.**
 
 
 <!-- ### Footer
