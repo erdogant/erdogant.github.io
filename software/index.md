@@ -24,11 +24,9 @@ My Streamlit Dashboards are available with the links below.
 
 ---
 
-[Skywalk](https://skywalk.streamlit.app/) A large applications that is developed for flight planning!
+[Skywalk Tool](https://skywalk.streamlit.app/), **SkyWalk: The Tool For Flight Preparations.**, [Medium](https://erdogant.medium.com/skywalk-the-tool-for-flight-preparations-51c52d5a1ac0), Aug. 2024
 
-More information can be found here: **SkyWalk: The Tool For Flight Preparations.**, [Medium](https://erdogant.medium.com/skywalk-the-tool-for-flight-preparations-51c52d5a1ac0), Aug. 2024
-
-[Tafelvoetbal](https://voetbal.streamlit.app/) A small dashboard to keep track of the scores!
+[Tafelvoetbal Tool](https://voetbal.streamlit.app/) A small dashboard to keep track of the scores!
 
 
 ---

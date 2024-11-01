@@ -21,7 +21,7 @@ See [linkedin](https://nl.linkedin.com/in/erdogant) for my full resume.
 
 ## Research
 
-My interest are especially in the statistics behind machine learning, and customizing models to let it work in real-world applications. My focus is mainly on causality models, cyber security, and unsupervised methods.
+My interest are especially in the statistics behind machine learning, and customizing models to let it work in real-world applications. My focus areas are especially on causality models, Cyber Security, Unsupervised methods.
 
 
 ## Press
