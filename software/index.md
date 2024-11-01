@@ -29,3 +29,10 @@ My Streamlit Dashboards are available with the links below.
 [Tafelvoetbal](https://voetbal.streamlit.app/), **A dashboard to keep track of the scores!**
 
 
+--
+
+
+<h3>Embedded README</h3>
+<iframe src="https://github.com/erdogant/erdogant/blob/master/README.rst" width="100%" height="800px"></iframe>
+
+
