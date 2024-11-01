@@ -31,37 +31,35 @@ My Streamlit Dashboards are available with the links below.
 
 --
 
-
 **A structured list of my repos**
 
 All Repos can be found in the Repositories section. If Sphinx pages are available, the link will directly go to the documentation pages.
 
 .. table::
-  
-  +----------------+------------------+-----------------+-------------------+--------------+-----------------+    
-  | Statistics     | Machine learning | (Time)Series    | Vizualization     | Utils        | API             |    
-  +================+==================+=================+===================+==============+=================+     
-  | `bnlearn`_     | `clusteval`_     | `findpeaks`_    | `d3graph`_        | `df2onehot`_ | `googletrends`_ |     
-  +----------------+------------------+-----------------+-------------------+--------------+-----------------+   
-  | `hnet`_        | `classeval`_     | `temporalrank`_ | `d3heatmap`_      | `pypickle`_  | `slacki`_       |     
-  +----------------+------------------+-----------------+-------------------+--------------+-----------------+     
-  | `distfit`_     | `hgboost`_       | `caerus`_       | `treeplot`_       | `ismember`_  |                 |
-  +----------------+------------------+-----------------+-------------------+--------------+-----------------+       
-  | `pca`_         | `clustimage`_    |                 | `kaplanmeier`_    | `irelease`_  |                 |
-  +----------------+------------------+-----------------+-------------------+--------------+-----------------+    
-  | `thompson`_    | `undouble`_      |                 | `flameplot`_      | `pypiplot`_  |                 |                  
-  +----------------+------------------+-----------------+-------------------+--------------+-----------------+    
-  | `benfordslaw`_ |                  |                 | `worldmap`_       | `dicter`_    |                 |                  
-  +----------------+------------------+-----------------+-------------------+--------------+-----------------+    
-  |                |                  |                 | `colourmap`_      |              |                 |                  
-  +----------------+------------------+-----------------+-------------------+--------------+-----------------+    
-  |                |                  |                 | `imagesc`_        |              |                 |                  
-  +----------------+------------------+-----------------+-------------------+--------------+-----------------+   
-  |                |                  |                 | `scatterd`_       |              |                 | 
-  +----------------+------------------+-----------------+-------------------+--------------+-----------------+ 
-  |                |                  |                 | `d3blocks`_       |              |                 | 
-  +----------------+------------------+-----------------+-------------------+--------------+-----------------+ 
-  
+
+  +----------------+------------------+-----------------+-------------------+--------------+-----------------+
+  | Statistics     | Machine learning | (Time)Series   | Visualization     | Utils        | API             |
+  +================+==================+=================+===================+==============+=================+
+  | `bnlearn`_    | `clusteval`_     | `findpeaks`_   | `d3graph`_        | `df2onehot`_ | `googletrends`_ |
+  +----------------+------------------+-----------------+-------------------+--------------+-----------------+
+  | `hnet`_       | `classeval`_     | `temporalrank`_| `d3heatmap`_      | `pypickle`_  | `slacki`_       |
+  +----------------+------------------+-----------------+-------------------+--------------+-----------------+
+  | `distfit`_    | `hgboost`_       | `caerus`_      | `treeplot`_       | `ismember`_  |                 |
+  +----------------+------------------+-----------------+-------------------+--------------+-----------------+
+  | `pca`_        | `clustimage`_    |                 | `kaplanmeier`_    | `irelease`_  |                 |
+  +----------------+------------------+-----------------+-------------------+--------------+-----------------+
+  | `thompson`_   | `undouble`_      |                 | `flameplot`_      | `pypiplot`_  |                 |
+  +----------------+------------------+-----------------+-------------------+--------------+-----------------+
+  | `benfordslaw`_|                  |                 | `worldmap`_       | `dicter`_    |                 |
+  +----------------+------------------+-----------------+-------------------+--------------+-----------------+
+  |               |                  |                 | `colourmap`_      |              |                 |
+  +----------------+------------------+-----------------+-------------------+--------------+-----------------+
+  |               |                  |                 | `imagesc`_        |              |                 |
+  +----------------+------------------+-----------------+-------------------+--------------+-----------------+
+  |               |                  |                 | `scatterd`_       |              |                 |
+  +----------------+------------------+-----------------+-------------------+--------------+-----------------+
+  |               |                  |                 | `d3blocks`_       |              |                 |
+  +----------------+------------------+-----------------+-------------------+--------------+-----------------+
 
 .. _dicter: https://erdogant.github.io/dicter/
 .. _bnlearn: https://erdogant.github.io/bnlearn/
@@ -71,7 +69,7 @@ All Repos can be found in the Repositories section. If Sphinx pages are availabl
 .. _hgboost: https://erdogant.github.io/hgboost/
 .. _findpeaks: https://erdogant.github.io/findpeaks/
 .. _clustimage: https://erdogant.github.io/clustimage/
-.. _undouble:  https://erdogant.github.io/undouble/
+.. _undouble: https://erdogant.github.io/undouble/
 .. _clusteval: https://erdogant.github.io/clusteval
 .. _pypickle: https://erdogant.github.io/pypickle
 .. _ismember: https://erdogant.github.io/ismember
@@ -96,10 +94,7 @@ All Repos can be found in the Repositories section. If Sphinx pages are availabl
 .. _googletrends: https://github.com/erdogant/googletrends
 .. _slacki: https://github.com/erdogant/slacki
 
-
 Find here my `Pypi download stats`_
 
 .. _Pypi download stats: https://erdogant.github.io/docs/imagesc/pypi/pypi_heatmap.html
-
-
 
