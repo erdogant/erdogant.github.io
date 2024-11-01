@@ -22,18 +22,31 @@ feature: sample-image-2.jpg
 Follow and read [my blogs on Substack](https://erdogant.substack.com) or alternatively on [Medium](https://erdogant.medium.com), My Substack also includes podcasts about the blogs. This makes it easy to listen in the car or train when traveling.
 
 
-## Top Popular Reads:
+## Top Popular Reads
 
 1. Taskesen E, **How to Find the Best Theoretical Distribution for Your Data**, [Medium](https://towardsdatascience.com/how-to-find-the-best-theoretical-distribution-for-your-data-a26e5673b4bd), Feb. 2023
 
 1. Taskesen E, **An Extensive Starter Guide For Causal Discovery Using Bayesian Modeling**, [Medium](https://towardsdatascience.com/an-extensive-starters-guide-for-causal-discovery-using-bayesian-modeling-cfd40839a308), Okt. 2024
 
 1. Taskesen E, **D3Blocks: The Python Library to Create Interactive and Standalone D3js Charts**, [Substack with podcast](https://erdogant.substack.com/p/d3blocks-the-python-library-to-create), [Medium](https://towardsdatascience.com/d3blocks-the-python-library-to-create-interactive-and-standalone-d3js-charts-3dda98ce97d4), Sep. 2022
+*Create interactive, stand-alone, and visually attractive charts that are built on the graphics of d3 javascript (d3js) but configurable with Python.*
 
 1. Taskesen E, **A Step-by-Step Guide in detecting causal relationships using Bayesian Structure Learning in Python**, [Medium](https://towardsdatascience.com/a-step-by-step-guide-in-detecting-causal-relationships-using-bayesian-structure-learning-in-python-c20c6b31cee5), Sep. 2021
 
 1. Taskesen E, **What You Need To Know To Build Large Streamlit Applications With Stripe Subscriptions And Firestore Integration.**, [Medium](https://towardsdatascience.com/what-you-need-to-know-to-build-large-streamlit-applications-with-stripe-subscriptions-and-firestore-8b76f6370cb2), Aug. 2024
 
+
+## Podcasts
+
+
+1. Taskesen E, **Chat with Your Dataset using Bayesian Inferences.**, [Substack with Podcast](https://erdogant.substack.com/p/chat-with-your-dataset-using-bayesian-292), Nov. 2023
+
+1. Taskesen E, **Detection of Statistical Significant Associations in Mixed Data sets.**, [Substack with Podcast](https://erdogant.substack.com/p/detection-of-relationships-in-data), Aug. 2020
+
+1. Taskesen E, **D3Blocks: The Python Library to Create Interactive and Standalone D3js Charts**, [Substack with podcast](https://erdogant.substack.com/p/d3blocks-the-python-library-to-create), Sep. 2022
+
+
+https://erdogant.substack.com/p/detection-of-relationships-in-data
 
 ---
 
@@ -55,17 +68,13 @@ Follow and read [my blogs on Substack](https://erdogant.substack.com) or alterna
 
 ## 2023
 
-**Causality**
-
-1. Taskesen E, **Chat with Your Dataset using Bayesian Inferences.**, [Medium](https://towardsdatascience.com/chat-with-your-dataset-using-bayesian-inferences-bfd4dc7f8dcd), Nov. 2023
+1. Taskesen E, **Chat with Your Dataset using Bayesian Inferences.**, [Substack with Podcast](https://erdogant.substack.com/p/chat-with-your-dataset-using-bayesian-292), [Medium](https://towardsdatascience.com/chat-with-your-dataset-using-bayesian-inferences-bfd4dc7f8dcd), Nov. 2023
 
 1. Taskesen E, **The Power of Bayesian Causal Inference: A Comparative Analysis of Libraries to Reveal Hidden Causality in Your Dataset**, [Medium](https://towardsdatascience.com/the-power-of-bayesian-causal-inference-a-comparative-analysis-of-libraries-to-reveal-hidden-d91e8306e25e), May. 2023
 
 
+
 1. Taskesen E, **A Step-by-Step Guide To Accurately Detect Peaks and Valleys.**, [Medium](https://towardsdatascience.com/a-step-by-step-guide-to-accurately-detect-peaks-and-valleys-9abc49a2eac3), Sep. 2023
-
-
-**Applications**
 
 1. Taskesen E, **Maximize Your Insights by Choosing the Best Chart: Network, Heatmap, or Sankey?**, [Medium](https://towardsdatascience.com/maximize-your-insights-by-choosing-the-best-chart-network-heatmap-or-sankey-d9b4165d7f16), Aug. 2023
 
@@ -74,28 +83,24 @@ Follow and read [my blogs on Substack](https://erdogant.substack.com) or alterna
 1. Taskesen E, **Create and Explore the Landscape of Roles and Salaries in Data Science**, [Medium](https://towardsdatascience.com/create-and-explore-the-landscape-of-roles-and-salaries-in-data-science-926092f616ca), Jun. 2023
 
 
-**Clustering**
 
 1. Taskesen E, [**From Clusters To Insights; The Next Step**](https://towardsdatascience.com/from-clusters-to-insights-the-next-step-1c166814e0c6), May. 2023
 
 1. Taskesen E, **From Data to Clusters: When is Your Clustering Good Enough?**, [Medium](https://towardsdatascience.com/from-data-to-clusters-when-is-your-clustering-good-enough-5895440a978a), April. 2023
 
 
-**Outlier Detection**
 
 1. Taskesen E, [**Outlier Detection Using Principal Component Analysis and Hotelling’s T2 and SPE/DmodX Methods**](https://towardsdatascience.com/outlier-detection-using-principal-component-analysis-and-hotellings-t2-and-spe-dmodx-methods-625b3c90897), Mar. 2023
 
 1. Taskesen E, [**Outlier Detection Using Distribution Fitting in Univariate Datasets**](https://towardsdatascience.com/outlier-detection-using-distribution-fitting-in-univariate-data-sets-ac8b7a14d40e), Feb. 2023
 
 
-**Probability Distributions**
 
 1. Taskesen E, [**How to Find the Best Theoretical Distribution for Your Data**](https://towardsdatascience.com/how-to-find-the-best-theoretical-distribution-for-your-data-a26e5673b4bd), Feb. 2023
 
 1. Taskesen E, **Step-by-Step Guide to Generate Synthetic Data by Sampling From Univariate Distributions.**, [Medium](https://towardsdatascience.com/step-by-step-guide-to-generate-synthetic-data-by-sampling-from-univariate-distributions-6b0be4221cb1), Mar. 2023
 
 
-**Data Science**
 
 1. Taskesen E, **The Next Step is Responsible AI. How Do We Get There?**, [Medium](https://towardsdatascience.com/the-next-step-is-responsible-ai-how-do-we-get-there-ecce929a1c03), Aug. 2023
 
@@ -152,7 +157,7 @@ Follow and read [my blogs on Substack](https://erdogant.substack.com) or alterna
 1. Taskesen E, [**A Step-by-Step Guide in detecting causal relationships using Bayesian Structure Learning in Python**](https://towardsdatascience.com/a-step-by-step-guide-in-detecting-causal-relationships-using-bayesian-structure-learning-in-python-c20c6b31cee5), Medium, Sep. 2021
 *The starter's guide to effectively determine causalities across variables.*
 
-1. Taskesen E, [**Explore and understand your data with a network of significant associations**](https://towardsdatascience.com/explore-and-understand-your-data-with-a-network-of-significant-associations-9a03cf79d254), Medium, Aug. 2020
+1. Taskesen E, **Explore and understand your data with a network of significant associations**, [Substack with Podcast](https://erdogant.substack.com/p/detection-of-relationships-in-data), [Medium](https://towardsdatascience.com/explore-and-understand-your-data-with-a-network-of-significant-associations-9a03cf79d254), Medium, Aug. 2020
 *Explore to understand your data can make the difference between an unsuccessful project or finishing successfully!*
 
 
