@@ -33,7 +33,7 @@ Follow and read [my blogs on Substack](https://erdogant.substack.com) or alterna
 
 ---
 
-## Podcasts
+## Blogs with Podcasts
 
 1. Taskesen E, **Chat with Your Dataset using Bayesian Inferences.**, [Substack with Podcast](https://erdogant.substack.com/p/chat-with-your-dataset-using-bayesian-292), Nov. 2023
 1. Taskesen E, **Detection of Statistical Significant Associations in Mixed Data sets.**, [Substack with Podcast](https://erdogant.substack.com/p/detection-of-relationships-in-data), Aug. 2020

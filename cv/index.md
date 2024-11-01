@@ -23,12 +23,11 @@ See [linkedin](https://nl.linkedin.com/in/erdogant) for my full resume.
 
 ## Speaker (Events, Conferences, Masterclasses)
 
-Over the past years I gave many talks in the field of Data science/ machine learning/ A.I. The content differs from pure technical, towards real-world applications but also about processes & organizations.
+I enjoy to give talks in the field of Data science/ machine learning/ A.I. The content differs from pure technical, towards real-world applications but also about processes & organizations.
 
 **2024**
 
 1. **Kunstmatige intelligentie bij het opsporen van dreigingen in systemen**, [Beheer de Toekomst](https://www.beheerdetoekomst.nl/jaarlijks-evenement/event-2024/programma-beheer-de-toekomst-2024/parallelsessies-beheer-de-toekomst-2024)
-
 1. Tilburg University, *TIAS*, **Advanced Program Cyber Security & Governance.**
 1. Tilburg University, *Guest lecture*, **Cybersecurity for Programming & Algorithmic Thinking.**
 1. IenW, Rijkswaterstaat, *GetConnect*, **The challenges of Artificial Intelligence from start to production.**
