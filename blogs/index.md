@@ -95,7 +95,7 @@ Follow and read [my blogs on Substack](https://erdogant.substack.com) or alterna
 1. Taskesen E, **Step-by-Step Guide to Generate Synthetic Data by Sampling From Univariate Distributions.**, [Medium](https://towardsdatascience.com/step-by-step-guide-to-generate-synthetic-data-by-sampling-from-univariate-distributions-6b0be4221cb1), Mar. 2023
 
 
-**Data Science Skills**
+**Data Science**
 
 1. Taskesen E, **The Next Step is Responsible AI. How Do We Get There?**, [Medium](https://towardsdatascience.com/the-next-step-is-responsible-ai-how-do-we-get-there-ecce929a1c03), Aug. 2023
 
