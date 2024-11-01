@@ -73,7 +73,7 @@ Follow and read [my blogs on Substack](https://erdogant.substack.com) or alterna
 1. Taskesen E, [**From Clusters To Insights; The Next Step**](https://towardsdatascience.com/from-clusters-to-insights-the-next-step-1c166814e0c6), May. 2023
 *Learn how to quantitatively detect which features drive the formation of the clusters.*
 
-1. Taskesen E, [From Data to Clusters: When is Your Clustering Good Enough?**](https://towardsdatascience.com/from-data-to-clusters-when-is-your-clustering-good-enough-5895440a978a), April. 2023
+1. Taskesen E, **From Data to Clusters: When is Your Clustering Good Enough?**, [Medium](https://towardsdatascience.com/from-data-to-clusters-when-is-your-clustering-good-enough-5895440a978a), April. 2023
 *Hidden gems can be found using clustering approaches but you need the right clustering method and evaluation approach to make sensible clusters. Learn how to find them in four steps.*
 
 1. Taskesen E, **Step-by-Step Guide to Generate Synthetic Data by Sampling From Univariate Distributions.**, [Medium](https://towardsdatascience.com/step-by-step-guide-to-generate-synthetic-data-by-sampling-from-univariate-distributions-6b0be4221cb1), Mar. 2023
