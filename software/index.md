@@ -29,4 +29,3 @@ My Streamlit Dashboards are available with the links below.
 [Tafelvoetbal Tool](https://voetbal.streamlit.app/) A small dashboard to keep track of the scores!
 
 
----
