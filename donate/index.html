@@ -1,38 +1,49 @@
-<!-- donate-bitcoin Copyright (GPL) 2016  Nathan Robinson -->
-<DOCTYPE html>
-  <head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
-    <title>Donate</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="shortcut icon" type="image/ico" href="favicon.ico">
-  </head>
-
-<script src="js/jquery.js"></script>
-<script src="js/jquery.qrcode.min.js"></script>
-<script src="index.js"></script>
-<body onload="donate()">
-<center>
-<div id="donatemessage"></div>
-<div id="donation">
-  <input type="text" name="donatebox" id="donatebox" onchange="donate()">
-  <br><br><img style="cursor:pointer" id="donationbutton" height="30px" onclick="donate()" src="">
-</div>
-<div id="donatetext"></div>
-<br>
-<div id="qrcodePlaceHolder"></div>
-</center>
-
-<script>
-document.getElementById("donatemessage").innerHTML = "<h3>Donate"+"</h3>";
-
-if (!isNaN(parseFloat(params.amount)))
-{
-  document.getElementById("donatebox").value = parseFloat(params.amount);
-}
-
-</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="10"> <!-- Refresh the page every 10 seconds -->
+    <title>Support Me</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+        }
+        a {
+            text-decoration: none;
+            color: #ffffff;
+            background-color: #FF813F;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        a:hover {
+            background-color: #e36d2d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Support My Work!</h1>
+        <p>If you like what I do, consider supporting me:</p>
+        <a href="https://buymeacoffee.com/erdogant" target="_blank">Buy Me a Coffee</a>
+    </div>
 </body>
-<html>
+</html>
