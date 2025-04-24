@@ -25,22 +25,22 @@ My applications are available with the links below.
 
 ---
 
+## SkyWalk
 [Skywalk](https://skywalk.streamlit.app/), ![Skywalk Logo](/images/skywalk_logo.png){: style="width: 100px;" }
 **The Tool For Flight Preparations.**, [Medium](https://erdogant.medium.com/skywalk-the-tool-for-flight-preparations-51c52d5a1ac0), Aug. 2024
-
 
 <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 2em;">
   <div style="flex: 1; min-width: 250px;">
     <img src="./images/oskar-kadaksoo-f_rLDn5m2XQ-unsplash.jpg" alt="Flight prep inspiration" style="width: 300%; border-radius: 12px;">
   </div>
-  <div style="flex: 1; min-width: 250px;">
-    <img src="./images/screenshot_app_skywalk.png" alt="SkyWalk Screenshot" style="width: 300%; border-radius: 12px;">
-  </div>
 </div>
 
-<br><hr><br>
+<br>
+---
+<br>
+
+## PhotoSense-AI
 [PhotoSense-AI](https://github.com/erdogant/PhotoSenseAI/), **The Tool For Organizing Your Photo Library Locally.**, [Documentation Pages](https://erdogant.github.io/PhotoSenseAI)
-![PhotoSense Logo](/images/photosenseAI_logo.png){: style="width: 80px;" }
 
 <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 2em;">
   <div style="flex: 1; min-width: 250px;">
@@ -49,7 +49,11 @@ My applications are available with the links below.
 </div>
 
 
-<br><hr><br>
+<br>
+---
+<br>
+
+## Tafelvoetbal
 [Tafelvoetbal](https://voetbal.streamlit.app/), **A dashboard to keep track of the scores!**
 
 <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 2em;">
