@@ -18,10 +18,6 @@ feature: sample-image-2.jpg
 </div>
 </section><!-- /#table-of-contents -->
 
-
-All my software projectes are listed on my [github page](https://github.com/erdogant).
-<br>
-
 All my applications are free to use! But it’s the result of many hundreds of developer hours—and counting!
 If you’d like to show your appreciation, feel free to treat me to a coffee. Coz great ideas run on coffee!
 I love coffee 😊 and you decide how much to contribute.
@@ -30,8 +26,10 @@ I love coffee 😊 and you decide how much to contribute.
 ---
 
 ## SkyWalk
+* **The Tool For Flight Preparations.**
+* Read the blog over [here](https://erdogant.medium.com/skywalk-the-tool-for-flight-preparations-51c52d5a1ac0)
+* Checkout the documentation pages over [here](https://erdogant.github.io/skywalk-docs)
 * [Go to the Skywalk Application](https://skywalk.streamlit.app/) ![Skywalk Logo](/images/skywalk_logo.png){: style="width: 100px;" }
-* **The Tool For Flight Preparations.**, [Medium](https://erdogant.medium.com/skywalk-the-tool-for-flight-preparations-51c52d5a1ac0)
 
 <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 2em;">
   <div style="flex: 1; min-width: 250px;">
@@ -42,8 +40,9 @@ I love coffee 😊 and you decide how much to contribute.
 ---
 
 ## PhotoSense-AI
+* **The Tool For Organizing Your Photo Library Locally.**
+* Checkout the documentation pages over [here](https://erdogant.github.io/PhotoSenseAI)
 * [Download and Install PhotoSense-AI](https://github.com/erdogant/PhotoSenseAI/)
-* **The Tool For Organizing Your Photo Library Locally.**, [Documentation Pages](https://erdogant.github.io/PhotoSenseAI)
 
 <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 2em;">
   <div style="flex: 1; min-width: 250px;">
@@ -55,8 +54,8 @@ I love coffee 😊 and you decide how much to contribute.
 ---
 
 ## Tafelvoetbal
-* [Go to the Tafelvoetbal Application](https://voetbal.streamlit.app/)
 * **A dashboard to keep track of the scores!**
+* [Go to the Tafelvoetbal Application](https://voetbal.streamlit.app/)
 
 <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 2em;">
     <div style="flex: 1; min-width: 250px;">
