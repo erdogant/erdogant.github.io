@@ -32,6 +32,13 @@ h3 {
 </head>
 <body>
 
+<!-- Create save button -->
+
+    <div style="max-width:1500px;">
+        <center><button id="saveButton">Save</button></center>
+    </div>
+
+
 
     <script>
         !function() {
@@ -9880,6 +9887,11 @@ function d3graphscript(config = {
     restart();
   }
 
+  // Set the initial value of the slider to the user-defined threshold
+  document.getElementById('thresholdSlider').value = 0;
+  // Call the threshold function to set the network state
+  threshold.call(document.getElementById('thresholdSlider'));
+
   d3.select("#thresholdSlider").on("change", threshold);
 
   //Restart the visualisation after any node and link changes
@@ -9917,22 +9929,36 @@ function d3graphscript(config = {
 
         window.addEventListener('DOMContentLoaded', function () {
             d3graphscript({
-                width: 650,
-                height: 700,
+                width: 1500,
+                height: 800,
                 charge: -450,
                 distance: 50,
                 directed: true,
                 collision: 0.5
             })
         });
+
+        // Save image to svg
+        document.getElementById('saveButton').addEventListener('click', function () {
+            var svgData = document.querySelector('svg').outerHTML;
+            var blob = new Blob([svgData], {type: "image/svg+xml;charset=utf-8"});
+            var url = URL.createObjectURL(blob);
+            var link = document.createElement('a');
+            link.href = url;
+            link.download = 'd3graph.svg';
+            link.click();
+        });
+        
+        
     </script>
+
 
 
 <!-- SLIDER -->
 
 
     
-	<div style="max-width:650px;">
+	<div style="max-width:1500px;">
         <form>
             <h3>
                 Edge Threshold

@@ -4,6 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <title>d3graph</title>
+
+    <script async src='https://media.ethicalads.io/media/client/ethicalads.min.js'></script>
+<div data-ea-publisher='erdogantgithubio' data-ea-type='text' data-ea-style='stickybox'></div>
+
     <style type="text/css">
         .node text {
   font-size: 10px;
@@ -25,6 +29,17 @@ h3 {
   font-family: "Helvetica";
 }
     </style>
+</head>
+<body>
+
+<!-- Create save button -->
+
+    <div style="max-width:1500px;">
+        <center><button id="saveButton">Save</button></center>
+    </div>
+
+
+
     <script>
         !function() {
   var d3 = {
@@ -9580,16 +9595,16 @@ h3 {
   });
   if (typeof define === "function" && define.amd) this.d3 = d3, define(d3); else if (typeof module === "object" && module.exports) module.exports = d3; else this.d3 = d3;
 }();
-        function d3graphscript(config = {
-  // Default values
-  width: 800,
-  height: 600,
-  charge: -250,
-  distance: 0,
-  directed: false,
-  collision: 0.5
-}) {
-  console.log('d3graphscript config = ', config);
+        
+function d3graphscript(config = {
+    // Default values
+    width: 800,
+    height: 600,
+    charge: -250,
+    distance: 0,
+    directed: false,
+    collision: 0.5
+    }) {
 
   //Constants for the SVG
   var width = config.width;
@@ -9600,14 +9615,40 @@ h3 {
 
   var force = d3.layout.force()
     .charge(config.charge)
-    .linkDistance((d) => config.distance > 0 ? config.distance : d.edge_weight)
+    .linkDistance((d) => d.edge_distance || config.distance)
+    //.linkDistance((d) => config.distance > 0 ? config.distance : d.edge_weight)
     .size([width, height]);
 
+  // DRAGGING START
+  function dragstarted(d) {
+    d3.event.sourceEvent.stopPropagation();
+    d3.select(this).classed("dragging", true);
+  }
+
+  function dragged(d) {
+    d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+  }
+
+  function dragended(d) {
+    d3.select(this).classed("dragging", false);
+  }
+
+  var drag = force.drag()
+    .origin(function(d) { return d; })
+    .on("dragstart", dragstarted)
+    .on("drag", dragged)
+    .on("dragend", dragended);
+
+  // DRAGGING STOP
 
   //Append a SVG to the body of the html page. Assign this SVG as an object to svg
   var svg = d3.select("body").append("svg")
     .attr("width", width)
     .attr("height", height)
+    .call(d3.behavior.zoom().on("zoom", function () { svg.attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")") }))
+    .on("dblclick.zoom", null)
+    .append("g")
+
   //.on("dblclick", threshold); // EXPLODE ALL CONNECTED POINTS
 
   graphRec = JSON.parse(JSON.stringify(graph));
@@ -9617,27 +9658,46 @@ h3 {
     .links(graph.links)
     .start();
 
-  //Create all the line svgs but without locations yet
+ // Create all the line svgs but without locations yet
   var link = svg.selectAll(".link")
     .data(graph.links)
     .enter().append("line")
     .attr("class", "link")
-    .style("marker-end", () => config.directed ? "url(#suit)" : "none") // ARROWS IN EDGES
-    .style("stroke-width", function(d) {return d.edge_width;}) // LINK-WIDTH
-    ;
-  //  .style("stroke-width", 1); // WIDTH OF THE LINKS
+    .attr('marker-start', function(d){ return 'url(#marker_' + d.marker_start + ')' })
+	.attr("marker-end", function(d) {
+    	if (config.directed) {return 'url(#marker_' + d.marker_end + ')' }})
+    .style("stroke-width", function(d) {return d.edge_width;})          // LINK-WIDTH
+    .style("stroke", function(d) {return d.color;})                     // EDGE-COLORS
+    .style("stroke-dasharray", function(d) {return d.edge_style;})      // EDGE-STYLE
+//  .style("stroke-width", 1); // WIDTH OF THE LINKS
+  ;
+
+  // ADD TEXT ON THE EDGES (PART 1/2)
+   var linkText = svg.selectAll(".link-text")
+     .data(graph.links)
+     .enter().append("text")
+     .attr("class", "link-text")
+     .attr("font-size", function(d) {return d.label_fontsize + "px";})
+     .style("fill", function(d) {return d.label_color;})
+     .style("font-family", "Arial")
+     //.attr("transform", "rotate(90)")
+     .text(function(d) { return d.label; });
 
   //Do the same with the circles for the nodes
   var node = svg.selectAll(".node")
     .data(graph.nodes)
     .enter().append("g")
     .attr("class", "node")
-    .call(force.drag)
-    .on('dblclick', connectedNodes); //Highliht ON/OFF
+    .call(drag)
+    .on('dblclick', connectedNodes); // HIGHLIGHT ON/OFF
+
+   node.on('click', color_on_click); // ON CLICK HANDLER
+
 
   node.append("circle")
     .attr("r", function(d) { return d.node_size; })					// NODE SIZE
     .style("fill", function(d) {return d.node_color;})				// NODE-COLOR
+    .style("opacity", function(d) {return d.node_opacity;}) 	    // NODE-OPACITY
     .style("stroke-width", function(d) {return d.node_size_edge;})	// NODE-EDGE-SIZE
     .style("stroke", function(d) {return d.node_color_edge;})		// NODE-COLOR-EDGE
   //  .style("stroke", '#000')										// NODE-EDGE-COLOR (all black)
@@ -9647,68 +9707,73 @@ h3 {
     .attr("dx", 10)
     .attr("dy", ".35em")
     .text(function(d) {return d.node_name}) // NODE-TEXT
-  //  .style("stroke", "gray");
+    .style("font-size", function(d) {return d.node_fontsize + "px";}) // set font size equal to node edge size
+	.style("fill", function(d) {return d.node_fontcolor;}) // set the text fill color to the same as node color
+	.style("font-family", "monospace");
+//  .style("stroke", "gray");
 
-  let showInHover = ["node_name"];
+  let showInHover = ["node_tooltip"]; // Tooltip
   node.append("title")
       .text((d) => Object.keys(d)
           .filter((key) => showInHover.indexOf(key) !== -1)
-          .map((key) => `${key}: ${d[key]}`)
+          .map((key) => `${d[key]}`)
           .join('\n')
       )
 
   //Now we are giving the SVGs co-ordinates - the force layout is generating the co-ordinates which this code is using to update the attributes of the SVG elements
   force.on("tick", function() {
-    link.attr("x1", function(d) {
-        return d.source.x;
-      })
-      .attr("y1", function(d) {
-        return d.source.y;
-      })
-      .attr("x2", function(d) {
-        return d.target.x;
-      })
-      .attr("y2", function(d) {
-        return d.target.y;
-      });
-    d3.selectAll("circle").attr("cx", function(d) {
-        return d.x;
-      })
-      .attr("cy", function(d) {
-        return d.y;
-      });
-    d3.selectAll("text").attr("x", function(d) {
-        return d.x;
-      })
-      .attr("y", function(d) {
-        return d.y;
-      });
+    link.attr("x1", function(d) { return d.source.x; })
+      .attr("y1", function(d) { return d.source.y; })
+      .attr("x2", function(d) { return d.target.x; })
+      .attr("y2", function(d) { return d.target.y; });
+    d3.selectAll("circle").attr("cx", function(d) { return d.x; })
+      .attr("cy", function(d) { return d.y; });
+    d3.selectAll("text").attr("x", function(d) { return d.x; })
+      .attr("y", function(d) { return d.y; })
+	linkText.attr("x", function(d) { return (d.source.x + d.target.x) / 2; })  // ADD TEXT ON THE EDGES (PART 2/2)
+      .attr("y", function(d) { return (d.source.y + d.target.y) / 2; })
+      .attr("text-anchor", "middle");
+      ;
 
     node.each(collide(config.collision)); //COLLISION DETECTION. High means a big fight to get untouchable nodes (default=0.5)
 
   });
 
-  // --------- Directed lines -----------
+  // --------- MARKER FOR EDGE ENDINGS -----------
+
+  var data_marker = [
+    { id: 0, name: 'circle', path: 'M 0, 0  m -5, 0  a 5,5 0 1,0 10,0  a 5,5 0 1,0 -10,0', viewbox: '-6 -6 12 12' }
+  , { id: 1, name: 'square', path: 'M 0,0 m -5,-5 L 5,-5 L 5,5 L -5,5 Z', viewbox: '-5 -5 10 10' }
+  , { id: 2, name: 'arrow', path: 'M 0,0 m -5,-5 L 5,0 L -5,5 Z', viewbox: '-5 -5 10 10' }
+  , { id: 3, name: 'stub', path: 'M 0,0 m -1,-5 L 1,-5 L 1,5 L -1,5 Z', viewbox: '-1 -5 2 10' }
+  ]
+
+  //console.log(JSON.stringify(link))
+
   svg.append("defs").selectAll("marker")
-      .data(["suit", "licensing", "resolved"])
-    .enter().append("marker")
-      .attr("id", function(d) { return d; })
-      .attr("viewBox", "0 -5 10 10")
-      .attr("refX", 25)
-      .attr("refY", 0)
-      .attr("markerWidth", 10)
-      .attr("markerHeight", 10)
-      .attr("orient", "auto")
-      .attr("markerUnits", "userSpaceOnUse") // MAKE FIXED ARROW WIDTH
-    .append("path")
-      .attr("d", "M0,-5L10,0L0,5 L10,0 L0, -5")
-      .style("stroke", "grey") // ARROWHEAD GREY
-      .style("opacity", "0.6")
-      .style("stroke-width", '1.5'); // THICKNESS OF ARROWHEAD
+    .data(data_marker)
+    .enter()
+    .append('svg:marker')
+      .attr('id', function(d){ return 'marker_' + d.name})
+      .attr('markerHeight', 10)
+      .attr('markerWidth', 10)
+      //.attr('markerUnits', 'strokeWidth')
+      .attr("markerUnits", "userSpaceOnUse")                   // Fix marker width
+      .attr('orient', 'auto')
+      //.attr('refX', -15)                                     // Offset marker-start
+      .attr('refX', 15)                                        // Offset marker-end
+      .attr('refY', 0)
+      .attr('viewBox', function(d){ return d.viewbox })
+      .append('svg:path')
+	    //.attr("transform", "rotate(180)")                    // Marker-start mirrored
+        .attr('d', function(d){ return d.path })               // Marker type
+        //.style("fill", function(d) {return d.marker_color;}) // Marker color
+        .style("fill", '#808080')                              // Marker color
+        .style("stroke", '#808080')                            // Marker edge-color
+        .style("opacity", 0.95)                                // Marker opacity
+        .style("stroke-width", 1);                             // Marker edge thickness
 
-  // --------- End directed lines -----------
-
-  //---Insert-------
+  // --------- END MARKER -----------
 
 
   // collision detection
@@ -9759,6 +9824,29 @@ h3 {
     return linkedByIndex[a.index + "," + b.index];
   }
 
+
+    // COLOR ON CLICK
+	function color_on_click() {
+		// Give the original color back
+		d3.selectAll(".node")
+		.select("circle")
+		.style("fill", function(d) {return d.node_color;})
+		.style("opacity", function(d) {return d.node_opacity;})
+		.style("stroke", function(d) {return d.node_color_edge;})
+		.style("stroke-width", function(d) {return d.edge_width;})
+		.attr("r", function(d) { return d.node_size; })
+		;
+
+		// Set the color on click
+		d3.select(this).select("circle")
+		.style("fill", function(d) {return d.node_color;})
+		.style("stroke", "black")
+		.style("stroke-width", 3)
+		.attr("r", function(d) { return d.node_size*1.3; })
+		;}
+
+
+
   function connectedNodes() {
     if (toggle == 0) {
       //Reduce the opacity of all but the neighbouring nodes
@@ -9773,7 +9861,7 @@ h3 {
       toggle = 1;
     } else {
       //Put them back to opacity=1
-      node.style("opacity", 1);
+      node.style("opacity", 0.95);
       link.style("opacity", 1);
 
       toggle = 0;
@@ -9786,8 +9874,10 @@ h3 {
   function threshold() {
     let thresh = this.value;
 
-    console.log('Setting threshold', thresh)
+    // console.log('Setting threshold', thresh)
     graph.links.splice(0, graph.links.length);
+    linkText = linkText.data([]);   // CLEAR EDGE-LABELS: Clear the linkText selection
+    linkText.exit().remove();       // CLEAR EDGE-LABELS: Clear the linkText elements from the DOM
 
     for (var i = 0; i < graphRec.links.length; i++) {
       if (graphRec.links[i].edge_weight > thresh) {
@@ -9797,47 +9887,90 @@ h3 {
     restart();
   }
 
+  // Set the initial value of the slider to the user-defined threshold
+  document.getElementById('thresholdSlider').value = 0;
+  // Call the threshold function to set the network state
+  threshold.call(document.getElementById('thresholdSlider'));
+
   d3.select("#thresholdSlider").on("change", threshold);
 
   //Restart the visualisation after any node and link changes
   function restart() {
 
+    // Update EDGE-LINKS
     link = link.data(graph.links);
     link.exit().remove();
     link.enter().insert("line", ".node").attr("class", "link");
-    link.style("stroke-width", function(d) {return d.edge_width;}); // WIDTH OF THE LINKS AFTER BREAKING WITH SLIDER
-    link.style("marker-end", () => config.directed ? "url(#suit)" : "none") // ARROWS IN EDGES
+    link.style("stroke-width", function(d) {return d.edge_width;});           // LINK-WIDTH AFTER BREAKING WITH SLIDER
+    //link.style('marker-start', function(d){ return 'url(#marker_' + d.marker_start  + ')' })
+	link.style("marker-end", function(d) {                                    // Include the markers.
+		if (config.directed) {return 'url(#marker_' + d.marker_end + ')' }})
+    link.style("stroke", function(d) {return d.color;});                      // EDGE-COLOR AFTER BREAKING WITH SLIDER
+    link.style("stroke-dasharray", function(d) {return d.edge_style;})      // EDGE-STYLE
+
+    // Update EDGE-LABELS
+    linkText = linkText.data(graph.links);
+    linkText.exit().remove();
+    linkText.enter().append("text")
+      .attr("class", "link-text")
+      .attr("font-size", function(d) {return d.label_fontsize + "px";})
+      .style("fill", function(d) {return d.label_color;})
+      .style("font-family", "Arial")
+      .text(function(d) { return d.label; });
+
     node = node.data(graph.nodes);
     node.enter().insert("circle", ".cursor").attr("class", "node").attr("r", 5).call(force.drag);
     force.start();
   }
+
 }
 
-        graph = {"links":[{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":0,"target":1,"source_label":"0","target_label":"1"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":0,"target":2,"source_label":"0","target_label":"2"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":0,"target":3,"source_label":"0","target_label":"3"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":0,"target":4,"source_label":"0","target_label":"4"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":0,"target":5,"source_label":"0","target_label":"5"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":0,"target":6,"source_label":"0","target_label":"6"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":0,"target":7,"source_label":"0","target_label":"7"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":0,"target":8,"source_label":"0","target_label":"8"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":0,"target":9,"source_label":"0","target_label":"10"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":0,"target":10,"source_label":"0","target_label":"11"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":0,"target":11,"source_label":"0","target_label":"12"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":0,"target":12,"source_label":"0","target_label":"13"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":0,"target":13,"source_label":"0","target_label":"17"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":0,"target":14,"source_label":"0","target_label":"19"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":0,"target":15,"source_label":"0","target_label":"21"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":0,"target":16,"source_label":"0","target_label":"31"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":1,"target":2,"source_label":"1","target_label":"2"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":1,"target":3,"source_label":"1","target_label":"3"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":1,"target":7,"source_label":"1","target_label":"7"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":1,"target":12,"source_label":"1","target_label":"13"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":1,"target":13,"source_label":"1","target_label":"17"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":1,"target":14,"source_label":"1","target_label":"19"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":1,"target":15,"source_label":"1","target_label":"21"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":1,"target":17,"source_label":"1","target_label":"30"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":2,"target":3,"source_label":"2","target_label":"3"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":2,"target":7,"source_label":"2","target_label":"7"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":2,"target":8,"source_label":"2","target_label":"8"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":2,"target":18,"source_label":"2","target_label":"9"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":2,"target":12,"source_label":"2","target_label":"13"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":2,"target":19,"source_label":"2","target_label":"27"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":2,"target":20,"source_label":"2","target_label":"28"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":2,"target":21,"source_label":"2","target_label":"32"},{"weight":5,"color":"#000000","edge_width":13.6667,"edge_weight":5,"source":3,"target":4,"source_label":"3","target_label":"4"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":3,"target":7,"source_label":"3","target_label":"7"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":3,"target":11,"source_label":"3","target_label":"12"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":3,"target":12,"source_label":"3","target_label":"13"},{"weight":6,"color":"#000000","edge_width":16.8333,"edge_weight":6,"source":4,"target":5,"source_label":"4","target_label":"5"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":4,"target":6,"source_label":"4","target_label":"6"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":4,"target":9,"source_label":"4","target_label":"10"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":5,"target":6,"source_label":"5","target_label":"6"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":5,"target":9,"source_label":"5","target_label":"10"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":5,"target":22,"source_label":"5","target_label":"16"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":6,"target":22,"source_label":"6","target_label":"16"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":8,"target":17,"source_label":"8","target_label":"30"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":8,"target":21,"source_label":"8","target_label":"32"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":8,"target":23,"source_label":"8","target_label":"33"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":12,"target":23,"source_label":"13","target_label":"33"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":14,"target":23,"source_label":"19","target_label":"33"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":16,"target":32,"source_label":"31","target_label":"24"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":16,"target":30,"source_label":"31","target_label":"25"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":16,"target":20,"source_label":"31","target_label":"28"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":16,"target":21,"source_label":"31","target_label":"32"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":16,"target":23,"source_label":"31","target_label":"33"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":17,"target":21,"source_label":"30","target_label":"32"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":17,"target":23,"source_label":"30","target_label":"33"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":18,"target":23,"source_label":"9","target_label":"33"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":19,"target":29,"source_label":"27","target_label":"23"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":19,"target":32,"source_label":"27","target_label":"24"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":19,"target":23,"source_label":"27","target_label":"33"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":20,"target":23,"source_label":"28","target_label":"33"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":21,"target":24,"source_label":"32","target_label":"14"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":21,"target":25,"source_label":"32","target_label":"15"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":21,"target":26,"source_label":"32","target_label":"18"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":21,"target":27,"source_label":"32","target_label":"20"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":21,"target":28,"source_label":"32","target_label":"22"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":21,"target":29,"source_label":"32","target_label":"23"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":21,"target":31,"source_label":"32","target_label":"29"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":21,"target":23,"source_label":"32","target_label":"33"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":23,"target":24,"source_label":"33","target_label":"14"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":23,"target":25,"source_label":"33","target_label":"15"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":23,"target":26,"source_label":"33","target_label":"18"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":23,"target":27,"source_label":"33","target_label":"20"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":23,"target":28,"source_label":"33","target_label":"22"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":23,"target":29,"source_label":"33","target_label":"23"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":23,"target":33,"source_label":"33","target_label":"26"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":23,"target":31,"source_label":"33","target_label":"29"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":29,"target":30,"source_label":"23","target_label":"25"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":29,"target":31,"source_label":"23","target_label":"29"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":30,"target":32,"source_label":"25","target_label":"24"},{"weight":1,"color":"#000000","edge_width":1.0,"edge_weight":1,"source":31,"target":33,"source_label":"29","target_label":"26"}],"nodes":[{"node_name":"0","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"},{"node_name":"1","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"},{"node_name":"2","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"},{"node_name":"3","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"},{"node_name":"4","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"},{"node_name":"5","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"},{"node_name":"6","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"},{"node_name":"7","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"},{"node_name":"8","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"},{"node_name":"10","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"},{"node_name":"11","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"},{"node_name":"12","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"},{"node_name":"13","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"},{"node_name":"17","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"},{"node_name":"19","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"},{"node_name":"21","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"},{"node_name":"31","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"},{"node_name":"30","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"},{"node_name":"9","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"},{"node_name":"27","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"},{"node_name":"28","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"},{"node_name":"32","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"},{"node_name":"16","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"},{"node_name":"33","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"},{"node_name":"14","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"},{"node_name":"15","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"},{"node_name":"18","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"},{"node_name":"20","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"},{"node_name":"22","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"},{"node_name":"23","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"},{"node_name":"25","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"},{"node_name":"29","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"},{"node_name":"24","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"},{"node_name":"26","node_color":"#000080","node_size":"10","node_size_edge":"0.1","node_color_edge":"#000000"}]}
+        graph = {"links":[{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":4.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.8802,"edge_distance":75.0,"edge_style":0,"edge_weight":4.0,"source":0,"target":1,"source_label":"0","target_label":"1"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":0,"target":2,"source_label":"0","target_label":"10"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":0,"target":3,"source_label":"0","target_label":"11"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":1.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":0.5,"edge_distance":50.0,"edge_style":0,"edge_weight":1.0,"source":0,"target":4,"source_label":"0","target_label":"12"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":0,"target":5,"source_label":"0","target_label":"13"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":0,"target":6,"source_label":"0","target_label":"17"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":0,"target":7,"source_label":"0","target_label":"19"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":5.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":3.6736,"edge_distance":83.3333,"edge_style":0,"edge_weight":5.0,"source":0,"target":8,"source_label":"0","target_label":"2"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":0,"target":9,"source_label":"0","target_label":"21"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":0,"target":10,"source_label":"0","target_label":"3"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":0,"target":11,"source_label":"0","target_label":"31"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":0,"target":12,"source_label":"0","target_label":"4"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":0,"target":13,"source_label":"0","target_label":"5"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":0,"target":14,"source_label":"0","target_label":"6"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":0,"target":15,"source_label":"0","target_label":"7"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":0,"target":16,"source_label":"0","target_label":"8"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":4.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.8802,"edge_distance":75.0,"edge_style":0,"edge_weight":4.0,"source":1,"target":0,"source_label":"1","target_label":"0"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":5.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":3.6736,"edge_distance":83.3333,"edge_style":0,"edge_weight":5.0,"source":1,"target":5,"source_label":"1","target_label":"13"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":1.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":0.5,"edge_distance":50.0,"edge_style":0,"edge_weight":1.0,"source":1,"target":6,"source_label":"1","target_label":"17"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":1,"target":7,"source_label":"1","target_label":"19"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":6.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":4.467,"edge_distance":91.6667,"edge_style":0,"edge_weight":6.0,"source":1,"target":8,"source_label":"1","target_label":"2"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":1,"target":9,"source_label":"1","target_label":"21"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":1,"target":10,"source_label":"1","target_label":"3"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":1,"target":17,"source_label":"1","target_label":"30"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":4.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.8802,"edge_distance":75.0,"edge_style":0,"edge_weight":4.0,"source":1,"target":15,"source_label":"1","target_label":"7"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":2,"target":0,"source_label":"10","target_label":"0"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":2,"target":12,"source_label":"10","target_label":"4"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":2,"target":13,"source_label":"10","target_label":"5"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":3,"target":0,"source_label":"11","target_label":"0"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":1.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":0.5,"edge_distance":50.0,"edge_style":0,"edge_weight":1.0,"source":4,"target":0,"source_label":"12","target_label":"0"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":4,"target":10,"source_label":"12","target_label":"3"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":5,"target":0,"source_label":"13","target_label":"0"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":5.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":3.6736,"edge_distance":83.3333,"edge_style":0,"edge_weight":5.0,"source":5,"target":1,"source_label":"13","target_label":"1"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":5,"target":8,"source_label":"13","target_label":"2"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":5,"target":10,"source_label":"13","target_label":"3"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":5,"target":18,"source_label":"13","target_label":"33"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":6,"target":0,"source_label":"17","target_label":"0"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":1.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":0.5,"edge_distance":50.0,"edge_style":0,"edge_weight":1.0,"source":6,"target":1,"source_label":"17","target_label":"1"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":7,"target":0,"source_label":"19","target_label":"0"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":7,"target":1,"source_label":"19","target_label":"1"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":1.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":0.5,"edge_distance":50.0,"edge_style":0,"edge_weight":1.0,"source":7,"target":18,"source_label":"19","target_label":"33"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":5.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":3.6736,"edge_distance":83.3333,"edge_style":0,"edge_weight":5.0,"source":8,"target":0,"source_label":"2","target_label":"0"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":6.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":4.467,"edge_distance":91.6667,"edge_style":0,"edge_weight":6.0,"source":8,"target":1,"source_label":"2","target_label":"1"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":8,"target":5,"source_label":"2","target_label":"13"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":8,"target":24,"source_label":"2","target_label":"27"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":8,"target":25,"source_label":"2","target_label":"28"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":8,"target":10,"source_label":"2","target_label":"3"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":8,"target":20,"source_label":"2","target_label":"32"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":4.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.8802,"edge_distance":75.0,"edge_style":0,"edge_weight":4.0,"source":8,"target":15,"source_label":"2","target_label":"7"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":5.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":3.6736,"edge_distance":83.3333,"edge_style":0,"edge_weight":5.0,"source":8,"target":16,"source_label":"2","target_label":"8"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":1.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":0.5,"edge_distance":50.0,"edge_style":0,"edge_weight":1.0,"source":8,"target":26,"source_label":"2","target_label":"9"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":9,"target":0,"source_label":"21","target_label":"0"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":9,"target":1,"source_label":"21","target_label":"1"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":10,"target":0,"source_label":"3","target_label":"0"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":10,"target":1,"source_label":"3","target_label":"1"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":10,"target":4,"source_label":"3","target_label":"12"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":10,"target":5,"source_label":"3","target_label":"13"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":10,"target":8,"source_label":"3","target_label":"2"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":5.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":3.6736,"edge_distance":83.3333,"edge_style":0,"edge_weight":5.0,"source":10,"target":12,"source_label":"3","target_label":"4"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":10,"target":15,"source_label":"3","target_label":"7"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":11,"target":0,"source_label":"31","target_label":"0"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":11,"target":32,"source_label":"31","target_label":"24"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":7.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":5.2605,"edge_distance":100.0,"edge_style":0,"edge_weight":7.0,"source":11,"target":30,"source_label":"31","target_label":"25"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":11,"target":25,"source_label":"31","target_label":"28"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":4.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.8802,"edge_distance":75.0,"edge_style":0,"edge_weight":4.0,"source":11,"target":20,"source_label":"31","target_label":"32"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":4.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.8802,"edge_distance":75.0,"edge_style":0,"edge_weight":4.0,"source":11,"target":18,"source_label":"31","target_label":"33"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":12,"target":0,"source_label":"4","target_label":"0"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":12,"target":2,"source_label":"4","target_label":"10"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":6.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":4.467,"edge_distance":91.6667,"edge_style":0,"edge_weight":6.0,"source":12,"target":13,"source_label":"4","target_label":"5"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":12,"target":14,"source_label":"4","target_label":"6"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":13,"target":0,"source_label":"5","target_label":"0"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":13,"target":2,"source_label":"5","target_label":"10"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":13,"target":22,"source_label":"5","target_label":"16"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":7.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":5.2605,"edge_distance":100.0,"edge_style":0,"edge_weight":7.0,"source":13,"target":14,"source_label":"5","target_label":"6"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":14,"target":0,"source_label":"6","target_label":"0"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":14,"target":22,"source_label":"6","target_label":"16"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":14,"target":12,"source_label":"6","target_label":"4"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":5.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":3.6736,"edge_distance":83.3333,"edge_style":0,"edge_weight":5.0,"source":14,"target":13,"source_label":"6","target_label":"5"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":15,"target":0,"source_label":"7","target_label":"0"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":4.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.8802,"edge_distance":75.0,"edge_style":0,"edge_weight":4.0,"source":15,"target":1,"source_label":"7","target_label":"1"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":4.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.8802,"edge_distance":75.0,"edge_style":0,"edge_weight":4.0,"source":15,"target":8,"source_label":"7","target_label":"2"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":15,"target":10,"source_label":"7","target_label":"3"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":16,"target":0,"source_label":"8","target_label":"0"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":5.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":3.6736,"edge_distance":83.3333,"edge_style":0,"edge_weight":5.0,"source":16,"target":8,"source_label":"8","target_label":"2"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":16,"target":17,"source_label":"8","target_label":"30"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":16,"target":20,"source_label":"8","target_label":"32"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":4.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.8802,"edge_distance":75.0,"edge_style":0,"edge_weight":4.0,"source":16,"target":18,"source_label":"8","target_label":"33"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":17,"target":1,"source_label":"30","target_label":"1"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":17,"target":20,"source_label":"30","target_label":"32"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":17,"target":18,"source_label":"30","target_label":"33"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":17,"target":16,"source_label":"30","target_label":"8"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":18,"target":5,"source_label":"33","target_label":"13"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":18,"target":19,"source_label":"33","target_label":"14"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":4.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.8802,"edge_distance":75.0,"edge_style":0,"edge_weight":4.0,"source":18,"target":21,"source_label":"33","target_label":"15"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":18,"target":23,"source_label":"33","target_label":"18"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":1.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":0.5,"edge_distance":50.0,"edge_style":0,"edge_weight":1.0,"source":18,"target":7,"source_label":"33","target_label":"19"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":1.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":0.5,"edge_distance":50.0,"edge_style":0,"edge_weight":1.0,"source":18,"target":27,"source_label":"33","target_label":"20"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":18,"target":28,"source_label":"33","target_label":"22"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":4.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.8802,"edge_distance":75.0,"edge_style":0,"edge_weight":4.0,"source":18,"target":29,"source_label":"33","target_label":"23"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":18,"target":33,"source_label":"33","target_label":"26"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":4.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.8802,"edge_distance":75.0,"edge_style":0,"edge_weight":4.0,"source":18,"target":24,"source_label":"33","target_label":"27"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":18,"target":25,"source_label":"33","target_label":"28"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":18,"target":31,"source_label":"33","target_label":"29"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":18,"target":17,"source_label":"33","target_label":"30"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":4.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.8802,"edge_distance":75.0,"edge_style":0,"edge_weight":4.0,"source":18,"target":11,"source_label":"33","target_label":"31"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":5.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":3.6736,"edge_distance":83.3333,"edge_style":0,"edge_weight":5.0,"source":18,"target":20,"source_label":"33","target_label":"32"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":4.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.8802,"edge_distance":75.0,"edge_style":0,"edge_weight":4.0,"source":18,"target":16,"source_label":"33","target_label":"8"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":18,"target":26,"source_label":"33","target_label":"9"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":19,"target":20,"source_label":"14","target_label":"32"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":19,"target":18,"source_label":"14","target_label":"33"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":20,"target":19,"source_label":"32","target_label":"14"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":20,"target":21,"source_label":"32","target_label":"15"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":1.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":0.5,"edge_distance":50.0,"edge_style":0,"edge_weight":1.0,"source":20,"target":23,"source_label":"32","target_label":"18"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":20,"target":8,"source_label":"32","target_label":"2"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":20,"target":27,"source_label":"32","target_label":"20"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":20,"target":28,"source_label":"32","target_label":"22"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":5.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":3.6736,"edge_distance":83.3333,"edge_style":0,"edge_weight":5.0,"source":20,"target":29,"source_label":"32","target_label":"23"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":4.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.8802,"edge_distance":75.0,"edge_style":0,"edge_weight":4.0,"source":20,"target":31,"source_label":"32","target_label":"29"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":20,"target":17,"source_label":"32","target_label":"30"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":4.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.8802,"edge_distance":75.0,"edge_style":0,"edge_weight":4.0,"source":20,"target":11,"source_label":"32","target_label":"31"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":5.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":3.6736,"edge_distance":83.3333,"edge_style":0,"edge_weight":5.0,"source":20,"target":18,"source_label":"32","target_label":"33"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":20,"target":16,"source_label":"32","target_label":"8"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":21,"target":20,"source_label":"15","target_label":"32"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":4.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.8802,"edge_distance":75.0,"edge_style":0,"edge_weight":4.0,"source":21,"target":18,"source_label":"15","target_label":"33"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":22,"target":13,"source_label":"16","target_label":"5"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":22,"target":14,"source_label":"16","target_label":"6"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":1.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":0.5,"edge_distance":50.0,"edge_style":0,"edge_weight":1.0,"source":23,"target":20,"source_label":"18","target_label":"32"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":23,"target":18,"source_label":"18","target_label":"33"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":24,"target":8,"source_label":"27","target_label":"2"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":4.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.8802,"edge_distance":75.0,"edge_style":0,"edge_weight":4.0,"source":24,"target":29,"source_label":"27","target_label":"23"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":24,"target":32,"source_label":"27","target_label":"24"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":4.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.8802,"edge_distance":75.0,"edge_style":0,"edge_weight":4.0,"source":24,"target":18,"source_label":"27","target_label":"33"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":25,"target":8,"source_label":"28","target_label":"2"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":25,"target":11,"source_label":"28","target_label":"31"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":25,"target":18,"source_label":"28","target_label":"33"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":1.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":0.5,"edge_distance":50.0,"edge_style":0,"edge_weight":1.0,"source":26,"target":8,"source_label":"9","target_label":"2"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":26,"target":18,"source_label":"9","target_label":"33"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":27,"target":20,"source_label":"20","target_label":"32"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":1.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":0.5,"edge_distance":50.0,"edge_style":0,"edge_weight":1.0,"source":27,"target":18,"source_label":"20","target_label":"33"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":28,"target":20,"source_label":"22","target_label":"32"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":28,"target":18,"source_label":"22","target_label":"33"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":5.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":3.6736,"edge_distance":83.3333,"edge_style":0,"edge_weight":5.0,"source":29,"target":30,"source_label":"23","target_label":"25"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":4.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.8802,"edge_distance":75.0,"edge_style":0,"edge_weight":4.0,"source":29,"target":24,"source_label":"23","target_label":"27"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":29,"target":31,"source_label":"23","target_label":"29"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":5.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":3.6736,"edge_distance":83.3333,"edge_style":0,"edge_weight":5.0,"source":29,"target":20,"source_label":"23","target_label":"32"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":4.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.8802,"edge_distance":75.0,"edge_style":0,"edge_weight":4.0,"source":29,"target":18,"source_label":"23","target_label":"33"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":5.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":3.6736,"edge_distance":83.3333,"edge_style":0,"edge_weight":5.0,"source":30,"target":29,"source_label":"25","target_label":"23"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":30,"target":32,"source_label":"25","target_label":"24"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":7.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":5.2605,"edge_distance":100.0,"edge_style":0,"edge_weight":7.0,"source":30,"target":11,"source_label":"25","target_label":"31"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":31,"target":29,"source_label":"29","target_label":"23"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":4.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.8802,"edge_distance":75.0,"edge_style":0,"edge_weight":4.0,"source":31,"target":33,"source_label":"29","target_label":"26"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":4.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.8802,"edge_distance":75.0,"edge_style":0,"edge_weight":4.0,"source":31,"target":20,"source_label":"29","target_label":"32"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":31,"target":18,"source_label":"29","target_label":"33"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":32,"target":30,"source_label":"24","target_label":"25"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.0868,"edge_distance":66.6667,"edge_style":0,"edge_weight":3.0,"source":32,"target":24,"source_label":"24","target_label":"27"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":32,"target":11,"source_label":"24","target_label":"31"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":4.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":2.8802,"edge_distance":75.0,"edge_style":0,"edge_weight":4.0,"source":33,"target":31,"source_label":"26","target_label":"29"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.0,"color":"#808080","label":"","label_color":"#808080","label_fontsize":8,"edge_width":1.2934,"edge_distance":58.3333,"edge_style":0,"edge_weight":2.0,"source":33,"target":18,"source_label":"26","target_label":"33"}],"nodes":[{"name":"0","group":"1","node_name":"0","node_marker":"circle","node_tooltip":"0","node_color":"#8da0cb","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#8da0cb","node_fontsize":"12"},{"name":"1","group":"1","node_name":"1","node_marker":"circle","node_tooltip":"1","node_color":"#8da0cb","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#8da0cb","node_fontsize":"12"},{"name":"10","group":"3","node_name":"10","node_marker":"circle","node_tooltip":"10","node_color":"#b3b3b3","node_opacity":"0.8731","node_size":"12.0867","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#b3b3b3","node_fontsize":"12"},{"name":"11","group":"1","node_name":"11","node_marker":"circle","node_tooltip":"11","node_color":"#8da0cb","node_opacity":"0.35","node_size":"8.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#8da0cb","node_fontsize":"12"},{"name":"12","group":"1","node_name":"12","node_marker":"circle","node_tooltip":"12","node_color":"#8da0cb","node_opacity":"0.6115","node_size":"10.043","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#8da0cb","node_fontsize":"12"},{"name":"13","group":"1","node_name":"13","node_marker":"circle","node_tooltip":"13","node_color":"#8da0cb","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#8da0cb","node_fontsize":"12"},{"name":"17","group":"1","node_name":"17","node_marker":"circle","node_tooltip":"17","node_color":"#8da0cb","node_opacity":"0.6115","node_size":"10.043","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#8da0cb","node_fontsize":"12"},{"name":"19","group":"1","node_name":"19","node_marker":"circle","node_tooltip":"19","node_color":"#8da0cb","node_opacity":"0.8731","node_size":"12.0867","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#8da0cb","node_fontsize":"12"},{"name":"2","group":"1","node_name":"2","node_marker":"circle","node_tooltip":"2","node_color":"#8da0cb","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#8da0cb","node_fontsize":"12"},{"name":"21","group":"1","node_name":"21","node_marker":"circle","node_tooltip":"21","node_color":"#8da0cb","node_opacity":"0.6115","node_size":"10.043","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#8da0cb","node_fontsize":"12"},{"name":"3","group":"1","node_name":"3","node_marker":"circle","node_tooltip":"3","node_color":"#8da0cb","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#8da0cb","node_fontsize":"12"},{"name":"31","group":"0","node_name":"31","node_marker":"circle","node_tooltip":"31","node_color":"#66c2a5","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#66c2a5","node_fontsize":"12"},{"name":"4","group":"3","node_name":"4","node_marker":"circle","node_tooltip":"4","node_color":"#b3b3b3","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#b3b3b3","node_fontsize":"12"},{"name":"5","group":"3","node_name":"5","node_marker":"circle","node_tooltip":"5","node_color":"#b3b3b3","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#b3b3b3","node_fontsize":"12"},{"name":"6","group":"3","node_name":"6","node_marker":"circle","node_tooltip":"6","node_color":"#b3b3b3","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#b3b3b3","node_fontsize":"12"},{"name":"7","group":"1","node_name":"7","node_marker":"circle","node_tooltip":"7","node_color":"#8da0cb","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#8da0cb","node_fontsize":"12"},{"name":"8","group":"2","node_name":"8","node_marker":"circle","node_tooltip":"8","node_color":"#ffd92f","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#ffd92f","node_fontsize":"12"},{"name":"30","group":"2","node_name":"30","node_marker":"circle","node_tooltip":"30","node_color":"#ffd92f","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#ffd92f","node_fontsize":"12"},{"name":"33","group":"2","node_name":"33","node_marker":"circle","node_tooltip":"33","node_color":"#ffd92f","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#ffd92f","node_fontsize":"12"},{"name":"14","group":"2","node_name":"14","node_marker":"circle","node_tooltip":"14","node_color":"#ffd92f","node_opacity":"0.6115","node_size":"10.043","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#ffd92f","node_fontsize":"12"},{"name":"32","group":"2","node_name":"32","node_marker":"circle","node_tooltip":"32","node_color":"#ffd92f","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#ffd92f","node_fontsize":"12"},{"name":"15","group":"2","node_name":"15","node_marker":"circle","node_tooltip":"15","node_color":"#ffd92f","node_opacity":"0.6115","node_size":"10.043","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#ffd92f","node_fontsize":"12"},{"name":"16","group":"3","node_name":"16","node_marker":"circle","node_tooltip":"16","node_color":"#b3b3b3","node_opacity":"0.6115","node_size":"10.043","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#b3b3b3","node_fontsize":"12"},{"name":"18","group":"2","node_name":"18","node_marker":"circle","node_tooltip":"18","node_color":"#ffd92f","node_opacity":"0.6115","node_size":"10.043","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#ffd92f","node_fontsize":"12"},{"name":"27","group":"0","node_name":"27","node_marker":"circle","node_tooltip":"27","node_color":"#66c2a5","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#66c2a5","node_fontsize":"12"},{"name":"28","group":"0","node_name":"28","node_marker":"circle","node_tooltip":"28","node_color":"#66c2a5","node_opacity":"0.8731","node_size":"12.0867","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#66c2a5","node_fontsize":"12"},{"name":"9","group":"1","node_name":"9","node_marker":"circle","node_tooltip":"9","node_color":"#8da0cb","node_opacity":"0.6115","node_size":"10.043","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#8da0cb","node_fontsize":"12"},{"name":"20","group":"2","node_name":"20","node_marker":"circle","node_tooltip":"20","node_color":"#ffd92f","node_opacity":"0.6115","node_size":"10.043","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#ffd92f","node_fontsize":"12"},{"name":"22","group":"2","node_name":"22","node_marker":"circle","node_tooltip":"22","node_color":"#ffd92f","node_opacity":"0.6115","node_size":"10.043","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#ffd92f","node_fontsize":"12"},{"name":"23","group":"0","node_name":"23","node_marker":"circle","node_tooltip":"23","node_color":"#66c2a5","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#66c2a5","node_fontsize":"12"},{"name":"25","group":"0","node_name":"25","node_marker":"circle","node_tooltip":"25","node_color":"#66c2a5","node_opacity":"0.8731","node_size":"12.0867","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#66c2a5","node_fontsize":"12"},{"name":"29","group":"2","node_name":"29","node_marker":"circle","node_tooltip":"29","node_color":"#ffd92f","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#ffd92f","node_fontsize":"12"},{"name":"24","group":"0","node_name":"24","node_marker":"circle","node_tooltip":"24","node_color":"#66c2a5","node_opacity":"0.8731","node_size":"12.0867","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#66c2a5","node_fontsize":"12"},{"name":"26","group":"2","node_name":"26","node_marker":"circle","node_tooltip":"26","node_color":"#ffd92f","node_opacity":"0.6115","node_size":"10.043","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#ffd92f","node_fontsize":"12"}]}
 
         window.addEventListener('DOMContentLoaded', function () {
             d3graphscript({
-                width: 800,
-                height: 600,
-                charge: -250,
-                distance: 30,
+                width: 1500,
+                height: 800,
+                charge: -450,
+                distance: 50,
                 directed: false,
                 collision: 3
             })
         });
+
+        // Save image to svg
+        document.getElementById('saveButton').addEventListener('click', function () {
+            var svgData = document.querySelector('svg').outerHTML;
+            var blob = new Blob([svgData], {type: "image/svg+xml;charset=utf-8"});
+            var url = URL.createObjectURL(blob);
+            var link = document.createElement('a');
+            link.href = url;
+            link.download = 'd3graph.svg';
+            link.click();
+        });
+        
+        
     </script>
-</head>
-<body>
+
+
+
+<!-- SLIDER -->
+
+
     
+	<div style="max-width:1500px;">
         <form>
             <h3>
-                Link threshold
-                0.0
-                <input type="range" autocomplete="off" id="thresholdSlider"
-                       value="0.0" min="0.0" max="17.0">
-                17.0
+                Edge Threshold
+                0
+                <input type="range" autocomplete="off" id="thresholdSlider" value="0" min="0" max="7">
+                7
             </h3>
         </form>
+	</div>
     
+
+
+
 </body>
 </html>
