@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>2-Player Scrolling Shooter met Scores</title>
+  <style>
+    html, body {
+      margin: 0; padding: 0; overflow: hidden;
+      background: #87CEEB;
+      font-family: Arial, sans-serif;
+    }
+    canvas {
+      display: block;
+      margin: auto;
+      background: #d0f4f7;
+      border: 2px solid #333;
+    }
+    #info {
+      text-align: center;
+      margin: 10px;
+      font-size: 18px;
+      color: #333;
+    }
+    #message {
+      text-align: center;
+      font-size: 32px;
+      font-weight: bold;
+      color: red;
+      margin-top: 20px;
+    }
+    #playersInfo {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div id="playersInfo">
+  <div>Speler 1 Levens: <span id="livesDisplay1">10</span> | Score: <span id="scoreDisplay1">0</span></div>
+<br><br>
+  <div>Speler 2 Levens: <span id="livesDisplay2">10</span> | Score: <span id="scoreDisplay2">0</span></div>
+</div>
+<div id="info">
+  Speler 1: pijltjestoetsen, schiet Space, bom B | Speler 2: WASD, schiet SHIFT, bom CTRL
+</div>
+<canvas id="gameCanvas" width="1000" height="640"></canvas>
+<div id="message"></div>
+
+<script>
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+  const livesDisplay1 = document.getElementById('livesDisplay1');
+  const livesDisplay2 = document.getElementById('livesDisplay2');
+  const scoreDisplay1 = document.getElementById('scoreDisplay1');
+  const scoreDisplay2 = document.getElementById('scoreDisplay2');
+  const messageDiv = document.getElementById('message');
+
+  const moveSpeed = 0.4;
+  const maxSpeed = 4;
+  const friction = 0.9;
+  const scrollSpeed = 1.5;
+
+  // Speler 1
+  const player1 = {
+    x: 100,
+    y: 300,
+    width: 30,
+    height: 30,
+    velocityX: 0,
+    velocityY: 0,
+    color: "#ffcc00",
+    lives: 10,
+    score: 0,
+    controls: {
+      left: "ArrowLeft",
+      right: "ArrowRight",
+      up: "ArrowUp",
+      down: "ArrowDown",
+      shoot: "Space",
+      bomb: "KeyB"
+    }
+  };
+
+  // Speler 2
+  const player2 = {
+    x: 350,
+    y: 300,
+    width: 30,
+    height: 30,
+    velocityX: 0,
+    velocityY: 0,
+    color: "#00ccff",
+    lives: 10,
+    score: 0,
+    controls: {
+      left: "KeyA",
+      right: "KeyD",
+      up: "KeyW",
+      down: "KeyS",
+      shoot: "ShiftLeft",
+      bomb: "ControlLeft"
+    }
+  };
+
+  const players = [player1, player2];
+
+  const keys = {};
+  const blocks = [];
+  const bullets = [];
+  const bombs = [];
+  const explosions = [];
+
+  let gameOver = false;
+  let gameWon = false;
+
+  // Explosiegeluid (base64 WAV)
+  const explosionSound = new Audio("data:audio/wav;base64,UklGRngAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA");
+
+  function generateBlocks() {
+    blocks.length = 0;
+    for (let i = 0; i < 30; i++) {
+      blocks.push({
+        x: Math.random() * (canvas.width - 40),
+        y: Math.random() * -2000,
+        width: Math.random() * 40 + 20,
+        height: Math.random() * 30 + 10,
+        color: "#ffffff"
+      });
+    }
+  }
+  generateBlocks();
+
+  document.addEventListener("keydown", e => {
+    if(gameOver || gameWon) return;
+    keys[e.code] = true;
+
+    players.forEach(p => {
+      if(e.code === p.controls.shoot){
+        shoot(p);
+      }
+      if(e.code === p.controls.bomb){
+        dropBomb(p);
+      }
+    });
+  });
+  document.addEventListener("keyup", e => keys[e.code] = false);
+
+  function shoot(player) {
+    if(gameOver || gameWon) return;
+    bullets.push({
+      x: player.x + player.width / 2 - 5,
+      y: player.y,
+      width: 10,
+      height: 20,
+      speed: 7,
+      color: player.color,
+      owner: player
+    });
+  }
+
+  function dropBomb(player) {
+    if(gameOver || gameWon) return;
+    bombs.push({
+      x: player.x + player.width / 2 - 15,
+      y: player.y,
+      width: 30,
+      height: 60,
+      speed: 7 / 3,
+      color: player.color === "#ffcc00" ? "#000000" : "#003344", // zwart voor p1, donkerblauw voor p2
+      startTime: performance.now(),
+      exploded: false,
+      owner: player
+    });
+  }
+
+  function gameLoop() {
+    if(!gameOver && !gameWon){
+      update();
+      draw();
+    }
+    requestAnimationFrame(gameLoop);
+  }
+
+  function update() {
+    if(gameOver || gameWon) return;
+
+    // Update spelers
+    players.forEach(player => {
+      if (keys[player.controls.left]) player.velocityX -= moveSpeed;
+      if (keys[player.controls.right]) player.velocityX += moveSpeed;
+      if (keys[player.controls.up]) player.velocityY -= moveSpeed;
+      if (keys[player.controls.down]) player.velocityY += moveSpeed;
+
+      player.velocityX *= friction;
+      player.velocityX = Math.max(-maxSpeed, Math.min(maxSpeed, player.velocityX));
+      player.x += player.velocityX;
+
+      player.velocityY *= friction;
+      player.velocityY = Math.max(-maxSpeed, Math.min(maxSpeed, player.velocityY));
+      player.y += player.velocityY;
+
+      // Beperk binnen canvas
+      if (player.x < 0) {
+        player.x = 0;
+        player.velocityX = 0;
+      } else if (player.x + player.width > canvas.width) {
+        player.x = canvas.width - player.width;
+        player.velocityX = 0;
+      }
+      if (player.y < 0) {
+        player.y = 0;
+        player.velocityY = 0;
+      } else if (player.y + player.height > canvas.height) {
+        player.y = canvas.height - player.height;
+        player.velocityY = 0;
+      }
+    });
+
+    // Scroll blocks
+    for (let i = blocks.length - 1; i >= 0; i--) {
+      const block = blocks[i];
+      block.y += scrollSpeed;
+
+      // Check botsing met spelers
+      players.forEach(player => {
+        if(rectsOverlap(player, block)) {
+          blocks.splice(i, 1);
+          loseLife(player);
+          i--; // i aanpassen want array verkleind
+        }
+      });
+
+      if (block.y > canvas.height + 50) {
+        block.y = -Math.random() * 1000 - 50;
+        block.x = Math.random() * (canvas.width - 40);
+        block.width = Math.random() * 40 + 20;
+        block.height = Math.random() * 30 + 10;
+      }
+    }
+
+    // Update bullets
+    for (let i = bullets.length - 1; i >= 0; i--) {
+      const b = bullets[i];
+      b.y -= b.speed;
+
+      if (b.y + b.height < 0) {
+        bullets.splice(i, 1);
+        continue;
+      }
+
+      for (let j = blocks.length - 1; j >= 0; j--) {
+        const block = blocks[j];
+        if (rectsOverlap(b, block)) {
+          // Verhoog score van speler die schiet
+          if(b.owner){
+            b.owner.score++;
+            updateScoreDisplay(b.owner);
+          }
+          bullets.splice(i, 1);
+          blocks.splice(j, 1);
+          break;
+        }
+      }
+    }
+
+    // Update bombs
+    const now = performance.now();
+    for (let i = bombs.length - 1; i >= 0; i--) {
+      const bomb = bombs[i];
+      bomb.y -= bomb.speed;
+
+      let collided = false;
+      for (let j = blocks.length - 1; j >= 0; j--) {
+        if (rectsOverlap(bomb, blocks[j])) {
+          collided = true;
+          break;
+        }
+      }
+      if (collided && !bomb.exploded) {
+        triggerExplosion(bomb.x + bomb.width/2, bomb.y + bomb.height/2);
+        bomb.exploded = true;
+        bombs.splice(i, 1);
+
+        // Verhoog score voor elke kapot gemaakte block
+        players.forEach(p => {
+          // geen update hier, update per block in loop hieronder
+        });
+        // Verwijder alle blokken zichtbaar in het scherm en verhoog score voor eigenaar bom
+        for (let j = blocks.length - 1; j >= 0; j--) {
+          const block = blocks[j];
+          if (block.y + block.height > 0 && block.y < canvas.height) {
+            if(bomb.owner){
+              bomb.owner.score++;
+            }
+            blocks.splice(j, 1);
+          }
+        }
+        if(bomb.owner){
+          updateScoreDisplay(bomb.owner);
+        }
+        continue;
+      }
+
+      if (!bomb.exploded && (now - bomb.startTime) >= 2000) {
+        triggerExplosion(bomb.x + bomb.width/2, bomb.y + bomb.height/2);
+        bomb.exploded = true;
+
+        for (let j = blocks.length - 1; j >= 0; j--) {
+          const block = blocks[j];
+          if (block.y + block.height > 0 && block.y < canvas.height) {
+            if(bomb.owner){
+              bomb.owner.score++;
+            }
+            blocks.splice(j, 1);
+          }
+        }
+        if(bomb.owner){
+          updateScoreDisplay(bomb.owner);
+        }
+        bombs.splice(i, 1);
+        continue;
+      }
+
+      if (bomb.y + bomb.height < 0) {
+        bombs.splice(i, 1);
+      }
+    }
+
+    // Update explosies animatie
+    for(let i = explosions.length - 1; i >= 0; i--){
+      const ex = explosions[i];
+      ex.radius += ex.growthRate;
+      ex.alpha -= ex.fadeRate;
+      if(ex.alpha <= 0){
+        explosions.splice(i,1);
+      }
+    }
+
+    // Check game over / win
+    if (players.every(p => p.lives <= 0)) {
+      endGame(false);
+    } else if (blocks.length === 0) {
+      winGame();
+    }
+  }
+
+  function updateScoreDisplay(player){
+    if(player === player1) scoreDisplay1.textContent = player.score;
+    else if(player === player2) scoreDisplay2.textContent = player.score;
+  }
+
+  function triggerExplosion(x, y){
+    explosions.push({
+      x: x,
+      y: y,
+      radius: 10,
+      growthRate: 2,
+      alpha: 1,
+      fadeRate: 0.03
+    });
+    explosionSound.currentTime = 0;
+    explosionSound.play();
+  }
+
+  function loseLife(player) {
+    player.lives--;
+    if(player === player1) livesDisplay1.textContent = player.lives;
+    else if(player === player2) livesDisplay2.textContent = player.lives;
+
+    if (player.lives <= 0) {
+      // Optioneel: kan speler uit scherm verplaatsen of kleur veranderen
+      // Nu nog niks extra
+    }
+  }
+
+  function winGame() {
+    gameWon = true;
+    messageDiv.textContent = "🎉 Gefeliciteerd, je hebt het uitgespeeld! 🎉";
+  }
+
+  function endGame(won) {
+    gameOver = true;
+    if(won){
+      messageDiv.textContent = "🎉 Gefeliciteerd, je hebt het uitgespeeld! 🎉";
+    } else {
+      messageDiv.textContent = "💥 Game Over! Beide spelers zijn af. 💥";
+    }
+  }
+
+  function rectsOverlap(a, b) {
+    return a.x < b.x + b.width &&
+           a.x + a.width > b.x &&
+           a.y < b.y + b.height &&
+           a.y + a.height > b.y;
+  }
+
+  function drawPlayer(player) {
+    const cx = player.x + player.width / 2;
+    const cy = player.y + player.height / 2;
+
+    ctx.save();
+    ctx.translate(cx, cy);
+
+    ctx.fillStyle = player.color;
+    ctx.beginPath();
+    ctx.moveTo(0, -player.height / 2);
+    ctx.lineTo(player.width / 2, player.height / 2);
+    ctx.lineTo(-player.width / 2, player.height / 2);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = 'orange';
+    ctx.beginPath();
+    ctx.arc(0, 0, player.width / 6, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    for (const block of blocks) {
+      ctx.fillStyle = block.color;
+      ctx.fillRect(block.x, block.y, block.width, block.height);
+    }
+
+    for (const b of bullets) {
+      ctx.fillStyle = b.color;
+      ctx.fillRect(b.x, b.y, b.width, b.height);
+    }
+
+    for (const bomb of bombs) {
+      ctx.fillStyle = bomb.color;
+      ctx.fillRect(bomb.x, bomb.y, bomb.width, bomb.height);
+    }
+
+    for (const ex of explosions) {
+      ctx.beginPath();
+      const gradient = ctx.createRadialGradient(ex.x, ex.y, ex.radius * 0.3, ex.x, ex.y, ex.radius);
+      gradient.addColorStop(0, `rgba(255, 165, 0, ${ex.alpha})`);
+      gradient.addColorStop(0.5, `rgba(255, 69, 0, ${ex.alpha * 0.6})`);
+      gradient.addColorStop(1, `rgba(255, 0, 0, 0)`);
+      ctx.fillStyle = gradient;
+      ctx.arc(ex.x, ex.y, ex.radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    drawPlayer(player1);
+    drawPlayer(player2);
+  }
+
+  gameLoop();
+</script>
+
+</body>
+</html>
