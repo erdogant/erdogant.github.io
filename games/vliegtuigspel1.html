@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Keira Vliegtuig Spel</title>
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      color: white;
+      font-family: sans-serif;
+      text-align: center;
+    }
+    canvas {
+      display: block;
+      margin: 0 auto;
+      background: #111;
+    }
+    #playersInfo {
+      margin-top: 10px;
+      font-size: 18px;
+    }
+    #info {
+      margin: 5px 0 10px 0;
+      font-size: 14px;
+      color: #ccc;
+    }
+    #message {
+      font-size: 20px;
+      color: yellow;
+      margin-top: 10px;
+    }
+    #touchControls {
+      display: none;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 10px 0;
+    }
+    .touchBtn {
+      padding: 10px;
+      margin: 4px;
+      font-size: 16px;
+      background: #444;
+      color: #fff;
+      border-radius: 8px;
+      border: none;
+      min-width: 60px;
+    }
+    @media (pointer: coarse) {
+      #touchControls {
+        display: flex;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="playersInfo">
+    <div>Speler 1 Levens: <span id="livesDisplay1">10</span> | Score: <span id="scoreDisplay1">0</span></div>
+    <br>
+    <div>Speler 2 Levens: <span id="livesDisplay2">10</span> | Score: <span id="scoreDisplay2">0</span></div>
+  </div>
+  <div id="info">
+    Speler 1: pijltjestoetsen, schiet [Space], bom [B] <br>
+    Speler 2: WASD, schiet [Shift], bom [Ctrl]
+  </div>
+  <canvas id="gameCanvas"></canvas>
+  <div id="message"></div>
+
+  <div id="touchControls">
+    <button class="touchBtn" onclick="keyDown('ArrowLeft')">⬅️ P1</button>
+    <button class="touchBtn" onclick="keyDown('ArrowRight')">➡️ P1</button>
+    <button class="touchBtn" onclick="keyDown('ArrowUp')">⬆️ P1</button>
+    <button class="touchBtn" onclick="keyDown('ArrowDown')">⬇️ P1</button>
+    <button class="touchBtn" onclick="triggerShoot(player1)">🔫 P1</button>
+    <button class="touchBtn" onclick="triggerBomb(player1)">💣 P1</button>
+    <br>
+    <button class="touchBtn" onclick="keyDown('KeyA')">⬅️ P2</button>
+    <button class="touchBtn" onclick="keyDown('KeyD')">➡️ P2</button>
+    <button class="touchBtn" onclick="keyDown('KeyW')">⬆️ P2</button>
+    <button class="touchBtn" onclick="keyDown('KeyS')">⬇️ P2</button>
+    <button class="touchBtn" onclick="triggerShoot(player2)">🔫 P2</button>
+    <button class="touchBtn" onclick="triggerBomb(player2)">💣 P2</button>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const message = document.getElementById("message");
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight * 0.9;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    let keys = {};
+    document.addEventListener("keydown", (e) => keys[e.code] = true);
+    document.addEventListener("keyup", (e) => keys[e.code] = false);
+
+    function keyDown(code) {
+      keys[code] = true;
+      setTimeout(() => keys[code] = false, 100);
+    }
+
+    const player1 = {
+      x: 100, y: 300, color: "yellow", lives: 10, score: 0, bullets: [], bombs: []
+    };
+    const player2 = {
+      x: 300, y: 300, color: "lightblue", lives: 10, score: 0, bullets: [], bombs: []
+    };
+
+    let obstacles = [];
+    function createObstacle() {
+      const x = Math.random() * (canvas.width - 30);
+      obstacles.push({ x, y: -30, w: 30, h: 30, color: "gray" });
+    }
+
+    function drawPlayer(player) {
+      ctx.fillStyle = player.color;
+      ctx.beginPath();
+      ctx.moveTo(player.x, player.y);
+      ctx.lineTo(player.x - 15, player.y + 20);
+      ctx.lineTo(player.x + 15, player.y + 20);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    function shoot(player) {
+      player.bullets.push({ x: player.x, y: player.y, r: 5 });
+      playShootSound();
+    }
+
+    function dropBomb(player) {
+      player.bombs.push({ x: player.x, y: player.y, r: 8 });
+      playBombSound();
+    }
+
+    function updateBullets(player) {
+      player.bullets.forEach((b, i) => {
+        b.y -= 6;
+        ctx.fillStyle = "red";
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, b.r, 0, 2 * Math.PI);
+        ctx.fill();
+
+        obstacles.forEach((obs, j) => {
+          if (b.x > obs.x && b.x < obs.x + obs.w && b.y > obs.y && b.y < obs.y + obs.h) {
+            player.bullets.splice(i, 1);
+            obstacles.splice(j, 1);
+            explode(obs.x + 15, obs.y + 15);
+            player.score++;
+          }
+        });
+      });
+    }
+
+    function updateBombs(player) {
+      player.bombs.forEach((b, i) => {
+        b.y += 4;
+        ctx.fillStyle = "orange";
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, b.r, 0, 2 * Math.PI);
+        ctx.fill();
+
+        obstacles.forEach((obs, j) => {
+          if (b.x > obs.x && b.x < obs.x + obs.w && b.y > obs.y && b.y < obs.y + obs.h) {
+            player.bombs.splice(i, 1);
+            obstacles.splice(j, 1);
+            explode(obs.x + 15, obs.y + 15);
+            player.score++;
+          }
+        });
+      });
+    }
+
+    function explode(x, y) {
+      ctx.fillStyle = "white";
+      ctx.beginPath();
+      ctx.arc(x, y, 30, 0, 2 * Math.PI);
+      ctx.fill();
+      setTimeout(() => {}, 100);
+      playExplosionSound();
+    }
+
+    function playShootSound() {
+      const ctx = new AudioContext();
+      const osc = ctx.createOscillator();
+      osc.type = "square";
+      osc.frequency.setValueAtTime(800, ctx.currentTime);
+      osc.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.1);
+    }
+
+    function playBombSound() {
+      const ctx = new AudioContext();
+      const osc = ctx.createOscillator();
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(200, ctx.currentTime);
+      osc.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.2);
+    }
+
+    function playExplosionSound() {
+      const ctx = new AudioContext();
+      const osc = ctx.createOscillator();
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(100, ctx.currentTime);
+      osc.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.15);
+    }
+
+    function update() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Controls
+      if (keys["ArrowLeft"]) player1.x -= 4;
+      if (keys["ArrowRight"]) player1.x += 4;
+      if (keys["ArrowUp"]) player1.y -= 4;
+      if (keys["ArrowDown"]) player1.y += 4;
+      if (keys["Space"]) shoot(player1);
+      if (keys["KeyB"]) dropBomb(player1);
+
+      if (keys["KeyA"]) player2.x -= 4;
+      if (keys["KeyD"]) player2.x += 4;
+      if (keys["KeyW"]) player2.y -= 4;
+      if (keys["KeyS"]) player2.y += 4;
+      if (keys["ShiftLeft"] || keys["ShiftRight"]) shoot(player2);
+      if (keys["ControlLeft"] || keys["ControlRight"]) dropBomb(player2);
+
+      drawPlayer(player1);
+      drawPlayer(player2);
+
+      updateBullets(player1);
+      updateBullets(player2);
+      updateBombs(player1);
+      updateBombs(player2);
+
+      obstacles.forEach((obs, i) => {
+        obs.y += 2;
+        ctx.fillStyle = obs.color;
+        ctx.fillRect(obs.x, obs.y, obs.w, obs.h);
+
+        [player1, player2].forEach(player => {
+          if (obs.x < player.x + 15 && obs.x + obs.w > player.x - 15 &&
+              obs.y < player.y + 20 && obs.y + obs.h > player.y) {
+            player.lives--;
+            obstacles.splice(i, 1);
+            explode(obs.x + 15, obs.y + 15);
+          }
+        });
+      });
+
+      // UI update
+      document.getElementById("livesDisplay1").textContent = player1.lives;
+      document.getElementById("livesDisplay2").textContent = player2.lives;
+      document.getElementById("scoreDisplay1").textContent = player1.score;
+      document.getElementById("scoreDisplay2").textContent = player2.score;
+
+      if (player1.lives <= 0 && player2.lives <= 0) {
+        message.textContent = "Beide spelers zijn gecrasht! Game Over!";
+        return;
+      }
+
+      requestAnimationFrame(update);
+    }
+
+    setInterval(createObstacle, 1500);
+    update();
+  </script>
+</body>
+</html>
