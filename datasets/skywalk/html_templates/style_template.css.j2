@@ -1,0 +1,128 @@
+@page {
+    size: A4;
+    margin: 0
+}
+
+@media print {
+    body, html {
+        width: 98%;
+    }
+    .container {
+        width: 98%; /* Adjust layout for printing */
+    }
+    /* Hide elements not needed for print */
+    .header, .footer, .non-printable {
+        display: none; /* Corrected from 'all' to 'none' to actually hide these elements */
+    }
+}
+
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;z
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    width: 95%;
+
+}
+
+h1 {
+    text-align: center;
+    background-color: {{ BACKGROUND_COLOR_TITLE }};
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-radius: 5px;
+    color: #fff;
+    margin: 10px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    
+}
+
+.title {
+    font-size: {{  FONT_SIZE_TITLE }}px;
+    font-weight: bold;
+    background-color: {{ BACKGROUND_COLOR_TITLE }};
+    color: #fff;
+    padding: 5px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+.title_departure {
+    font-size: {{  FONT_SIZE_TITLE }}px;
+    font-weight: bold;
+    background-color: #4769b1;
+    color: #fff;
+    padding: 5px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+.title_freq {
+    font-size: {{  FONT_SIZE_TITLE }}px;
+    font-weight: bold;
+    background-color: #771921;
+    color: #fff;
+    padding: 5px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+
+.title_other {
+    font-size: {{  FONT_SIZE_TITLE }}px;
+    font-weight: bold;
+    background-color: #9a31a8;
+    color: #fff;
+    padding: 5px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+
+
+.subtitle {
+    font-size: {{  FONT_SIZE_SUBTITLE }}px;
+    font-weight: bold;
+    background-color: #75787ac0;
+    color: #fff;
+    padding: 2px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+}
+
+.pilot_general {
+    margin-bottom: 2px;
+    font-size: {{  FONT_SIZE_PILOT }}px;
+    color: black;
+}
+.pilot {
+    background: #e9ecef;
+    padding: 10px;
+    border-radius: 5px;
+}
+.pilot_text {
+    margin-bottom: 10px;
+    font-size: {{  FONT_SIZE_PILOT }}px;
+    color: red;
+}
+.tower_text {
+    font-size: {{  FONT_SIZE_TOWER }}px;
+    color: grey;
+}
+.frequencies {
+    font-size: {{  FONT_SIZE_PILOT }}px;
+    background: #e9ecef;
+    padding: 10px;
+    border-radius: 5px;
+}
+
