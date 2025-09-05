@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arrival</title>
+
+    <link rel="stylesheet" href="style_template.css" media="all">
+    <!--Set the zoom level to 50% to make sure printing looks nice-->
+    <style type="text/css" media="print">
+        body {zoom: 48%;}
+    </style>
+</head>
+</head>
+<body>
+
+
+    <div class="container">
+        <h1>ARRIVAL: {{ ARRIVAL_NAME|capitalize }} ({{ ARRIVAL_ICAO }})</h1>
+
+        <div class="grid" style="grid-template-columns: repeat({{ GRID_COLUMNS }}, 1fr);">
+
+
+            <div class="startup">
+                <div class="pilot">
+                    <p class="title">1. ARRIVAL - {{ ARRIVAL_NAME }} TOWER - {{ ATC_TOWER }}</p>
+
+                    <div style="display: grid; grid-template-columns: 1fr 4fr;">
+                        <p class="pilot_general"><strong>PILOT :</strong></p>
+                        <p class="pilot_general">{{ ARRIVAL_NAME }} {{ ATC_TOWER_NAME }}, <strong class="pilot_text">{{ CALLSIGN }}</strong>.</p>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 4fr;">
+                        <p class="tower_text"><strong>TOWER:</strong></p>
+                        <p class="tower_text">{{ CALLSIGN_SHORT }}, Go Ahead</p>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 4fr;">
+                        <p class="pilot_general"><strong>PILOT :</strong></p>
+                        <p class="pilot_general"><strong class="pilot_text">{{ AIRCRAFT_TYPE }}</strong>, APPROACHING <strong class="pilot_text">{{ ARRIVAL_ROUTE_NAME }}</strong>
+                        <br>AT <strong class="pilot_text">{{ ARRIVAL_ROUTE_ALTITUDE }} feet,</strong> {{ FLIGHT_RULES }}, <strong class="pilot_text">{{ POB }} POB</strong>, 
+                        <!--<br><br>INFORMATION <strong class="pilot_text"> [ .   .   .   .   .   . ]</strong> RECEIVED,-->
+                        {{ TEXT_INFORMATION_RECEIVED }}
+                        <br><br>FOR LANDING,
+                        {{ REQUEST_INFORMATION }}, <strong class="pilot_text">{{ CALLSIGN_SHORT }}</strong></p>
+                    </div>
+
+                    <div class="pilot_general" style="display: grid; grid-template-columns: repeat(3, 1fr); border: 0px solid grey; text-align: center;">
+                        <p class="subtitle">ARRIVAL</p>
+                        <p class="subtitle">RUNWAY</p>
+                        <p class="subtitle">QNH</p>
+                    </div>
+                    <div class="pilot_general" style="display: grid; grid-template-columns: repeat(3, 1fr); border: 0px solid grey; text-align: center; column-gap: 2px;">
+                        <div class="info-box" style="border-right: 1px solid grey;"><p>   </p></div>
+                        <div class="info-box" style="border-right: 1px solid grey;"> <p> <class="tower_text">{{ ARRIVAL_RUNWAY }} </p> </div>
+                        <div class="info-box" style="border: 0px solid grey;"><p>  </p> </div>
+                    </div>
+
+                    <div style="display: grid; repeat(3, 1fr);text-align: center;">
+                        <p class="pilot_general"> <strong class="pilot_text">{{ CALLSIGN_SHORT }}</strong> </p>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="taxi">
+                <div class="pilot">
+                    <p class="title">2. ENTRY POINT (CTR, CIRCUIT) - {{ ATC_TOWER }} (Tower)</p>
+
+                    <div style="display: grid; grid-template-columns: 1fr 4fr;">
+                        <p class="pilot_general"><strong>PILOT :</strong></p>
+                        <p class="pilot_general"><strong class="pilot_text">{{ CALLSIGN_SHORT }}</strong>, OVER <strong class="pilot_text">{{ ARRIVAL_ROUTE_NAME }}</strong> AT <strong class="pilot_text">{{ ARRIVAL_ROUTE_ALTITUDE }} feet </strong></p>
+                    </div>
+
+                    <div class="pilot_general" style="display: grid; grid-template-columns: repeat(3, 1fr); border: 0px solid grey; text-align: center;">
+                        <p class="subtitle">DESCENDING TO</p>
+                        <p class="subtitle">DOWNWIND</p>
+                        <p class="subtitle">RUNWAY</p>
+                    </div>
+
+                    <div class="pilot_general" style="display: grid; grid-template-columns: repeat(3, 1fr); border: 0px solid grey; text-align: center; column-gap: 2px;">
+                        <div class="info-box" style="border-right: 1px solid grey;"><p> <class="tower_text">{{ CIRCUIT_ALTITUDE }} feet </p></div>
+                        <div class="info-box" style="border-right: 1px solid grey;"> <p>  </p> </div>
+                        <div class="info-box" style="border: 0px solid grey;"><p> <class="tower_text">{{ ARRIVAL_RUNWAY }} </p> </div>
+                    </div>
+
+                    <div style="display: grid; repeat(3, 1fr);text-align: center;">
+                        <p class="pilot_general"> <strong class="pilot_text">{{ CALLSIGN_SHORT }}</strong> </p>
+                    </div>
+
+                </div>
+            </div>
+
+
+
+            <div class="taxi">
+                <div class="pilot">
+                    <p class="title">3. TAXI</p>
+
+                    <div style="display: grid; grid-template-columns: 1fr 4fr;">
+                        <p class="pilot_general"><strong>PILOT:</strong></p>
+                        <p class="pilot_general"><strong class="pilot_text">{{ CALLSIGN_SHORT }}</strong>, VACATED TO <strong class="pilot_text">[ .   .   .   .   .   .   .   .   .   .   .   . ]</strong>, REQUEST TAXI</p>
+                    </div>
+
+
+		            <div style="display: grid; grid-template-columns: 1fr 4fr;">
+                        <p class="tower_text"><strong>TOWER :</strong></p>
+                        <p class="tower_text">{{ CALLSIGN_SHORT }}, TAXI TO [ .   .   .   .   .   . ]</p>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 4fr;">
+                        <p class="pilot_general"><strong>PILOT:</strong></p>
+                        <p class="pilot_general"><strong class="pilot_text">{{ CALLSIGN_SHORT }}</strong>, PARKED AT THE APRON, REQUEST SWITCH OFF </p>
+                    </div>
+
+                </div>
+            </div>
+            
+         
+            <div class="radio-check">
+                <div class="pilot">
+                    <p class="title_other">CHANGING FREQUENCY</p>
+                    <div style="display: grid; grid-template-columns: 1fr 4fr;">
+                        <p class="pilot_general"><strong>PILOT :</strong></p>
+                        <p class="pilot_general"><strong class="pilot_text">{{ CALLSIGN_SHORT }}</strong> is changing RADIO FREQUENCY to <strong class="pilot_text">{{ ARRIVAL_NAME }}</strong></p>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="radio-check">
+                <div class="frequencies">
+                    <p class="title_freq">FREQUENCIES</p>
+                    
+                    {{ ATC_FREQUENCIES }}
+
+                </div>
+            </div>
+
+
+            <div class="radio-check">
+                <div class="frequencies">
+                    <p class="title_freq">CODES</p>
+
+                    <div style="display: grid; grid-template-columns: 2fr 4fr;">
+                        <p class="pilot_general"><strong>VFR</strong></p>
+                        <p class="pilot_general">7000</p>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 2fr 4fr;">
+                        <p class="pilot_general"><strong>HIJACK</strong></p>
+                        <p class="pilot_general">7500</p>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 2fr 4fr;">
+                        <p class="pilot_general"><strong>NO RADIO</strong></p>
+                        <p class="pilot_general">7600</p>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 2fr 4fr;">
+                        <p class="pilot_general"><strong>MAYDAY</strong></p>
+                        <p class="pilot_general">7700</p>
+                    </div>
+
+                </div>
+            </div>
+
+
+        
+        </div>
+    <br><br>
+    <button onclick="window.print();">Print this page</button>
+    <br><br>
+
+</div>
+
+
+
+    
+</body>
+</html>
