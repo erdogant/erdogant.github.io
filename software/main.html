@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skywalk Flightplan</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://pyscript.net/releases/2025.8.1/core.css">
+  <script type="module" src="https://pyscript.net/releases/2025.8.1/core.js"></script>
+</head>
+
+<body>
+  <div id="app">
+
+    <!-- Tab links -->
+    <div class="tab">
+      <button class="tablinks active" data-tab="General">General</button>
+      <button class="tablinks" data-tab="Departure">Departure</button>
+      <button class="tablinks" data-tab="Arrival">Arrival</button>
+      <button class="tablinks" data-tab="Enroute">Enroute</button>
+      <button class="tablinks" data-tab="Settings">Settings</button>
+    </div>
+
+    <!-- Tab contents -->
+
+
+    <!-- =============== TAB GENERAL =============== -->
+
+	<div id="General" class="tabcontent" style="display:block;">
+	  <!-- Logo -->
+	  <div class="logo-container">
+		<a href="https://erdogant.github.io/skywalk-docs/pages/html/index.html" target="_blank">
+		  <img id="skywalk_logo_cache" alt="SkyWalk">
+		</a>
+	  </div>
+
+	  <!-- New Flightplan row -->
+	  <div class="button-row">
+		<button id="new_plan_btn">New Flightplan</button>
+	  </div>
+
+	  <!-- Flightplan select + Load row -->
+	  <div class="button-row">
+		<select id="plan_spinner">
+		  <option value="">Select flightplan</option>
+		</select>
+		<button id="load_btn">Load Plan</button>
+		<button id="delete_btn">Delete</button>
+	  </div>
+
+	  <!-- Flightplan Name row -->
+	  <div class="button-row">
+		<input type="text" id="FLIGHTPLAN_input" placeholder="Flightplan Name">
+	  </div>
+
+	  <!-- Aircraft Info Label -->
+	  <label_h1>Aircraft Info</label_h1>
+
+	  <!-- CALLSIGN + Aircraft Type row -->
+	  <div class="button-row">
+        <input type="text" id="CALLSIGN_input" class="UPPERCASE_input" placeholder="CALLSIGN (PH-SVU)">
+        <input type="text" id="AIRCRAFT_TYPE_input" class="UPPERCASE_input" placeholder="Aircraft Type (Robin400)">
+    </div>
+
+	  <!-- Persons on Board + Flight Rules row -->
+	  <div class="button-row">
+		<input type="text" id="POB_input" placeholder="Persons on Board">
+		<select id="FLIGHT_RULES_spinner">
+		  <option value="VFR">VFR</option>
+		  <option value="IFR">IFR</option>
+		</select>
+	  </div>
+
+	  <!-- Datetime row -->
+	  <div class="button-row">
+		<input type="text" id="DATETIME_input" placeholder="dd-mm-yyyy hh:mm (or create new flight plan)">
+	  </div>
+
+	  <!-- Logo -->
+
+	  <div class="coffee-container">
+		<a href="https://www.buymeacoffee.com/erdogant" target="_blank">
+ 		  <img id="coffee_image_cache" alt="Coffee Donation">
+		</a>
+	  </div>
+
+	  <!-- Save + Bottom Buttons Container -->
+	  <div id="bottom-container">
+		<div class="warning" id="missing_label">Missing: Flightplan Name, CALLSIGN, Aircraft Type</div>
+		<button id="save_tab_btn">Save</button>
+		<div id="bottom-buttons">
+		  <button id="html_btn">Create Summary ATC</button>
+		  <button id="reverse_btn">Create Reverse Route ATC</button>
+		</div>
+	  </div>
+	</div>
+
+
+    <!-- =============== TAB DEPARTURE =============== -->
+
+	<div id="Departure" class="tabcontent">
+        <button id="departureBtn">Run Departure</button>
+        <div id="departureOutput" class="output-box">Output for departure tab</div>
+    </div>
+
+
+    <!-- =============== TAB ARRIVAL =============== -->
+
+    <div id="Arrival" class="tabcontent">
+      <label for="arrivalSlider">Arrival Speed:</label>
+      <input type="range" id="arrivalSlider" min="0" max="10" value="5">
+      <button id="arrivalBtn">Run Arrival</button>
+      <div id="arrivalOutput" class="output-box">Output for Arrival tab</div>
+    </div>
+
+    <!-- =============== TAB ENROUTE =============== -->
+
+    <div id="Enroute" class="tabcontent">
+      <label for="enrouteSlider">Enroute Speed:</label>
+      <input type="range" id="enrouteSlider" min="0" max="10" value="5">
+      <button id="enrouteBtn">Run Enroute</button>
+      <div id="enrouteOutput" class="output-box">Output for Enroute tab</div>
+    </div>
+
+    <!-- =============== TAB SETTINGS =============== -->
+
+
+    <div id="Settings" class="tabcontent">
+        <!-- SETTINGS -->
+        <label_h1>Settings</label_h1>
+
+        <div class="button-row">
+            <div style="display:flex; flex-direction:column; flex:1; margin-right:10px;">
+                <label for="user_usage_type">Print / View</label>
+                <select id="user_usage_type">
+                    <option value="print" selected>Print</option>
+                    <option value="view">View</option>
+                </select>
+            </div>
+            <div style="display:flex; flex-direction:column; flex:1;">
+                <label for="user_select_cols">Columns</label>
+                <select id="user_select_cols">
+                    <option value="1">1</option>
+                    <option value="2" selected>2</option>
+                    <option value="3">3</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="button-row">
+            <div style="display:flex; flex-direction:column; flex:1; margin-right:10px;">
+                <label for="DEPARTURE_COUNTRY">Departure</label>
+                <select id="DEPARTURE_COUNTRY">
+                    <option value="a">a</option>
+                    <option value="b">b</option>
+                </select>
+            </div>
+            <div style="display:flex; flex-direction:column; flex:1;">
+                <label for="ARRIVAL_COUNTRY">Arrival</label>
+                <select id="ARRIVAL_COUNTRY">
+                    <option value="a">a</option>
+                    <option value="b">b</option>
+                </select>
+            </div>
+        </div>
+
+        <!--
+        <div class="button-row">
+            <div style="display:flex; flex-direction:column; flex:1; margin-right:10px;">
+                <label for="MAX_HEADWIND_LIMIT">Max. Headwind</label>
+                <input type="text" id="MAX_HEADWIND_LIMIT" placeholder="Max Headwind Limit">
+            </div>
+            <div style="display:flex; flex-direction:column; flex:1;">
+                <label for="MAX_CROSSWIND_LIMIT">Max. Crosswind</label>
+                <input type="text" id="MAX_CROSSWIND_LIMIT" placeholder="Max Crosswind Limit">
+            </div>
+        </div>-->
+
+
+        <script>
+            console.log('Updated user_usage_type:');
+            // Update settings when changed
+            document.getElementById('user_usage_type').addEventListener('change', (e) => {
+                if (window.settings) {
+                    window.settings.user_usage_type = e.target.value;
+                    console.log('Updated user_usage_type:', e.target.value);
+                }
+            });
+
+            document.getElementById('user_select_cols').addEventListener('change', (e) => {
+                if (window.settings) {
+                    window.settings.user_select_cols = e.target.value;
+                    console.log('Updated user_select_cols:', e.target.value);
+                }
+            });
+
+            document.getElementById('DEPARTURE_COUNTRY').addEventListener('change', (e) => {
+                if (window.settings) {
+                    window.settings.DEPARTURE_COUNTRY = e.target.value;
+                    console.log('Updated DEPARTURE_COUNTRY:', e.target.value);
+                }
+            });
+
+            document.getElementById('ARRIVAL_COUNTRY').addEventListener('change', (e) => {
+                if (window.settings) {
+                    window.settings.ARRIVAL_COUNTRY = e.target.value;
+                    console.log('Updated ARRIVAL_COUNTRY:', e.target.value);
+                }
+            });
+
+            // document.getElementById('MAX_HEADWIND_LIMIT').addEventListener('change', (e) => {
+            //     if (window.settings) {
+            //         window.settings.MAX_HEADWIND_LIMIT = e.target.value;
+            //         console.log('Updated MAX_HEADWIND_LIMIT:', e.target.value);
+            //     }
+            // });
+
+            // document.getElementById('MAX_CROSSWIND_LIMIT').addEventListener('change', (e) => {
+            //     if (window.settings) {
+            //         window.settings.MAX_CROSSWIND_LIMIT = e.target.value;
+            //         console.log('Updated MAX_CROSSWIND_LIMIT:', e.target.value);
+            //     }
+            // });
+
+            </script>
+
+    </div>
+
+<!-- Javascript functionality -->
+<script>
+  // List of images to cache
+  const IMAGES_TO_CACHE = {
+    skywalk_logo_cache: "https://erdogant.github.io/datasets/skywalk/figs/Slide2.PNG",
+    coffee_image_cache: "https://erdogant.github.io/datasets/skywalk/figs/buy_me_a_coffee.png"
+  };
+
+  const CACHE_NAME = "skywalk-cache-v1";
+
+  // Function to cache and set image source
+  async function cacheAndSetImage(url, imgElementId) {
+    const cache = await caches.open(CACHE_NAME);
+
+    // Try loading from cache
+    let response = await cache.match(url);
+    if (!response) {
+      console.log(`Image not cached yet. Downloading: ${url}`);
+      response = await fetch(url);
+      await cache.put(url, response.clone());
+    } else {
+      console.log(`Loaded from cache: ${url}`);
+    }
+
+    const blob = await response.blob();
+    const objectURL = URL.createObjectURL(blob);
+    document.getElementById(imgElementId).src = objectURL;
+  }
+
+  // Initialize caching on page load
+  document.addEventListener("DOMContentLoaded", () => {
+    for (const [elementId, url] of Object.entries(IMAGES_TO_CACHE)) {
+      cacheAndSetImage(url, elementId);
+    }
+  });
+</script>
+
+<!-- PyScript for flightplan functionality -->
+  <script type="py">
+    import js
+    from datetime import datetime
+    import os
+    import tempfile
+    #import requests
+    import sys
+    from urllib.parse import urlparse
+
+    import logging
+    logger = logging.getLogger('SKYWALK')
+
+
+    def get_default_settings():
+        """Get default settings"""
+        data = {
+            'DEPARTURE_COUNTRY': '',
+            'DEPARTURE_ICAO': '',
+            'DEPARTURE_ICAO_CITY': '',
+            'ARRIVAL_COUNTRY': '',
+            'ARRIVAL_ICAO': '',
+            'ARRIVAL_ICAO_CITY': '',
+            'MAX_HEADWIND_LIMIT': 25,
+            'MAX_CROSSWIND_LIMIT': 15,
+            'user_usage_type': 'print',
+            'user_select_cols': '2',
+
+            'source': {
+                'METAR_stations': r'https://erdogant.github.io/datasets/skywalk/nsd_cccc.zip',
+                'FIG_DIR': r'https://erdogant.github.io/datasets/skywalk/figs/',
+                'link_coffee': "https://www.buymeacoffee.com/erdogant",
+                'logo_coffee': r'https://erdogant.github.io/datasets/skywalk/figs/buy_me_a_coffee.png',
+                'link_skywalk': 'http://erdogant.github.io/skywalk-docs/',
+                'logo_skywalk': r'https://erdogant.github.io/datasets/skywalk/figs/Slide3.PNG',
+                'img_default_icao': r'https://erdogant.github.io/datasets/skywalk/figs/oskar-kadaksoo-f_rLDn5m2XQ-unsplash.jpg',
+                'img_default_wind_envelope': r'https://erdogant.github.io/datasets/skywalk/figs/windsock_mark-konig-OsYYPaPgIjw-unsplash.jpg',
+                'url_default_wind_envelope': 'https://erdogant.github.io/skywalk-docs/pages/html/Departure_Arrival.html#cloud-plot',
+                'img_default_cloud_plot': r'https://erdogant.github.io/datasets/skywalk/figs/dylan-mcleod-vY7GkgvTj-k-unsplash.jpg',
+                'url_default_cloud_plot': 'https://erdogant.github.io/skywalk-docs/pages/html/Departure_Arrival.html#cloud-plot',
+                'key_aerodromes': "GpZzcnXiLleytOr5Y7WC@",
+                'url_aerodromes': 'https://erdogant.github.io/datasets/skywalk/aerodromes/',
+                'html_templates': 'https://erdogant.github.io/datasets/skywalk/html_templates/',
+                },
+        }
+        return data
+
+    def get_default_data():
+        """Get default flightplan data structure - copied from utils_skywalk.py"""
+        data = {
+            # General/Flightplan
+            'FLIGHTPLAN': '',           # Name of the flightplan
+            'DATETIME': datetime.now().strftime('%d-%m-%Y %H:%M'),
+            'CALLSIGN': '',             # Aircraft callsign
+            'CALLSIGN_SHORT': '',       # Short callsign (auto-generated)
+            'AIRCRAFT_TYPE': '',        # Aircraft type/model
+            'FLIGHT_RULES': 'VFR',      # VFR/IFR
+            'POB': '',                  # Persons on board
+
+            # Departure
+            'DEPARTURE_ICAO': '',       # ICAO code
+            'DEPARTURE_ICAO_CITY': '',  # ICAO code with City
+            'DEPARTURE_NAME': '',       # Aerodrome name
+            'DEPARTURE_POSITION': '',   # Position at apron
+            'DEPARTURE_RUNWAY': '',     # The user selected Runway
+            'DEPARTURE_ELEVATION': '',     # The Runway ELEVATION
+            'DEPARTURE_RUNWAYS': '',     # All available Runways
+            'DEPARTURE_ROUTE_NAME': '', # Departure route name
+            'DEPARTURE_ROUTE_ALTITUDE': '', # Departure route altitude
+            'DEPARTURE_CIRCUIT_ALTITUDE': '', # Departure circuit altitude
+            'DEPARTURE_CTR': False,     # CTR checkbox state
+            'DEPARTURE_COUNTRY': '',    # Country selection
+            'DEPARTURE_IMAGE': None,    # Image of the departure
+            'DEPARTURE_URL_WEBSITE': None,    # Website of the Aerodrome
+            'DEPARTURE_URL_WIKIPEDIA': None,    # Website of the Aerodrome
+            'DEPARTURE_LATLON': [None, None],    # Latlon
+            'DEPARTURE_METAR_ICAO': '',      # METAR
+            'DEPARTURE_METAR': {},      # METAR
+            'DEPARTURE_WIND_ENVELOPE': {},      # WIND ENVELOPE
+            'DEPARTURE_CLOUD': [],      # CLOUD DATA
+            'DEPARTURE_TIMEZONE': '',    # Timezone
+
+            # Departure ATC
+            'DEPARTURE_ATC_TOWER': '',            # Tower/Radio frequency
+            'DEPARTURE_ATC_ATIS_FREQ': '',    # ATIS frequency
+            'DEPARTURE_ATC_GROUND': '',           # Delivery/Ground frequency
+            'DEPARTURE_ATC_APPROACH': '',         # Approach
+            'DEPARTURE_ATC_TELEPHONE': '',        # Telephone Tower
+
+            # Arrival
+            'ARRIVAL_ICAO': '',         # ICAO code
+            'ARRIVAL_ICAO_CITY': '',  # ICAO code with City
+            'ARRIVAL_NAME': '',         # Aerodrome name
+            'ARRIVAL_POSITION': '',     # Position at apron
+            'ARRIVAL_RUNWAY': '',       # The user selected Runway
+            'ARRIVAL_ELEVATION': '',     # The Runway ELEVATION
+            'ARRIVAL_RUNWAYS': '',     # All available Runways
+            'ARRIVAL_ROUTE_NAME': '',   # Arrival route name
+            'ARRIVAL_ROUTE_ALTITUDE': '', # Arrival route altitude
+            'ARRIVAL_CIRCUIT_ALTITUDE': '', # Arrival circuit altitude
+            'ARRIVAL_CTR': False,       # CTR checkbox state
+            'ARRIVAL_COUNTRY': '',      # Country selection
+            'ARRIVAL_IMAGE': None,      # Image of the departure
+            'ARRIVAL_URL_WEBSITE': None,    # Website of the Aerodrome
+            'ARRIVAL_URL_WIKIPEDIA': None,    # Website of the Aerodrome
+            'ARRIVAL_LATLON': [None, None],    # Latlon
+            'ARRIVAL_METAR_ICAO': '',      # METAR
+            'ARRIVAL_METAR': {},        # METAR
+            'ARRIVAL_WIND_ENVELOPE': {},      # WIND ENVELOPE
+            'ARRIVAL_CLOUD': [],      # CLOUD DATA
+            'ARRIVAL_TIMEZONE': '',    # Timezone
+
+            # Arrival ATC
+            'ARRIVAL_ATC_TOWER': '',        # Tower/Radio frequency
+            'ARRIVAL_ATC_ATIS_FREQ': '',    # ATIS frequency
+            'ARRIVAL_ATC_GROUND': '',       # Delivery/Ground frequency
+            'ARRIVAL_ATC_APPROACH': '',     # Approach
+            'ARRIVAL_ATC_TELEPHONE': '',    # Telephone Tower
+
+            # Enroute
+            'FIC_NAME': '',             # FIC name
+            'FIC_FREQUENCY': '',        # FIC frequency
+            'OVERHEAD': '',             # Overhead point
+            'SQUAWK': '',               # Squawk code
+
+            # Enroute (second FIC/overhead/squawk)
+            'FIC_NAME2': '',            # Second FIC name
+            'FIC_FREQUENCY2': '',       # Second FIC frequency
+            'OVERHEAD2': '',            # Second overhead point
+            'SQUAWK2': '',              # Second squawk code
+
+            # NOTAM data
+            'NOTAM': {'data': {}},            # Second FIC name
+        }
+        return data
+
+    def create_callsign_short(CALLSIGN):
+        # Create short callsign automatically
+        CALLSIGN_SHORT = ''
+        if CALLSIGN is not None and CALLSIGN != '':
+            CALLSIGN_SHORT = CALLSIGN[0] + CALLSIGN[-2:]
+        return CALLSIGN_SHORT
+
+    def get_tempdir(dirname):
+        # Get the basedir
+        platform = sys.platform
+
+        if platform == 'win32':
+            # Windows base directory
+            base_dir = os.environ.get('TEMP', tempfile.gettempdir())
+        elif platform == 'darwin':
+            # macOS base directory
+            base_dir = os.path.expanduser('~/Documents')
+        elif platform.startswith('linux'):
+            # Linux base directory
+            base_dir = tempfile.gettempdir()
+        else:
+            # Fallback for any unknown system
+            base_dir = tempfile.gettempdir()
+
+        # Create save_dir
+        tempdir = os.path.join(base_dir, 'SKYWALK', dirname)
+
+        # Create tempdir
+        if not os.path.exists(tempdir):
+            os.makedirs(tempdir, exist_ok=True)
+
+        # Return tempdir
+        return tempdir
+
+    def save_and_load_url(url, dirname='IMAGES', filename=None):
+        if url is None:
+            logger.warning(f'No url available for {filename}: {url}')
+            return None
+
+        # Get temporary directory
+        tempdir = get_tempdir(dirname)
+        print(tempdir)
+
+        # Extract filename from URL
+        if filename is None:
+            filename = os.path.basename(urlparse(url).path)
+
+        # Append .png if no extension
+        name, ext = os.path.splitext(filename)
+        if not ext: filename += '.png'
+        filepath = os.path.join(tempdir, filename)
+        print(filepath)
+
+        # If file already exists, return it
+        if os.path.isfile(filepath):
+            logger.debug(f'Load from disk: {filepath}')
+            return filepath
+
+        # Download the file
+        """
+        try:
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                              "(KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+            }
+
+            response = requests.get(url, headers=headers, stream=True)
+            if response.status_code == 200:
+                with open(filepath, 'wb') as f:
+                    for chunk in response.iter_content(chunk_size=8192):
+                        f.write(chunk)
+                logger.info(f"Source file saved to: {filepath}")
+                return filepath
+            else:
+                logger.warning(f"Failed to download {url}. Status code: {response.status_code}")
+                return None
+        except Exception as e:
+            logger.error(f"Failed to download {url}. Error code: {e}")
+        """
+
+    def create_new_flightplan():
+        """Initialize new flightplan - returns current datetime for UI"""
+        # Get current datetime for UI
+        current_time = datetime.now().strftime("%d-%m-%Y %H:%M")
+        print("New flightplan initialized - fields cleared")
+
+        # settings = getattr(js.window, "settings", {})
+        # print(settings['source']['logo_coffee'])
+        # filepath = save_and_load_url(settings['source']['logo_coffee'])
+        # print(filepath)
+
+        return current_time
+
+    def load_flightplan():
+        """Load selected flightplan (placeholder function)"""
+        plan_name = js.document.getElementById('plan_spinner').value
+        if plan_name:
+            print(f"Loading flightplan: {plan_name}")
+        else:
+            print("No flightplan selected")
+
+    def delete_flightplan():
+        """Delete selected flightplan (placeholder function)"""
+        plan_name = js.document.getElementById('plan_spinner').value
+        if plan_name:
+            print(f"Deleting flightplan: {plan_name}")
+        else:
+            print("No flightplan selected")
+
+    def save_flightplan():
+        """Save current flightplan data"""
+
+        # Read current values from input fields
+        js.window.flight_plan_data["FLIGHTPLAN"] = js.document.getElementById('FLIGHTPLAN_input').value;
+        js.window.flight_plan_data["POB"] = js.document.getElementById('POB_input').value;
+        js.window.flight_plan_data["FLIGHT_RULES"] = js.document.getElementById('FLIGHT_RULES_spinner').value;
+        js.window.flight_plan_data["DATETIME"] = js.document.getElementById('DATETIME_input').value;
+        js.window.flight_plan_data["AIRCRAFT_TYPE"] = js.document.getElementById('AIRCRAFT_TYPE_input').value;
+        js.window.flight_plan_data["CALLSIGN"] = js.document.getElementById('CALLSIGN_input').value;
+        js.window.flight_plan_data["CALLSIGN_SHORT"] = js.window.create_callsign_short(js.document.getElementById('CALLSIGN_input').value);
+
+
+        # Create flightplan variables array with current values
+        # Print the saved variables array
+        print("-------------SAVE FLIGHTPLAN DATA-------------")
+        flight_plan_data = getattr(js.window, "flight_plan_data", {})
+        for key, value in flight_plan_data.items():
+            if value != '' and value != None and value != {} and value != []:
+                print(f"  {key}: '{value}'")
+
+        """
+        print("-------------SETTINGS-------------")
+        settings = getattr(js.window, "settings", {})
+        for key, value in settings.items():
+            if value != '' and value != None and value != {} and value != []:
+                print(f"  {key}: '{value}'")
+        """
+        print("---------------DATA SAVED-------------------")
+        return True
+
+    def create_summary_atc():
+        """Create ATC summary (placeholder function)"""
+        print("Creating ATC summary...")
+
+    def create_reverse_route_atc():
+        """Create reverse route ATC (placeholder function)"""
+        print("Creating reverse route ATC...")
+
+
+    # Make functions available to JavaScript
+    js.window.create_new_flightplan = create_new_flightplan
+    js.window.load_flightplan = load_flightplan
+    js.window.delete_flightplan = delete_flightplan
+    js.window.save_flightplan = save_flightplan
+    js.window.create_summary_atc = create_summary_atc
+    js.window.create_reverse_route_atc = create_reverse_route_atc
+    js.window.create_callsign_short = create_callsign_short
+    js.window.save_and_load_url = save_and_load_url
+    js.window.get_default_data = get_default_data
+    js.window.get_default_settings = get_default_settings
+  </script>
+
+  <!-- Vanilla JS for tabs and flightplan buttons -->
+  <script>
+    const tabButtons = document.querySelectorAll(".tablinks");
+    const tabContents = document.querySelectorAll(".tabcontent");
+
+    tabButtons.forEach(btn => {
+      btn.addEventListener("click", async () => {
+        // Save current data when switching tabs (except when going to General)
+        const currentTab = btn.getAttribute("data-tab");
+        if (currentTab !== "General" && pyscriptReady && window.save_flightplan) {
+          try {
+            await window.save_flightplan();
+            console.log("Data saved before switching to", currentTab, "tab");
+          } catch (error) {
+            console.error("Error saving data before tab switch:", error);
+          }
+        }
+
+        // Switch tabs
+        tabButtons.forEach(b => b.classList.remove("active"));
+        tabContents.forEach(c => c.style.display = "none");
+        btn.classList.add("active");
+        document.getElementById(btn.getAttribute("data-tab")).style.display = "block";
+      });
+    });
+
+    // Flightplan elements
+    const CALLSIGN_input = document.getElementById('CALLSIGN_input');
+    const AIRCRAFT_TYPE_input = document.getElementById('AIRCRAFT_TYPE_input');
+    const POB_input = document.getElementById('POB_input');
+    const FLIGHTPLAN_input = document.getElementById('FLIGHTPLAN_input');
+    const DATETIME_input = document.getElementById('DATETIME_input');
+    const FLIGHT_RULES_spinner = document.getElementById('FLIGHT_RULES_spinner');
+    const new_plan_btn = document.getElementById('new_plan_btn');
+    const load_btn = document.getElementById('load_btn');
+    const delete_btn = document.getElementById('delete_btn');
+    const save_tab_btn = document.getElementById('save_tab_btn');
+    const html_btn = document.getElementById('html_btn');
+    const reverse_btn = document.getElementById('reverse_btn');
+    const missing_label = document.getElementById('missing_label');
+    // Uppercase for all fields with class="UPPERCASE_input"
+    document.querySelectorAll('.UPPERCASE_input').forEach(input => {
+    input.addEventListener('input', () => {
+        input.value = input.value.toUpperCase();
+        });
+    });
+
+
+
+    // Wait for PyScript to be ready
+    let pyscriptReady = false;
+
+    // Check if PyScript is ready
+    function checkPyScriptReady() {
+      if (typeof window.create_new_flightplan === 'function') {
+        pyscriptReady = true;
+        window.flight_plan_data = window.get_default_data();
+        window.settings = window.get_default_settings()
+        console.log("PyScript is ready!");
+        console.log("Default data is initialized.");
+        console.log("Settings data is initialized.");
+      }
+    }
+
+    // Check periodically for PyScript
+    const checkInterval = setInterval(() => {
+      checkPyScriptReady();
+      if (pyscriptReady) {
+        clearInterval(checkInterval);
+      }
+    }, 100);
+
+    // Connect PyScript functions to button clicks
+    new_plan_btn.onclick = async () => {
+      try {
+        // Check if PyScript is ready
+        if (!pyscriptReady) return alert("Please wait, PyScript is still loading...");
+
+        // Clear all input fields
+        FLIGHTPLAN_input.value = "";
+        CALLSIGN_input.value = "";
+        AIRCRAFT_TYPE_input.value = "";
+        POB_input.value = "";
+        FLIGHT_RULES_spinner.value = "VFR";
+        DATETIME_input.value = await window.create_new_flightplan();
+        window.flight_plan_data = await window.get_default_data();
+
+        // Clear plan spinner selection
+        document.getElementById('plan_spinner').value = "";
+        // Update missing fields label
+        missing_label.textContent = "Missing: Flightplan Name, CALLSIGN, Aircraft Type";
+        // Show success message to user
+        alert("✅ New flightplan created successfully!\n\nAll fields have been cleared and reset to default values.");
+
+      } catch (error) {
+        console.error("Error creating new flightplan:", error);
+        alert("Error creating new flightplan. Please try again.");
+      }
+    };
+
+    load_btn.onclick = async () => {
+      if (pyscriptReady && window.load_flightplan) {
+        await window.load_flightplan();
+      }
+    };
+
+    delete_btn.onclick = async () => {
+      if (pyscriptReady && window.delete_flightplan) {
+        await window.delete_flightplan();
+      }
+    };
+
+    save_tab_btn.onclick = async () => {
+      if (pyscriptReady && window.save_flightplan) {
+        try {
+          await window.save_flightplan();
+          alert("✅ Flightplan saved successfully!");
+        } catch (error) {
+          console.error("Error saving flightplan:", error);
+          alert("Error saving flightplan. Please try again.");
+        }
+      }
+    };
+
+    html_btn.onclick = () => {
+      if (window.create_summary_atc) {
+        window.create_summary_atc();
+      }
+    };
+
+    reverse_btn.onclick = () => {
+      if (window.create_reverse_route_atc) {
+        window.create_reverse_route_atc();
+      }
+    };
+
+    const inputs = [CALLSIGN_input, AIRCRAFT_TYPE_input, POB_input, FLIGHTPLAN_input, DATETIME_input];
+    inputs.forEach(input => {
+      input.addEventListener('input', () => {
+        const missing = [];
+        if (!FLIGHTPLAN_input.value) missing.push('Flightplan Name');
+        if (!CALLSIGN_input.value) missing.push('CALLSIGN');
+        if (!AIRCRAFT_TYPE_input.value) missing.push('Aircraft Type');
+        if (!POB_input.value) missing.push('POB');
+        missing_label.textContent = missing.length ? 'Missing: ' + missing.join(', ') : '';
+      });
+    });
+  </script>
+
+</body>
+</html>
