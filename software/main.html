@@ -3,7 +3,11 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#2A3F54">
   <title>Skywalk Flightplan</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://pyscript.net/releases/2025.8.1/core.css">
@@ -72,13 +76,24 @@
 		</select>
 	  </div>
 
-	  <!-- Datetime row -->
-	  <div class="button-row">
-		<input type="text" id="DATETIME_input" placeholder="dd-mm-yyyy hh:mm (or create new flight plan)">
-	  </div>
+	<!-- Datetime row -->
+	<div class="button-row">
+		<input type="text" id="DATETIME_input" placeholder="dd-mm-yyyy hh:mm">
+		<button id="set_datetime_btn">Now</button>
+			</div>
+			<script>
+			    document.getElementById('set_datetime_btn').addEventListener('click', () => {
+				const now = new Date();
+				const day = String(now.getDate()).padStart(2, '0');
+				const month = String(now.getMonth() + 1).padStart(2, '0');
+				const year = now.getFullYear();
+				const hours = String(now.getHours()).padStart(2, '0');
+				const minutes = String(now.getMinutes()).padStart(2, '0');
+				document.getElementById('DATETIME_input').value = `${day}-${month}-${year} ${hours}:${minutes}`;
+		});
+			</script>
 
 	  <!-- Logo -->
-
 	  <div class="coffee-container">
 		<a href="https://www.buymeacoffee.com/erdogant" target="_blank">
  		  <img id="coffee_image_cache" alt="Coffee Donation">
@@ -100,9 +115,103 @@
     <!-- =============== TAB DEPARTURE =============== -->
 
 	<div id="Departure" class="tabcontent">
-        <button id="departureBtn">Run Departure</button>
-        <div id="departureOutput" class="output-box">Output for departure tab</div>
+
+	  <!-- Departure Information Label -->
+	  <label_h1>Departure Information</label_h1>
+
+	  <!-- Line 2: COUNTRY and ICAO_CITY spinners aligned -->
+	  <div class="button-row">
+		<select id="DEPARTURE_COUNTRY">
+			<option value="">country_select</option>
+		</select>
+		<select id="DEPARTURE_ICAO_CITY">
+		  <option value="">ICAO City</option>
+		  <!-- ICAO City options will be populated dynamically -->
+		</select>
+	  </div>
+
+	  <!-- Line 3: CTR spinner -->
+	  <div class="button-row">
+		<select id="DEPARTURE_CTR">
+		  <option value="">None</option>
+		  <option value="CTR">CTR</option>
+		</select>
+	  </div>
+
+	  <!-- Line 4: NAME and ICAO inputs -->
+	  <div class="button-row">
+		<input type="text" id="DEPARTURE_NAME" placeholder="Airport Name">
+		<input type="text" id="DEPARTURE_ICAO" class="UPPERCASE_input" placeholder="ICAO">
+	  </div>
+
+	  <!-- Line 5: POSITION, RUNWAY, ELEVATION inputs -->
+	  <div class="button-row">
+		<input type="text" id="DEPARTURE_POSITION" placeholder="Position">
+		<input type="text" id="DEPARTURE_RUNWAY" placeholder="Runway">
+		<input type="text" id="DEPARTURE_ELEVATION" placeholder="Elevation">
+	  </div>
+
+	  <!-- Line 6: ROUTE_NAME, ROUTE_ALTITUDE, CIRCUIT_ALTITUDE inputs -->
+	  <div class="button-row">
+		<input type="text" id="DEPARTURE_ROUTE_NAME" placeholder="Route Name">
+		<input type="text" id="DEPARTURE_ROUTE_ALTITUDE" placeholder="Route Alt">
+		<input type="text" id="DEPARTURE_CIRCUIT_ALTITUDE" placeholder="Circuit Alt">
+	  </div>
+
+	  <!-- Line 7: Frequency label -->
+	  <label_h1>Frequency</label_h1>
+
+	  <!-- Line 8: ATC_TOWER and ATC_APPROACH inputs -->
+	  <div class="button-row">
+		<input type="text" id="DEPARTURE_ATC_TOWER" placeholder="Tower">
+		<input type="text" id="DEPARTURE_ATC_APPROACH" placeholder="Approach">
+	  </div>
+
+	  <!-- Line 9: ATC_ATIS_FREQ and ATC_GROUND inputs -->
+	  <div class="button-row">
+		<input type="text" id="DEPARTURE_ATC_ATIS_FREQ" placeholder="ATIS">
+		<input type="text" id="DEPARTURE_ATC_GROUND" placeholder="Ground">
+	  </div>
+
+	  <!-- Line 10: ATC_TELEPHONE input -->
+	  <div class="button-row">
+		<input type="text" id="DEPARTURE_ATC_TELEPHONE" placeholder="Telephone">
+	  </div>
+
+	  <script>
+		// Populate dropdown on page load
+		window.addEventListener('DOMContentLoaded', () => {
+          populateDropdown('DEPARTURE_COUNTRY', COUNTRIES_DATA);
+        });
+
+        // Auto-save departure data when fields change
+		const departureFields = [
+		  'DEPARTURE_COUNTRY', 'DEPARTURE_ICAO_CITY', 'DEPARTURE_CTR',
+		  'DEPARTURE_NAME', 'DEPARTURE_ICAO', 'DEPARTURE_POSITION',
+		  'DEPARTURE_RUNWAY', 'DEPARTURE_ELEVATION', 'DEPARTURE_ROUTE_NAME',
+		  'DEPARTURE_ROUTE_ALTITUDE', 'DEPARTURE_CIRCUIT_ALTITUDE',
+		  'DEPARTURE_ATC_TOWER', 'DEPARTURE_ATC_APPROACH',
+		  'DEPARTURE_ATC_ATIS_FREQ', 'DEPARTURE_ATC_GROUND',
+		  'DEPARTURE_ATC_TELEPHONE'
+		];
+
+		departureFields.forEach(fieldId => {
+		  const element = document.getElementById(fieldId);
+		  if (element) {
+			element.addEventListener('change', () => {
+			  if (window.flight_plan_data) {
+				window.flight_plan_data[fieldId] = element.value;
+				console.log(`Updated ${fieldId}:`, element.value);
+			  }
+			});
+		  }
+		});
+	  </script>
+
     </div>
+
+
+
 
 
     <!-- =============== TAB ARRIVAL =============== -->
@@ -149,21 +258,18 @@
         </div>
 
         <div class="button-row">
-            <div style="display:flex; flex-direction:column; flex:1; margin-right:10px;">
-                <label for="DEPARTURE_COUNTRY">Departure</label>
-                <select id="DEPARTURE_COUNTRY">
-                    <option value="a">a</option>
-                    <option value="b">b</option>
-                </select>
-            </div>
-            <div style="display:flex; flex-direction:column; flex:1;">
-                <label for="ARRIVAL_COUNTRY">Arrival</label>
-                <select id="ARRIVAL_COUNTRY">
-                    <option value="a">a</option>
-                    <option value="b">b</option>
-                </select>
-            </div>
+            <!-- City options will be populated dynamically -->
+            <!--<label for="DEPARTURE_COUNTRY_DEFAULT">Departure</label>-->
+            <select id="DEPARTURE_COUNTRY_DEFAULT">
+                <option value="">country_select</option>
+            </select>
+            <!--<label for="ARRIVAL_COUNTRY_DEFAULT">Arrival</label>-->
+            <select id="ARRIVAL_COUNTRY_DEFAULT">
+                <option value="">country_select</option>
+            </select>
         </div>
+
+
 
         <!--
         <div class="button-row">
@@ -177,55 +283,63 @@
             </div>
         </div>-->
 
-
-        <script>
-            console.log('Updated user_usage_type:');
-            // Update settings when changed
-            document.getElementById('user_usage_type').addEventListener('change', (e) => {
-                if (window.settings) {
-                    window.settings.user_usage_type = e.target.value;
-                    console.log('Updated user_usage_type:', e.target.value);
-                }
-            });
-
-            document.getElementById('user_select_cols').addEventListener('change', (e) => {
-                if (window.settings) {
-                    window.settings.user_select_cols = e.target.value;
-                    console.log('Updated user_select_cols:', e.target.value);
-                }
-            });
-
-            document.getElementById('DEPARTURE_COUNTRY').addEventListener('change', (e) => {
-                if (window.settings) {
-                    window.settings.DEPARTURE_COUNTRY = e.target.value;
-                    console.log('Updated DEPARTURE_COUNTRY:', e.target.value);
-                }
-            });
-
-            document.getElementById('ARRIVAL_COUNTRY').addEventListener('change', (e) => {
-                if (window.settings) {
-                    window.settings.ARRIVAL_COUNTRY = e.target.value;
-                    console.log('Updated ARRIVAL_COUNTRY:', e.target.value);
-                }
-            });
-
-            // document.getElementById('MAX_HEADWIND_LIMIT').addEventListener('change', (e) => {
-            //     if (window.settings) {
-            //         window.settings.MAX_HEADWIND_LIMIT = e.target.value;
-            //         console.log('Updated MAX_HEADWIND_LIMIT:', e.target.value);
-            //     }
-            // });
-
-            // document.getElementById('MAX_CROSSWIND_LIMIT').addEventListener('change', (e) => {
-            //     if (window.settings) {
-            //         window.settings.MAX_CROSSWIND_LIMIT = e.target.value;
-            //         console.log('Updated MAX_CROSSWIND_LIMIT:', e.target.value);
-            //     }
-            // });
-
-            </script>
-
     </div>
+
+    <script>
+      // Populate dropdowns and setup event listeners on page load
+        window.addEventListener('DOMContentLoaded', () => {
+          // Populate dropdowns
+          populateDropdown('DEPARTURE_COUNTRY_DEFAULT', COUNTRIES_DATA);
+          populateDropdown('ARRIVAL_COUNTRY_DEFAULT', COUNTRIES_DATA);
+
+          console.log('Settings initialized');
+
+          // Update settings when changed
+          document.getElementById('user_usage_type').addEventListener('change', (e) => {
+              if (window.settings) {
+                  window.settings.user_usage_type = e.target.value;
+                  console.log('Updated user_usage_type:', e.target.value);
+              }
+          });
+
+          document.getElementById('user_select_cols').addEventListener('change', (e) => {
+              if (window.settings) {
+                  window.settings.user_select_cols = e.target.value;
+                  console.log('Updated user_select_cols:', e.target.value);
+              }
+          });
+
+          document.getElementById('DEPARTURE_COUNTRY_DEFAULT').addEventListener('change', (e) => {
+              if (window.settings) {
+                  window.settings.DEPARTURE_COUNTRY = e.target.value;
+                  console.log('Updated DEPARTURE_COUNTRY:', e.target.value);
+              }
+          });
+
+          document.getElementById('ARRIVAL_COUNTRY_DEFAULT').addEventListener('change', (e) => {
+              if (window.settings) {
+                  window.settings.ARRIVAL_COUNTRY = e.target.value;
+                  console.log('Updated ARRIVAL_COUNTRY:', e.target.value);
+              }
+          });
+
+          // document.getElementById('MAX_HEADWIND_LIMIT').addEventListener('change', (e) => {
+          //     if (window.settings) {
+          //         window.settings.MAX_HEADWIND_LIMIT = e.target.value;
+          //         console.log('Updated MAX_HEADWIND_LIMIT:', e.target.value);
+          //     }
+          // });
+
+          // document.getElementById('MAX_CROSSWIND_LIMIT').addEventListener('change', (e) => {
+          //     if (window.settings) {
+          //         window.settings.MAX_CROSSWIND_LIMIT = e.target.value;
+          //         console.log('Updated MAX_CROSSWIND_LIMIT:', e.target.value);
+          //     }
+          // });
+        });
+
+        </script>
+
 
 <!-- Javascript functionality -->
 <script>
@@ -713,3 +827,71 @@
 
 </body>
 </html>
+
+
+
+
+<script>
+  const COUNTRIES_DATA = [
+    'Afghanistan', 'Albania', 'Algeria', 'Angola', 'Anguilla', 'Antarctica',
+    'Antigua', 'Apia', 'Argentina', 'Armenia', 'Aruba', 'Australia', 'Austria',
+    'Azerbaijan', 'Bahrain', 'Bangladesh', 'Barbados', 'Belarus', 'Belgium',
+    'Belgrade', 'Belize', 'Benin', 'Bermuda', 'Bhutan',
+    'Bolivia  Plurinational State Of', 'Bosnia And Herzegovina', 'Botswana', 'Brazil',
+    'Brazzaville', 'Brunei Darussalam', 'Bulgaria', 'Burkina Faso', 'Burundi',
+    'Cambodia', 'Cameroon', 'Canada', 'Cape Verde', 'Cayman',
+    'Central African Republic', 'Chad', 'Chagos', 'Chile', 'China', 'Colombia',
+    'Comoro', 'Congo  The Democratic Republic Of The', 'Costa Rica', 'Cote D\x92Ivoire',
+    'Croatia', 'Cuba', 'Curacao', 'Cyprus', 'Czech Republic', 'Damascus',
+    'Denmark', 'Djibouti', 'Dominica', 'Dominican Republic', 'Ecuador', 'Efate',
+    'Egypt', 'El Salvador', 'Enderbury', 'Equatorial Guinea', 'Eritrea', 'Estonia',
+    'Ethiopia', 'Fiji', 'Finland', 'France', 'French Guiana', 'Funafuti',
+    'Gabon', 'Gambia', 'Gambier', 'Georgia', 'Germany', 'Ghana', 'Grand Turk',
+    'Greece', 'Greenland', 'Grenada', 'Guadalcanal', 'Guadeloupe', 'Guatemala',
+    'Guernsey', 'Guinea-Bissau', 'Guinea', 'Guyana', 'Haiti', 'Honduras',
+    'Hong Kong', 'Hungary', 'Iceland', 'India', 'Indonesia',
+    'Iran  Islamic Republic Of', 'Iraq', 'Ireland', 'Isle of Man', 'Israel', 'Italy',
+    'Jamaica', 'Japan', 'Jersey', 'Jordan', 'Juba', 'Kazakhstan', 'Kenya',
+    'Kiritimati', 'Korea  Republic Of', 'Kralendijk', 'Kuwait', 'Kyrgyzstan',
+    'Lao Peoples Democratic Republic', 'Latvia', 'Lebanon', 'Lesotho', 'Liberia',
+    'Lithuania', 'Longyearbyen', 'Lower Princes', 'Luxembourg',
+    'Macedonia  The Former Yugoslav Republic Of', 'Madagascar', 'Madrid', 'Majuro',
+    'Malawi', 'Malaysia', 'Maldives', 'Mali', 'Malta', 'Marigot', 'Marquesas',
+    'Martinique', 'Mauritania', 'Mauritius', 'Mayotte', 'Mexico', 'Miquelon',
+    'Moldova  Republic Of', 'Mongolia', 'Montenegro', 'Montserrat', 'Morocco',
+    'Mozambique', 'Myanmar', 'Namibia', 'Nassau', 'Nauru', 'Nepal', 'Netherlands',
+    'New Zealand', 'Nicaragua', 'Niger', 'Nigeria', 'Niue', 'Norway', 'Noumea',
+    'Oman', 'Oslo', 'Pakistan', 'Palau', 'Panama', 'Papua New Guinea',
+    'Paraguay', 'Peru', 'Philippines', 'Poland', 'Port of Spain', 'Portugal',
+    'Pyongyang', 'Qatar', 'Rarotonga', 'Reunion', 'Romania', 'Russian Federation',
+    'Rwanda', 'Sao Tome And Principe', 'Saudi Arabia', 'Senegal', 'Serbia',
+    'Seychelles', 'Sierra Leone', 'Singapore', 'Slovakia', 'Slovenia', 'Somalia',
+    'South Africa', 'Spain', 'Sri Lanka', 'St Barthelemy', 'St Kitts', 'St Lucia',
+    'St Vincent', 'Stanley', 'Sudan', 'Suriname', 'Swaziland', 'Sweden',
+    'Switzerland', 'Tahiti', 'Taiwan Republic Of China', 'Tajikistan',
+    'Tanzania  United Republic Of', 'Tarawa', 'Tegucigalpa', 'Thailand', 'Timor-Leste',
+    'Togo', 'Tongatapu', 'Tortola', 'Tripoli', 'Tunisia', 'Turkey', 'Turkmenistan',
+    'Uganda', 'Ukraine', 'United Arab Emirates', 'United Kingdom', 'United States',
+    'Uruguay', 'Uzbekistan', 'Venezuela  Bolivarian Republic Of', 'Viet Nam', 'Wallis',
+    'Western Sahara', 'Windhoek', 'Yemen', 'Zambia', 'Zimbabwe'
+  ];
+
+  /**
+   * Generic function to populate a dropdown with data
+   * @param {string} selectId - The ID of the select element to populate
+   * @param {Array} dataArray - Array of items to populate the dropdown with
+   */
+  function populateDropdown(selectId, dataArray) {
+    const select = document.getElementById(selectId);
+    if (!select) {
+      console.warn(`Select element with ID '${selectId}' not found`);
+      return;
+    }
+    dataArray.forEach(item => {
+      const option = document.createElement('option');
+      option.value = item;
+      option.textContent = item;
+      select.appendChild(option);
+    });
+  }
+</script>
