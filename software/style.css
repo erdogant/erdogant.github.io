@@ -31,7 +31,7 @@ body {
     margin: 0;
     padding: 0;
     overflow-x: hidden;
-    background-color: #f0f2f6;
+    background-color: white;
     font-family: Arial, sans-serif;
     display: flex;
     justify-content: center;
@@ -46,7 +46,11 @@ body {
     max-width: 100%;
     height: 100%;
     background-color: white;
-    padding: 10px;
+    padding: 0;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
     display: flex;
     flex-direction: column;
     overflow-x: hidden; /* Prevent horizontal scroll inside app */
@@ -59,6 +63,7 @@ body {
     body {
         padding: 20px;
         align-items: center;
+        background-color: #f0f2f6;
     }
 
     #app {
@@ -68,6 +73,16 @@ body {
         max-height: 90vh;
         border-radius: 15px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 10px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .tab {
+        border-radius: 10px 10px 0 0;
+        top: 0;
     }
 }
 
@@ -80,10 +95,10 @@ h1 {
     display: flex;
     justify-content: space-between;
     background-color: #f1f1f1;
-    border-radius: 10px 10px 0 0;
+    border-radius: 0;
     color: #2a3f54; /* Navy-ish dark color */
     position: sticky;
-    top: 0;
+    top: env(safe-area-inset-top);
     z-index: 10;
     overflow-x: hidden; /* Prevent horizontal scroll */
 }
@@ -115,10 +130,10 @@ h1 {
 .tabcontent {
     display: none;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: none;
     border-top: none;
-    margin-top: -1px;
-    border-radius: 0 0 10px 10px;
+    margin-top: 0;
+    border-radius: 0;
     flex-grow: 1; /* Fill remaining vertical space */
     overflow-y: auto; /* Scroll if content exceeds container */
     overflow-x: hidden; /* Prevent horizontal scroll */
@@ -211,7 +226,7 @@ input[type="text"]:hover {
 /* Logo wrapper container */
 .logo-container {
     text-align: center;
-    margin: 10px 0;
+    margin: 10px 10px 10px 10px;
     border-radius: 10px; /* keep rounded edges */
     overflow: hidden; /* clip the inner image so edges stay rounded */
 }
