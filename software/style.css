@@ -1,0 +1,279 @@
+/* Global box sizing to include padding/border in width */
+* {
+  box-sizing: border-box;
+}
+
+label_h1 {
+  display: block;
+  font-weight: bold;
+  margin-top: 12px;
+  margin-bottom: 6px;
+  padding: 10px;
+  color: #2A3F54;       /* Navy-ish dark color */
+  font-size: 14px;
+  text-transform: uppercase;  /* Makes text uppercase */
+  letter-spacing: 0.5px;      /* Small spacing between letters */
+  text-align: center;
+}
+
+label {
+  display: block;
+  font-weight: normal;
+  padding: 3px;
+  color: #030506;
+  font-size: 14px;
+  text-align: center;
+}
+
+
+/* Prevent horizontal scroll globally */
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background-color: #F0F2F6;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+#app {
+  width: 100%;
+  max-width: 390px;       /* iPhone width */
+  background-color: white;
+  border-radius: 15px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;     /* Prevent horizontal scroll inside app */
+}
+
+h1 {
+  text-align: center;
+}
+
+/* Tab style */
+.tab {
+  display: flex;
+  justify-content: space-between;
+  background-color: #f1f1f1;
+  border-radius: 10px 10px 0 0;
+  color: #2A3F54;       /* Navy-ish dark color */
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  overflow-x: hidden;     /* Prevent horizontal scroll */
+}
+
+/* Tab buttons */
+.tab button {
+  flex: 1 1 0;            /* Flexible width, no overflow */
+  max-width: 100%;
+  background-color: inherit;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 10px 12px;
+  transition: 0.3s;       /* smooth background transition */
+  font-weight: bold;
+  border-radius: 0;       /* keep edges consistent */
+}
+
+.tab button:hover {
+  background-color: #E8EAED; /* soft hover effect */
+}
+
+.tab button.active {
+  background-color: #faf9fa; /* slightly brighter active tab */
+  box-shadow: inset 0 -3px 0 #2A3F54; /* subtle indicator line */
+}
+
+/* Tab content */
+.tabcontent {
+  display: none;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-top: none;
+  margin-top: -1px;
+  border-radius: 0 0 10px 10px;
+  flex-grow: 1;          /* Fill remaining vertical space */
+  overflow-y: auto;      /* Scroll if content exceeds container */
+  overflow-x: hidden;    /* Prevent horizontal scroll */
+}
+
+/* Output box */
+.output-box {
+  margin-top: 10px;
+  padding: 8px;
+  background: #F0F2F6;  /* soft gray background */
+  border-radius: 8px;
+  min-height: 30px;
+  color: #333;
+}
+
+/* Button row for horizontal alignment */
+.button-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin: 8px 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.button-row select,
+.button-row input[type="text"] {
+  flex: 1;
+  border: none;
+  border-radius: 8px;
+  padding: 6px;
+  background-color: #F0F2F6;
+  color: #333;
+  transition: background 0.2s;
+  min-width: 0; /* Allow select to shrink */
+  margin: 0; /* Remove default margins for consistent spacing */
+}
+
+.button-row button {
+  flex: 0 0 auto;
+  min-width: 60px;
+  max-width: 80px;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 8px;
+  background-color: #F0F2F6;
+  color: #333;
+  transition: background 0.2s;
+  margin: 0;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Full width button when it's the only child in button-row */
+.button-row button:only-child {
+  flex: 1;
+  min-width: auto;
+  max-width: none;
+  font-size: 14px;
+}
+
+.button-row button:hover, .button-row select:hover, .button-row input[type="text"]:hover {
+  background-color: #E8EAED;
+}
+
+/* Inputs and buttons */
+input[type=range], button, input[type="text"] {
+  width: 100%;
+  margin: 8px 0;
+  border: none;
+  border-radius: 8px;
+  padding: 6px;
+  background-color: #F0F2F6; /* soft gray background */
+  color: #333;
+  transition: background 0.2s; /* smooth background change on hover */
+}
+
+input[type=range]:hover, button:hover, input[type="text"]:hover {
+  background-color: #E8EAED; /* subtle hover effect */
+}
+
+/* Logo wrapper container */
+.logo-container {
+  text-align: center;
+  margin: 10px 0;
+  border-radius: 10px;      /* keep rounded edges */
+  overflow: hidden;          /* clip the inner image so edges stay rounded */
+}
+
+/* Logo image */
+.logo-container img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  cursor: pointer;
+  transition: transform 0.2s; /* only scale on hover */
+}
+
+/* Hover effect: slightly enlarge without breaking border radius */
+.logo-container img:hover {
+  transform: scale(1.05);
+}
+
+
+/* Logo wrapper container */
+.coffee-container {
+  text-align: center;
+  margin: 30px 0;
+  border-radius: 10px;      /* keep rounded edges */
+  overflow: hidden;          /* clip the inner image so edges stay rounded */
+}
+
+/* Logo image */
+.coffee-container img {
+  max-width: 50%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  cursor: pointer;
+  transition: transform 0.2s; /* only scale on hover */
+}
+
+/* Hover effect: slightly enlarge without breaking border radius */
+.coffee-container img:hover {
+  transform: scale(1.05);
+}
+
+/* Warning styling for missing fields */
+.warning {
+  font-size: 10px;
+  color: orange;
+  margin: 4px 0;
+  text-align: center;
+}
+
+
+#General {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 10px; /* ensure content doesn't overlap buttons */
+  box-sizing: border-box;
+  position: relative;
+}
+
+#bottom-container {
+  margin-top: auto; /* pushes container to bottom of #General */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 10px 0;
+  border: none; /* remove all borders */
+  background-color: none; /* optional, choose color you want */
+  border: none; /* 1px solid #ccc; */
+}
+
+#bottom-buttons {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+  border: none; /* ensure no border around the buttons container */
+}
+
+#bottom-buttons button {
+  flex: 1;
+  margin: 0;
+  padding: 6px 8px;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+#UPPERCASE_input {
+  text-transform: uppercase;
+}
