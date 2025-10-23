@@ -3,11 +3,13 @@
 
 <head>
   <meta charset="UTF-8">
+    <!--RUN FULL SCREEN-->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#2A3F54">
+
   <title>Skywalk Flightplan</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://pyscript.net/releases/2025.8.1/core.css">
@@ -122,10 +124,10 @@
 	  <!-- Line 2: COUNTRY and ICAO_CITY spinners aligned -->
 	  <div class="button-row">
 		<select id="DEPARTURE_COUNTRY">
-			<option value="">country_select</option>
+			<option value=""></option>
 		</select>
 		<select id="DEPARTURE_ICAO_CITY">
-		  <option value="">ICAO City</option>
+		  <option value=""></option>
 		  <!-- ICAO City options will be populated dynamically -->
 		</select>
 	  </div>
@@ -133,7 +135,7 @@
 	  <!-- Line 3: CTR spinner -->
 	  <div class="button-row">
 		<select id="DEPARTURE_CTR">
-		  <option value="">None</option>
+		  <option value=""></option>
 		  <option value="CTR">CTR</option>
 		</select>
 	  </div>
@@ -178,10 +180,39 @@
 		<input type="text" id="DEPARTURE_ATC_TELEPHONE" placeholder="Telephone">
 	  </div>
 
+	  <!-- Departure Image -->
+	  <div class="logo-container" style="margin-top: 20px;">
+		<img id="departure_image_cache" alt="Departure Aerodrome" style="max-width: 100%; height: auto; border-radius: 10px;">
+	  </div>
+
 	  <script>
 		// Populate dropdown on page load
 		window.addEventListener('DOMContentLoaded', () => {
           populateDropdown('DEPARTURE_COUNTRY', COUNTRIES_DATA);
+        });
+
+		// Download the aerodrome data when the country changes
+        document.getElementById("DEPARTURE_COUNTRY").addEventListener("change", async function() {
+          const country = this.value;
+          if (country && window.import_aerodrome_selected) {
+            // Call PyScript function
+            await window.import_aerodrome_selected(country);
+          }
+        });
+
+        // Populate fields when ICAO city is selected
+        document.getElementById("DEPARTURE_ICAO_CITY").addEventListener("change", async function() {
+          const city_icao = this.value;
+
+          // Clear all departure fields first to prevent data leakage
+          if (window.clear_departure_fields) {
+            await window.clear_departure_fields();
+          }
+
+          if (city_icao && window.populate_departure_fields_from_icao) {
+            // Call PyScript function to populate fields
+            await window.populate_departure_fields_from_icao(city_icao);
+          }
         });
 
         // Auto-save departure data when fields change
@@ -223,14 +254,39 @@
       <div id="arrivalOutput" class="output-box">Output for Arrival tab</div>
     </div>
 
+
     <!-- =============== TAB ENROUTE =============== -->
 
     <div id="Enroute" class="tabcontent">
-      <label for="enrouteSlider">Enroute Speed:</label>
-      <input type="range" id="enrouteSlider" min="0" max="10" value="5">
-      <button id="enrouteBtn">Run Enroute</button>
-      <div id="enrouteOutput" class="output-box">Output for Enroute tab</div>
+    <!-- Enroute Information Label -->
+	  <label_h1>Enroute Information</label_h1>
+
+    <!-- Line: FIC Name and FIC Frequency labels -->
+        <div class="button-row">
+          <div style="display:flex; flex-direction:column; flex:1; margin-right:10px;">
+            <label for="FIC_NAME">FIC name</label>
+          </div>
+          <div style="display:flex; flex-direction:column; flex:1;">
+            <label for="FIC_FREQUENCY">FIC frequency</label>
+          </div>
+        </div>
+
+        <!-- Line: FIC Name and FIC Frequency inputs -->
+        <div class="button-row">
+          <input type="text" id="FIC_NAME" placeholder="FIC Name">
+          <input type="text" id="FIC_FREQUENCY" placeholder="FIC Frequency">
+        </div>
+
+        <!-- Line: SECOND FIC label -->
+        <label_h1>SECOND FIC</label_h1>
+
+        <!-- Line: FIC Name2 and FIC Frequency2 inputs -->
+        <div class="button-row">
+          <input type="text" id="FIC_NAME2" placeholder="FIC Name 2">
+          <input type="text" id="FIC_FREQUENCY2" placeholder="FIC Frequency 2">
+        </div>
     </div>
+
 
     <!-- =============== TAB SETTINGS =============== -->
 
@@ -241,7 +297,7 @@
 
         <div class="button-row">
             <div style="display:flex; flex-direction:column; flex:1; margin-right:10px;">
-                <label for="user_usage_type">Print / View</label>
+                <label for="user_usage_type">Output</label>
                 <select id="user_usage_type">
                     <option value="print" selected>Print</option>
                     <option value="view">View</option>
@@ -259,17 +315,13 @@
 
         <div class="button-row">
             <!-- City options will be populated dynamically -->
-            <!--<label for="DEPARTURE_COUNTRY_DEFAULT">Departure</label>-->
             <select id="DEPARTURE_COUNTRY_DEFAULT">
                 <option value="">country_select</option>
             </select>
-            <!--<label for="ARRIVAL_COUNTRY_DEFAULT">Arrival</label>-->
             <select id="ARRIVAL_COUNTRY_DEFAULT">
                 <option value="">country_select</option>
             </select>
         </div>
-
-
 
         <!--
         <div class="button-row">
@@ -349,6 +401,12 @@
     coffee_image_cache: "https://erdogant.github.io/datasets/skywalk/figs/buy_me_a_coffee.png"
   };
 
+  // Default image URL for departures (cached separately when needed)
+  const DEFAULT_ICAO_IMAGE = 'https://erdogant.github.io/datasets/skywalk/figs/oskar-kadaksoo-f_rLDn5m2XQ-unsplash.jpg';
+
+  // Make it globally accessible
+  window.DEFAULT_ICAO_IMAGE = DEFAULT_ICAO_IMAGE;
+
   const CACHE_NAME = "skywalk-cache-v1";
 
   // Function to cache and set image source
@@ -367,7 +425,12 @@
 
     const blob = await response.blob();
     const objectURL = URL.createObjectURL(blob);
-    document.getElementById(imgElementId).src = objectURL;
+    const imgElement = document.getElementById(imgElementId);
+    if (imgElement) {
+      imgElement.src = objectURL;
+    } else {
+      console.warn(`Image element not found: ${imgElementId}`);
+    }
   }
 
   // Initialize caching on page load
@@ -375,8 +438,16 @@
     for (const [elementId, url] of Object.entries(IMAGES_TO_CACHE)) {
       cacheAndSetImage(url, elementId);
     }
+
+    // Load default departure image on page load
+    cacheAndSetImage(DEFAULT_ICAO_IMAGE, 'departure_image_cache');
   });
 </script>
+
+<!-- PyScript configuration -->
+<py-config>
+  packages = ["pandas", "numpy"]
+</py-config>
 
 <!-- PyScript for flightplan functionality -->
   <script type="py">
@@ -384,13 +455,18 @@
     from datetime import datetime
     import os
     import tempfile
-    #import requests
     import sys
     from urllib.parse import urlparse
-
+    import pandas as pd
+    from pyodide.http import pyfetch
+    from io import BytesIO
+    import zipfile
+    import ast
     import logging
     logger = logging.getLogger('SKYWALK')
 
+    URL_BASE = "https://erdogant.github.io/datasets/skywalk/aerodromes/"
+    PASSWORD = "GpZzcnXiLleytOr5Y7WC@"  # To be read from secrets.toml later
 
     def get_default_settings():
         """Get default settings"""
@@ -438,57 +514,57 @@
             'POB': '',                  # Persons on board
 
             # Departure
-            'DEPARTURE_ICAO': '',       # ICAO code
-            'DEPARTURE_ICAO_CITY': '',  # ICAO code with City
-            'DEPARTURE_NAME': '',       # Aerodrome name
-            'DEPARTURE_POSITION': '',   # Position at apron
-            'DEPARTURE_RUNWAY': '',     # The user selected Runway
-            'DEPARTURE_ELEVATION': '',     # The Runway ELEVATION
-            'DEPARTURE_RUNWAYS': '',     # All available Runways
-            'DEPARTURE_ROUTE_NAME': '', # Departure route name
-            'DEPARTURE_ROUTE_ALTITUDE': '', # Departure route altitude
-            'DEPARTURE_CIRCUIT_ALTITUDE': '', # Departure circuit altitude
-            'DEPARTURE_CTR': False,     # CTR checkbox state
-            'DEPARTURE_COUNTRY': '',    # Country selection
-            'DEPARTURE_IMAGE': None,    # Image of the departure
-            'DEPARTURE_URL_WEBSITE': None,    # Website of the Aerodrome
+            'DEPARTURE_ICAO': '',               # ICAO code
+            'DEPARTURE_ICAO_CITY': '',          # ICAO code with City
+            'DEPARTURE_NAME': '',               # Aerodrome name
+            'DEPARTURE_POSITION': '',           # Position at apron
+            'DEPARTURE_RUNWAY': '',             # The user selected Runway
+            'DEPARTURE_ELEVATION': '',          # The Runway ELEVATION
+            'DEPARTURE_RUNWAYS': '',            # All available Runways
+            'DEPARTURE_ROUTE_NAME': '',         # Departure route name
+            'DEPARTURE_ROUTE_ALTITUDE': '',     # Departure route altitude
+            'DEPARTURE_CIRCUIT_ALTITUDE': '',   # Departure circuit altitude
+            'DEPARTURE_CTR': False,             # CTR checkbox state
+            'DEPARTURE_COUNTRY': '',            # Country selection
+            'DEPARTURE_IMAGE': None,            # Image of the departure
+            'DEPARTURE_URL_WEBSITE': None,      # Website of the Aerodrome
             'DEPARTURE_URL_WIKIPEDIA': None,    # Website of the Aerodrome
-            'DEPARTURE_LATLON': [None, None],    # Latlon
-            'DEPARTURE_METAR_ICAO': '',      # METAR
-            'DEPARTURE_METAR': {},      # METAR
+            'DEPARTURE_LATLON': [None, None],   # Latlon
+            'DEPARTURE_METAR_ICAO': '',         # METAR
+            'DEPARTURE_METAR': {},              # METAR
             'DEPARTURE_WIND_ENVELOPE': {},      # WIND ENVELOPE
-            'DEPARTURE_CLOUD': [],      # CLOUD DATA
-            'DEPARTURE_TIMEZONE': '',    # Timezone
+            'DEPARTURE_CLOUD': [],              # CLOUD DATA
+            'DEPARTURE_TIMEZONE': '',           # Timezone
 
             # Departure ATC
             'DEPARTURE_ATC_TOWER': '',            # Tower/Radio frequency
-            'DEPARTURE_ATC_ATIS_FREQ': '',    # ATIS frequency
+            'DEPARTURE_ATC_ATIS_FREQ': '',        # ATIS frequency
             'DEPARTURE_ATC_GROUND': '',           # Delivery/Ground frequency
             'DEPARTURE_ATC_APPROACH': '',         # Approach
             'DEPARTURE_ATC_TELEPHONE': '',        # Telephone Tower
 
             # Arrival
-            'ARRIVAL_ICAO': '',         # ICAO code
-            'ARRIVAL_ICAO_CITY': '',  # ICAO code with City
-            'ARRIVAL_NAME': '',         # Aerodrome name
-            'ARRIVAL_POSITION': '',     # Position at apron
-            'ARRIVAL_RUNWAY': '',       # The user selected Runway
-            'ARRIVAL_ELEVATION': '',     # The Runway ELEVATION
-            'ARRIVAL_RUNWAYS': '',     # All available Runways
-            'ARRIVAL_ROUTE_NAME': '',   # Arrival route name
-            'ARRIVAL_ROUTE_ALTITUDE': '', # Arrival route altitude
-            'ARRIVAL_CIRCUIT_ALTITUDE': '', # Arrival circuit altitude
-            'ARRIVAL_CTR': False,       # CTR checkbox state
-            'ARRIVAL_COUNTRY': '',      # Country selection
-            'ARRIVAL_IMAGE': None,      # Image of the departure
-            'ARRIVAL_URL_WEBSITE': None,    # Website of the Aerodrome
-            'ARRIVAL_URL_WIKIPEDIA': None,    # Website of the Aerodrome
-            'ARRIVAL_LATLON': [None, None],    # Latlon
-            'ARRIVAL_METAR_ICAO': '',      # METAR
-            'ARRIVAL_METAR': {},        # METAR
-            'ARRIVAL_WIND_ENVELOPE': {},      # WIND ENVELOPE
-            'ARRIVAL_CLOUD': [],      # CLOUD DATA
-            'ARRIVAL_TIMEZONE': '',    # Timezone
+            'ARRIVAL_ICAO': '',                   # ICAO code
+            'ARRIVAL_ICAO_CITY': '',              # ICAO code with City
+            'ARRIVAL_NAME': '',                   # Aerodrome name
+            'ARRIVAL_POSITION': '',               # Position at apron
+            'ARRIVAL_RUNWAY': '',                 # The user selected Runway
+            'ARRIVAL_ELEVATION': '',              # The Runway ELEVATION
+            'ARRIVAL_RUNWAYS': '',                # All available Runways
+            'ARRIVAL_ROUTE_NAME': '',             # Arrival route name
+            'ARRIVAL_ROUTE_ALTITUDE': '',         # Arrival route altitude
+            'ARRIVAL_CIRCUIT_ALTITUDE': '',       # Arrival circuit altitude
+            'ARRIVAL_CTR': False,                 # CTR checkbox state
+            'ARRIVAL_COUNTRY': '',                # Country selection
+            'ARRIVAL_IMAGE': None,                # Image of the departure
+            'ARRIVAL_URL_WEBSITE': None,          # Website of the Aerodrome
+            'ARRIVAL_URL_WIKIPEDIA': None,        # Website of the Aerodrome
+            'ARRIVAL_LATLON': [None, None],       # Latlon
+            'ARRIVAL_METAR_ICAO': '',             # METAR
+            'ARRIVAL_METAR': {},                  # METAR
+            'ARRIVAL_WIND_ENVELOPE': {},          # WIND ENVELOPE
+            'ARRIVAL_CLOUD': [],                  # CLOUD DATA
+            'ARRIVAL_TIMEZONE': '',               # Timezone
 
             # Arrival ATC
             'ARRIVAL_ATC_TOWER': '',        # Tower/Radio frequency
@@ -510,7 +586,7 @@
             'SQUAWK2': '',              # Second squawk code
 
             # NOTAM data
-            'NOTAM': {'data': {}},            # Second FIC name
+            'NOTAM': {'data': {}},      # NOTAM data
         }
         return data
 
@@ -521,110 +597,581 @@
             CALLSIGN_SHORT = CALLSIGN[0] + CALLSIGN[-2:]
         return CALLSIGN_SHORT
 
-    def get_tempdir(dirname):
-        # Get the basedir
-        platform = sys.platform
 
-        if platform == 'win32':
-            # Windows base directory
-            base_dir = os.environ.get('TEMP', tempfile.gettempdir())
-        elif platform == 'darwin':
-            # macOS base directory
-            base_dir = os.path.expanduser('~/Documents')
-        elif platform.startswith('linux'):
-            # Linux base directory
-            base_dir = tempfile.gettempdir()
-        else:
-            # Fallback for any unknown system
-            base_dir = tempfile.gettempdir()
+    # Cache Helpers
+    def is_cached(country):
+        try:
+            cached = js.localStorage.getItem(f"aerodrome_{country}")
+            # Check if value exists and is truthy (not null/undefined)
+            return bool(cached)
+        except:
+            return False
 
-        # Create save_dir
-        tempdir = os.path.join(base_dir, 'SKYWALK', dirname)
+    def save_to_cache(country, data):
+        js.localStorage.setItem(f"aerodrome_{country}", data)
 
-        # Create tempdir
-        if not os.path.exists(tempdir):
-            os.makedirs(tempdir, exist_ok=True)
-
-        # Return tempdir
-        return tempdir
-
-    def save_and_load_url(url, dirname='IMAGES', filename=None):
-        if url is None:
-            logger.warning(f'No url available for {filename}: {url}')
+    def load_from_cache(country):
+        try:
+            cached = js.localStorage.getItem(f"aerodrome_{country}")
+            # Convert to Python string if it exists
+            if cached:
+                return str(cached)
+            return None
+        except:
             return None
 
-        # Get temporary directory
-        tempdir = get_tempdir(dirname)
-        print(tempdir)
+    # Fetch ZIP from remote and save to cache
+    async def fetch_zip(country):
+        url = f"{URL_BASE}{country}.zip"
+        print(f"📥 Fetching: {url}")
+        response = await pyfetch(url)
+        if response.ok:
+            # Get bytes directly as Python bytes object
+            zip_bytes = await response.bytes()
+            # Convert bytes to base64 string for caching
+            import base64
+            b64_string = base64.b64encode(zip_bytes).decode('utf-8')
+            save_to_cache(country, b64_string)
+            print(f"💾 Cached {len(zip_bytes)} bytes")
+            return zip_bytes
+        else:
+            print(f"❌ Failed to download {url} - Status: {response.status}")
+            return None
 
-        # Extract filename from URL
-        if filename is None:
-            filename = os.path.basename(urlparse(url).path)
-
-        # Append .png if no extension
-        name, ext = os.path.splitext(filename)
-        if not ext: filename += '.png'
-        filepath = os.path.join(tempdir, filename)
-        print(filepath)
-
-        # If file already exists, return it
-        if os.path.isfile(filepath):
-            logger.debug(f'Load from disk: {filepath}')
-            return filepath
-
-        # Download the file
-        """
+    # Extract CSV inside the ZIP
+    def extract_csv_from_zip(zip_bytes, password):
         try:
-            headers = {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-                              "(KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
-            }
-
-            response = requests.get(url, headers=headers, stream=True)
-            if response.status_code == 200:
-                with open(filepath, 'wb') as f:
-                    for chunk in response.iter_content(chunk_size=8192):
-                        f.write(chunk)
-                logger.info(f"Source file saved to: {filepath}")
-                return filepath
-            else:
-                logger.warning(f"Failed to download {url}. Status code: {response.status_code}")
-                return None
+            print(f"🔓 Extracting ZIP file ({len(zip_bytes)} bytes)...")
+            with zipfile.ZipFile(BytesIO(zip_bytes)) as z:
+                files = z.namelist()
+                print(f"📂 Files in ZIP: {files}")
+                name = files[0]  # First file in ZIP
+                print(f"📄 Reading: {name}")
+                with z.open(name, pwd=password.encode()) as f:
+                    df = pd.read_csv(f, sep=';')
+                print(f"✅ CSV parsed: {len(df)} rows, {len(df.columns)} columns")
+            return df
+        except zipfile.BadZipFile as e:
+            print(f"❌ BadZipFile error: {e}")
+            print(f"First 100 bytes: {zip_bytes[:100]}")
+            raise
         except Exception as e:
-            logger.error(f"Failed to download {url}. Error code: {e}")
-        """
+            print(f"❌ Error extracting CSV: {type(e).__name__}: {e}")
+            raise
 
-    def create_new_flightplan():
+    # Main loader: called from JS
+    async def import_aerodrome_selected(country):
+        print(f"🌍 Loading aerodrome data for: {country}")
+        zip_bytes = None
+
+        if is_cached(country):
+            print("📦 Using cached data")
+            zip_b64 = load_from_cache(country)
+            if zip_b64:
+                # Decode base64 string to bytes
+                import base64
+                zip_bytes = base64.b64decode(zip_b64)
+                print(f"📦 Loaded {len(zip_bytes)} bytes from cache")
+            else:
+                print("⚠️ Cache returned null, downloading...")
+                zip_bytes = await fetch_zip(country)
+        else:
+            print("⬇️ Downloading from server...")
+            zip_bytes = await fetch_zip(country)
+
+        if zip_bytes:
+            df = extract_csv_from_zip(zip_bytes, PASSWORD)
+            js.console.log(f"✅ Aerodromes loaded for {country}: {len(df)} rows.")
+            print(f"✅ Successfully loaded {len(df)} aerodromes for {country}")
+
+            # For now, just show the first few entries
+            # print(df.head().to_string())
+
+            # Store dataframe globally for later use
+            js.window.AERODROME_DEPARTURE_DATA = df.to_dict('records')
+            print(f"Available columns: {df.columns.tolist()}")
+
+            # Show sample record for debugging
+            if len(js.window.AERODROME_DEPARTURE_DATA) > 0:
+                sample = js.window.AERODROME_DEPARTURE_DATA[0]
+                print(f"\n📊 Sample record structure:")
+                for key in sorted(sample.keys()):
+                    val = sample[key]
+                    if val is not None and str(val) != '' and str(val) != 'nan':
+                        print(f"  {key}: {val}")
+
+            # Populate DEPARTURE_ICAO_CITY dropdown with aerodrome data
+            if 'city_icao' in df.columns:
+                icao_codes = df['city_icao'].dropna().unique().tolist()
+                print(f"📍 Found {len(icao_codes)} unique ICAO cities")
+
+                # Clear and populate the dropdown
+                select = js.document.getElementById('DEPARTURE_ICAO_CITY')
+                if select:
+                    # Clear existing options except the first placeholder
+                    select.innerHTML = '<option value="">ICAO City</option>'
+
+                    # Add each ICAO city as an option
+                    for icao in sorted(icao_codes):
+                        option = js.document.createElement('option')
+                        option.value = icao
+                        option.textContent = icao
+                        select.appendChild(option)
+
+                    print(f"✅ Populated DEPARTURE_ICAO_CITY dropdown with {len(icao_codes)} cities")
+                else:
+                    print("⚠️ DEPARTURE_ICAO_CITY dropdown not found")
+            else:
+                print("⚠️ 'city_icao' column not found in dataframe")
+                print(f"Available columns: {df.columns.tolist()}")
+        else:
+            print("⚠️ No data available")
+
+
+    async def populate_departure_fields_from_icao(city_icao):
+        """Populate departure fields when ICAO city is selected."""
+        print(f"🔍 Searching for data: {city_icao}")
+
+        # Get the stored dataframe
+        if not hasattr(js.window, 'AERODROME_DEPARTURE_DATA'):
+            print("⚠️ No aerodrome data available")
+            return
+
+        # Get data for DEPARTURE
+        df = js.window.AERODROME_DEPARTURE_DATA
+
+        # Get data for specific ICAO
+        row_dict = get_icao_data(df, city_icao)
+
+        if not row_dict:
+            print(f"⚠️ No data found for {city_icao}")
+            return
+
+        # Get runway data
+        rwy_ids, rwy_list = retrieve_runways(row_dict)
+
+        # Store data
+        CTR_BOOL = row_dict['AERODROME_CTR']
+        FREQ_TOWER_RADIO = row_dict['freqs.TOWER'] if CTR_BOOL else row_dict['freqs.RADIO']
+        js.window.flight_plan_data["DEPARTURE_ICAO"] = row_dict['icao']
+        js.window.flight_plan_data["DEPARTURE_ICAO_CITY"] = city_icao
+        js.window.flight_plan_data["DEPARTURE_RUNWAYS"] = rwy_ids
+        js.window.flight_plan_data["DEPARTURE_RUNWAY"] = normalize_freq(rwy_ids)
+        js.window.flight_plan_data["DEPARTURE_NAME"] = row_dict['name']
+        js.window.flight_plan_data["DEPARTURE_ELEVATION"] = str(row_dict['elevation_aerodrome'])
+        js.window.flight_plan_data["DEPARTURE_CTR"] = 'CTR' if CTR_BOOL else ''
+        js.window.flight_plan_data["DEPARTURE_COUNTRY"] = row_dict['country']
+        js.window.flight_plan_data["DEPARTURE_IMAGE"] = row_dict.get('url.wikipedia.aerodrome.image', None)
+        js.window.flight_plan_data["DEPARTURE_URL_WEBSITE"] = row_dict.get('url.website', '')
+        js.window.flight_plan_data["DEPARTURE_URL_WIKIPEDIA"] = row_dict.get('url.wikipedia', '')
+        js.window.flight_plan_data["DEPARTURE_LATLON"] = [row_dict.get('lat', None), row_dict.get('lon', None)]
+        js.window.flight_plan_data["DEPARTURE_TIMEZONE"] = row_dict.get('tz', None)
+
+        # FILL THE FREQUENCIES
+        # Handle FREQ_TOWER_RADIO
+        js.window.flight_plan_data["DEPARTURE_ATC_TOWER"] = normalize_freq(FREQ_TOWER_RADIO)
+
+
+        field_mapping = {
+          'DEPARTURE_ATC_ATIS_FREQ': 'freqs.ATIS',
+          'DEPARTURE_ATC_GROUND': 'freqs.DELIVERY/GROUND',
+          'DEPARTURE_ATC_APPROACH': 'freqs.APPROACH',
+          'DEPARTURE_ATC_TELEPHONE': 'freqs.TELEPHONE',
+          'FIC_NAME': 'freqs.FIC_NAME',
+          'FIC_FREQUENCY': 'freqs.FIC_FREQUENCY',
+          'FIC_NAME2': 'freqs.FIC_NAME_2',
+          'FIC_FREQUENCY2': 'freqs.FIC_FREQUENCY_2',
+        }
+        for key, colname in field_mapping.items():
+          freq_raw = row_dict[colname]
+          freq_clean = normalize_freq(freq_raw)
+          js.window.flight_plan_data[key] = freq_clean
+          print(f"  {key}: {js.window.flight_plan_data[key]}")
+
+        # js.window.flight_plan_data["DEPARTURE_POSITION"]        # Position at apron
+        # js.window.flight_plan_data["DEPARTURE_RUNWAY"]          # The user selected Runway
+        # js.window.flight_plan_data["DEPARTURE_ROUTE_NAME"]      # Departure route name
+        # js.window.flight_plan_data["DEPARTURE_ROUTE_ALTITUDE"]  # Departure route altitude
+        # js.window.flight_plan_data["DEPARTURE_CIRCUIT_ALTITUDE"]  # Departure route altitude
+
+        # Update all GUI fields from flight_plan_data
+        update_departure_gui_fields()
+
+        # Update departure image
+        await update_departure_image()
+
+    def normalize_freq(value):
+        # Convert to string and strip brackets/quotes
+        freq_str = str(value).strip().strip('[]').replace("'", "").replace('"', '')
+        # Split, clean, and filter empty items
+        parts = [f.strip() for f in freq_str.split(',') if f.strip()]
+        # Return
+        return ', '.join(parts)
+
+    async def clear_general_fields():
+        """Clear all GENERAL GUI fields and flight_plan_data"""
+        print("🧹 Clearing all GENERAL fields...")
+
+        # List of all departure fields to clear
+        field_ids = [
+          'FLIGHTPLAN_input',
+          'CALLSIGN_input',
+          'AIRCRAFT_TYPE_input',
+          'FLIGHT_RULES_spinner',
+          'DATETIME_input',
+          'POB_input',
+        ]
+
+        # Clear GUI fields
+        for field_id in field_ids:
+            element = js.document.getElementById(field_id)
+            if element:
+                if field_id == 'FLIGHT_RULES_spinner':
+                    element.value = 'VFR'
+                else:
+                    element.value = ''
+
+        # Clear flight_plan_data for departure fields
+        keys = [
+            'FLIGHTPLAN', 'DATETIME', 'CALLSIGN', 'CALLSIGN_SHORT',
+            'AIRCRAFT_TYPE', 'FIC_NAME2', 'FLIGHT_RULES', 'POB',
+        ]
+
+        for key in keys:
+            if key == 'FLIGHT_RULES':
+                js.window.flight_plan_data[key] = 'VFR'
+            else:
+                js.window.flight_plan_data[key] = ''
+
+
+    def update_departure_gui_fields():
+        """Update all DEPARTURE GUI fields from js.window.flight_plan_data"""
+        print("🔄 Updating DEPARTURE GUI fields...")
+
+        # List of field IDs to update
+        field_ids = [
+            'DEPARTURE_COUNTRY',
+            'DEPARTURE_ICAO_CITY',
+            'DEPARTURE_CTR',
+            'DEPARTURE_NAME',
+            'DEPARTURE_ICAO',
+            'DEPARTURE_POSITION',
+            'DEPARTURE_RUNWAY',
+            'DEPARTURE_ELEVATION',
+            'DEPARTURE_ROUTE_NAME',
+            'DEPARTURE_ROUTE_ALTITUDE',
+            'DEPARTURE_CIRCUIT_ALTITUDE',
+            'DEPARTURE_ATC_TOWER',
+            'DEPARTURE_ATC_APPROACH',
+            'DEPARTURE_ATC_ATIS_FREQ',
+            'DEPARTURE_ATC_GROUND',
+            'DEPARTURE_ATC_TELEPHONE',
+            'FIC_NAME',
+            'FIC_FREQUENCY',
+            'FIC_NAME2',
+            'FIC_FREQUENCY2',
+        ]
+
+        updated_count = 0
+        for field_id in field_ids:
+            # Get the value from flight_plan_data
+            value = js.window.flight_plan_data.get(field_id)
+
+            # Get the HTML element
+            element = js.document.getElementById(field_id)
+
+            if element:
+                # Convert value to string and handle special cases
+                if value is not None and value != '' and str(value) != 'nan' and str(value) != 'None':
+                    # Handle boolean for CTR
+                    if field_id == 'DEPARTURE_CTR':
+                        if value or str(value).lower() == 'true':
+                            element.value = 'CTR'
+                        else:
+                            element.value = ''
+                    else:
+                        element.value = str(value)
+
+                    updated_count += 1
+                    print(f"  ✓ Updated {field_id}: {element.value}")
+                else:
+                    # Clear the field if no value
+                    element.value = ''
+            else:
+                print(f"  ⚠️ Element not found: {field_id}")
+
+        print(f"✅ Updated {updated_count} GUI fields")
+
+    async def clear_departure_fields():
+        """Clear all GENERAL GUI fields and flight_plan_data"""
+        print("🧹 Clearing all DEPARTURE fields...")
+
+        # List of all departure fields to clear
+        field_ids = [
+            'DEPARTURE_COUNTRY',
+            'DEPARTURE_ICAO_CITY',
+            'DEPARTURE_CTR',
+            'DEPARTURE_NAME',
+            'DEPARTURE_ICAO',
+            'DEPARTURE_POSITION',
+            'DEPARTURE_RUNWAY',
+            'DEPARTURE_ELEVATION',
+            'DEPARTURE_ROUTE_NAME',
+            'DEPARTURE_ROUTE_ALTITUDE',
+            'DEPARTURE_CIRCUIT_ALTITUDE',
+            'DEPARTURE_ATC_TOWER',
+            'DEPARTURE_ATC_APPROACH',
+            'DEPARTURE_ATC_ATIS_FREQ',
+            'DEPARTURE_ATC_GROUND',
+            'DEPARTURE_ATC_TELEPHONE',
+            'FIC_NAME',
+            'FIC_FREQUENCY',
+            'FIC_NAME2',
+            'FIC_FREQUENCY2'
+        ]
+
+        # Clear GUI fields
+        for field_id in field_ids:
+            element = js.document.getElementById(field_id)
+            if element:
+                element.value = ''
+
+        # Clear flight_plan_data for departure fields
+        departure_keys = [
+            'DEPARTURE_COUNTRY', 'DEPARTURE_ICAO_CITY',
+            'DEPARTURE_ICAO', 'DEPARTURE_ICAO_CITY', 'DEPARTURE_NAME',
+            'DEPARTURE_POSITION', 'DEPARTURE_RUNWAY', 'DEPARTURE_ELEVATION',
+            'DEPARTURE_RUNWAYS', 'DEPARTURE_ROUTE_NAME', 'DEPARTURE_ROUTE_ALTITUDE',
+            'DEPARTURE_CIRCUIT_ALTITUDE', 'DEPARTURE_CTR', 'DEPARTURE_IMAGE',
+            'DEPARTURE_URL_WEBSITE', 'DEPARTURE_URL_WIKIPEDIA', 'DEPARTURE_LATLON',
+            'DEPARTURE_METAR_ICAO', 'DEPARTURE_METAR', 'DEPARTURE_WIND_ENVELOPE',
+            'DEPARTURE_CLOUD', 'DEPARTURE_TIMEZONE', 'DEPARTURE_ATC_TOWER',
+            'DEPARTURE_ATC_ATIS_FREQ', 'DEPARTURE_ATC_GROUND', 'DEPARTURE_ATC_APPROACH',
+            'DEPARTURE_ATC_TELEPHONE',
+            'FIC_NAME', 'FIC_FREQUENCY', 'FIC_NAME2', 'FIC_FREQUENCY2',
+        ]
+
+        for key in departure_keys:
+            if key == 'DEPARTURE_CTR':
+                js.window.flight_plan_data[key] = False
+            elif key == 'DEPARTURE_LATLON':
+                js.window.flight_plan_data[key] = [None, None]
+            elif key in ['DEPARTURE_METAR', 'DEPARTURE_WIND_ENVELOPE']:
+                js.window.flight_plan_data[key] = {}
+            elif key in ['DEPARTURE_CLOUD', 'DEPARTURE_RUNWAYS']:
+                js.window.flight_plan_data[key] = []
+            else:
+                js.window.flight_plan_data[key] = ''
+
+        # Reset to default departure image
+        await clear_departure_image()
+
+
+    async def update_departure_image():
+        """Update departure image from DEPARTURE_IMAGE or use default"""
+        print("🖼️ Updating departure image...")
+
+        # Get the image URL from flight_plan_data
+        image_url = js.window.flight_plan_data.get('DEPARTURE_IMAGE')
+        print(f"  📋 DEPARTURE_IMAGE from flight_plan_data: {image_url}")
+
+        # Get default image from JavaScript constant
+        default_image = js.DEFAULT_ICAO_IMAGE
+
+        # Use default if no valid image URL
+        if not image_url or str(image_url) == 'None' or str(image_url) == '' or str(image_url) == 'nan' or not str(image_url).startswith('http'):
+            print(f"  📋 Default image: {default_image}")
+            image_url = default_image
+        else:
+            print(f"  ✓ Using departure-specific image")
+
+        # Validate URL before fetching
+        if image_url and str(image_url).startswith('http'):
+            try:
+                await cache_and_display_image(image_url, 'departure_image_cache')
+            except Exception as e:
+                print(f"  ⚠️ Failed to load image: {e}")
+        else:
+            print(f"  ⚠️ Invalid image URL (not http/https): {image_url}")
+
+
+    async def clear_departure_image():
+        """Reset departure image to default"""
+        print("🔄 Resetting to default image...")
+        default_image = js.DEFAULT_ICAO_IMAGE
+
+        try:
+            await cache_and_display_image(default_image, 'departure_image_cache')
+            print("✅ Default image displayed")
+        except Exception as e:
+            print(f"⚠️ Failed to load default image: {e}")
+
+
+    async def cache_and_display_image(url, img_element_id):
+        """Cache and display an image using browser cache API"""
+        try:
+            cache = await js.caches.open("skywalk-cache-v1")
+
+            # Try loading from cache
+            response = await cache.match(url)
+
+            if not response:
+                print(f"  📥 Image not cached, downloading: {url}")
+                response = await js.fetch(url)
+                if response.ok:
+                    await cache.put(url, response.clone())
+                else:
+                    print(f"  ❌ Failed to fetch image: {response.status}")
+                    return
+            else:
+                print(f"  📦 Loaded from cache: {url}")
+
+            # Convert response to blob and display
+            blob = await response.blob()
+            object_url = js.URL.createObjectURL(blob)
+            js.document.getElementById(img_element_id).src = object_url
+            print(f"  ✅ Image displayed: {img_element_id}")
+
+        except Exception as e:
+            print(f"  ❌ Error caching/displaying image: {e}")
+            raise
+
+
+    def get_icao_data(df, city_icao, colname='city_icao'):
+        """Load custom icao from disk and update"""
+        row_dict = {}
+        for df_row in df:
+            if df_row.get('city_icao') == city_icao:
+                row_dict = df_row
+                break
+        # Return
+        return row_dict
+
+
+    def retrieve_runways(row_dict):
+        """Retrieve the runways from ICAO"""
+        # row_dict = get_icao_data(df, city_icao)
+        rwy_ids, rwy_list = [], []
+
+        # Get all INFORMATION for the selected ICAO
+        if row_dict:
+            runways = row_dict.get("runways", [])
+            if isinstance(runways, str): runways = ast.literal_eval(runways)
+            rwy_ids = [r["id"] for r in runways if isinstance(r, dict) and "id" in r]
+            rwy_list = options_runway_number(runways)
+
+        # Return
+        return rwy_ids, rwy_list
+
+
+    def options_runway_number(data):
+        """Retrieve all available runways based on aerodrome ICAO."""
+        runways = []
+        if data is not None:
+            runways = [num for rwy in data for num in rwy.get("number", [])]
+            runways = list(filter(lambda x: x != '', runways))
+
+        # Return
+        return runways
+
+
+    async def create_new_flightplan():
         """Initialize new flightplan - returns current datetime for UI"""
         # Get current datetime for UI
         current_time = datetime.now().strftime("%d-%m-%Y %H:%M")
         print("New flightplan initialized - fields cleared")
 
-        # settings = getattr(js.window, "settings", {})
-        # print(settings['source']['logo_coffee'])
-        # filepath = save_and_load_url(settings['source']['logo_coffee'])
-        # print(filepath)
+        # Clear fields
+        await clear_general_fields()
+        await clear_departure_fields()
 
         return current_time
 
-    def load_flightplan():
-        """Load selected flightplan (placeholder function)"""
+    async def load_flightplan():
+        """Load selected flightplan from localStorage"""
         plan_name = js.document.getElementById('plan_spinner').value
-        if plan_name:
-            print(f"Loading flightplan: {plan_name}")
-        else:
-            print("No flightplan selected")
 
-    def delete_flightplan():
-        """Delete selected flightplan (placeholder function)"""
+        if not plan_name or plan_name == "":
+            print("⚠️ No flightplan selected")
+            return
+
+        print(f"📂 Loading flightplan: {plan_name}")
+
+        # Load from localStorage
+        storage_key = f"flightplan_{plan_name}"
+        json_data = js.localStorage.getItem(storage_key)
+
+        if not json_data:
+            print(f"⚠️ Flightplan not found: {plan_name}")
+            js.window.alert(f"⚠️ Flightplan '{plan_name}' not found")
+            return
+
+        # Parse JSON
+        import json
+        try:
+            flight_plan_dict = json.loads(json_data)
+            print(f"✅ Loaded {len(flight_plan_dict)} fields")
+
+            # Update js.window.flight_plan_data
+            for key, value in flight_plan_dict.items():
+                js.window.flight_plan_data[key] = value
+
+            # Update General tab fields
+            if flight_plan_dict.get('FLIGHTPLAN'):
+                js.document.getElementById('FLIGHTPLAN_input').value = flight_plan_dict['FLIGHTPLAN']
+            if flight_plan_dict.get('CALLSIGN'):
+                js.document.getElementById('CALLSIGN_input').value = flight_plan_dict['CALLSIGN']
+            if flight_plan_dict.get('AIRCRAFT_TYPE'):
+                js.document.getElementById('AIRCRAFT_TYPE_input').value = flight_plan_dict['AIRCRAFT_TYPE']
+            if flight_plan_dict.get('POB'):
+                js.document.getElementById('POB_input').value = flight_plan_dict['POB']
+            if flight_plan_dict.get('FLIGHT_RULES'):
+                js.document.getElementById('FLIGHT_RULES_spinner').value = flight_plan_dict['FLIGHT_RULES']
+            if flight_plan_dict.get('DATETIME'):
+                js.document.getElementById('DATETIME_input').value = flight_plan_dict['DATETIME']
+
+            # Update Departure tab fields - call the GUI update function
+            update_departure_gui_fields()
+
+            # Update departure image
+            await update_departure_image()
+
+            print(f"✅ Flightplan '{plan_name}' loaded successfully")
+
+        except Exception as e:
+            print(f"❌ Error loading flightplan: {e}")
+            js.window.alert(f"❌ Error loading flightplan: {e}")
+
+    async def delete_flightplan():
+        """Delete selected flightplan from localStorage"""
         plan_name = js.document.getElementById('plan_spinner').value
-        if plan_name:
-            print(f"Deleting flightplan: {plan_name}")
-        else:
-            print("No flightplan selected")
+
+        if not plan_name or plan_name == "":
+            print("⚠️ No flightplan selected")
+            return
+
+        # Confirm deletion
+        if not js.window.confirm(f"Are you sure you want to delete '{plan_name}'?"):
+            print("❌ Deletion cancelled")
+            return
+
+        # Delete from localStorage
+        storage_key = f"flightplan_{plan_name}"
+        js.localStorage.removeItem(storage_key)
+        print(f"✅ Flightplan '{plan_name}' deleted")
+
+        # Clear the dropdown selection
+        js.document.getElementById('plan_spinner').value = ""
+
+        # Update the flightplan list
+        update_flightplan_list()
+
+        # Create new flightplan
+        await clear_general_fields()
+        await clear_departure_fields()
 
     def save_flightplan():
-        """Save current flightplan data"""
+        """Save current flightplan data to localStorage"""
 
         # Read current values from input fields
         js.window.flight_plan_data["FLIGHTPLAN"] = js.document.getElementById('FLIGHTPLAN_input').value;
@@ -635,28 +1182,120 @@
         js.window.flight_plan_data["CALLSIGN"] = js.document.getElementById('CALLSIGN_input').value;
         js.window.flight_plan_data["CALLSIGN_SHORT"] = js.window.create_callsign_short(js.document.getElementById('CALLSIGN_input').value);
 
+        # Read Enroute tab fields
+        js.window.flight_plan_data["FIC_NAME"] = js.document.getElementById('FIC_NAME').value;
+        js.window.flight_plan_data["FIC_FREQUENCY"] = js.document.getElementById('FIC_FREQUENCY').value;
+        js.window.flight_plan_data["FIC_NAME2"] = js.document.getElementById('FIC_NAME2').value;
+        js.window.flight_plan_data["FIC_FREQUENCY2"] = js.document.getElementById('FIC_FREQUENCY2').value;
 
-        # Create flightplan variables array with current values
+        # Get flightplan name
+        flightplan_name = js.window.flight_plan_data.get("FLIGHTPLAN", "")
+
+        if not flightplan_name or flightplan_name == "":
+            print("⚠️ Flightplan not saved. Name is required")
+            # js.window.alert("⚠️ Please enter a flightplan name before saving")
+            return False
+
         # Print the saved variables array
         print("-------------SAVE FLIGHTPLAN DATA-------------")
-        flight_plan_data = getattr(js.window, "flight_plan_data", {})
-        for key, value in flight_plan_data.items():
+        print(f"  Flightplan Name: {flightplan_name}")
+
+        # Convert flight_plan_data to JSON string
+        import json
+        flight_plan_dict = {}
+        keys = get_default_data()
+        for key in keys:
+            try:
+                value = js.window.flight_plan_data.get(key)
+                # Convert JavaScript objects to Python objects
+                if hasattr(value, 'to_py'):
+                    value = value.to_py()
+                flight_plan_dict[key] = value
+            except Exception as e:
+                print(f"⚠️ Failed to save {key}: {e}")
+
+        # Print saved data
+        for key, value in flight_plan_dict.items():
             if value != '' and value != None and value != {} and value != []:
                 print(f"  {key}: '{value}'")
 
-        """
-        print("-------------SETTINGS-------------")
-        settings = getattr(js.window, "settings", {})
-        for key, value in settings.items():
-            if value != '' and value != None and value != {} and value != []:
-                print(f"  {key}: '{value}'")
-        """
+        # Convert to JSON string
+        json_data = json.dumps(flight_plan_dict)
+
+        # Save to localStorage with key "flightplan_[name]"
+        storage_key = f"flightplan_{flightplan_name}"
+        js.localStorage.setItem(storage_key, json_data)
+
+        # Get localStorage info
+        print(f"💾 Saved to localStorage: {storage_key}")
+        print(f"   Storage Type: Browser localStorage")
+        print(f"   Storage Location: Browser's IndexedDB/localStorage database")
+        print(f"   Key: {storage_key}")
+        print(f"   Size: {len(json_data)} bytes")
+
+        # Print browser-specific path hints
+        import sys
+        print(f"   Browser localStorage is typically stored at:")
+        if sys.platform == 'win32':
+            print(f"   - Chrome: %LOCALAPPDATA%\\Google\\Chrome\\User Data\\Default\\Local Storage")
+            print(f"   - Firefox: %APPDATA%\\Mozilla\\Firefox\\Profiles\\<profile>\\storage\\default")
+            print(f"   - Edge: %LOCALAPPDATA%\\Microsoft\\Edge\\User Data\\Default\\Local Storage")
+        elif sys.platform == 'darwin':
+            print(f"   - Chrome: ~/Library/Application Support/Google/Chrome/Default/Local Storage")
+            print(f"   - Firefox: ~/Library/Application Support/Firefox/Profiles/<profile>/storage/default")
+            print(f"   - Safari: ~/Library/Safari/LocalStorage")
+        else:
+            print(f"   - Chrome: ~/.config/google-chrome/Default/Local Storage")
+            print(f"   - Firefox: ~/.mozilla/firefox/<profile>/storage/default")
+
+        # Update the list of saved flightplans
+        update_flightplan_list()
+
         print("---------------DATA SAVED-------------------")
         return True
 
-    def create_summary_atc():
+    def update_flightplan_list():
+        """Update the flightplan dropdown with saved plans from localStorage"""
+        print("🔄 Updating flightplan list...")
+
+        # Get all keys from localStorage
+        storage_length = js.localStorage.length
+        flightplan_names = []
+
+        for i in range(storage_length):
+            key = js.localStorage.key(i)
+            if key and str(key).startswith('flightplan_'):
+                # Extract flightplan name from key
+                plan_name = str(key).replace('flightplan_', '')
+                flightplan_names.append(plan_name)
+
+        # Sort alphabetically
+        flightplan_names.sort()
+
+        # Update dropdown
+        select = js.document.getElementById('plan_spinner')
+        if select:
+            # Clear existing options except the first placeholder
+            select.innerHTML = '<option value="">Select flightplan</option>'
+
+            # Add each flightplan as an option
+            for plan_name in flightplan_names:
+                option = js.document.createElement('option')
+                option.value = plan_name
+                option.textContent = plan_name
+                select.appendChild(option)
+
+            print(f"✅ Found {len(flightplan_names)} saved flightplans")
+        else:
+            print("⚠️ Flightplan dropdown not found")
+
+    def create_summary_atc(reverse_path=False):
         """Create ATC summary (placeholder function)"""
         print("Creating ATC summary...")
+        # Generate HTML content
+        # html_content = generate_summary_html(window.flight_plan_data, app.SETTINGS, reverse_path=reverse_path)
+        # Open in browser
+        # open_in_browser(html_content)
 
     def create_reverse_route_atc():
         """Create reverse route ATC (placeholder function)"""
@@ -668,12 +1307,27 @@
     js.window.load_flightplan = load_flightplan
     js.window.delete_flightplan = delete_flightplan
     js.window.save_flightplan = save_flightplan
+    js.window.update_flightplan_list = update_flightplan_list
+    # HELPERS
     js.window.create_summary_atc = create_summary_atc
     js.window.create_reverse_route_atc = create_reverse_route_atc
     js.window.create_callsign_short = create_callsign_short
-    js.window.save_and_load_url = save_and_load_url
+    js.window.import_aerodrome_selected = import_aerodrome_selected
+    # DEPARTURE TAB
+    js.window.populate_departure_fields_from_icao = populate_departure_fields_from_icao
+    js.window.update_departure_gui_fields = update_departure_gui_fields
+    js.window.clear_departure_fields = clear_departure_fields
+    js.window.update_departure_image = update_departure_image
+    js.window.clear_departure_image = clear_departure_image
+    js.window.cache_and_display_image = cache_and_display_image
+    # GENERAL TAB
+    js.window.clear_general_fields = clear_general_fields
+    # DATA FUNCTIONS
     js.window.get_default_data = get_default_data
     js.window.get_default_settings = get_default_settings
+
+    # Load the flightplan list on startup
+    update_flightplan_list()
   </script>
 
   <!-- Vanilla JS for tabs and flightplan buttons -->
@@ -683,12 +1337,17 @@
 
     tabButtons.forEach(btn => {
       btn.addEventListener("click", async () => {
-        // Save current data when switching tabs (except when going to General)
-        const currentTab = btn.getAttribute("data-tab");
-        if (currentTab !== "General" && pyscriptReady && window.save_flightplan) {
+        // Get the tab we're switching TO
+        const targetTab = btn.getAttribute("data-tab");
+
+        // Get the CURRENT active tab (before switching)
+        const currentActiveTab = document.querySelector(".tablinks.active");
+        const currentTab = currentActiveTab ? currentActiveTab.getAttribute("data-tab") : null;
+
+        // Save data when switching tabs
+        if (pyscriptReady && window.save_flightplan && currentTab && currentTab !== targetTab) {
           try {
             await window.save_flightplan();
-            console.log("Data saved before switching to", currentTab, "tab");
           } catch (error) {
             console.error("Error saving data before tab switch:", error);
           }
@@ -716,14 +1375,13 @@
     const html_btn = document.getElementById('html_btn');
     const reverse_btn = document.getElementById('reverse_btn');
     const missing_label = document.getElementById('missing_label');
+
     // Uppercase for all fields with class="UPPERCASE_input"
     document.querySelectorAll('.UPPERCASE_input').forEach(input => {
     input.addEventListener('input', () => {
         input.value = input.value.toUpperCase();
         });
     });
-
-
 
     // Wait for PyScript to be ready
     let pyscriptReady = false;
@@ -732,10 +1390,10 @@
     function checkPyScriptReady() {
       if (typeof window.create_new_flightplan === 'function') {
         pyscriptReady = true;
-        window.flight_plan_data = window.get_default_data();
-        window.settings = window.get_default_settings()
         console.log("PyScript is ready!");
+        window.flight_plan_data = window.get_default_data();
         console.log("Default data is initialized.");
+        window.settings = window.get_default_settings()
         console.log("Settings data is initialized.");
       }
     }
@@ -754,13 +1412,11 @@
         // Check if PyScript is ready
         if (!pyscriptReady) return alert("Please wait, PyScript is still loading...");
 
-        // Clear all input fields
-        FLIGHTPLAN_input.value = "";
-        CALLSIGN_input.value = "";
-        AIRCRAFT_TYPE_input.value = "";
-        POB_input.value = "";
-        FLIGHT_RULES_spinner.value = "VFR";
+        // Clear all input fields and departure fields
+        await clear_general_fields();
         DATETIME_input.value = await window.create_new_flightplan();
+
+        // Store default flight plan data
         window.flight_plan_data = await window.get_default_data();
 
         // Clear plan spinner selection
@@ -778,7 +1434,13 @@
 
     load_btn.onclick = async () => {
       if (pyscriptReady && window.load_flightplan) {
-        await window.load_flightplan();
+        try {
+          await window.load_flightplan();
+          alert("✅ Flightplan loaded successfully!");
+        } catch (error) {
+          console.error("Error loading flightplan:", error);
+          alert("❌ Error loading flightplan. Please check console for details.");
+        }
       }
     };
 
@@ -832,49 +1494,31 @@
 
 
 <script>
-  const COUNTRIES_DATA = [
-    'Afghanistan', 'Albania', 'Algeria', 'Angola', 'Anguilla', 'Antarctica',
-    'Antigua', 'Apia', 'Argentina', 'Armenia', 'Aruba', 'Australia', 'Austria',
-    'Azerbaijan', 'Bahrain', 'Bangladesh', 'Barbados', 'Belarus', 'Belgium',
-    'Belgrade', 'Belize', 'Benin', 'Bermuda', 'Bhutan',
-    'Bolivia  Plurinational State Of', 'Bosnia And Herzegovina', 'Botswana', 'Brazil',
-    'Brazzaville', 'Brunei Darussalam', 'Bulgaria', 'Burkina Faso', 'Burundi',
-    'Cambodia', 'Cameroon', 'Canada', 'Cape Verde', 'Cayman',
-    'Central African Republic', 'Chad', 'Chagos', 'Chile', 'China', 'Colombia',
-    'Comoro', 'Congo  The Democratic Republic Of The', 'Costa Rica', 'Cote D\x92Ivoire',
-    'Croatia', 'Cuba', 'Curacao', 'Cyprus', 'Czech Republic', 'Damascus',
-    'Denmark', 'Djibouti', 'Dominica', 'Dominican Republic', 'Ecuador', 'Efate',
-    'Egypt', 'El Salvador', 'Enderbury', 'Equatorial Guinea', 'Eritrea', 'Estonia',
-    'Ethiopia', 'Fiji', 'Finland', 'France', 'French Guiana', 'Funafuti',
-    'Gabon', 'Gambia', 'Gambier', 'Georgia', 'Germany', 'Ghana', 'Grand Turk',
-    'Greece', 'Greenland', 'Grenada', 'Guadalcanal', 'Guadeloupe', 'Guatemala',
-    'Guernsey', 'Guinea-Bissau', 'Guinea', 'Guyana', 'Haiti', 'Honduras',
-    'Hong Kong', 'Hungary', 'Iceland', 'India', 'Indonesia',
-    'Iran  Islamic Republic Of', 'Iraq', 'Ireland', 'Isle of Man', 'Israel', 'Italy',
-    'Jamaica', 'Japan', 'Jersey', 'Jordan', 'Juba', 'Kazakhstan', 'Kenya',
-    'Kiritimati', 'Korea  Republic Of', 'Kralendijk', 'Kuwait', 'Kyrgyzstan',
-    'Lao Peoples Democratic Republic', 'Latvia', 'Lebanon', 'Lesotho', 'Liberia',
-    'Lithuania', 'Longyearbyen', 'Lower Princes', 'Luxembourg',
-    'Macedonia  The Former Yugoslav Republic Of', 'Madagascar', 'Madrid', 'Majuro',
-    'Malawi', 'Malaysia', 'Maldives', 'Mali', 'Malta', 'Marigot', 'Marquesas',
-    'Martinique', 'Mauritania', 'Mauritius', 'Mayotte', 'Mexico', 'Miquelon',
-    'Moldova  Republic Of', 'Mongolia', 'Montenegro', 'Montserrat', 'Morocco',
-    'Mozambique', 'Myanmar', 'Namibia', 'Nassau', 'Nauru', 'Nepal', 'Netherlands',
-    'New Zealand', 'Nicaragua', 'Niger', 'Nigeria', 'Niue', 'Norway', 'Noumea',
-    'Oman', 'Oslo', 'Pakistan', 'Palau', 'Panama', 'Papua New Guinea',
-    'Paraguay', 'Peru', 'Philippines', 'Poland', 'Port of Spain', 'Portugal',
-    'Pyongyang', 'Qatar', 'Rarotonga', 'Reunion', 'Romania', 'Russian Federation',
-    'Rwanda', 'Sao Tome And Principe', 'Saudi Arabia', 'Senegal', 'Serbia',
-    'Seychelles', 'Sierra Leone', 'Singapore', 'Slovakia', 'Slovenia', 'Somalia',
-    'South Africa', 'Spain', 'Sri Lanka', 'St Barthelemy', 'St Kitts', 'St Lucia',
-    'St Vincent', 'Stanley', 'Sudan', 'Suriname', 'Swaziland', 'Sweden',
-    'Switzerland', 'Tahiti', 'Taiwan Republic Of China', 'Tajikistan',
-    'Tanzania  United Republic Of', 'Tarawa', 'Tegucigalpa', 'Thailand', 'Timor-Leste',
-    'Togo', 'Tongatapu', 'Tortola', 'Tripoli', 'Tunisia', 'Turkey', 'Turkmenistan',
-    'Uganda', 'Ukraine', 'United Arab Emirates', 'United Kingdom', 'United States',
-    'Uruguay', 'Uzbekistan', 'Venezuela  Bolivarian Republic Of', 'Viet Nam', 'Wallis',
-    'Western Sahara', 'Windhoek', 'Yemen', 'Zambia', 'Zimbabwe'
-  ];
+const COUNTRIES_DATA = [
+  // Europe
+  'Albania', 'Andorra', 'Austria', 'Belarus', 'Belgium', 'Bosnia And Herzegovina',
+  'Bulgaria', 'Croatia', 'Cyprus', 'Czech Republic', 'Denmark', 'Estonia',
+  'Finland', 'France', 'Germany', 'Greece', 'Hungary', 'Iceland', 'Ireland',
+  'Italy', 'Latvia', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Malta',
+  'Moldova  Republic Of', 'Monaco', 'Montenegro', 'Netherlands', 'North Macedonia',
+  'Norway', 'Poland', 'Portugal', 'Romania', 'Russian Federation', 'Serbia',
+  'Slovakia', 'Slovenia', 'Spain', 'Sweden', 'Switzerland', 'Turkey', 'Ukraine',
+  'United Kingdom',
+
+  // Americas (North, Central, South, Caribbean)
+  'Antigua', 'Argentina', 'Bahamas', 'Barbados', 'Belize', 'Bolivia  Plurinational State Of',
+  'Brazil', 'Canada', 'Chile', 'Colombia', 'Costa Rica', 'Cuba', 'Curacao',
+  'Dominica', 'Dominican Republic', 'Ecuador', 'El Salvador', 'Grenada',
+  'Guatemala', 'Guyana', 'Haiti', 'Honduras', 'Jamaica', 'Mexico', 'Nicaragua',
+  'Panama', 'Paraguay', 'Peru', 'Saint Kitts and Nevis', 'Saint Lucia',
+  'Saint Vincent and the Grenadines', 'Suriname', 'Trinidad and Tobago',
+  'United States', 'Uruguay', 'Venezuela  Bolivarian Republic Of',
+
+  // Oceania
+  'Australia', 'Fiji', 'Kiribati', 'Marshall Islands', 'Micronesia', 'Nauru',
+  'New Zealand', 'Palau', 'Papua New Guinea', 'Samoa', 'Solomon Islands',
+  'Tonga', 'Tuvalu', 'Vanuatu'
+];
 
   /**
    * Generic function to populate a dropdown with data
