@@ -164,7 +164,8 @@ h1 {
     flex: 1;
     border: none;
     border-radius: 8px;
-    padding: 6px;
+    padding: 10px;
+    font-size: 14px;
     background-color: #f0f2f6;
     color: #333;
     transition: background 0.2s;
@@ -183,7 +184,7 @@ h1 {
     color: #333;
     transition: background 0.2s;
     margin: 0;
-    font-size: 12px;
+    font-size: 14px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -211,7 +212,8 @@ input[type="text"] {
     margin: 8px 0;
     border: none;
     border-radius: 8px;
-    padding: 6px;
+    padding: 10px;
+    font-size: 14px;
     background-color: #f0f2f6; /* soft gray background */
     color: #333;
     transition: background 0.2s; /* smooth background change on hover */

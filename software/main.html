@@ -452,6 +452,7 @@
 <!-- PyScript for flightplan functionality -->
   <script type="py">
     import js
+    import json
     from datetime import datetime
     import os
     import tempfile
@@ -481,6 +482,7 @@
             'MAX_CROSSWIND_LIMIT': 15,
             'user_usage_type': 'print',
             'user_select_cols': '2',
+            'fontsizes': set_fontsizes(user_usage_type='view', user_select_cols=1),
 
             'source': {
                 'METAR_stations': r'https://erdogant.github.io/datasets/skywalk/nsd_cccc.zip',
@@ -1201,7 +1203,6 @@
         print(f"  Flightplan Name: {flightplan_name}")
 
         # Convert flight_plan_data to JSON string
-        import json
         flight_plan_dict = {}
         keys = get_default_data()
         for key in keys:
@@ -1215,9 +1216,9 @@
                 print(f"⚠️ Failed to save {key}: {e}")
 
         # Print saved data
-        for key, value in flight_plan_dict.items():
-            if value != '' and value != None and value != {} and value != []:
-                print(f"  {key}: '{value}'")
+        # for key, value in flight_plan_dict.items():
+        #    if value != '' and value != None and value != {} and value != []:
+        #        print(f"  {key}: '{value}'")
 
         # Convert to JSON string
         json_data = json.dumps(flight_plan_dict)
@@ -1293,13 +1294,172 @@
         """Create ATC summary (placeholder function)"""
         print("Creating ATC summary...")
         # Generate HTML content
-        # html_content = generate_summary_html(window.flight_plan_data, app.SETTINGS, reverse_path=reverse_path)
+        html_content = generate_summary_html(reverse_path=reverse_path)
         # Open in browser
-        # open_in_browser(html_content)
+        open_in_browser(html_content)
 
     def create_reverse_route_atc():
         """Create reverse route ATC (placeholder function)"""
         print("Creating reverse route ATC...")
+
+
+    def generate_summary_html(reverse_path=False):
+        """Generate HTML content for summary screen similar to ATC_SUMMARY."""
+        flight_data = js.window.flight_plan_data
+        settings = js.window.settings
+        try:
+            # Set departure and arrival
+            if reverse_path:
+                DEPARTURE, ARRIVAL = 'ARRIVAL', 'DEPARTURE'
+            else:
+                DEPARTURE, ARRIVAL = 'DEPARTURE', 'ARRIVAL'
+
+            # Prepare frequency and tower info
+            ATC_FREQUENCIES = create_freq_list_combined([DEPARTURE, ARRIVAL])
+            ATC_TOWER_FREQ_DEP, ATC_TOWER_NAME_DEP = get_ATC_TOWER(DEPARTURE)
+            ATC_TOWER_FREQ_ARR, ATC_TOWER_NAME_ARR = get_ATC_TOWER(ARRIVAL)
+
+            empty_field = '[ . . . . . . . . . ]'
+            html_content = {
+                'CALLSIGN': flight_data.get('CALLSIGN', '') or empty_field,
+                'CALLSIGN_SHORT': flight_data.get('CALLSIGN_SHORT', '') or empty_field,
+                'AIRCRAFT_TYPE': flight_data.get('AIRCRAFT_TYPE', '') or empty_field,
+                'FLIGHT_RULES': flight_data.get('FLIGHT_RULES', '') or empty_field,
+                'POB': flight_data.get('POB', '') or empty_field,
+
+                'REQUEST_INFORMATION': '' if flight_data.get(f'{ARRIVAL}_CTR', False) else 'REQUEST AERODROME INFORMATION',
+                'TEXT_INFORMATION_RECEIVED': TEXT_INFORMATION_RECEIVED() if flight_data.get(f'{ARRIVAL}_CTR', False) else '',
+                'CTR_REGION_BOOL_DEPARTURE': 'true' if flight_data.get(f'{DEPARTURE}_CTR', False) else 'false',
+                'CTR_REGION_BOOL_ARRIVAL': 'true' if flight_data.get(f'{ARRIVAL}_CTR', False) else 'false',
+
+                'DEPARTURE_POSITION': flight_data.get(f'{DEPARTURE}_POSITION', '') or 'at the Apron',
+                'DEPARTURE_RUNWAY': flight_data.get(f'{DEPARTURE}_RUNWAY', '') or empty_field,
+                'DEPARTURE_NAME': flight_data.get(f'{DEPARTURE}_NAME', '') or empty_field,
+                'DEPARTURE_ROUTE_NAME': flight_data.get(f'{DEPARTURE}_ROUTE_NAME', '') or empty_field,
+                'DEPARTURE_ROUTE_ALTITUDE': flight_data.get(f'{DEPARTURE}_ROUTE_ALTITUDE', '') or empty_field,
+                'DEPARTURE_ICAO': flight_data.get(f'{DEPARTURE}_ICAO', '') or empty_field,
+
+                'FIC_NAME': flight_data.get('FIC_NAME', '') or empty_field,
+                'FIC_FREQUENCY': flight_data.get('FIC_FREQUENCY', ''),
+                'FIC_SQUAWK': flight_data.get('SQUAWK', ''),
+                'OVERHEAD': flight_data.get('OVERHEAD', flight_data.get(f'{DEPARTURE}_ROUTE_NAME', '') or empty_field),
+                'ATC_FREQUENCIES': ATC_FREQUENCIES,
+                'ATC_ATIS_FREQ_DEP': flight_data.get(f'{DEPARTURE}_ATC_ATIS_FREQ', ''),
+                'OVERHEAD2': flight_data.get('OVERHEAD2', ''),
+                'FIC_SQUAWK2': flight_data.get('SQUAWK2', ''),
+
+                'ATC_TOWER': ATC_TOWER_FREQ_DEP,
+                'DELIVERY_OR_RADIO': ATC_TOWER_NAME_DEP if ATC_TOWER_NAME_DEP == 'RADIO' else 'DELIVERY',
+                'ATC_GROUND': ATC_TOWER_FREQ_DEP if ATC_TOWER_NAME_DEP == 'RADIO' else flight_data.get(f'{DEPARTURE}_ATC_GROUND', ''),
+
+                'ARRIVAL_ICAO': flight_data.get(f'{ARRIVAL}_ICAO', '') or empty_field,
+                'ARRIVAL_ROUTE_ALTITUDE': flight_data.get(f'{ARRIVAL}_ROUTE_ALTITUDE', '') or empty_field,
+                'ARRIVAL_NAME': flight_data.get(f'{ARRIVAL}_NAME', '') or empty_field,
+                'ARRIVAL_ROUTE_NAME': flight_data.get(f'{ARRIVAL}_ROUTE_NAME', ''),
+                'ATC_TOWER_ARR': ATC_TOWER_FREQ_ARR,
+                'ATC_TOWER_NAME': ATC_TOWER_NAME_ARR,
+                'ARRIVAL_RUNWAY': flight_data.get(f'{ARRIVAL}_RUNWAY', '') or empty_field,
+
+                'GRID_COLUMNS': settings.get('user_select_cols', 1),
+            }
+            if reverse_path:
+                html_content['FIC_NAME'] = flight_data.get('FIC_NAME2', '') or empty_field
+                html_content['FIC_FREQUENCY'] = flight_data.get('FIC_FREQUENCY2', '')
+                html_content['OVERHEAD'] = flight_data.get('OVERHEAD2', '')
+                html_content['FIC_SQUAWK'] = flight_data.get('SQUAWK2', '')
+
+            fontsizes = settings.get('fontsizes')
+            css_content = {
+                'FONT_SIZE_TOWER': fontsizes.get('TOWER'),
+                'FONT_SIZE_PILOT': fontsizes.get('PILOT'),
+                'FONT_SIZE_TITLE': fontsizes.get('TITLE'),
+                'FONT_SIZE_SUBTITLE': fontsizes.get('TITLE') - 2,
+                'BACKGROUND_COLOR_TITLE': '#6b21a8',
+            }
+            html_string = personalize_content(html_content, 'ATC_summary_template.html.j2')
+            css_string = personalize_content(css_content, 'style_template.css.j2')
+            html_with_css = f"""
+            <style>
+            {css_string}
+            </style>
+            {html_string}
+            """
+            return html_with_css
+        except Exception as e:
+            return f"<p>Error generating HTML: {str(e)}</p>"
+
+
+    def set_fontsizes(user_usage_type, user_select_cols):
+        user_select_cols = str(user_select_cols)
+        # Change fontsize based on settings
+        if 'view' in user_usage_type.lower() and user_select_cols == '1':
+            fontsizes = {'TOWER': 14, 'PILOT': 16, 'TITLE': 20}
+        elif 'view' in user_usage_type.lower() and (user_select_cols == '2' or user_select_cols == '3'):
+            fontsizes = {'TOWER': 12, 'PILOT': 14, 'TITLE': 14}
+        elif 'print' in user_usage_type.lower() and (user_select_cols == '2' or user_select_cols == '3'):
+            fontsizes = {'TOWER': 16, 'PILOT': 18, 'TITLE': 20}
+        else:
+            fontsizes = {'TOWER': 20, 'PILOT': 22, 'TITLE': 24}
+        return fontsizes
+
+
+    def personalize_content(content, template_name):
+        """Personalize content using Jinja2 templates.
+
+        This function loads a Jinja2 template and renders it with the provided content.
+
+        Args:
+            content: Dictionary containing data to render in the template
+            template_name: Name of the template file to load
+
+        Returns:
+            str: Rendered HTML content
+        """
+
+        # Personalize the html based on the departure and aircraft
+        template_path = save_and_load_url(os.path.join(window.settings['source']['html_templates'],template_name), dirname='HTML_TEMPLATES')
+        # Get dirname
+        template_dir = os.path.dirname(os.path.abspath(template_path))
+        # Get filename
+        template_name = os.path.basename(template_path)
+
+        jinja_env = Environment(loader=FileSystemLoader(template_dir))
+        # Get the template
+        template = jinja_env.get_template(template_name)
+        # Generate html content
+        html_content = template.render(content)
+
+        # Return
+        return html_content
+
+
+    def open_in_browser(html_content):
+        # Get or create custom tempdir
+        tempdir = get_tempdir("HTML")
+
+        # Inject a viewport meta tag for mobile formatting if not present
+        if "<head>" in html_content:
+            if 'name="viewport"' not in html_content:
+                html_content = html_content.replace(
+                    "<head>",
+                    '<head><meta name="viewport" content="width=device-width, initial-scale=1.0">'
+                )
+        else:
+            # If no <head>, prepend the meta tag at the top
+            html_content = (
+                '<meta name="viewport" content="width=device-width, initial-scale=1.0">'
+                + html_content
+            )
+
+        # Build a temp file path in our custom tempdir
+        fd, temp_file_path = tempfile.mkstemp(suffix=".html", dir=tempdir, text=True)
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write(html_content)
+
+        # Open in the browser
+        webbrowser.open(f"file://{temp_file_path}")
+
+
 
 
     # Make functions available to JavaScript
@@ -1313,6 +1473,7 @@
     js.window.create_reverse_route_atc = create_reverse_route_atc
     js.window.create_callsign_short = create_callsign_short
     js.window.import_aerodrome_selected = import_aerodrome_selected
+    js.window.generate_summary_html = generate_summary_html
     # DEPARTURE TAB
     js.window.populate_departure_fields_from_icao = populate_departure_fields_from_icao
     js.window.update_departure_gui_fields = update_departure_gui_fields
@@ -1506,13 +1667,7 @@ const COUNTRIES_DATA = [
   'United Kingdom',
 
   // Americas (North, Central, South, Caribbean)
-  'Antigua', 'Argentina', 'Bahamas', 'Barbados', 'Belize', 'Bolivia  Plurinational State Of',
-  'Brazil', 'Canada', 'Chile', 'Colombia', 'Costa Rica', 'Cuba', 'Curacao',
-  'Dominica', 'Dominican Republic', 'Ecuador', 'El Salvador', 'Grenada',
-  'Guatemala', 'Guyana', 'Haiti', 'Honduras', 'Jamaica', 'Mexico', 'Nicaragua',
-  'Panama', 'Paraguay', 'Peru', 'Saint Kitts and Nevis', 'Saint Lucia',
-  'Saint Vincent and the Grenadines', 'Suriname', 'Trinidad and Tobago',
-  'United States', 'Uruguay', 'Venezuela  Bolivarian Republic Of',
+  'Brazil', 'Canada', 'Curacao', 'United States',
 
   // Oceania
   'Australia', 'Fiji', 'Kiribati', 'Marshall Islands', 'Micronesia', 'Nauru',
