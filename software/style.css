@@ -292,3 +292,40 @@ input[type="text"]:hover {
 #UPPERCASE_input {
     text-transform: uppercase;
 }
+
+/* Remove default rounded corners, shadows, etc. */
+input,
+select,
+textarea,
+button {
+    -webkit-appearance: none;
+    appearance: none;
+    border-radius: 0; /* optional: set your own radius */
+}
+
+/* Fix input zoom on focus (iOS auto-zoom) */
+html {
+    font-size: 16px; /* ensures no zooming when focusing inputs */
+}
+
+/* Remove inner padding and special styling for search fields */
+input[type="search"] {
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+/* Remove spinner from number fields */
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Style dropdown arrows manually */
+select {
+    background-image: none; /* prevent iOS arrow */
+}
