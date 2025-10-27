@@ -11,8 +11,8 @@ label_h1 {
     padding: 10px;
     color: #2a3f54; /* Navy-ish dark color */
     font-size: 14px;
-    text-transform: uppercase; /* Makes text uppercase */
-    letter-spacing: 0.5px; /* Small spacing between letters */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     text-align: center;
 }
 
@@ -38,7 +38,7 @@ body {
     align-items: stretch;
     width: 100%;
     height: 100vh;
-    height: 100dvh; /* Dynamic viewport height for mobile */
+    height: 100dvh;
 }
 
 #app {
@@ -53,11 +53,11 @@ body {
     padding-right: env(safe-area-inset-right);
     display: flex;
     flex-direction: column;
-    overflow-x: hidden; /* Prevent horizontal scroll inside app */
+    overflow-x: hidden;
     overflow-y: auto;
 }
 
-/* Media query for larger screens - restore centered layout */
+/* Media query for larger screens */
 @media (min-width: 768px) {
     html,
     body {
@@ -74,10 +74,6 @@ body {
         border-radius: 15px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         padding: 10px;
-        padding-top: 10px;
-        padding-bottom: 10px;
-        padding-left: 10px;
-        padding-right: 10px;
     }
 
     .tab {
@@ -96,54 +92,50 @@ h1 {
     justify-content: space-between;
     background-color: #f1f1f1;
     border-radius: 0;
-    color: #2a3f54; /* Navy-ish dark color */
+    color: #2a3f54;
     position: sticky;
     top: env(safe-area-inset-top);
     z-index: 10;
-    overflow-x: hidden; /* Prevent horizontal scroll */
+    overflow-x: hidden;
 }
 
 /* Tab buttons */
 .tab button {
-    flex: 1 1 0; /* Flexible width, no overflow */
+    flex: 1 1 0;
     max-width: 100%;
     background-color: inherit;
     border: none;
     outline: none;
     cursor: pointer;
-    padding: 10px 12px;
-    transition: 0.3s; /* smooth background transition */
+    padding: 10px;
+    transition: 0.3s;
     font-weight: bold;
-    border-radius: 0; /* keep edges consistent */
+    border-radius: 0;
 }
 
 .tab button:hover {
-    background-color: #e8eaed; /* soft hover effect */
+    background-color: #e8eaed;
 }
 
 .tab button.active {
-    background-color: #faf9fa; /* slightly brighter active tab */
-    box-shadow: inset 0 -3px 0 #2a3f54; /* subtle indicator line */
+    background-color: #faf9fa;
+    box-shadow: inset 0 -3px 0 #2a3f54;
 }
 
 /* Tab content */
 .tabcontent {
     display: none;
     padding: 10px;
-    border: none;
-    border-top: none;
-    margin-top: 0;
-    border-radius: 0;
-    flex-grow: 1; /* Fill remaining vertical space */
-    overflow-y: auto; /* Scroll if content exceeds container */
-    overflow-x: hidden; /* Prevent horizontal scroll */
+    flex-grow: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 /* Output box */
 .output-box {
     margin-top: 10px;
     padding: 8px;
-    background: #f0f2f6; /* soft gray background */
+    background: #f0f2f6;
     border-radius: 8px;
     min-height: 30px;
     color: #333;
@@ -159,52 +151,41 @@ h1 {
     box-sizing: border-box;
 }
 
+/* Unified height across input, select, and button without hardcoding */
 .button-row select,
-.button-row input[type="text"] {
+.button-row input[type="text"],
+.button-row button {
     flex: 1;
     border: none;
     border-radius: 8px;
-    padding: 10px;
+    padding: 10px; /* This determines consistent height */
     font-size: 14px;
     background-color: #f0f2f6;
     color: #333;
     transition: background 0.2s;
-    min-width: 0; /* Allow select to shrink */
-    margin: 0; /* Remove default margins for consistent spacing */
-}
-
-.button-row button {
-    flex: 0 0 auto;
-    min-width: 60px;
-    max-width: 80px;
-    border: none;
-    border-radius: 8px;
-    padding: 6px 8px;
-    background-color: #f0f2f6;
-    color: #333;
-    transition: background 0.2s;
+    min-width: 0;
     margin: 0;
-    font-size: 14px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    line-height: 1.2; /* Helps align text nicely */
 }
 
-/* Full width button when it's the only child in button-row */
-.button-row button:only-child {
-    flex: 1;
-    min-width: auto;
-    max-width: none;
-    font-size: 14px;
-}
-
+/* Button hover states */
 .button-row button:hover,
 .button-row select:hover,
 .button-row input[type="text"]:hover {
     background-color: #e8eaed;
 }
 
-/* Inputs and buttons */
+/* Full width button when it's the only child */
+.button-row button:only-child {
+    flex: 1;
+    min-width: auto;
+    max-width: none;
+}
+
+/* Inputs and buttons general styling */
 input[type="range"],
 button,
 input[type="text"] {
@@ -213,65 +194,61 @@ input[type="text"] {
     border: none;
     border-radius: 8px;
     padding: 10px;
-    font-size: 14px;
-    background-color: #f0f2f6; /* soft gray background */
+    background-color: #f0f2f6;
     color: #333;
-    transition: background 0.2s; /* smooth background change on hover */
+    transition: background 0.2s;
+    font-size: 14px;
 }
 
 input[type="range"]:hover,
 button:hover,
 input[type="text"]:hover {
-    background-color: #e8eaed; /* subtle hover effect */
+    background-color: #e8eaed;
 }
 
 /* Logo wrapper container */
 .logo-container {
     text-align: center;
-    margin: 10px 10px 10px 10px;
-    border-radius: 10px; /* keep rounded edges */
-    overflow: hidden; /* clip the inner image so edges stay rounded */
+    margin: 10px;
+    border-radius: 10px;
+    overflow: hidden;
 }
 
-/* Logo image */
 .logo-container img {
     max-width: 100%;
     height: auto;
     display: block;
     margin: 0 auto;
     cursor: pointer;
-    transition: transform 0.2s; /* only scale on hover */
+    transition: transform 0.2s;
 }
 
-/* Hover effect: slightly enlarge without breaking border radius */
 .logo-container img:hover {
     transform: scale(1.05);
 }
 
-/* Logo wrapper container */
+/* Coffee container */
 .coffee-container {
     text-align: center;
     margin: 30px 0;
-    border-radius: 10px; /* keep rounded edges */
-    overflow: hidden; /* clip the inner image so edges stay rounded */
+    border-radius: 10px;
+    overflow: hidden;
 }
 
-/* Logo image */
 .coffee-container img {
     max-width: 50%;
     height: auto;
     display: block;
     margin: 0 auto;
     cursor: pointer;
-    transition: transform 0.2s; /* only scale on hover */
+    transition: transform 0.2s;
 }
 
-/* Hover effect: slightly enlarge without breaking border radius */
 .coffee-container img:hover {
     transform: scale(1.05);
 }
 
-/* Warning styling for missing fields */
+/* Warning styling */
 .warning {
     font-size: 10px;
     color: orange;
@@ -282,34 +259,30 @@ input[type="text"]:hover {
 #General {
     display: flex;
     flex-direction: column;
-    padding-bottom: 10px; /* ensure content doesn't overlap buttons */
+    padding-bottom: 10px;
     box-sizing: border-box;
     position: relative;
 }
 
 #bottom-container {
-    margin-top: auto; /* pushes container to bottom of #General */
+    margin-top: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 1px;
     padding: 10px 0;
-    border: none; /* remove all borders */
-    background-color: none; /* optional, choose color you want */
-    border: none; /* 1px solid #ccc; */
 }
 
 #bottom-buttons {
     display: flex;
     gap: 6px;
     width: 100%;
-    border: none; /* ensure no border around the buttons container */
 }
 
 #bottom-buttons button {
     flex: 1;
     margin: 0;
-    padding: 6px 8px;
+    padding: 10px; /* same unified padding */
     font-size: 12px;
     white-space: nowrap;
     overflow: hidden;

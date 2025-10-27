@@ -133,31 +133,40 @@
 	  </div>
 
 	  <!-- Line 3: CTR spinner -->
+	<!--
 	  <div class="button-row">
 		<select id="DEPARTURE_CTR">
 		  <option value=""></option>
 		  <option value="CTR">CTR</option>
 		</select>
 	  </div>
+			-->
 
 	  <!-- Line 4: NAME and ICAO inputs -->
 	  <div class="button-row">
 		<input type="text" id="DEPARTURE_NAME" placeholder="Airport Name">
 		<input type="text" id="DEPARTURE_ICAO" class="UPPERCASE_input" placeholder="ICAO">
+		<select id="DEPARTURE_CTR">
+		  <option value=""></option>
+		  <option value="CTR">CTR</option>
+		</select>
 	  </div>
 
 	  <!-- Line 5: POSITION, RUNWAY, ELEVATION inputs -->
 	  <div class="button-row">
-		<input type="text" id="DEPARTURE_POSITION" placeholder="Position">
-		<input type="text" id="DEPARTURE_RUNWAY" placeholder="Runway">
-		<input type="text" id="DEPARTURE_ELEVATION" placeholder="Elevation">
+		<input type="text" id="DEPARTURE_POSITION" placeholder="Position (At the Apron)", class="UPPERCASE_input">
+	  </div>
+
+	  <div class="button-row">
+		<input type="text" id="DEPARTURE_RUNWAY" placeholder="Runway Number">
+		<input type="text" id="DEPARTURE_ELEVATION" placeholder="Field Elevation">
 	  </div>
 
 	  <!-- Line 6: ROUTE_NAME, ROUTE_ALTITUDE, CIRCUIT_ALTITUDE inputs -->
 	  <div class="button-row">
-		<input type="text" id="DEPARTURE_ROUTE_NAME" placeholder="Route Name">
-		<input type="text" id="DEPARTURE_ROUTE_ALTITUDE" placeholder="Route Alt">
-		<input type="text" id="DEPARTURE_CIRCUIT_ALTITUDE" placeholder="Circuit Alt">
+		<input type="text" id="DEPARTURE_ROUTE_NAME" placeholder="Route Name", class="UPPERCASE_input">
+		<input type="text" id="DEPARTURE_ROUTE_ALTITUDE" placeholder="Route Altitude">
+		<input type="text" id="DEPARTURE_CIRCUIT_ALTITUDE" placeholder="Circuit Altitude">
 	  </div>
 
 	  <!-- Line 7: Frequency label -->
@@ -165,14 +174,14 @@
 
 	  <!-- Line 8: ATC_TOWER and ATC_APPROACH inputs -->
 	  <div class="button-row">
-		<input type="text" id="DEPARTURE_ATC_TOWER" placeholder="Tower">
-		<input type="text" id="DEPARTURE_ATC_APPROACH" placeholder="Approach">
+		<input type="text" id="DEPARTURE_ATC_TOWER" placeholder="Tower Frequency">
+		<input type="text" id="DEPARTURE_ATC_APPROACH" placeholder="Approach Frequency">
 	  </div>
 
 	  <!-- Line 9: ATC_ATIS_FREQ and ATC_GROUND inputs -->
 	  <div class="button-row">
-		<input type="text" id="DEPARTURE_ATC_ATIS_FREQ" placeholder="ATIS">
-		<input type="text" id="DEPARTURE_ATC_GROUND" placeholder="Ground">
+		<input type="text" id="DEPARTURE_ATC_ATIS_FREQ" placeholder="ATIS Frequency">
+		<input type="text" id="DEPARTURE_ATC_GROUND" placeholder="Ground Frequency">
 	  </div>
 
 	  <!-- Line 10: ATC_TELEPHONE input -->
@@ -1635,17 +1644,31 @@
       }
     };
 
-    const inputs = [CALLSIGN_input, AIRCRAFT_TYPE_input, POB_input, FLIGHTPLAN_input, DATETIME_input];
-    inputs.forEach(input => {
-      input.addEventListener('input', () => {
-        const missing = [];
-        if (!FLIGHTPLAN_input.value) missing.push('Flightplan Name');
-        if (!CALLSIGN_input.value) missing.push('CALLSIGN');
-        if (!AIRCRAFT_TYPE_input.value) missing.push('Aircraft Type');
-        if (!POB_input.value) missing.push('POB');
-        missing_label.textContent = missing.length ? 'Missing: ' + missing.join(', ') : '';
+    const inputs = [DEPARTURE_ATC_GROUND, DEPARTURE_ATC_ATIS_FREQ, DEPARTURE_ATC_TOWER, DEPARTURE_ROUTE_ALTITUDE, DEPARTURE_ROUTE_NAME, DEPARTURE_RUNWAY, DEPARTURE_POSITION, DEPARTURE_NAME, DEPARTURE_ICAO, CALLSIGN_input, AIRCRAFT_TYPE_input, POB_input, FLIGHTPLAN_input, DATETIME_input];
+      inputs.forEach(input => {
+        input.addEventListener('input', () => {
+          const missing = [];
+          // Reset all backgrounds first
+          inputs.forEach(inp => inp.style.backgroundColor = '');
+
+          if (!FLIGHTPLAN_input.value) { missing.push('Flightplan Name'); FLIGHTPLAN_input.style.backgroundColor = '#ffeb3b'; }
+          if (!CALLSIGN_input.value) { missing.push('CALLSIGN'); CALLSIGN_input.style.backgroundColor = '#ffeb3b'; }
+          if (!AIRCRAFT_TYPE_input.value) { missing.push('Aircraft Type'); AIRCRAFT_TYPE_input.style.backgroundColor = '#ffeb3b'; }
+          if (!POB_input.value) { missing.push('POB'); POB_input.style.backgroundColor = '#ffeb3b'; }
+          if (!DEPARTURE_NAME.value) { missing.push('Aerodrome Name (Dep.)'); DEPARTURE_NAME.style.backgroundColor = '#ffeb3b'; }
+          if (!DEPARTURE_ICAO.value) { missing.push('ICAO (Dep.)'); DEPARTURE_ICAO.style.backgroundColor = '#ffeb3b'; }
+          if (!DEPARTURE_POSITION.value) { missing.push('Position (Dep.)'); DEPARTURE_POSITION.style.backgroundColor = '#ffeb3b'; }
+          if (!DEPARTURE_RUNWAY.value) { missing.push('Runway (Dep.)'); DEPARTURE_RUNWAY.style.backgroundColor = '#ffeb3b'; }
+          if (!DEPARTURE_ROUTE_NAME.value) { missing.push('Route Name (Dep.)'); DEPARTURE_ROUTE_NAME.style.backgroundColor = '#ffeb3b'; }
+          if (!DEPARTURE_ROUTE_ALTITUDE.value) { missing.push('Route Altitude (Dep.)'); DEPARTURE_ROUTE_ALTITUDE.style.backgroundColor = '#ffeb3b'; }
+          if (!DEPARTURE_ATC_TOWER.value) { missing.push('Freq. Tower/Radio (Dep.)'); DEPARTURE_ATC_TOWER.style.backgroundColor = '#ffeb3b'; }
+          if (DEPARTURE_CTR.value === 'CTR') {
+              if (!DEPARTURE_ATC_ATIS_FREQ.value) { missing.push('Freq. ATIS (Dep.)'); DEPARTURE_ATC_ATIS_FREQ.style.backgroundColor = '#ffeb3b'; }
+              if (!DEPARTURE_ATC_GROUND.value) { missing.push('Freq. Delivery/Ground (Dep.)'); DEPARTURE_ATC_GROUND.style.backgroundColor = '#ffeb3b'; }
+          }
+          missing_label.textContent = missing.length ? 'Missing: ' + missing.join(', ') : '';
+        });
       });
-    });
   </script>
 
 </body>
@@ -1662,8 +1685,8 @@ const COUNTRIES_DATA = [
   'Finland', 'France', 'Germany', 'Greece', 'Hungary', 'Iceland', 'Ireland',
   'Italy', 'Latvia', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Malta',
   'Moldova  Republic Of', 'Monaco', 'Montenegro', 'Netherlands', 'North Macedonia',
-  'Norway', 'Poland', 'Portugal', 'Romania', 'Russian Federation', 'Serbia',
-  'Slovakia', 'Slovenia', 'Spain', 'Sweden', 'Switzerland', 'Turkey', 'Ukraine',
+  'Norway', 'Poland', 'Portugal', 'Romania',
+  'Slovakia', 'Slovenia', 'Spain', 'Sweden', 'Switzerland', 'Turkey',
   'United Kingdom',
 
   // Americas (North, Central, South, Caribbean)
