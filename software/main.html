@@ -19,9 +19,9 @@
 <body>
   <div id="app">
     <div id="loading-spinner" class="spinner-overlay" style="display: flex;">
-      <div style="text-align: center;">
+      <div class="spinner-container">
         <div class="spinner"></div>
-        <div class="spinner-text">Loading SkyWalk. Please wait...</div>
+        <div class="spinner-text">Loading SkyWalk. Please wait..</div>
       </div>
     </div>
 
@@ -32,6 +32,7 @@
       <button class="tablinks" data-tab="Arrival">Arrival</button>
       <button class="tablinks" data-tab="Enroute">Enroute</button>
       <button class="tablinks" data-tab="ATC">ATC</button>
+      <button class="tablinks" data-tab="Config">⚙️</button>
     </div>
 
     <!-- Tab contents -->
@@ -47,18 +48,18 @@
 		</a>
 	  </div>
 
+	  <label_h1>Flightplan</label_h1>
 	  <!-- New Flightplan row -->
 	  <div class="button-row">
-		<button id="new_plan_btn">New Flightplan</button>
+		<button id="new_plan_btn">Create New Flightplan</button>
 	  </div>
 
 	  <!-- Flightplan select + Load row -->
 	  <div class="button-row">
+		<button id="delete_btn" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">🗑️</button>
 		<select id="plan_spinner" onchange="this.value && window.load_flightplan()">
-		  <option value="">Select flightplan</option>
+		  <option value="">Load Flightplan</option>
 		</select>
-		<button id="load_btn" style="display:none">Load Plan</button>
-		<button id="delete_btn">Delete</button>
 	  </div>
 
 	  <!-- Flightplan Name row -->
@@ -101,7 +102,6 @@
 		});
 			</script>
 
-
 	  <!-- Save + Bottom Buttons Container -->
 	  <div id="bottom-container">
     	  <!-- Logo -->
@@ -109,14 +109,12 @@
     		<a href="https://www.buymeacoffee.com/erdogant" target="_blank">
     		  <img id="coffee_image_cache" alt="Coffee Donation">
     		</a>
+           	<center>
+          		<script async src="https://media.ethicalads.io/media/client/ethicalads.min.js"></script>
+          		<div data-ea-publisher="erdogantgithubio" data-ea-type="text"></div>
+           	</center>
     	  </div>
 
-       <!--
-		<div id="bottom-buttons">
-		  <button id="html_btn">Create Summary ATC</button>
-		  <button id="reverse_btn">Create Reverse Route ATC</button>
-		</div>
-		-->
 	  </div>
 
 	</div>
@@ -329,7 +327,7 @@
 
     <div id="ATC" class="tabcontent">
         <!-- ATC -->
-        <label_h1>Output Settings</label_h1>
+        <label_h1>Display Settings</label_h1>
 
         <div class="button-row">
             <div style="display:flex; flex-direction:column; flex:1; margin-right:10px;">
@@ -339,6 +337,8 @@
                     <option value="view">Screen</option>
                 </select>
             </div>
+
+
             <div style="display:flex; flex-direction:column; flex:1;">
                 <label for="user_select_cols">Columns</label>
                 <select id="user_select_cols">
@@ -349,16 +349,27 @@
             </div>
         </div>
 
-        <label_h1>ATC</label_h1>
-        <div id="bottom-buttons">
-		  <button id="html_btn">Create Summary ATC</button>
-		  <button id="reverse_btn">Create Reverse Route ATC</button>
-		</div>
+        <label_h1>Air Traffic Control (ATC)</label_h1>
+        <div class="button-row" style="border: 2px solid purple; border-radius: 10px; padding: 10px;">
+            <button id="BTN_HTML_SUMMARY">Create Summary ATC</button>
+            <button id="BTN_HTML_SUMMARY_REV">Create Reverse</button>
+        </div>
+        <div class="button-row">
+            <button id="BTN_HTML_DEPARTURE">Create Departure ATC</button>
+            <button id="BTN_HTML_DEPARTURE_REV">Create Reverse</button>
+        </div>
+        <div class="button-row">
+            <button id="BTN_HTML_ARRIVAL">Create Arrival ATC</button>
+            <button id="BTN_HTML_ARRIVAL_REV">Create Reverse</button>
+        </div>
+        <div class="button-row">
+            <button id="BTN_HTML_ENROUTE">Create Enroute ATC</button>
+            <button id="BTN_HTML_EN_REV">Create Reverse</button>
+        </div>
 
         <!-- Save + Bottom Buttons Container -->
 	  <div id="bottom-container">
 		<div class="warning" id="missing_label">Missing: Flightplan Name, CALLSIGN, Aircraft Type</div>
-		<!-- <button id="save_tab_btn">Save</button> -->
 	  </div>
 
         <!--
@@ -384,6 +395,24 @@
             </div>
         </div>
         -->
+
+    </div>
+
+    <!-- =============== TAB CONFIGURATIONS =============== -->
+
+    <div id="Config" class="tabcontent">
+        <!-- CONFIGURATIONS -->
+        <label_h1>Information</label_h1>
+        <div class="info" style="margin-bottom: 20px;">SkyWalk is a web-based tool designed to help pilots communicate effectively with Air Traffic Control (ATC). The app is free for use and does not require any registration or login. If you enjoy using SkyWalk, please consider supporting by donating a coffee.</div>
+
+        <label_h1>Cleaning</label_h1>
+        <div class="button-row" style="margin-top: 20px;">
+            <button id="clear_cache_btn" style="background-color: #ff4444; color: white;">Clear Cache</button>
+        </div>
+        <div class="warning" style="margin-bottom: 20px;">Warning: This will permanently delete all saved flightplans from your local browser storage. The reason for using this is when you want to start fresh or when you suspect that your flightplans are corrupted or the ATC output does not show or update. This action cannot be undone.</div>
+
+        <label_h1>Disclaimer</label_h1>
+        <div class="disclaimer" style="margin-bottom: 20px;">SkyWalk is provided as-is without any warranty or guarantee. The developers are not responsible for any damages or losses resulting from the use of this app. SkyWalk is only to be used for educational purposes and not for commercial or professional use.</div>
 
     </div>
 
@@ -538,10 +567,6 @@
     # URL_BASE = "https://erdogant.github.io/datasets/skywalk/aerodromes/"
     # PASSWORD = "GpZzcnXiLleytOr5Y7WC@"  # To be read from secrets.toml later
 
-    def TEXT_INFORMATION_RECEIVED():
-        """Return text confirming information received"""
-        return '<br><br>INFORMATION <strong class="pilot_text"> [ .   .   .   .   .   . ]</strong> RECEIVED,'
-
     def get_default_settings():
         """Get default settings"""
         data = {
@@ -669,15 +694,21 @@
         }
         return data
 
-    def create_callsign_short(CALLSIGN):
-        # Create short callsign automatically
-        CALLSIGN_SHORT = ''
-        if CALLSIGN is not None and CALLSIGN != '':
-            CALLSIGN_SHORT = CALLSIGN[0] + CALLSIGN[-2:]
-        return CALLSIGN_SHORT
-
-
     # Cache Helpers
+    def clear_cache():
+        """Clear all cached data from localStorage"""
+        try:
+            # Clears everything stored in localStorage
+            js.localStorage.clear()
+
+            # If you also use sessionStorage:
+            js.sessionStorage.clear()
+            print("🧹 Cache cleared successfully")
+            return True
+        except Exception as e:
+            print(f"❌ Error clearing cache: {e}")
+            return False
+
     def is_cached(country):
         try:
             cached = js.localStorage.getItem(f"aerodrome_{country}")
@@ -894,6 +925,17 @@
         parts = [f.strip() for f in freq_str.split(',') if f.strip()]
         # Return
         return ', '.join(parts)
+
+    def create_callsign_short(CALLSIGN):
+        # Create short callsign automatically
+        CALLSIGN_SHORT = ''
+        if CALLSIGN is not None and CALLSIGN != '':
+            CALLSIGN_SHORT = CALLSIGN[0] + CALLSIGN[-2:]
+        return CALLSIGN_SHORT
+
+    def TEXT_INFORMATION_RECEIVED():
+        """Return text confirming information received"""
+        return '<br><br>INFORMATION <strong class="pilot_text"> [ .   .   .   .   .   . ]</strong> RECEIVED,'
 
     async def clear_general_fields():
         """Clear all GENERAL GUI fields and flight_plan_data"""
@@ -1363,6 +1405,18 @@
         js.localStorage.setItem(storage_key, json_data)
 
         # Get localStorage info
+        # print_local_storage()
+
+        # Update the list of saved flightplans
+        update_flightplan_list()
+
+        print("---------------DATA SAVED-------------------")
+        return True
+
+    def print_local_storage():
+        # Get localStorage info
+        import sys
+
         print(f"💾 Saved to localStorage: {storage_key}")
         print(f"   Storage Type: Browser localStorage")
         print(f"   Storage Location: Browser's IndexedDB/localStorage database")
@@ -1370,7 +1424,6 @@
         print(f"   Size: {len(json_data)} bytes")
 
         # Print browser-specific path hints
-        import sys
         print(f"   Browser localStorage is typically stored at:")
         if sys.platform == 'win32':
             print(f"   - Chrome: %LOCALAPPDATA%\\Google\\Chrome\\User Data\\Default\\Local Storage")
@@ -1383,12 +1436,6 @@
         else:
             print(f"   - Chrome: ~/.config/google-chrome/Default/Local Storage")
             print(f"   - Firefox: ~/.mozilla/firefox/<profile>/storage/default")
-
-        # Update the list of saved flightplans
-        update_flightplan_list()
-
-        print("---------------DATA SAVED-------------------")
-        return True
 
     def update_flightplan_list():
         """Update the flightplan dropdown with saved plans from localStorage"""
@@ -1425,13 +1472,37 @@
         else:
             print("⚠️ Flightplan dropdown not found")
 
-    async def create_atc_summary(reverse_path=False):
+    async def create_summary_atc(reverse_path=False):
         """Create ATC summary (placeholder function)"""
         print("Creating ATC summary...")
         # Generate HTML content
         html_content = await generate_summary_html(reverse_path=reverse_path)
         # Open in browser
-        open_html(html_content)
+        open_html(html_content, 'ATC_Summary_reverse' if reverse_path else 'ATC_Summary')
+
+    async def create_departure_atc(reverse_path=False):
+        """Create ATC Departure (placeholder function)"""
+        print("Creating Departure summary...")
+        # Generate HTML content
+        html_content = await generate_departure_html(reverse_path=reverse_path)
+        # Open in browser
+        open_html(html_content, 'ATC_Departure_reverse' if reverse_path else 'ATC_Departure')
+
+    async def create_arrival_atc(reverse_path=False):
+        """Create ATC Arrival (placeholder function)"""
+        print("Creating Arrival summary...")
+        # Generate HTML content
+        html_content = await generate_arrival_html(reverse_path=reverse_path)
+        # Open in browser
+        open_html(html_content, 'ATC_Arrival_reverse' if reverse_path else 'ATC_Arrival')
+
+    async def create_enroute_atc(reverse_path=False):
+        """Create ATC Enroute (placeholder function)"""
+        print("Creating Enroute summary...")
+        # Generate HTML content
+        html_content = await generate_enroute_html(reverse_path=reverse_path)
+        # Open in browser
+        open_html(html_content, 'ATC_Enroute_reverse' if reverse_path else 'ATC_Enroute')
 
 
     async def generate_summary_html(reverse_path=False):
@@ -1513,6 +1584,222 @@
             html_string = await personalize_content(html_content, 'ATC_summary_template.html.j2')
             css_string = await personalize_content(css_content, 'style_template.css.j2')
 
+            html_with_css = f"""
+            <style>
+            {css_string}
+            </style>
+            {html_string}
+            """
+            return html_with_css
+        except Exception as e:
+            return f"<p>Error generating Summary HTML: {str(e)}</p>"
+
+
+    async def generate_departure_html(reverse_path=False):
+        """Generate HTML content for departure screen similar to ATC_DEPARTURE. """
+
+        flight_data = js.window.flight_plan_data
+        settings = js.window.settings
+
+        try:
+            # Set departure and arrival
+            if reverse_path:
+                DEPARTURE, ARRIVAL = 'ARRIVAL', 'DEPARTURE'
+            else:
+                DEPARTURE, ARRIVAL = 'DEPARTURE', 'ARRIVAL'
+
+            # Create string of all Frequencies
+            ATC_FREQUENCIES = create_freq_list_combined(DEPARTURE)
+            ATC_TOWER_FREQ, ATC_TOWER_NAME = get_ATC_TOWER(DEPARTURE)
+
+            # Prepare HTML content data
+            empty_field = '[ . . . . . . . . . ]'
+            html_content = {
+                'CALLSIGN': flight_data.get('CALLSIGN', '') or empty_field,
+                'CALLSIGN_SHORT': flight_data.get('CALLSIGN_SHORT', '') or empty_field,
+                'AIRCRAFT_TYPE': flight_data.get('AIRCRAFT_TYPE', '') or empty_field,
+                'FLIGHT_RULES': flight_data.get('FLIGHT_RULES', ''),
+                'POB': flight_data.get('POB', '') or empty_field,
+
+                'ARRIVAL_NAME': flight_data.get(f'{ARRIVAL}_NAME', '') or empty_field,
+                'ARRIVAL_RUNWAY': flight_data.get(f'{ARRIVAL}_RUNWAY', '') or empty_field,
+                'ARRIVAL_ROUTE_ALTITUDE': str(flight_data.get(f'{ARRIVAL}_ROUTE_ALTITUDE', '')) or empty_field,
+                'ARRIVAL_ICAO': flight_data.get(f'{ARRIVAL}_ICAO', '') or empty_field,
+
+                'CTR_REGION_BOOL': 'true' if flight_data.get(f'{DEPARTURE}_CTR', False) else 'false',
+                'DEPARTURE_POSITION': flight_data.get(f'{DEPARTURE}_POSITION', '') or 'at the Apron',
+                'DEPARTURE_RUNWAY': flight_data.get(f'{DEPARTURE}_RUNWAY', '') or empty_field,
+                'DEPARTURE_NAME': flight_data.get(f'{DEPARTURE}_NAME', '') or empty_field,
+                'DEPARTURE_ROUTE_NAME': flight_data.get(f'{DEPARTURE}_ROUTE_NAME', '') or empty_field,
+                'DEPARTURE_ROUTE_ALTITUDE': flight_data.get(f'{DEPARTURE}_ROUTE_ALTITUDE', '') or empty_field,
+                'DEPARTURE_CITY_ICAO': flight_data.get(f'{DEPARTURE}_NAME', '') or empty_field,
+                'DEPARTURE_ICAO': flight_data.get(f'{DEPARTURE}_ICAO', '') or empty_field,
+
+                'ATC_TOWER': ATC_TOWER_FREQ,
+                'ATC_ATIS_FREQ_DEP': flight_data.get(f'{DEPARTURE}_ATC_ATIS_FREQ', ''),
+                'DELIVERY_OR_RADIO': ATC_TOWER_NAME if ATC_TOWER_NAME == 'RADIO' else 'DELIVERY',
+                'ATC_GROUND': ATC_TOWER_FREQ if ATC_TOWER_NAME == 'RADIO' else flight_data.get(f'{DEPARTURE}_ATC_GROUND', ''),
+                'ATC_FREQUENCIES': ATC_FREQUENCIES,
+
+                'GRID_COLUMNS': settings.get('user_select_cols', 1),
+            }
+
+            # Prepare CSS content
+            fontsizes = settings.get('fontsizes')
+            css_content = {
+                'FONT_SIZE_TOWER': fontsizes.get('TOWER'),
+                'FONT_SIZE_PILOT': fontsizes.get('PILOT'),
+                'FONT_SIZE_TITLE': fontsizes.get('TITLE'),
+                'FONT_SIZE_SUBTITLE': fontsizes.get('TITLE') - 2,
+                'BACKGROUND_COLOR_TITLE': '#4769b1',
+            }
+
+            html_string = await personalize_content(html_content, 'ATC_departure_template.html.j2')
+            css_string = await personalize_content(css_content, 'style_template.css.j2')
+
+            # Embed CSS in the HTML content
+            html_with_css = f"""
+            <style>
+            {css_string}
+            </style>
+            {html_string}
+            """
+
+            return html_with_css
+
+        except Exception as e:
+            return f"<p>Error generating Deparature HTML: {str(e)}</p>"
+
+
+    async def generate_arrival_html(reverse_path=False):
+        """Generate HTML content for arrivak screen similar to ATC_ARRIVAL."""
+
+        flight_data = js.window.flight_plan_data
+        settings = js.window.settings
+
+        try:
+            # Set departure and arrival
+            if reverse_path:
+                DEPARTURE, ARRIVAL = 'ARRIVAL', 'DEPARTURE'
+            else:
+                DEPARTURE, ARRIVAL = 'DEPARTURE', 'ARRIVAL'
+
+            # Create string of all Frequencies
+            ATC_FREQUENCIES = create_freq_list_combined(ARRIVAL)
+            ATC_TOWER_FREQ, ATC_TOWER_NAME = get_ATC_TOWER(ARRIVAL)
+
+            # Set the content to customize the html
+            empty_field = '[ . . . . . . . . . ]'
+            html_content = {
+                'AIRCRAFT_TYPE': flight_data.get('AIRCRAFT_TYPE', '') or empty_field,
+                'CALLSIGN': flight_data.get('CALLSIGN', '') or empty_field,
+                'CALLSIGN_SHORT': flight_data.get('CALLSIGN_SHORT', '') or empty_field,
+                'FLIGHT_RULES': flight_data.get('FLIGHT_RULES', '') or empty_field,
+                'CIRCUIT_ALTITUDE': flight_data.get('CIRCUIT_ALTITUDE', '') or empty_field,
+                'ARRIVAL_CITY_ICAO': flight_data.get(f'{ARRIVAL}_ICAO', '') or empty_field,
+                'POB': flight_data.get('POB', '') or empty_field,
+
+                'ARRIVAL_NAME': flight_data.get(f'{ARRIVAL}_NAME', '') or empty_field,
+                'ARRIVAL_RUNWAY': flight_data.get(f'{ARRIVAL}_RUNWAY', '') or empty_field,
+                'ARRIVAL_ROUTE_NAME': flight_data.get(f'{ARRIVAL}_ROUTE_NAME', '') or empty_field,
+                'ARRIVAL_ROUTE_ALTITUDE': flight_data.get(f'{ARRIVAL}_ROUTE_ALTITUDE', '') or empty_field,
+
+                'DEPARTURE_ICAO': flight_data.get(f'{DEPARTURE}_ICAO', '') or empty_field,
+                'ARRIVAL_ICAO': flight_data.get(f'{ARRIVAL}_ICAO', '') or empty_field,
+
+                'REQUEST_INFORMATION': '' if flight_data.get(f'{ARRIVAL}_CTR', False) else 'REQUEST AERODROME INFORMATION',
+                'TEXT_INFORMATION_RECEIVED': TEXT_INFORMATION_RECEIVED() if flight_data.get(f'{ARRIVAL}_CTR', False) else '',
+
+                'ATC_TOWER_NAME': ATC_TOWER_NAME,
+                'ATC_TOWER': ATC_TOWER_FREQ,
+                'ATC_FREQUENCIES': ATC_FREQUENCIES,
+                'GRID_COLUMNS': settings.get('user_select_cols', 1),
+            }
+
+            # Prepare CSS content
+            fontsizes = settings.get('fontsizes')
+            css_content = {
+                'FONT_SIZE_TOWER': fontsizes.get('TOWER'),
+                'FONT_SIZE_PILOT': fontsizes.get('PILOT'),
+                'FONT_SIZE_TITLE': fontsizes.get('TITLE'),
+                'FONT_SIZE_SUBTITLE': fontsizes.get('TITLE') - 2,
+                'BACKGROUND_COLOR_TITLE': '#258f45',
+            }
+
+            # Personalize the html based on the departure and aircraft
+            html_string = await personalize_content(html_content, 'ATC_arrival_template.html.j2')
+            css_string = await personalize_content(css_content, 'style_template.css.j2')
+
+            # Embed CSS in the HTML content
+            html_with_css = f"""
+            <style>
+            {css_string}
+            </style>
+            {html_string}
+            """
+
+            return html_with_css
+
+        except Exception as e:
+            return f"<p>Error generating HTML: {str(e)}</p>"
+
+
+    async def generate_enroute_html(reverse_path=False):
+        """Generate HTML content for enroute screen similar to ATC_ENROUTE."""
+
+        flight_data = js.window.flight_plan_data
+        settings = js.window.settings
+
+        try:
+            # Set departure and arrival
+            if reverse_path:
+                DEPARTURE, ARRIVAL = 'ARRIVAL', 'DEPARTURE'
+            else:
+                DEPARTURE, ARRIVAL = 'DEPARTURE', 'ARRIVAL'
+
+            # Prepare HTML content data (adjust keys as needed)
+            empty_field = '[ . . . . . . . . . ]'
+            html_content = {
+                'AIRCRAFT_TYPE': flight_data.get('AIRCRAFT_TYPE', '') or empty_field,
+                'CALLSIGN': flight_data.get('CALLSIGN', '') or empty_field,
+                'CALLSIGN_SHORT': flight_data.get('CALLSIGN_SHORT', '') or empty_field,
+
+                'FIC_NAME': flight_data.get('FIC_NAME', '') or empty_field,
+                'FIC_FREQUENCY': flight_data.get('FIC_FREQUENCY', ''),
+                'FIC_SQUAWK': flight_data.get('SQUAWK', ''),
+                'FIC_SQUAWK2': flight_data.get('SQUAWK2', ''),
+
+                'OVERHEAD': flight_data.get('OVERHEAD', flight_data.get(f'{DEPARTURE}_ROUTE_NAME', '') or empty_field),
+                'OVERHEAD2': flight_data.get('OVERHEAD2', '') or empty_field,
+                'FLIGHT_RULES': flight_data.get('FLIGHT_RULES', ''),
+                'POB': flight_data.get('POB', '') or empty_field,
+
+                'DEPARTURE_ICAO': flight_data.get(f'{DEPARTURE}_ICAO', '') or empty_field,
+                'DEPARTURE_NAME': flight_data.get(f'{DEPARTURE}_NAME', '') or empty_field,
+                'DEPARTURE_ROUTE_ALTITUDE': flight_data.get(f'{DEPARTURE}_ROUTE_ALTITUDE', '') or empty_field,
+
+                'ARRIVAL_ICAO': flight_data.get(f'{ARRIVAL}_ICAO', '') or empty_field,
+                'ARRIVAL_NAME': flight_data.get(f'{ARRIVAL}_NAME', '') or empty_field,
+                'ATC_FREQUENCIES': create_freq_list_combined([DEPARTURE, ARRIVAL]),
+                'GRID_COLUMNS': settings.get('user_select_cols', 1),
+            }
+
+            if reverse_path:
+                html_content['FIC_NAME'] = flight_data.get('FIC_NAME2', '') or empty_field
+                html_content['FIC_FREQUENCY'] = flight_data.get('FIC_FREQUENCY2', '')
+                html_content['OVERHEAD'] = flight_data.get('OVERHEAD2', '')
+                html_content['FIC_SQUAWK'] = flight_data.get('SQUAWK2', '')
+
+            fontsizes = settings.get('fontsizes')
+            css_content = {
+                'FONT_SIZE_TOWER': fontsizes.get('TOWER'),
+                'FONT_SIZE_PILOT': fontsizes.get('PILOT'),
+                'FONT_SIZE_TITLE': fontsizes.get('TITLE'),
+                'FONT_SIZE_SUBTITLE': fontsizes.get('TITLE') - 2,
+                'BACKGROUND_COLOR_TITLE': '#ec7d15',
+            }
+            html_string = await personalize_content(html_content, 'ATC_enroute_template.html.j2')
+            css_string = await personalize_content(css_content, 'style_template.css.j2')
             html_with_css = f"""
             <style>
             {css_string}
@@ -1603,7 +1890,7 @@
             return f"<p>Error generating HTML: {e}</p>"
 
 
-    def open_html(html_content):
+    def open_html(html_content, pagename="_blank"):
         logger.info('open_in_browser(html_content)')
 
         # Inject viewport for mobile if not present
@@ -1618,7 +1905,8 @@
                 + html_content
             )
 
-        new_win = window.open("", "_blank")
+        # new_win = window.open("", "_blank")
+        new_win = window.open("", pagename)
         if not new_win:
             # blocked
             window.alert("Popup blocked. Try allowing popups for this site.")
@@ -1683,12 +1971,19 @@
     js.window.delete_flightplan = delete_flightplan
     js.window.save_flightplan = save_flightplan
     js.window.update_flightplan_list = create_proxy(update_flightplan_list)
-    # HELPERS
-    js.window.create_summary_atc = create_proxy(create_atc_summary)
+    js.window.clear_cache = clear_cache
+
+    # ATC
+    js.window.create_summary_atc = create_proxy(create_summary_atc)
+    js.window.create_departure_atc = create_proxy(create_departure_atc)
+    js.window.create_arrival_atc = create_proxy(create_arrival_atc)
+    js.window.create_enroute_atc = create_proxy(create_enroute_atc)
+    # HELPERS FOR ATC
     js.window.create_callsign_short = create_proxy(create_callsign_short)
     js.window.import_aerodrome_selected = create_proxy(import_aerodrome_selected)
     js.window.generate_summary_html = create_proxy(generate_summary_html)
     js.window.set_fontsizes = create_proxy(set_fontsizes)
+
     # DEPARTURE TAB
     js.window.populate_departure_fields_from_icao = create_proxy(populate_departure_fields_from_icao)
     js.window.update_departure_gui_fields = update_departure_gui_fields
@@ -1696,10 +1991,13 @@
     js.window.update_departure_image = update_departure_image
     js.window.clear_departure_image = clear_departure_image
     js.window.cache_and_display_image = cache_and_display_image
+
     # GENERAL TAB
     js.window.clear_general_fields = clear_general_fields
+
     # ENROUTE TAB
     js.window.clear_enroute_fields = clear_enroute_fields
+
     # DATA FUNCTIONS
     js.window.get_default_data = get_default_data
     js.window.get_default_settings = get_default_settings
@@ -1795,12 +2093,22 @@
     const FLIGHTPLAN_input = document.getElementById('FLIGHTPLAN_input');
     const DATETIME_input = document.getElementById('DATETIME_input');
     const FLIGHT_RULES_spinner = document.getElementById('FLIGHT_RULES_spinner');
+
+    // Create buttons at the START page
     const new_plan_btn = document.getElementById('new_plan_btn');
-    const load_btn = document.getElementById('load_btn');
     const delete_btn = document.getElementById('delete_btn');
-    //const save_tab_btn = document.getElementById('save_tab_btn');
-    const html_btn = document.getElementById('html_btn');
-    const reverse_btn = document.getElementById('reverse_btn');
+
+    // Create buttons to generate ATC at the ATC page
+    const BTN_HTML_SUMMARY = document.getElementById('BTN_HTML_SUMMARY');
+    const BTN_HTML_SUMMARY_REV = document.getElementById('BTN_HTML_SUMMARY_REV');
+    const BTN_HTML_DEPARTURE = document.getElementById('BTN_HTML_DEPARTURE');
+    const BTN_HTML_DEPARTURE_REV = document.getElementById('BTN_HTML_DEPARTURE_REV');
+    const BTN_HTML_ARRIVAL = document.getElementById('BTN_HTML_ARRIVAL');
+    const BTN_HTML_ARRIVAL_REV = document.getElementById('BTN_HTML_ARRIVAL_REV');
+    const BTN_HTML_ENROUTE = document.getElementById('BTN_HTML_ENROUTE');
+    const BTN_HTML_ENROUTE_REV = document.getElementById('BTN_HTML_ENROUTE_REV');
+
+    // Missing labels
     const missing_label = document.getElementById('missing_label');
 
     // Uppercase for all fields with class="UPPERCASE_input"
@@ -1816,6 +2124,8 @@
             updateMissingFields();
         });
     });
+
+
     // Initial calls to handle any existing values
     updateEnrouteFields();
     updateMissingFields();
@@ -1892,29 +2202,56 @@
       }
     };
 
-    // save_tab_btn.onclick = async () => {
-    //   if (pyscriptReady && window.save_flightplan) {
-    //     try {
-    //       await window.save_flightplan();
-    //       alert("✅ Flightplan saved successfully!");
-    //     } catch (error) {
-    //       console.error("Error saving flightplan:", error);
-    //       alert("Error saving flightplan. Please try again.");
-    //     }
-    //   }
-    // };
 
-    html_btn.onclick = () => {
-      if (window.create_summary_atc) {
-        window.create_summary_atc();
-      }
-    };
 
-    reverse_btn.onclick = async () => {
-      if (window.create_summary_atc) {
-        window.create_summary_atc({ reverse_path: true });
-      }
-    };
+    document.getElementById('BTN_HTML_SUMMARY')?.addEventListener('click', () => {
+      if (window.create_summary_atc) { window.create_summary_atc(); }
+    });
+    document.getElementById('BTN_HTML_SUMMARY_REV')?.addEventListener('click', () => {
+      if (window.create_summary_atc) { window.create_summary_atc({ reverse_path: true }); }
+    });
+
+    document.getElementById('BTN_HTML_DEPARTURE')?.addEventListener('click', () => {
+      if (window.create_departure_atc) { window.create_departure_atc(); }
+    });
+    document.getElementById('BTN_HTML_DEPARTURE_REV')?.addEventListener('click', () => {
+      if (window.create_departure_atc) { window.create_departure_atc({ reverse_path: true }); }
+    });
+
+    document.getElementById('BTN_HTML_ARRIVAL')?.addEventListener('click', () => {
+      if (window.create_arrival_atc) { window.create_arrival_atc(); }
+    });
+    document.getElementById('BTN_HTML_ARRIVAL_REV')?.addEventListener('click', () => {
+      if (window.create_arrival_atc) { window.create_arrival_atc({ reverse_path: true }); }
+    });
+
+    document.getElementById('BTN_HTML_ENROUTE')?.addEventListener('click', () => {
+      if (window.create_enroute_atc) { window.create_enroute_atc(); }
+    });
+    document.getElementById('BTN_HTML_EN_REV')?.addEventListener('click', () => {
+      if (window.create_enroute_atc) { window.create_enroute_atc({ reverse_path: true }); }
+    });
+
+    // Add clear cache button handler
+    document.getElementById('clear_cache_btn')?.addEventListener('click', async () => {
+        if (!confirm('This will clear all saved (cached) data. Are you sure?')) return;
+
+        const spinner = document.getElementById('loading-spinner');
+        const spinnerText = spinner.querySelector('.spinner-text');
+        spinnerText.textContent = 'Clearing cache...';
+        spinner.style.display = 'flex';
+
+        try {
+            if (await window.clear_cache()) {
+                alert('Cache cleared successfully! The page will now reload.');
+                location.reload();
+            } else { alert('Error clearing cache. Please try again.'); }
+        } catch (error) {
+            alert('Error clearing cache: ' + error);
+        } finally {
+            spinner.style.display = 'none';
+        }
+    });
 
     const inputs = [DEPARTURE_ATC_GROUND, DEPARTURE_ATC_ATIS_FREQ, DEPARTURE_ATC_TOWER,
                    DEPARTURE_ROUTE_ALTITUDE, DEPARTURE_ROUTE_NAME, DEPARTURE_RUNWAY,
