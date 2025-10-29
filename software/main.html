@@ -18,14 +18,20 @@
 
 <body>
   <div id="app">
+    <div id="loading-spinner" class="spinner-overlay" style="display: flex;">
+      <div style="text-align: center;">
+        <div class="spinner"></div>
+        <div class="spinner-text">Loading SkyWalk. Please wait...</div>
+      </div>
+    </div>
 
     <!-- Tab links -->
     <div class="tab">
-      <button class="tablinks active" data-tab="General">General</button>
+      <button class="tablinks active" data-tab="General">Start</button>
       <button class="tablinks" data-tab="Departure">Departure</button>
       <button class="tablinks" data-tab="Arrival">Arrival</button>
       <button class="tablinks" data-tab="Enroute">Enroute</button>
-      <button class="tablinks" data-tab="Settings">Settings</button>
+      <button class="tablinks" data-tab="ATC">ATC</button>
     </div>
 
     <!-- Tab contents -->
@@ -48,10 +54,10 @@
 
 	  <!-- Flightplan select + Load row -->
 	  <div class="button-row">
-		<select id="plan_spinner">
+		<select id="plan_spinner" onchange="this.value && window.load_flightplan()">
 		  <option value="">Select flightplan</option>
 		</select>
-		<button id="load_btn">Load Plan</button>
+		<button id="load_btn" style="display:none">Load Plan</button>
 		<button id="delete_btn">Delete</button>
 	  </div>
 
@@ -95,22 +101,24 @@
 		});
 			</script>
 
-	  <!-- Logo -->
-	  <div class="coffee-container">
-		<a href="https://www.buymeacoffee.com/erdogant" target="_blank">
- 		  <img id="coffee_image_cache" alt="Coffee Donation">
-		</a>
-	  </div>
 
 	  <!-- Save + Bottom Buttons Container -->
 	  <div id="bottom-container">
-		<div class="warning" id="missing_label">Missing: Flightplan Name, CALLSIGN, Aircraft Type</div>
-		<button id="save_tab_btn">Save</button>
+    	  <!-- Logo -->
+    	  <div class="coffee-container">
+    		<a href="https://www.buymeacoffee.com/erdogant" target="_blank">
+    		  <img id="coffee_image_cache" alt="Coffee Donation">
+    		</a>
+    	  </div>
+
+       <!--
 		<div id="bottom-buttons">
 		  <button id="html_btn">Create Summary ATC</button>
 		  <button id="reverse_btn">Create Reverse Route ATC</button>
 		</div>
+		-->
 	  </div>
+
 	</div>
 
 	<!-- ============================================= -->
@@ -137,20 +145,20 @@
 	  <div class="button-row">
 		<input type="text" id="DEPARTURE_NAME" placeholder="Airport Name">
 		<input type="text" id="DEPARTURE_ICAO" class="UPPERCASE_input" placeholder="ICAO">
+	  </div>
+
+	  <!-- Line 5: POSITION, RUNWAY, ELEVATION inputs -->
+	  <div class="button-row">
+		<input type="text" id="DEPARTURE_POSITION" placeholder="Position (At the Apron)", class="UPPERCASE_input">
 		<select id="DEPARTURE_CTR">
 		  <option value=""></option>
 		  <option value="CTR">CTR</option>
 		</select>
 	  </div>
 
-	  <!-- Line 5: POSITION, RUNWAY, ELEVATION inputs -->
-	  <div class="button-row">
-		<input type="text" id="DEPARTURE_POSITION" placeholder="Position (At the Apron)", class="UPPERCASE_input">
-	  </div>
-
 	  <div class="button-row">
 		<input type="text" id="DEPARTURE_RUNWAY" placeholder="Runway Number">
-		<input type="text" id="DEPARTURE_ELEVATION" placeholder="Field Elevation">
+		<input type="text" id="DEPARTURE_ELEVATION" placeholder="Field Elevation (ft)">
 	  </div>
 
 	  <!-- Line 6: ROUTE_NAME, ROUTE_ALTITUDE, CIRCUIT_ALTITUDE inputs -->
@@ -195,8 +203,22 @@
         document.getElementById("DEPARTURE_COUNTRY").addEventListener("change", async function() {
           const country = this.value;
           if (country && window.import_aerodrome_selected) {
-            // Call PyScript function
-            await window.import_aerodrome_selected(country);
+            const spinner = document.getElementById('loading-spinner');
+            const spinnerText = spinner.querySelector('.spinner-text');
+            spinnerText.textContent = `Loading aerodrome data for ${country}...`;
+            spinner.style.display = 'flex';
+            document.body.style.cursor = 'wait';
+            document.body.style.overflow = 'hidden';  // Prevent scrolling while loading
+            try {
+              await window.import_aerodrome_selected(country);
+            } catch (error) {
+              console.error("Error importing aerodrome data:", error);
+              alert("Error loading aerodrome data. Please try again.");
+            } finally {
+              spinner.style.display = 'none';
+              document.body.style.cursor = '';
+              document.body.style.overflow = '';  // Restore scrolling
+            }
           }
         });
 
@@ -208,10 +230,16 @@
           if (window.clear_departure_fields) {
             await window.clear_departure_fields();
           }
+          // Clear all enroute fields first to prevent data leakage
+          if (window.clear_enroute_fields) {
+            await window.clear_enroute_fields();
+          }
 
           if (city_icao && window.populate_departure_fields_from_icao) {
             // Call PyScript function to populate fields
             await window.populate_departure_fields_from_icao(city_icao);
+            // Update missing fields
+            updateMissingFields();
           }
         });
 
@@ -273,8 +301,12 @@
 
         <!-- Line: FIC Name and FIC Frequency inputs -->
         <div class="button-row">
-          <input type="text" id="FIC_NAME" placeholder="FIC Name">
+          <input type="text" id="FIC_NAME" placeholder="FIC Name", class="REPLACE_INFO">
           <input type="text" id="FIC_FREQUENCY" placeholder="FIC Frequency">
+        </div>
+        <div class="button-row">
+          <input type="text" id="OVERHEAD" placeholder="Overhead Point", class="UPPERCASE_input">
+          <input type="text" id="SQUAWK" placeholder="SQUAWK">
         </div>
 
         <!-- Line: SECOND FIC label -->
@@ -282,25 +314,29 @@
 
         <!-- Line: FIC Name2 and FIC Frequency2 inputs -->
         <div class="button-row">
-          <input type="text" id="FIC_NAME2" placeholder="FIC Name 2">
+          <input type="text" id="FIC_NAME2" placeholder="FIC Name 2", class="REPLACE_INFO">
           <input type="text" id="FIC_FREQUENCY2" placeholder="FIC Frequency 2">
+        </div>
+        <div class="button-row">
+          <input type="text" id="OVERHEAD2" placeholder="Overhead Point", class="UPPERCASE_input">
+          <input type="text" id="SQUAWK2" placeholder="SQUAWK">
         </div>
     </div>
 
 
-    <!-- =============== TAB SETTINGS =============== -->
+    <!-- =============== TAB ATC =============== -->
 
 
-    <div id="Settings" class="tabcontent">
-        <!-- SETTINGS -->
-        <label_h1>Settings</label_h1>
+    <div id="ATC" class="tabcontent">
+        <!-- ATC -->
+        <label_h1>Output Settings</label_h1>
 
         <div class="button-row">
             <div style="display:flex; flex-direction:column; flex:1; margin-right:10px;">
                 <label for="user_usage_type">Output</label>
                 <select id="user_usage_type">
                     <option value="print" selected>Print</option>
-                    <option value="view">View</option>
+                    <option value="view">Screen</option>
                 </select>
             </div>
             <div style="display:flex; flex-direction:column; flex:1;">
@@ -313,8 +349,20 @@
             </div>
         </div>
 
+        <label_h1>ATC</label_h1>
+        <div id="bottom-buttons">
+		  <button id="html_btn">Create Summary ATC</button>
+		  <button id="reverse_btn">Create Reverse Route ATC</button>
+		</div>
+
+        <!-- Save + Bottom Buttons Container -->
+	  <div id="bottom-container">
+		<div class="warning" id="missing_label">Missing: Flightplan Name, CALLSIGN, Aircraft Type</div>
+		<!-- <button id="save_tab_btn">Save</button> -->
+	  </div>
+
+        <!--
         <div class="button-row">
-            <!-- City options will be populated dynamically -->
             <select id="DEPARTURE_COUNTRY_DEFAULT">
                 <option value="">country_select</option>
             </select>
@@ -322,6 +370,7 @@
                 <option value="">country_select</option>
             </select>
         </div>
+        -->
 
         <!--
         <div class="button-row">
@@ -333,7 +382,8 @@
                 <label for="MAX_CROSSWIND_LIMIT">Max. Crosswind</label>
                 <input type="text" id="MAX_CROSSWIND_LIMIT" placeholder="Max Crosswind Limit">
             </div>
-        </div>-->
+        </div>
+        -->
 
     </div>
 
@@ -341,8 +391,8 @@
       // Populate dropdowns and setup event listeners on page load
         window.addEventListener('DOMContentLoaded', () => {
           // Populate dropdowns
-          populateDropdown('DEPARTURE_COUNTRY_DEFAULT', COUNTRIES_DATA);
-          populateDropdown('ARRIVAL_COUNTRY_DEFAULT', COUNTRIES_DATA);
+          // populateDropdown('DEPARTURE_COUNTRY_DEFAULT', COUNTRIES_DATA);
+          // populateDropdown('ARRIVAL_COUNTRY_DEFAULT', COUNTRIES_DATA);
 
           console.log('Settings initialized');
 
@@ -350,30 +400,38 @@
           document.getElementById('user_usage_type').addEventListener('change', (e) => {
               if (window.settings) {
                   window.settings.user_usage_type = e.target.value;
-                  console.log('Updated user_usage_type:', e.target.value);
+                  console.log('Updated output type:', window.settings.user_usage_type);
+                  window.settings.fontsizes = window.set_fontsizes({
+                      user_usage_type: window.settings.user_usage_type,
+                      user_select_cols: window.settings.user_select_cols
+                  });
               }
           });
 
           document.getElementById('user_select_cols').addEventListener('change', (e) => {
               if (window.settings) {
                   window.settings.user_select_cols = e.target.value;
-                  console.log('Updated user_select_cols:', e.target.value);
+                  console.log('Updated nr. columns:', window.settings.user_select_cols);
+                  window.settings.fontsizes = window.set_fontsizes({
+                      user_usage_type: window.settings.user_usage_type,
+                      user_select_cols: window.settings.user_select_cols
+                  });
               }
           });
 
-          document.getElementById('DEPARTURE_COUNTRY_DEFAULT').addEventListener('change', (e) => {
-              if (window.settings) {
-                  window.settings.DEPARTURE_COUNTRY = e.target.value;
-                  console.log('Updated DEPARTURE_COUNTRY:', e.target.value);
-              }
-          });
+          // document.getElementById('DEPARTURE_COUNTRY_DEFAULT').addEventListener('change', (e) => {
+          //     if (window.settings) {
+          //         window.settings.DEPARTURE_COUNTRY = e.target.value;
+          //         console.log('Updated DEPARTURE_COUNTRY:', e.target.value);
+          //     }
+          // });
 
-          document.getElementById('ARRIVAL_COUNTRY_DEFAULT').addEventListener('change', (e) => {
-              if (window.settings) {
-                  window.settings.ARRIVAL_COUNTRY = e.target.value;
-                  console.log('Updated ARRIVAL_COUNTRY:', e.target.value);
-              }
-          });
+          // document.getElementById('ARRIVAL_COUNTRY_DEFAULT').addEventListener('change', (e) => {
+          //     if (window.settings) {
+          //         window.settings.ARRIVAL_COUNTRY = e.target.value;
+          //         console.log('Updated ARRIVAL_COUNTRY:', e.target.value);
+          //     }
+          // });
 
           // document.getElementById('MAX_HEADWIND_LIMIT').addEventListener('change', (e) => {
           //     if (window.settings) {
@@ -400,6 +458,7 @@
     skywalk_logo_cache: "https://erdogant.github.io/datasets/skywalk/figs/Slide2.PNG",
     coffee_image_cache: "https://erdogant.github.io/datasets/skywalk/figs/buy_me_a_coffee.png"
   };
+
 
   // Default image URL for departures (cached separately when needed)
   const DEFAULT_ICAO_IMAGE = 'https://erdogant.github.io/datasets/skywalk/figs/oskar-kadaksoo-f_rLDn5m2XQ-unsplash.jpg';
@@ -446,7 +505,7 @@
 
 <!-- PyScript configuration -->
 <py-config>
-  packages = ["pandas", "numpy"]
+  packages = ["pandas", "numpy", "jinja2"]
 </py-config>
 
 <!-- PyScript for flightplan functionality -->
@@ -463,11 +522,25 @@
     from io import BytesIO
     import zipfile
     import ast
+    from jinja2 import Environment, DictLoader
+    import asyncio
+    from pyodide.ffi import create_proxy
+    import urllib.parse
+    import webbrowser
+    import pathlib
+    import re
+    from js import Blob, URL, window
+
+
     import logging
     logger = logging.getLogger('SKYWALK')
 
-    URL_BASE = "https://erdogant.github.io/datasets/skywalk/aerodromes/"
-    PASSWORD = "GpZzcnXiLleytOr5Y7WC@"  # To be read from secrets.toml later
+    # URL_BASE = "https://erdogant.github.io/datasets/skywalk/aerodromes/"
+    # PASSWORD = "GpZzcnXiLleytOr5Y7WC@"  # To be read from secrets.toml later
+
+    def TEXT_INFORMATION_RECEIVED():
+        """Return text confirming information received"""
+        return '<br><br>INFORMATION <strong class="pilot_text"> [ .   .   .   .   .   . ]</strong> RECEIVED,'
 
     def get_default_settings():
         """Get default settings"""
@@ -482,24 +555,28 @@
             'MAX_CROSSWIND_LIMIT': 15,
             'user_usage_type': 'print',
             'user_select_cols': '2',
-            'fontsizes': set_fontsizes(user_usage_type='view', user_select_cols=1),
+            'fontsizes': set_fontsizes(type('Params', (), {'user_usage_type': 'view', 'user_select_cols': '1'})),
 
-            'source': {
-                'METAR_stations': r'https://erdogant.github.io/datasets/skywalk/nsd_cccc.zip',
-                'FIG_DIR': r'https://erdogant.github.io/datasets/skywalk/figs/',
-                'link_coffee': "https://www.buymeacoffee.com/erdogant",
-                'logo_coffee': r'https://erdogant.github.io/datasets/skywalk/figs/buy_me_a_coffee.png',
-                'link_skywalk': 'http://erdogant.github.io/skywalk-docs/',
-                'logo_skywalk': r'https://erdogant.github.io/datasets/skywalk/figs/Slide3.PNG',
-                'img_default_icao': r'https://erdogant.github.io/datasets/skywalk/figs/oskar-kadaksoo-f_rLDn5m2XQ-unsplash.jpg',
-                'img_default_wind_envelope': r'https://erdogant.github.io/datasets/skywalk/figs/windsock_mark-konig-OsYYPaPgIjw-unsplash.jpg',
-                'url_default_wind_envelope': 'https://erdogant.github.io/skywalk-docs/pages/html/Departure_Arrival.html#cloud-plot',
-                'img_default_cloud_plot': r'https://erdogant.github.io/datasets/skywalk/figs/dylan-mcleod-vY7GkgvTj-k-unsplash.jpg',
-                'url_default_cloud_plot': 'https://erdogant.github.io/skywalk-docs/pages/html/Departure_Arrival.html#cloud-plot',
-                'key_aerodromes': "GpZzcnXiLleytOr5Y7WC@",
-                'url_aerodromes': 'https://erdogant.github.io/datasets/skywalk/aerodromes/',
-                'html_templates': 'https://erdogant.github.io/datasets/skywalk/html_templates/',
-                },
+            'METAR_stations': r'https://erdogant.github.io/datasets/skywalk/nsd_cccc.zip',
+
+            'link_coffee': "https://www.buymeacoffee.com/erdogant",
+            'link_skywalk': 'http://erdogant.github.io/skywalk-docs/',
+
+            'FIG_DIR': r'https://erdogant.github.io/datasets/skywalk/figs/',
+            'logo_coffee': r'https://erdogant.github.io/datasets/skywalk/figs/buy_me_a_coffee.png',
+            'logo_skywalk': r'https://erdogant.github.io/datasets/skywalk/figs/Slide3.PNG',
+
+            'img_default_icao': r'https://erdogant.github.io/datasets/skywalk/figs/oskar-kadaksoo-f_rLDn5m2XQ-unsplash.jpg',
+            'img_default_wind_envelope': r'https://erdogant.github.io/datasets/skywalk/figs/windsock_mark-konig-OsYYPaPgIjw-unsplash.jpg',
+            'url_default_wind_envelope': 'https://erdogant.github.io/skywalk-docs/pages/html/Departure_Arrival.html#cloud-plot',
+            'img_default_cloud_plot': r'https://erdogant.github.io/datasets/skywalk/figs/dylan-mcleod-vY7GkgvTj-k-unsplash.jpg',
+            'url_default_cloud_plot': 'https://erdogant.github.io/skywalk-docs/pages/html/Departure_Arrival.html#cloud-plot',
+
+            'key_aerodromes': "GpZzcnXiLleytOr5Y7WC@",
+            'url_aerodromes': 'https://erdogant.github.io/datasets/skywalk/aerodromes/',
+            'url_aerodromes_images': 'https://erdogant.github.io/datasets/skywalk/aerodromes_images/',
+
+            'html_templates': 'https://erdogant.github.io/datasets/skywalk/html_templates/',
         }
         return data
 
@@ -585,7 +662,7 @@
             'FIC_NAME2': '',            # Second FIC name
             'FIC_FREQUENCY2': '',       # Second FIC frequency
             'OVERHEAD2': '',            # Second overhead point
-            'SQUAWK2': '',              # Second squawk code
+            'SQUAWK2': '',             # Second squawk code
 
             # NOTAM data
             'NOTAM': {'data': {}},      # NOTAM data
@@ -623,8 +700,9 @@
             return None
 
     # Fetch ZIP from remote and save to cache
-    async def fetch_zip(country):
-        url = f"{URL_BASE}{country}.zip"
+    async def fetch_zip(zipname):
+        URL_BASE = js.window.settings['url_aerodromes']
+        url = f"{URL_BASE}{zipname}.zip"
         print(f"📥 Fetching: {url}")
         response = await pyfetch(url)
         if response.ok:
@@ -633,11 +711,12 @@
             # Convert bytes to base64 string for caching
             import base64
             b64_string = base64.b64encode(zip_bytes).decode('utf-8')
-            save_to_cache(country, b64_string)
+            save_to_cache(zipname, b64_string)
             print(f"💾 Cached {len(zip_bytes)} bytes")
             return zip_bytes
         else:
             print(f"❌ Failed to download {url} - Status: {response.status}")
+            js.document.getElementById('loading-spinner').style.display = 'none'
             return None
 
     # Extract CSV inside the ZIP
@@ -659,6 +738,7 @@
             raise
         except Exception as e:
             print(f"❌ Error extracting CSV: {type(e).__name__}: {e}")
+            js.document.getElementById('loading-spinner').style.display = 'none'
             raise
 
     # Main loader: called from JS
@@ -667,7 +747,7 @@
         zip_bytes = None
 
         if is_cached(country):
-            print("📦 Using cached data")
+            print(f"📦 Using cached data for: {country}")
             zip_b64 = load_from_cache(country)
             if zip_b64:
                 # Decode base64 string to bytes
@@ -682,6 +762,7 @@
             zip_bytes = await fetch_zip(country)
 
         if zip_bytes:
+            PASSWORD = js.window.settings['key_aerodromes']
             df = extract_csv_from_zip(zip_bytes, PASSWORD)
             js.console.log(f"✅ Aerodromes loaded for {country}: {len(df)} rows.")
             print(f"✅ Successfully loaded {len(df)} aerodromes for {country}")
@@ -691,9 +772,10 @@
 
             # Store dataframe globally for later use
             js.window.AERODROME_DEPARTURE_DATA = df.to_dict('records')
-            print(f"Available columns: {df.columns.tolist()}")
+            # print(f"Available columns: {df.columns.tolist()}")
 
             # Show sample record for debugging
+            """
             if len(js.window.AERODROME_DEPARTURE_DATA) > 0:
                 sample = js.window.AERODROME_DEPARTURE_DATA[0]
                 print(f"\n📊 Sample record structure:")
@@ -701,6 +783,7 @@
                     val = sample[key]
                     if val is not None and str(val) != '' and str(val) != 'nan':
                         print(f"  {key}: {val}")
+            """
 
             # Populate DEPARTURE_ICAO_CITY dropdown with aerodrome data
             if 'city_icao' in df.columns:
@@ -728,6 +811,9 @@
                 print(f"Available columns: {df.columns.tolist()}")
         else:
             print("⚠️ No data available")
+
+        # Hide loading spinner when done
+        js.document.getElementById('loading-spinner').style.display = 'none'
 
 
     async def populate_departure_fields_from_icao(city_icao):
@@ -773,7 +859,6 @@
         # Handle FREQ_TOWER_RADIO
         js.window.flight_plan_data["DEPARTURE_ATC_TOWER"] = normalize_freq(FREQ_TOWER_RADIO)
 
-
         field_mapping = {
           'DEPARTURE_ATC_ATIS_FREQ': 'freqs.ATIS',
           'DEPARTURE_ATC_GROUND': 'freqs.DELIVERY/GROUND',
@@ -817,10 +902,10 @@
         # List of all departure fields to clear
         field_ids = [
           'FLIGHTPLAN_input',
+          'DATETIME_input',
           'CALLSIGN_input',
           'AIRCRAFT_TYPE_input',
           'FLIGHT_RULES_spinner',
-          'DATETIME_input',
           'POB_input',
         ]
 
@@ -836,7 +921,7 @@
         # Clear flight_plan_data for departure fields
         keys = [
             'FLIGHTPLAN', 'DATETIME', 'CALLSIGN', 'CALLSIGN_SHORT',
-            'AIRCRAFT_TYPE', 'FIC_NAME2', 'FLIGHT_RULES', 'POB',
+            'AIRCRAFT_TYPE', 'FLIGHT_RULES', 'POB',
         ]
 
         for key in keys:
@@ -870,8 +955,12 @@
             'DEPARTURE_ATC_TELEPHONE',
             'FIC_NAME',
             'FIC_FREQUENCY',
+            'SQUAWK',
+            'OVERHEAD',
             'FIC_NAME2',
             'FIC_FREQUENCY2',
+            'SQUAWK2',
+            'OVERHEAD2',
         ]
 
         updated_count = 0
@@ -903,6 +992,38 @@
                 print(f"  ⚠️ Element not found: {field_id}")
 
         print(f"✅ Updated {updated_count} GUI fields")
+
+        async def clear_enroute_fields():
+            """Clear all ENROUTE GUI fields and flight_plan_data"""
+            print("🧹 Clearing all ENROUTE fields...")
+
+            # List of all departure fields to clear
+            field_ids = [
+                'FIC_NAME',
+                'FIC_FREQUENCY',
+                'FIC_NAME2',
+                'FIC_FREQUENCY2'
+                'SQUAWK',
+                'OVERHEAD',
+                'SQUAWK2',
+                'OVERHEAD2',
+            ]
+
+            # Clear GUI fields
+            for field_id in field_ids:
+                element = js.document.getElementById(field_id)
+                if element:
+                    element.value = ''
+
+            # Clear flight_plan_data for departure fields
+            departure_keys = [
+                'FIC_NAME', 'FIC_FREQUENCY', 'FIC_NAME2', 'FIC_FREQUENCY2',
+                'OVERHEAD', 'OVERHEAD2', 'SQUAWK', 'SQUAWK2',
+            ]
+
+            for key in departure_keys:
+                js.window.flight_plan_data[key] = ''
+
 
     async def clear_departure_fields():
         """Clear all GENERAL GUI fields and flight_plan_data"""
@@ -974,43 +1095,28 @@
         print("🖼️ Updating departure image...")
 
         # Get the image URL from flight_plan_data
-        image_url = js.window.flight_plan_data.get('DEPARTURE_IMAGE')
-        print(f"  📋 DEPARTURE_IMAGE from flight_plan_data: {image_url}")
+        image_url1 = os.path.join(js.window.settings['url_aerodromes_images'], js.window.flight_plan_data['DEPARTURE_ICAO']) + '.png' if js.window.flight_plan_data['DEPARTURE_ICAO'] != '' else None
+        image_url2 = js.window.flight_plan_data.get('DEPARTURE_IMAGE')
+        image_url3 = js.DEFAULT_ICAO_IMAGE
 
-        # Get default image from JavaScript constant
-        default_image = js.DEFAULT_ICAO_IMAGE
-
-        # Use default if no valid image URL
-        if not image_url or str(image_url) == 'None' or str(image_url) == '' or str(image_url) == 'nan' or not str(image_url).startswith('http'):
-            print(f"  📋 Default image: {default_image}")
-            image_url = default_image
-        else:
-            print(f"  ✓ Using departure-specific image")
-
-        # Validate URL before fetching
-        if image_url and str(image_url).startswith('http'):
-            try:
-                await cache_and_display_image(image_url, 'departure_image_cache')
-            except Exception as e:
-                print(f"  ⚠️ Failed to load image: {e}")
-        else:
-            print(f"  ⚠️ Invalid image URL (not http/https): {image_url}")
+        for image_url in [image_url1, image_url2, image_url3]:
+            if await cache_and_display_image(image_url, 'departure_image_cache'):
+                print(f"  📋 DEPARTURE_IMAGE from flight_plan_data: {image_url}")
+                break
 
 
     async def clear_departure_image():
         """Reset departure image to default"""
         print("🔄 Resetting to default image...")
-        default_image = js.DEFAULT_ICAO_IMAGE
-
-        try:
-            await cache_and_display_image(default_image, 'departure_image_cache')
-            print("✅ Default image displayed")
-        except Exception as e:
-            print(f"⚠️ Failed to load default image: {e}")
+        await cache_and_display_image(js.DEFAULT_ICAO_IMAGE, 'departure_image_cache')
 
 
     async def cache_and_display_image(url, img_element_id):
         """Cache and display an image using browser cache API"""
+        # If the URL is invalid or missing, return without displaying an image
+        if not url or str(url) == 'None' or str(url) == '' or str(url) == 'nan' or not str(url).startswith('http'):
+            return False
+
         try:
             cache = await js.caches.open("skywalk-cache-v1")
 
@@ -1024,7 +1130,7 @@
                     await cache.put(url, response.clone())
                 else:
                     print(f"  ❌ Failed to fetch image: {response.status}")
-                    return
+                    return False
             else:
                 print(f"  📦 Loaded from cache: {url}")
 
@@ -1033,10 +1139,12 @@
             object_url = js.URL.createObjectURL(blob)
             js.document.getElementById(img_element_id).src = object_url
             print(f"  ✅ Image displayed: {img_element_id}")
+            return True
 
         except Exception as e:
             print(f"  ❌ Error caching/displaying image: {e}")
             raise
+            return False
 
 
     def get_icao_data(df, city_icao, colname='city_icao'):
@@ -1077,6 +1185,26 @@
         return runways
 
 
+    async def clear_enroute_fields():
+        """Clear all ENROUTE GUI fields and flight_plan_data"""
+        print("🧹 Clearing all ENROUTE fields...")
+
+        # Clear GUI fields
+        js.document.getElementById('OVERHEAD').value = ''
+        js.document.getElementById('OVERHEAD2').value = ''
+        js.document.getElementById('SQUAWK').value = ''
+        js.document.getElementById('SQUAWK2').value = ''
+        js.document.getElementById('FIC_NAME').value = ''
+        js.document.getElementById('FIC_NAME2').value = ''
+        js.document.getElementById('FIC_FREQUENCY').value = ''
+        js.document.getElementById('FIC_FREQUENCY2').value = ''
+
+        # Clear flight_plan_data
+        keys = ['OVERHEAD', 'OVERHEAD2', 'SQUAWK', 'SQUAWK2',
+                'FIC_NAME', 'FIC_NAME2', 'FIC_FREQUENCY', 'FIC_FREQUENCY2']
+        for key in keys:
+            js.window.flight_plan_data[key] = ''
+
     async def create_new_flightplan():
         """Initialize new flightplan - returns current datetime for UI"""
         # Get current datetime for UI
@@ -1086,6 +1214,7 @@
         # Clear fields
         await clear_general_fields()
         await clear_departure_fields()
+        await clear_enroute_fields()
 
         return current_time
 
@@ -1168,9 +1297,11 @@
         # Update the flightplan list
         update_flightplan_list()
 
+        """Create new flightplan with current timestamp"""
         # Create new flightplan
         await clear_general_fields()
         await clear_departure_fields()
+        await clear_enroute_fields()
 
     def save_flightplan():
         """Save current flightplan data to localStorage"""
@@ -1187,8 +1318,12 @@
         # Read Enroute tab fields
         js.window.flight_plan_data["FIC_NAME"] = js.document.getElementById('FIC_NAME').value;
         js.window.flight_plan_data["FIC_FREQUENCY"] = js.document.getElementById('FIC_FREQUENCY').value;
+        js.window.flight_plan_data["OVERHEAD"] = js.document.getElementById('OVERHEAD').value;
+        js.window.flight_plan_data["SQUAWK"] = js.document.getElementById('SQUAWK').value;
         js.window.flight_plan_data["FIC_NAME2"] = js.document.getElementById('FIC_NAME2').value;
         js.window.flight_plan_data["FIC_FREQUENCY2"] = js.document.getElementById('FIC_FREQUENCY2').value;
+        js.window.flight_plan_data["OVERHEAD2"] = js.document.getElementById('OVERHEAD2').value;
+        js.window.flight_plan_data["SQUAWK2"] = js.document.getElementById('SQUAWK2').value;
 
         # Get flightplan name
         flightplan_name = js.window.flight_plan_data.get("FLIGHTPLAN", "")
@@ -1290,23 +1425,21 @@
         else:
             print("⚠️ Flightplan dropdown not found")
 
-    def create_summary_atc(reverse_path=False):
+    async def create_atc_summary(reverse_path=False):
         """Create ATC summary (placeholder function)"""
         print("Creating ATC summary...")
         # Generate HTML content
-        html_content = generate_summary_html(reverse_path=reverse_path)
+        html_content = await generate_summary_html(reverse_path=reverse_path)
         # Open in browser
-        open_in_browser(html_content)
-
-    def create_reverse_route_atc():
-        """Create reverse route ATC (placeholder function)"""
-        print("Creating reverse route ATC...")
+        open_html(html_content)
 
 
-    def generate_summary_html(reverse_path=False):
+    async def generate_summary_html(reverse_path=False):
         """Generate HTML content for summary screen similar to ATC_SUMMARY."""
+
         flight_data = js.window.flight_plan_data
         settings = js.window.settings
+
         try:
             # Set departure and arrival
             if reverse_path:
@@ -1369,6 +1502,7 @@
                 html_content['FIC_SQUAWK'] = flight_data.get('SQUAWK2', '')
 
             fontsizes = settings.get('fontsizes')
+
             css_content = {
                 'FONT_SIZE_TOWER': fontsizes.get('TOWER'),
                 'FONT_SIZE_PILOT': fontsizes.get('PILOT'),
@@ -1376,8 +1510,9 @@
                 'FONT_SIZE_SUBTITLE': fontsizes.get('TITLE') - 2,
                 'BACKGROUND_COLOR_TITLE': '#6b21a8',
             }
-            html_string = personalize_content(html_content, 'ATC_summary_template.html.j2')
-            css_string = personalize_content(css_content, 'style_template.css.j2')
+            html_string = await personalize_content(html_content, 'ATC_summary_template.html.j2')
+            css_string = await personalize_content(css_content, 'style_template.css.j2')
+
             html_with_css = f"""
             <style>
             {css_string}
@@ -1389,8 +1524,25 @@
             return f"<p>Error generating HTML: {str(e)}</p>"
 
 
-    def set_fontsizes(user_usage_type, user_select_cols):
-        user_select_cols = str(user_select_cols)
+    def get_ATC_TOWER(fname):
+        """Get ATC tower frequency and name for DEPARTURE or ARRIVAL from flight_plan_data."""
+        data = js.window.flight_plan_data
+
+        if fname=='DEPARTURE':
+            ATC_TOWER_FREQ = data.get('DEPARTURE_ATC_TOWER', '')
+            ATC_TOWER_FREQ = ATC_TOWER_FREQ if ATC_TOWER_FREQ not in (None, '') else '???.???'
+            ATC_TOWER_NAME = 'TOWER' if data.get('DEPARTURE_CTR') else 'RADIO'
+        elif fname=='ARRIVAL':
+            ATC_TOWER_FREQ = data.get('ARRIVAL_ATC_TOWER', '')
+            ATC_TOWER_FREQ = ATC_TOWER_FREQ if ATC_TOWER_FREQ not in (None, '') else '???.???'
+            ATC_TOWER_NAME = 'TOWER' if data.get('ARRIVAL_CTR') else 'RADIO'
+
+        return ATC_TOWER_FREQ, ATC_TOWER_NAME
+
+
+    def set_fontsizes(params):
+        user_usage_type = str(params.user_usage_type if hasattr(params, 'user_usage_type') else 'view')
+        user_select_cols = str(params.user_select_cols if hasattr(params, 'user_select_cols') else '1')
         # Change fontsize based on settings
         if 'view' in user_usage_type.lower() and user_select_cols == '1':
             fontsizes = {'TOWER': 14, 'PILOT': 16, 'TITLE': 20}
@@ -1402,80 +1554,143 @@
             fontsizes = {'TOWER': 20, 'PILOT': 22, 'TITLE': 24}
         return fontsizes
 
-
-    def personalize_content(content, template_name):
-        """Personalize content using Jinja2 templates.
-
-        This function loads a Jinja2 template and renders it with the provided content.
-
-        Args:
-            content: Dictionary containing data to render in the template
-            template_name: Name of the template file to load
-
-        Returns:
-            str: Rendered HTML content
-        """
-
-        # Personalize the html based on the departure and aircraft
-        template_path = save_and_load_url(os.path.join(window.settings['source']['html_templates'],template_name), dirname='HTML_TEMPLATES')
-        # Get dirname
-        template_dir = os.path.dirname(os.path.abspath(template_path))
-        # Get filename
-        template_name = os.path.basename(template_path)
-
-        jinja_env = Environment(loader=FileSystemLoader(template_dir))
-        # Get the template
-        template = jinja_env.get_template(template_name)
-        # Generate html content
-        html_content = template.render(content)
-
-        # Return
-        return html_content
+    #async def fetch_and_cache_template(url, template_key):
 
 
-    def open_in_browser(html_content):
-        # Get or create custom tempdir
-        tempdir = get_tempdir("HTML")
+    async def load_template(template_name):
+        """Fetch from URL, store in localStorage, and return text content."""
+        template_key = f"template_{template_name}"
+        base_url = js.window.settings['html_templates']
+        url = os.path.join(base_url, template_name)
 
-        # Inject a viewport meta tag for mobile formatting if not present
-        if "<head>" in html_content:
-            if 'name="viewport"' not in html_content:
-                html_content = html_content.replace(
-                    "<head>",
-                    '<head><meta name="viewport" content="width=device-width, initial-scale=1.0">'
-                )
-        else:
-            # If no <head>, prepend the meta tag at the top
+        #response =  await fetch_and_cache_template(url, template_key)
+        # 1. Try cache
+        cached = js.localStorage.getItem(template_key)
+        if cached:
+            print("✅ Loaded from cache")
+            return cached
+
+            # 2. Fetch template using JS fetch
+        print(f"🌐 Fetching from URL: {url}")
+
+        try:
+            response = await js.fetch(url)
+            if response.ok:
+                content = await response.text()  # get the text content
+                js.localStorage.setItem(template_key, content)  # store content
+                print(f"✅ Template cached under key '{template_key}'")
+                return content
+            else:
+                print(f"❌ Fetch failed: {response.status}")
+                return None
+        except Exception as e:
+            print(f"❌ Error fetching template: {e}")
+            return None
+
+
+    async def personalize_content(content, template_name):
+        # Load template content (async)
+        template_content = await load_template(template_name)
+
+        # Use DictLoader to store template
+        jinja_env = Environment(loader=DictLoader({template_name: template_content}))
+
+        try:
+            template = jinja_env.get_template(template_name)
+            html_content = template.render(content)
+            return html_content
+        except Exception as e:
+            return f"<p>Error generating HTML: {e}</p>"
+
+
+    def open_html(html_content):
+        logger.info('open_in_browser(html_content)')
+
+        # Inject viewport for mobile if not present
+        if "<head>" in html_content and 'name="viewport"' not in html_content:
+            html_content = html_content.replace(
+                "<head>",
+                '<head><meta name="viewport" content="width=device-width, initial-scale=1.0">'
+            )
+        elif "<head>" not in html_content:
             html_content = (
                 '<meta name="viewport" content="width=device-width, initial-scale=1.0">'
                 + html_content
             )
 
-        # Build a temp file path in our custom tempdir
-        fd, temp_file_path = tempfile.mkstemp(suffix=".html", dir=tempdir, text=True)
-        with os.fdopen(fd, "w", encoding="utf-8") as f:
-            f.write(html_content)
+        new_win = window.open("", "_blank")
+        if not new_win:
+            # blocked
+            window.alert("Popup blocked. Try allowing popups for this site.")
+            return
+        new_win.document.write(html_content)
+        new_win.document.close()
 
-        # Open in the browser
-        webbrowser.open(f"file://{temp_file_path}")
+    # %%
+    def create_freq_list_combined(fname):
+        """Create ATC frequency list for both DEPARTURE and ARRIVAL using flight_plan_data."""
+        if isinstance(fname, str): fname = [fname]
 
+        data = js.window.flight_plan_data
+        settings = js.window.settings
+        html_string = ''
 
+        def freq_block(freq, label, city):
+            if freq:
+                return f'''
+                <div style="display: grid; grid-template-columns: 1.5fr 3.5fr;">
+                    <p class="pilot_general"><strong>{freq}: </strong></p>
+                    <p class="pilot_general">{city} {label}</p>
+                </div>
+                '''
+            return ''
 
+        # DEPARTURE frequencies
+        if 'DEPARTURE' in fname:
+            dep_city = data.get('DEPARTURE_NAME', '')
+            html_string += freq_block(data.get('DEPARTURE_ATC_ATIS_FREQ', ''), 'ATIS', dep_city)
+            html_string += freq_block(data.get('DEPARTURE_ATC_GROUND', ''), 'DELIVERY/GROUND', dep_city)
+            html_string += freq_block(data.get('DEPARTURE_ATC_TOWER', ''), 'TOWER', dep_city)
+            html_string += freq_block(data.get('DEPARTURE_ATC_APPROACH', ''), 'APPROACH', dep_city)
+            html_string += freq_block(data.get('DEPARTURE_ATC_TELEPHONE', ''), 'TELEPHONE', dep_city)
+            #html_string += freq_block(data.get('DELIVERY_OR_RADIO', ''), 'RADIO', dep_city)
+
+        # Add a horizontal rule between departure and arrival
+        if len(fname)>=2:
+            html_string += '<hr>'
+
+        # ARRIVAL frequencies
+        if 'ARRIVAL' in fname:
+            arr_city = data.get('ARRIVAL_NAME', '')
+            html_string += freq_block(data.get('ARRIVAL_ATC_ATIS_FREQ', ''), 'ATIS', arr_city)
+            html_string += freq_block(data.get('ARRIVAL_ATC_GROUND', ''), 'DELIVERY/GROUND', arr_city)
+            html_string += freq_block(data.get('ARRIVAL_ATC_TOWER', ''), 'TOWER', arr_city)
+            html_string += freq_block(data.get('ARRIVAL_ATC_APPROACH', ''), 'APPROACH', arr_city)
+            html_string += freq_block(data.get('ARRIVAL_ATC_TELEPHONE', ''), 'TELEPHONE', arr_city)
+            #html_string += freq_block(data.get('DELIVERY_OR_RADIO_ARR', ''), 'RADIO', arr_city)
+
+        html_string += '<hr>'
+        SQUAWK = f": {data.get('SQUAWK', '')}" if data.get('SQUAWK', '') else ''
+        SQUAWK2 = f": {data.get('SQUAWK2', '')}" if data.get('SQUAWK2', '') else ''
+        html_string += freq_block(data.get('FIC_FREQUENCY', '') , data.get('FIC_NAME', '') + SQUAWK, '')
+        html_string += freq_block(data.get('FIC_FREQUENCY2', '') , data.get('FIC_NAME2', '') + SQUAWK2, '')
+
+        return html_string
 
     # Make functions available to JavaScript
     js.window.create_new_flightplan = create_new_flightplan
     js.window.load_flightplan = load_flightplan
     js.window.delete_flightplan = delete_flightplan
     js.window.save_flightplan = save_flightplan
-    js.window.update_flightplan_list = update_flightplan_list
+    js.window.update_flightplan_list = create_proxy(update_flightplan_list)
     # HELPERS
-    js.window.create_summary_atc = create_summary_atc
-    js.window.create_reverse_route_atc = create_reverse_route_atc
-    js.window.create_callsign_short = create_callsign_short
-    js.window.import_aerodrome_selected = import_aerodrome_selected
-    js.window.generate_summary_html = generate_summary_html
+    js.window.create_summary_atc = create_proxy(create_atc_summary)
+    js.window.create_callsign_short = create_proxy(create_callsign_short)
+    js.window.import_aerodrome_selected = create_proxy(import_aerodrome_selected)
+    js.window.generate_summary_html = create_proxy(generate_summary_html)
+    js.window.set_fontsizes = create_proxy(set_fontsizes)
     # DEPARTURE TAB
-    js.window.populate_departure_fields_from_icao = populate_departure_fields_from_icao
+    js.window.populate_departure_fields_from_icao = create_proxy(populate_departure_fields_from_icao)
     js.window.update_departure_gui_fields = update_departure_gui_fields
     js.window.clear_departure_fields = clear_departure_fields
     js.window.update_departure_image = update_departure_image
@@ -1483,6 +1698,8 @@
     js.window.cache_and_display_image = cache_and_display_image
     # GENERAL TAB
     js.window.clear_general_fields = clear_general_fields
+    # ENROUTE TAB
+    js.window.clear_enroute_fields = clear_enroute_fields
     # DATA FUNCTIONS
     js.window.get_default_data = get_default_data
     js.window.get_default_settings = get_default_settings
@@ -1495,6 +1712,51 @@
   <script>
     const tabButtons = document.querySelectorAll(".tablinks");
     const tabContents = document.querySelectorAll(".tabcontent");
+
+    // Function to check for missing fields and update highlighting
+    function updateMissingFields() {
+        const inputs = [DEPARTURE_ATC_GROUND, DEPARTURE_ATC_ATIS_FREQ, DEPARTURE_ATC_TOWER,
+                       DEPARTURE_ROUTE_ALTITUDE, DEPARTURE_ROUTE_NAME, DEPARTURE_RUNWAY,
+                       DEPARTURE_POSITION, DEPARTURE_NAME, DEPARTURE_ICAO,
+                       CALLSIGN_input, AIRCRAFT_TYPE_input, POB_input, FLIGHTPLAN_input,
+                       FIC_NAME, FIC_FREQUENCY, OVERHEAD, SQUAWK,
+        ];
+
+        // Reset all backgrounds first
+        inputs.forEach(input => input.style.backgroundColor = '');
+
+        const missing = [];
+        if (!FLIGHTPLAN_input.value) { missing.push('Flightplan Name'); FLIGHTPLAN_input.style.backgroundColor = '#ffeb3b'; }
+        if (!CALLSIGN_input.value) { missing.push('CALLSIGN'); CALLSIGN_input.style.backgroundColor = '#ffeb3b'; }
+        if (!AIRCRAFT_TYPE_input.value) { missing.push('Aircraft Type'); AIRCRAFT_TYPE_input.style.backgroundColor = '#ffeb3b'; }
+        if (!POB_input.value) { missing.push('POB'); POB_input.style.backgroundColor = '#ffeb3b'; }
+        if (!DEPARTURE_NAME.value) { missing.push('Aerodrome Name (Dep.)'); DEPARTURE_NAME.style.backgroundColor = '#ffeb3b'; }
+        if (!DEPARTURE_ICAO.value) { missing.push('ICAO (Dep.)'); DEPARTURE_ICAO.style.backgroundColor = '#ffeb3b'; }
+        if (!DEPARTURE_POSITION.value) { missing.push('Position (Dep.)'); DEPARTURE_POSITION.style.backgroundColor = '#ffeb3b'; }
+        if (!DEPARTURE_RUNWAY.value) { missing.push('Runway (Dep.)'); DEPARTURE_RUNWAY.style.backgroundColor = '#ffeb3b'; }
+        if (!DEPARTURE_ROUTE_NAME.value) { missing.push('Route Name (Dep.)'); DEPARTURE_ROUTE_NAME.style.backgroundColor = '#ffeb3b'; }
+        if (!DEPARTURE_ROUTE_ALTITUDE.value) { missing.push('Route Altitude (Dep.)'); DEPARTURE_ROUTE_ALTITUDE.style.backgroundColor = '#ffeb3b'; }
+        if (!DEPARTURE_ATC_TOWER.value) { missing.push('Freq. Tower/Radio (Dep.)'); DEPARTURE_ATC_TOWER.style.backgroundColor = '#ffeb3b'; }
+        if (!FIC_NAME.value) { missing.push('FIC name'); FIC_NAME.style.backgroundColor = '#ffeb3b'; }
+        if (!FIC_FREQUENCY.value) { missing.push('FIC Freq.'); FIC_FREQUENCY.style.backgroundColor = '#ffeb3b'; }
+        if (!OVERHEAD.value) { missing.push('Overhead point.'); OVERHEAD.style.backgroundColor = '#ffeb3b'; }
+        if (!SQUAWK.value) { missing.push('SQUAWK.'); SQUAWK.style.backgroundColor = '#ffeb3b'; }
+        if (DEPARTURE_CTR.value === 'CTR') {
+            if (!DEPARTURE_ATC_ATIS_FREQ.value) { missing.push('Freq. ATIS (Dep.)'); DEPARTURE_ATC_ATIS_FREQ.style.backgroundColor = '#ffeb3b'; }
+            if (!DEPARTURE_ATC_GROUND.value) { missing.push('Freq. Delivery/Ground (Dep.)'); DEPARTURE_ATC_GROUND.style.backgroundColor = '#ffeb3b'; }
+        }
+
+        missing_label.textContent = missing.length ? 'Missing: ' + missing.join(', ') : '';
+    }
+
+    // Function to replace INFORMATION with INFO in input fields
+    function updateEnrouteFields() {
+        document.querySelectorAll('.REPLACE_INFO').forEach(input => {
+            if (input.value) {
+                input.value = input.value.toUpperCase().replace(/INFORMATION/g, 'INFO');
+            }
+        });
+    }
 
     tabButtons.forEach(btn => {
       btn.addEventListener("click", async () => {
@@ -1519,6 +1781,10 @@
         tabContents.forEach(c => c.style.display = "none");
         btn.classList.add("active");
         document.getElementById(btn.getAttribute("data-tab")).style.display = "block";
+
+        // Update INFO fields and check missing fields after tab switch
+        updateEnrouteFields();
+        updateMissingFields();
       });
     });
 
@@ -1532,7 +1798,7 @@
     const new_plan_btn = document.getElementById('new_plan_btn');
     const load_btn = document.getElementById('load_btn');
     const delete_btn = document.getElementById('delete_btn');
-    const save_tab_btn = document.getElementById('save_tab_btn');
+    //const save_tab_btn = document.getElementById('save_tab_btn');
     const html_btn = document.getElementById('html_btn');
     const reverse_btn = document.getElementById('reverse_btn');
     const missing_label = document.getElementById('missing_label');
@@ -1543,6 +1809,16 @@
         input.value = input.value.toUpperCase();
         });
     });
+
+    document.querySelectorAll('.REPLACE_INFO').forEach(input => {
+        input.addEventListener('input', () => {
+            input.value = input.value.toUpperCase().replace(/INFORMATION/g, 'INFO');
+            updateMissingFields();
+        });
+    });
+    // Initial calls to handle any existing values
+    updateEnrouteFields();
+    updateMissingFields();
 
     // Wait for PyScript to be ready
     let pyscriptReady = false;
@@ -1556,6 +1832,8 @@
         console.log("Default data is initialized.");
         window.settings = window.get_default_settings()
         console.log("Settings data is initialized.");
+        // Hide loading spinner once everything is ready
+        document.getElementById('loading-spinner').style.display = 'none';
       }
     }
 
@@ -1582,8 +1860,8 @@
 
         // Clear plan spinner selection
         document.getElementById('plan_spinner').value = "";
-        // Update missing fields label
-        missing_label.textContent = "Missing: Flightplan Name, CALLSIGN, Aircraft Type";
+        // Update missing fields
+        updateMissingFields();
         // Show success message to user
         alert("✅ New flightplan created successfully!\n\nAll fields have been cleared and reset to default values.");
 
@@ -1593,17 +1871,20 @@
       }
     };
 
-    load_btn.onclick = async () => {
-      if (pyscriptReady && window.load_flightplan) {
+    // Auto-load functionality moved to plan_spinner onChange event
+    document.getElementById('plan_spinner').addEventListener('change', async (e) => {
+      if (e.target.value && pyscriptReady && window.load_flightplan) {
         try {
           await window.load_flightplan();
-          alert("✅ Flightplan loaded successfully!");
+          console.log("✅ Flightplan loaded successfully");
+          // Update missing fields after loading
+          updateMissingFields();
         } catch (error) {
           console.error("Error loading flightplan:", error);
-          alert("❌ Error loading flightplan. Please check console for details.");
+          alert("Error loading flightplan: " + error);
         }
       }
-    };
+    });
 
     delete_btn.onclick = async () => {
       if (pyscriptReady && window.delete_flightplan) {
@@ -1611,17 +1892,17 @@
       }
     };
 
-    save_tab_btn.onclick = async () => {
-      if (pyscriptReady && window.save_flightplan) {
-        try {
-          await window.save_flightplan();
-          alert("✅ Flightplan saved successfully!");
-        } catch (error) {
-          console.error("Error saving flightplan:", error);
-          alert("Error saving flightplan. Please try again.");
-        }
-      }
-    };
+    // save_tab_btn.onclick = async () => {
+    //   if (pyscriptReady && window.save_flightplan) {
+    //     try {
+    //       await window.save_flightplan();
+    //       alert("✅ Flightplan saved successfully!");
+    //     } catch (error) {
+    //       console.error("Error saving flightplan:", error);
+    //       alert("Error saving flightplan. Please try again.");
+    //     }
+    //   }
+    // };
 
     html_btn.onclick = () => {
       if (window.create_summary_atc) {
@@ -1629,13 +1910,18 @@
       }
     };
 
-    reverse_btn.onclick = () => {
-      if (window.create_reverse_route_atc) {
-        window.create_reverse_route_atc();
+    reverse_btn.onclick = async () => {
+      if (window.create_summary_atc) {
+        window.create_summary_atc({ reverse_path: true });
       }
     };
 
-    const inputs = [DEPARTURE_ATC_GROUND, DEPARTURE_ATC_ATIS_FREQ, DEPARTURE_ATC_TOWER, DEPARTURE_ROUTE_ALTITUDE, DEPARTURE_ROUTE_NAME, DEPARTURE_RUNWAY, DEPARTURE_POSITION, DEPARTURE_NAME, DEPARTURE_ICAO, CALLSIGN_input, AIRCRAFT_TYPE_input, POB_input, FLIGHTPLAN_input, DATETIME_input];
+    const inputs = [DEPARTURE_ATC_GROUND, DEPARTURE_ATC_ATIS_FREQ, DEPARTURE_ATC_TOWER,
+                   DEPARTURE_ROUTE_ALTITUDE, DEPARTURE_ROUTE_NAME, DEPARTURE_RUNWAY,
+                   DEPARTURE_POSITION, DEPARTURE_NAME, DEPARTURE_ICAO,
+                   CALLSIGN_input, AIRCRAFT_TYPE_input, POB_input, FLIGHTPLAN_input,
+                   FIC_NAME, FIC_FREQUENCY, OVERHEAD, SQUAWK,
+    ];
       inputs.forEach(input => {
         input.addEventListener('input', () => {
           const missing = [];
@@ -1653,6 +1939,10 @@
           if (!DEPARTURE_ROUTE_NAME.value) { missing.push('Route Name (Dep.)'); DEPARTURE_ROUTE_NAME.style.backgroundColor = '#ffeb3b'; }
           if (!DEPARTURE_ROUTE_ALTITUDE.value) { missing.push('Route Altitude (Dep.)'); DEPARTURE_ROUTE_ALTITUDE.style.backgroundColor = '#ffeb3b'; }
           if (!DEPARTURE_ATC_TOWER.value) { missing.push('Freq. Tower/Radio (Dep.)'); DEPARTURE_ATC_TOWER.style.backgroundColor = '#ffeb3b'; }
+          if (!FIC_NAME.value) { missing.push('FIC name'); FIC_NAME.style.backgroundColor = '#ffeb3b'; }
+          if (!FIC_FREQUENCY.value) { missing.push('FIC Freq.'); FIC_FREQUENCY.style.backgroundColor = '#ffeb3b'; }
+          if (!OVERHEAD.value) { missing.push('Overhead point.'); OVERHEAD.style.backgroundColor = '#ffeb3b'; }
+          if (!SQUAWK.value) { missing.push('SQUAWK.'); SQUAWK.style.backgroundColor = '#ffeb3b'; }
           if (DEPARTURE_CTR.value === 'CTR') {
               if (!DEPARTURE_ATC_ATIS_FREQ.value) { missing.push('Freq. ATIS (Dep.)'); DEPARTURE_ATC_ATIS_FREQ.style.backgroundColor = '#ffeb3b'; }
               if (!DEPARTURE_ATC_GROUND.value) { missing.push('Freq. Delivery/Ground (Dep.)'); DEPARTURE_ATC_GROUND.style.backgroundColor = '#ffeb3b'; }
@@ -1671,11 +1961,11 @@
 <script>
 const COUNTRIES_DATA = [
   // Europe
-  'Albania', 'Andorra', 'Austria', 'Belarus', 'Belgium', 'Bosnia And Herzegovina',
+  'Albania', 'Austria', 'Belarus', 'Belgium',
   'Bulgaria', 'Croatia', 'Cyprus', 'Czech Republic', 'Denmark', 'Estonia',
   'Finland', 'France', 'Germany', 'Greece', 'Hungary', 'Iceland', 'Ireland',
-  'Italy', 'Latvia', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Malta',
-  'Moldova  Republic Of', 'Monaco', 'Montenegro', 'Netherlands', 'North Macedonia',
+  'Italy', 'Latvia', 'Lithuania', 'Luxembourg', 'Malta',
+  'Moldova  Republic Of', 'Montenegro', 'Netherlands',
   'Norway', 'Poland', 'Portugal', 'Romania',
   'Slovakia', 'Slovenia', 'Spain', 'Sweden', 'Switzerland', 'Turkey',
   'United Kingdom',
@@ -1684,9 +1974,8 @@ const COUNTRIES_DATA = [
   'Brazil', 'Canada', 'Curacao', 'United States',
 
   // Oceania
-  'Australia', 'Fiji', 'Kiribati', 'Marshall Islands', 'Micronesia', 'Nauru',
-  'New Zealand', 'Palau', 'Papua New Guinea', 'Samoa', 'Solomon Islands',
-  'Tonga', 'Tuvalu', 'Vanuatu'
+  'Australia', 'Fiji', 'Nauru',
+  'New Zealand', 'Palau', 'Papua New Guinea',
 ];
 
   /**

@@ -293,39 +293,40 @@ input[type="text"]:hover {
     text-transform: uppercase;
 }
 
-/* Remove default rounded corners, shadows, etc. */
-input,
-select,
-textarea,
-button {
-    -webkit-appearance: none;
-    appearance: none;
-    border-radius: 0; /* optional: set your own radius */
+.spinner-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+    /* backdrop-filter: blur(2px);*/
 }
-
-/* Fix input zoom on focus (iOS auto-zoom) */
-html {
-    font-size: 16px; /* ensures no zooming when focusing inputs */
+.spinner {
+    width: 60px;
+    height: 60px;
+    border: 6px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 6px solid #3498db;
+    animation: spin 1s linear infinite;
 }
-
-/* Remove inner padding and special styling for search fields */
-input[type="search"] {
-    -webkit-appearance: none;
-    appearance: none;
+.spinner-text {
+    color: white;
+    font-size: 18px;
+    margin-top: 15px;
+    text-align: center;
 }
-
-/* Remove spinner from number fields */
-input[type="number"] {
-    -moz-appearance: textfield;
-}
-
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-/* Style dropdown arrows manually */
-select {
-    background-image: none; /* prevent iOS arrow */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
