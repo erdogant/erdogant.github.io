@@ -1478,7 +1478,8 @@
         # Generate HTML content
         html_content = await generate_summary_html(reverse_path=reverse_path)
         # Open in browser
-        open_html(html_content, 'ATC_Summary_reverse' if reverse_path else 'ATC_Summary')
+        # open_html(html_content, 'ATC_Summary_reverse' if reverse_path else 'ATC_Summary')
+        open_html(html_content)
 
     async def create_departure_atc(reverse_path=False):
         """Create ATC Departure (placeholder function)"""
@@ -1486,7 +1487,8 @@
         # Generate HTML content
         html_content = await generate_departure_html(reverse_path=reverse_path)
         # Open in browser
-        open_html(html_content, 'ATC_Departure_reverse' if reverse_path else 'ATC_Departure')
+        # open_html(html_content, 'ATC_Departure_reverse' if reverse_path else 'ATC_Departure')
+        open_html(html_content)
 
     async def create_arrival_atc(reverse_path=False):
         """Create ATC Arrival (placeholder function)"""
@@ -1494,7 +1496,8 @@
         # Generate HTML content
         html_content = await generate_arrival_html(reverse_path=reverse_path)
         # Open in browser
-        open_html(html_content, 'ATC_Arrival_reverse' if reverse_path else 'ATC_Arrival')
+        # open_html(html_content, 'ATC_Arrival_reverse' if reverse_path else 'ATC_Arrival')
+        open_html(html_content)
 
     async def create_enroute_atc(reverse_path=False):
         """Create ATC Enroute (placeholder function)"""
@@ -1502,7 +1505,8 @@
         # Generate HTML content
         html_content = await generate_enroute_html(reverse_path=reverse_path)
         # Open in browser
-        open_html(html_content, 'ATC_Enroute_reverse' if reverse_path else 'ATC_Enroute')
+        # open_html(html_content, 'ATC_Enroute_reverse' if reverse_path else 'ATC_Enroute')
+        open_html(html_content)
 
 
     async def generate_summary_html(reverse_path=False):

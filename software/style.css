@@ -250,7 +250,7 @@ input[type="text"]:hover {
 
 /* Warning styling */
 .warning {
-    font-size: 10px;
+    font-size: 12px;
     color: orange;
     margin: 4px 0;
     text-align: center;
