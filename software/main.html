@@ -44,27 +44,25 @@
 	  <!-- Logo -->
 	  <div class="logo-container">
 		<a href="https://erdogant.github.io/skywalk-docs/pages/html/index.html" target="_blank">
-		  <img id="skywalk_logo_cache" alt="SkyWalk">
+		  <img id="skywalk_logo" alt="SkyWalk">
 		</a>
 	  </div>
 
 	  <label_h1>Flightplan</label_h1>
 	  <!-- New Flightplan row -->
-	  <div class="button-row">
-		<button id="new_plan_btn">Create New Flightplan</button>
-	  </div>
 
 	  <!-- Flightplan select + Load row -->
 	  <div class="button-row">
-		<button id="delete_btn" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">🗑️</button>
+			<button id="new_plan_btn">New Flightplan</button>
 		<select id="plan_spinner" onchange="this.value && window.load_flightplan()">
 		  <option value="">Load Flightplan</option>
 		</select>
+		<button id="delete_btn" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">🗑️</button>
 	  </div>
 
 	  <!-- Flightplan Name row -->
 	  <div class="button-row">
-		<input type="text" id="FLIGHTPLAN_input" placeholder="Flightplan Name">
+		<input type="text" id="FLIGHTPLAN" placeholder="Flightplan Name">
 	  </div>
 
 	  <!-- Aircraft Info Label -->
@@ -72,13 +70,13 @@
 
 	  <!-- CALLSIGN + Aircraft Type row -->
 	  <div class="button-row">
-        <input type="text" id="CALLSIGN_input" class="UPPERCASE_input" placeholder="CALLSIGN (PH-SVU)">
-        <input type="text" id="AIRCRAFT_TYPE_input" class="UPPERCASE_input" placeholder="Aircraft Type (Robin400)">
+        <input type="text" id="CALLSIGN" class="UPPERCASE_input" placeholder="CALLSIGN (PH-SVU)">
+        <input type="text" id="AIRCRAFT_TYPE" class="UPPERCASE_input" placeholder="Aircraft Type (Robin400)">
     </div>
 
 	  <!-- Persons on Board + Flight Rules row -->
 	  <div class="button-row">
-		<input type="text" id="POB_input" placeholder="Persons on Board">
+		<input type="text" id="POB" placeholder="Persons on Board">
 		<select id="FLIGHT_RULES_spinner">
 		  <option value="VFR">VFR</option>
 		  <option value="IFR">IFR</option>
@@ -87,7 +85,7 @@
 
 	<!-- Datetime row -->
 	<div class="button-row">
-		<input type="text" id="DATETIME_input" placeholder="dd-mm-yyyy hh:mm">
+		<input type="text" id="DATETIME" placeholder="dd-mm-yyyy hh:mm">
 		<button id="set_datetime_btn">Now</button>
 			</div>
 			<script>
@@ -98,7 +96,7 @@
 				const year = now.getFullYear();
 				const hours = String(now.getHours()).padStart(2, '0');
 				const minutes = String(now.getMinutes()).padStart(2, '0');
-				document.getElementById('DATETIME_input').value = `${day}-${month}-${year} ${hours}:${minutes}`;
+				document.getElementById('DATETIME').value = `${day}-${month}-${year} ${hours}:${minutes}`;
 		});
 			</script>
 
@@ -107,7 +105,7 @@
     	  <!-- Logo -->
     	  <div class="coffee-container">
     		<a href="https://www.buymeacoffee.com/erdogant" target="_blank">
-    		  <img id="coffee_image_cache" alt="Coffee Donation">
+    		  <img id="coffee_image" alt="Coffee Donation">
     		</a>
            	<center>
           		<script async src="https://media.ethicalads.io/media/client/ethicalads.min.js"></script>
@@ -118,6 +116,7 @@
 	  </div>
 
 	</div>
+
 
 	<!-- ============================================= -->
 	<!-- =============== TAB DEPARTURE =============== -->
@@ -148,10 +147,11 @@
 	  <!-- Line 5: POSITION, RUNWAY, ELEVATION inputs -->
 	  <div class="button-row">
 		<input type="text" id="DEPARTURE_POSITION" placeholder="Position (At the Apron)", class="UPPERCASE_input">
-		<select id="DEPARTURE_CTR">
+		<select id="DEPARTURE_CTR" onchange="updateMissingFields()">
 		  <option value=""></option>
 		  <option value="CTR">CTR</option>
 		</select>
+
 	  </div>
 
 	  <div class="button-row">
@@ -188,82 +188,12 @@
 
 	  <!-- Departure Image -->
 	  <div class="logo-container" style="margin-top: 20px;">
-		<img id="departure_image_cache" alt="Departure Aerodrome" style="max-width: 100%; height: auto; border-radius: 10px;">
+		<img id="DEPARTURE_image_cache" alt="Departure Aerodrome" style="max-width: 100%; height: auto; border-radius: 10px;">
 	  </div>
 
-	  <script>
-		// Populate dropdown on page load
-		window.addEventListener('DOMContentLoaded', () => {
-          populateDropdown('DEPARTURE_COUNTRY', COUNTRIES_DATA);
-        });
-
-		// Download the aerodrome data when the country changes
-        document.getElementById("DEPARTURE_COUNTRY").addEventListener("change", async function() {
-          const country = this.value;
-          if (country && window.import_aerodrome_selected) {
-            const spinner = document.getElementById('loading-spinner');
-            const spinnerText = spinner.querySelector('.spinner-text');
-            spinnerText.textContent = `Loading aerodrome data for ${country}...`;
-            spinner.style.display = 'flex';
-            document.body.style.cursor = 'wait';
-            document.body.style.overflow = 'hidden';  // Prevent scrolling while loading
-            try {
-              await window.import_aerodrome_selected(country);
-            } catch (error) {
-              console.error("Error importing aerodrome data:", error);
-              alert("Error loading aerodrome data. Please try again.");
-            } finally {
-              spinner.style.display = 'none';
-              document.body.style.cursor = '';
-              document.body.style.overflow = '';  // Restore scrolling
-            }
-          }
-        });
-
-        // Populate fields when ICAO city is selected
-        document.getElementById("DEPARTURE_ICAO_CITY").addEventListener("change", async function() {
-          const city_icao = this.value;
-
-          // Clear all departure fields first to prevent data leakage
-          if (window.clear_departure_fields) {
-            await window.clear_departure_fields();
-          }
-          // Clear all enroute fields first to prevent data leakage
-          if (window.clear_enroute_fields) {
-            await window.clear_enroute_fields();
-          }
-
-          if (city_icao && window.populate_departure_fields_from_icao) {
-            // Call PyScript function to populate fields
-            await window.populate_departure_fields_from_icao(city_icao);
-            // Update missing fields
-            updateMissingFields();
-          }
-        });
-
-        // Auto-save departure data when fields change
-		const departureFields = [
-		  'DEPARTURE_COUNTRY', 'DEPARTURE_ICAO_CITY', 'DEPARTURE_CTR',
-		  'DEPARTURE_NAME', 'DEPARTURE_ICAO', 'DEPARTURE_POSITION',
-		  'DEPARTURE_RUNWAY', 'DEPARTURE_ELEVATION', 'DEPARTURE_ROUTE_NAME',
-		  'DEPARTURE_ROUTE_ALTITUDE', 'DEPARTURE_CIRCUIT_ALTITUDE',
-		  'DEPARTURE_ATC_TOWER', 'DEPARTURE_ATC_APPROACH',
-		  'DEPARTURE_ATC_ATIS_FREQ', 'DEPARTURE_ATC_GROUND',
-		  'DEPARTURE_ATC_TELEPHONE'
-		];
-
-		departureFields.forEach(fieldId => {
-		  const element = document.getElementById(fieldId);
-		  if (element) {
-			element.addEventListener('change', () => {
-			  if (window.flight_plan_data) {
-				window.flight_plan_data[fieldId] = element.value;
-				console.log(`Updated ${fieldId}:`, element.value);
-			  }
-			});
-		  }
-		});
-	  </script>
+	  <div class="button-row">
+		<button id="retrieve_metar_btn">Update METAR/ TAF</button>
+	  </div>
 
     </div>
 
@@ -271,14 +201,84 @@
 
 
 
-    <!-- =============== TAB ARRIVAL =============== -->
+    <!-- ============================================= -->
+	<!-- =============== TAB ARRIVAL =============== -->
+	<!-- ============================================= -->
 
-    <div id="Arrival" class="tabcontent">
-      <label for="arrivalSlider">Arrival Speed:</label>
-      <input type="range" id="arrivalSlider" min="0" max="10" value="5">
-      <button id="arrivalBtn">Run Arrival</button>
-      <div id="arrivalOutput" class="output-box">Output for Arrival tab</div>
-    </div>
+	<div id="Arrival" class="tabcontent">
+
+	  <!-- Arrival Information Label -->
+	  <label_h1>Arrival Information</label_h1>
+
+	  <!-- Line 2: COUNTRY and ICAO_CITY spinners aligned -->
+	  <div class="button-row">
+		<select id="ARRIVAL_COUNTRY">
+			<option value=""></option>
+		</select>
+		<select id="ARRIVAL_ICAO_CITY">
+		  <option value=""></option>
+		  <!-- ICAO City options will be populated dynamically -->
+		</select>
+	  </div>
+
+	  <!-- Line 4: NAME and ICAO inputs -->
+	  <div class="button-row">
+		<input type="text" id="ARRIVAL_NAME" placeholder="Airport Name">
+		<input type="text" id="ARRIVAL_ICAO" class="UPPERCASE_input" placeholder="ICAO">
+	  </div>
+
+	  <!-- Line 5: POSITION, RUNWAY, ELEVATION inputs -->
+	  <div class="button-row">
+		<input type="text" id="ARRIVAL_POSITION" placeholder="Position (At the Apron)", class="UPPERCASE_input">
+		<select id="ARRIVAL_CTR" onchange="updateMissingFields()">
+		  <option value=""></option>
+		  <option value="CTR">CTR</option>
+		</select>
+
+	  </div>
+
+	  <div class="button-row">
+		<input type="text" id="ARRIVAL_RUNWAY" placeholder="Runway Number">
+		<input type="text" id="ARRIVAL_ELEVATION" placeholder="Field Elevation (ft)">
+	  </div>
+
+	  <!-- Line 6: ROUTE_NAME, ROUTE_ALTITUDE, CIRCUIT_ALTITUDE inputs -->
+	  <div class="button-row">
+		<input type="text" id="ARRIVAL_ROUTE_NAME" placeholder="Route Name", class="UPPERCASE_input">
+		<input type="text" id="ARRIVAL_ROUTE_ALTITUDE" placeholder="Route Altitude">
+		<input type="text" id="ARRIVAL_CIRCUIT_ALTITUDE" placeholder="Circuit Altitude">
+	  </div>
+
+	  <!-- Line 7: Frequency label -->
+	  <label_h1>Frequency</label_h1>
+
+	  <!-- Line 8: ATC_TOWER and ATC_APPROACH inputs -->
+	  <div class="button-row">
+		<input type="text" id="ARRIVAL_ATC_TOWER" placeholder="Tower Frequency">
+		<input type="text" id="ARRIVAL_ATC_APPROACH" placeholder="Approach Frequency">
+	  </div>
+
+	  <!-- Line 9: ATC_ATIS_FREQ and ATC_GROUND inputs -->
+	  <div class="button-row">
+		<input type="text" id="ARRIVAL_ATC_ATIS_FREQ" placeholder="ATIS Frequency">
+		<input type="text" id="ARRIVAL_ATC_GROUND" placeholder="Ground Frequency">
+	  </div>
+
+	  <!-- Line 10: ATC_TELEPHONE input -->
+	  <div class="button-row">
+		<input type="text" id="ARRIVAL_ATC_TELEPHONE" placeholder="Telephone">
+	  </div>
+
+	  <!-- ARRIVAL Image -->
+	  <div class="logo-container" style="margin-top: 20px;">
+		<img id="ARRIVAL_image_cache" alt="Arrival Aerodrome" style="max-width: 100%; height: auto; border-radius: 10px;">
+	  </div>
+
+	  <div class="button-row">
+		<button id="retrieve_metar_btn">Update METAR/ TAF</button>
+	  </div>
+
+       </div>
 
 
     <!-- =============== TAB ENROUTE =============== -->
@@ -331,7 +331,7 @@
 
         <div class="button-row">
             <div style="display:flex; flex-direction:column; flex:1; margin-right:10px;">
-                <label for="user_usage_type">Output</label>
+                <label for="user_usage_type">Choose Output</label>
                 <select id="user_usage_type">
                     <option value="print" selected>Print</option>
                     <option value="view">Screen</option>
@@ -350,6 +350,11 @@
         </div>
 
         <label_h1>Air Traffic Control (ATC)</label_h1>
+        <!-- Bottom Buttons Container -->
+    	  <div id="bottom-container">
+    		<div class="warning" id="missing_label">Missing: Flightplan Name, CALLSIGN, Aircraft Type</div>
+    	  </div>
+
         <div class="button-row" style="border: 2px solid purple; border-radius: 10px; padding: 10px;">
             <button id="BTN_HTML_SUMMARY">Create Summary ATC</button>
             <button id="BTN_HTML_SUMMARY_REV">Create Reverse</button>
@@ -366,11 +371,6 @@
             <button id="BTN_HTML_ENROUTE">Create Enroute ATC</button>
             <button id="BTN_HTML_EN_REV">Create Reverse</button>
         </div>
-
-        <!-- Save + Bottom Buttons Container -->
-	  <div id="bottom-container">
-		<div class="warning" id="missing_label">Missing: Flightplan Name, CALLSIGN, Aircraft Type</div>
-	  </div>
 
         <!--
         <div class="button-row">
@@ -484,16 +484,12 @@
 <script>
   // List of images to cache
   const IMAGES_TO_CACHE = {
-    skywalk_logo_cache: "https://erdogant.github.io/datasets/skywalk/figs/Slide2.PNG",
-    coffee_image_cache: "https://erdogant.github.io/datasets/skywalk/figs/buy_me_a_coffee.png"
+    skywalk_logo: "https://erdogant.github.io/datasets/skywalk/figs/Slide2.PNG",
+    coffee_image: "https://erdogant.github.io/datasets/skywalk/figs/buy_me_a_coffee.png"
   };
-
-
-  // Default image URL for departures (cached separately when needed)
-  const DEFAULT_ICAO_IMAGE = 'https://erdogant.github.io/datasets/skywalk/figs/oskar-kadaksoo-f_rLDn5m2XQ-unsplash.jpg';
-
-  // Make it globally accessible
-  window.DEFAULT_ICAO_IMAGE = DEFAULT_ICAO_IMAGE;
+  // Default ICAO image URL (not cached with others since it's used differently)
+  const DEFAULT_ICAO_IMAGE = "https://erdogant.github.io/datasets/skywalk/figs/oskar-kadaksoo-f_rLDn5m2XQ-unsplash.jpg";
+  window.DEFAULT_ICAO_IMAGE = DEFAULT_ICAO_IMAGE
 
   const CACHE_NAME = "skywalk-cache-v1";
 
@@ -528,7 +524,8 @@
     }
 
     // Load default departure image on page load
-    cacheAndSetImage(DEFAULT_ICAO_IMAGE, 'departure_image_cache');
+    cacheAndSetImage(DEFAULT_ICAO_IMAGE, 'DEPARTURE_image_cache');
+    cacheAndSetImage(DEFAULT_ICAO_IMAGE, 'ARRIVAL_image_cache');
   });
 </script>
 
@@ -539,33 +536,57 @@
 
 <!-- PyScript for flightplan functionality -->
   <script type="py">
-    import js
+    # Standard library imports
     import json
-    from datetime import datetime
     import os
-    import tempfile
     import sys
-    from urllib.parse import urlparse
-    import pandas as pd
-    from pyodide.http import pyfetch
+    import re
+    import pathlib
+    import tempfile
+    import base64
+    from datetime import datetime
     from io import BytesIO
-    import zipfile
-    import ast
-    from jinja2 import Environment, DictLoader
-    import asyncio
-    from pyodide.ffi import create_proxy
+    from urllib.parse import urlparse
     import urllib.parse
     import webbrowser
-    import pathlib
-    import re
-    from js import Blob, URL, window
 
+    # Third party imports
+    import pandas as pd
+    import zipfile
+    import ast
+    import asyncio
+    from jinja2 import Environment, DictLoader
+
+    # JavaScript/browser imports
+    import js
+    from js import Blob, URL, window
+    from pyodide.http import pyfetch
+    from pyodide.ffi import create_proxy
 
     import logging
     logger = logging.getLogger('SKYWALK')
 
-    # URL_BASE = "https://erdogant.github.io/datasets/skywalk/aerodromes/"
-    # PASSWORD = "GpZzcnXiLleytOr5Y7WC@"  # To be read from secrets.toml later
+    async def load_cached_zip(cache_key, url=None):
+        """Load data from cache or download and cache it
+        Args:
+            cache_key: Key to use for caching
+            url: URL to fetch data from if not in cache
+        Returns:
+            bytes: The loaded data
+        """
+        if is_cached(cache_key):
+            print(f"📦 Using cached data for: {cache_key}")
+            cached_data = load_from_cache(cache_key)
+            return cached_data
+
+        if url:
+            print(f"⬇️ Downloading from: {url}")
+            data = await fetch_zip(url)
+            if data:
+                save_to_cache(cache_key, data, encode_base64=True)
+                return data
+        return None
+
 
     def get_default_settings():
         """Get default settings"""
@@ -709,41 +730,53 @@
             print(f"❌ Error clearing cache: {e}")
             return False
 
-    def is_cached(country):
+    def is_cached(cache_key):
         try:
-            cached = js.localStorage.getItem(f"aerodrome_{country}")
+            cached = js.localStorage.getItem(f"skywalk_{cache_key}")
             # Check if value exists and is truthy (not null/undefined)
             return bool(cached)
         except:
             return False
 
-    def save_to_cache(country, data):
-        js.localStorage.setItem(f"aerodrome_{country}", data)
-
-    def load_from_cache(country):
+    def save_to_cache(cache_key, data, encode_base64=False):
+        """Save data to localStorage with optional base64 encoding"""
         try:
-            cached = js.localStorage.getItem(f"aerodrome_{country}")
-            # Convert to Python string if it exists
-            if cached:
-                return str(cached)
+            if encode_base64:
+                data = base64.b64encode(data).decode('utf-8')
+            js.localStorage.setItem(f"skywalk_{cache_key}", data)
+            print(f"💾 Cached {cache_key}: {len(data)} bytes")
+            return True
+        except Exception as e:
+            print(f"❌ Error saving to cache: {e}")
+            return False
+
+
+    def load_from_cache(cache_key):
+        try:
+            cached_data = js.localStorage.getItem(f"skywalk_{cache_key}")
+            if cached_data:
+                # Decode base64 string to bytes
+                data = base64.b64decode(cached_data)
+                print(f"📦 Loaded {len(data)} bytes from cache")
+                return data
+            print("⚠️ Cache returned null, downloading...")
             return None
-        except:
+        except Exception as e:
+            print(f"⚠️ Error decoding cached data: {e}")
             return None
 
     # Fetch ZIP from remote and save to cache
-    async def fetch_zip(zipname):
-        URL_BASE = js.window.settings['url_aerodromes']
-        url = f"{URL_BASE}{zipname}.zip"
+    async def fetch_zip(url):
+        filepath = urlparse(url).path
+        zipname = os.path.splitext(os.path.basename(filepath))[0]
         print(f"📥 Fetching: {url}")
+        print(f"📥 Fetching: {zipname}")
+
         response = await pyfetch(url)
         if response.ok:
             # Get bytes directly as Python bytes object
             zip_bytes = await response.bytes()
-            # Convert bytes to base64 string for caching
-            import base64
-            b64_string = base64.b64encode(zip_bytes).decode('utf-8')
-            save_to_cache(zipname, b64_string)
-            print(f"💾 Cached {len(zip_bytes)} bytes")
+            save_to_cache(zipname, zip_bytes, encode_base64=True)
             return zip_bytes
         else:
             print(f"❌ Failed to download {url} - Status: {response.status}")
@@ -751,7 +784,7 @@
             return None
 
     # Extract CSV inside the ZIP
-    def extract_csv_from_zip(zip_bytes, password):
+    def extract_csv_from_zip(zip_bytes, password=None):
         try:
             print(f"🔓 Extracting ZIP file ({len(zip_bytes)} bytes)...")
             with zipfile.ZipFile(BytesIO(zip_bytes)) as z:
@@ -759,8 +792,12 @@
                 print(f"📂 Files in ZIP: {files}")
                 name = files[0]  # First file in ZIP
                 print(f"📄 Reading: {name}")
-                with z.open(name, pwd=password.encode()) as f:
-                    df = pd.read_csv(f, sep=';')
+                if password is None:
+                    with z.open(name) as f:
+                        df = pd.read_csv(f, sep=';')
+                else:
+                    with z.open(name, pwd=password.encode()) as f:
+                        df = pd.read_csv(f, sep=';')
                 print(f"✅ CSV parsed: {len(df)} rows, {len(df.columns)} columns")
             return df
         except zipfile.BadZipFile as e:
@@ -773,24 +810,12 @@
             raise
 
     # Main loader: called from JS
-    async def import_aerodrome_selected(country):
-        print(f"🌍 Loading aerodrome data for: {country}")
+    async def import_aerodrome_selected(fname, country):
+        print(f"🌍 Loading {fname} aerodrome data for: {country}")
         zip_bytes = None
 
-        if is_cached(country):
-            print(f"📦 Using cached data for: {country}")
-            zip_b64 = load_from_cache(country)
-            if zip_b64:
-                # Decode base64 string to bytes
-                import base64
-                zip_bytes = base64.b64decode(zip_b64)
-                print(f"📦 Loaded {len(zip_bytes)} bytes from cache")
-            else:
-                print("⚠️ Cache returned null, downloading...")
-                zip_bytes = await fetch_zip(country)
-        else:
-            print("⬇️ Downloading from server...")
-            zip_bytes = await fetch_zip(country)
+        url = js.window.settings['url_aerodromes'] + country + ".zip"
+        zip_bytes = await load_cached_zip(f"aerodrome_{country}", url)
 
         if zip_bytes:
             PASSWORD = js.window.settings['key_aerodromes']
@@ -800,21 +825,13 @@
 
             # For now, just show the first few entries
             # print(df.head().to_string())
-
-            # Store dataframe globally for later use
-            js.window.AERODROME_DEPARTURE_DATA = df.to_dict('records')
             # print(f"Available columns: {df.columns.tolist()}")
 
-            # Show sample record for debugging
-            """
-            if len(js.window.AERODROME_DEPARTURE_DATA) > 0:
-                sample = js.window.AERODROME_DEPARTURE_DATA[0]
-                print(f"\n📊 Sample record structure:")
-                for key in sorted(sample.keys()):
-                    val = sample[key]
-                    if val is not None and str(val) != '' and str(val) != 'nan':
-                        print(f"  {key}: {val}")
-            """
+            # Store data in global variable
+            if fname == 'DEPARTURE':
+                js.window.AERODROME_DEPARTURE_DATA = df.to_dict('records')
+            else:
+                js.window.AERODROME_ARRIVAL_DATA = df.to_dict('records')
 
             # Populate DEPARTURE_ICAO_CITY dropdown with aerodrome data
             if 'city_icao' in df.columns:
@@ -822,7 +839,7 @@
                 print(f"📍 Found {len(icao_codes)} unique ICAO cities")
 
                 # Clear and populate the dropdown
-                select = js.document.getElementById('DEPARTURE_ICAO_CITY')
+                select = js.document.getElementById(f'{fname}_ICAO_CITY')
                 if select:
                     # Clear existing options except the first placeholder
                     select.innerHTML = '<option value="">ICAO City</option>'
@@ -834,11 +851,11 @@
                         option.textContent = icao
                         select.appendChild(option)
 
-                    print(f"✅ Populated DEPARTURE_ICAO_CITY dropdown with {len(icao_codes)} cities")
+                    print(f"✅ Populated {fname}_ICAO_CITY dropdown with {len(icao_codes)} cities")
                 else:
-                    print("⚠️ DEPARTURE_ICAO_CITY dropdown not found")
+                    print(f"⚠️ {fname}_ICAO_CITY dropdown not found")
             else:
-                print("⚠️ 'city_icao' column not found in dataframe")
+                print(f"⚠️ '{fname}_city_icao' column not found in dataframe")
                 print(f"Available columns: {df.columns.tolist()}")
         else:
             print("⚠️ No data available")
@@ -847,17 +864,20 @@
         js.document.getElementById('loading-spinner').style.display = 'none'
 
 
-    async def populate_departure_fields_from_icao(city_icao):
-        """Populate departure fields when ICAO city is selected."""
+    async def populate_aerodrome_fields_from_icao(fname, city_icao):
+        """Populate departure/arrival fields when ICAO city is selected."""
         print(f"🔍 Searching for data: {city_icao}")
 
         # Get the stored dataframe
-        if not hasattr(js.window, 'AERODROME_DEPARTURE_DATA'):
-            print("⚠️ No aerodrome data available")
+        if not hasattr(js.window, f'AERODROME_{fname}_DATA'):
+            print(f"⚠️ No aerodrome data available:'AERODROME_{fname}_DATA'")
             return
 
-        # Get data for DEPARTURE
-        df = js.window.AERODROME_DEPARTURE_DATA
+        # Get data
+        if fname == 'DEPARTURE':
+            df = js.window.AERODROME_DEPARTURE_DATA
+        elif fname == 'ARRIVAL':
+            df = js.window.AERODROME_ARRIVAL_DATA
 
         # Get data for specific ICAO
         row_dict = get_icao_data(df, city_icao)
@@ -872,51 +892,50 @@
         # Store data
         CTR_BOOL = row_dict['AERODROME_CTR']
         FREQ_TOWER_RADIO = row_dict['freqs.TOWER'] if CTR_BOOL else row_dict['freqs.RADIO']
-        js.window.flight_plan_data["DEPARTURE_ICAO"] = row_dict['icao']
-        js.window.flight_plan_data["DEPARTURE_ICAO_CITY"] = city_icao
-        js.window.flight_plan_data["DEPARTURE_RUNWAYS"] = rwy_ids
-        js.window.flight_plan_data["DEPARTURE_RUNWAY"] = normalize_freq(rwy_ids)
-        js.window.flight_plan_data["DEPARTURE_NAME"] = row_dict['name']
-        js.window.flight_plan_data["DEPARTURE_ELEVATION"] = str(row_dict['elevation_aerodrome'])
-        js.window.flight_plan_data["DEPARTURE_CTR"] = 'CTR' if CTR_BOOL else ''
-        js.window.flight_plan_data["DEPARTURE_COUNTRY"] = row_dict['country']
-        js.window.flight_plan_data["DEPARTURE_IMAGE"] = row_dict.get('url.wikipedia.aerodrome.image', None)
-        js.window.flight_plan_data["DEPARTURE_URL_WEBSITE"] = row_dict.get('url.website', '')
-        js.window.flight_plan_data["DEPARTURE_URL_WIKIPEDIA"] = row_dict.get('url.wikipedia', '')
-        js.window.flight_plan_data["DEPARTURE_LATLON"] = [row_dict.get('lat', None), row_dict.get('lon', None)]
-        js.window.flight_plan_data["DEPARTURE_TIMEZONE"] = row_dict.get('tz', None)
+        js.window.flight_plan_data[f"{fname}_ICAO"] = row_dict['icao']
+        js.window.flight_plan_data[f"{fname}_ICAO_CITY"] = city_icao
+        js.window.flight_plan_data[f"{fname}_RUNWAYS"] = rwy_ids
+        js.window.flight_plan_data[f"{fname}_RUNWAY"] = normalize_freq(rwy_ids)
+        js.window.flight_plan_data[f"{fname}_NAME"] = row_dict['name']
+        js.window.flight_plan_data[f"{fname}_ELEVATION"] = str(row_dict['elevation_aerodrome'])
+        js.window.flight_plan_data[f"{fname}_CTR"] = 'CTR' if CTR_BOOL else ''
+        js.window.flight_plan_data[f"{fname}_COUNTRY"] = row_dict['country']
+        js.window.flight_plan_data[f"{fname}_IMAGE"] = row_dict.get('url.wikipedia.aerodrome.image', None)
+        js.window.flight_plan_data[f"{fname}_URL_WEBSITE"] = row_dict.get('url.website', '')
+        js.window.flight_plan_data[f"{fname}_URL_WIKIPEDIA"] = row_dict.get('url.wikipedia', '')
+        js.window.flight_plan_data[f"{fname}_LATLON"] = [row_dict.get('lat', None), row_dict.get('lon', None)]
+        js.window.flight_plan_data[f"{fname}_TIMEZONE"] = row_dict.get('tz', None)
 
-        # FILL THE FREQUENCIES
-        # Handle FREQ_TOWER_RADIO
-        js.window.flight_plan_data["DEPARTURE_ATC_TOWER"] = normalize_freq(FREQ_TOWER_RADIO)
+        if fname == 'DEPARTURE':
+            # Handle FREQ_TOWER_RADIO
+            js.window.flight_plan_data["DEPARTURE_ATC_TOWER"] = normalize_freq(FREQ_TOWER_RADIO)
 
-        field_mapping = {
-          'DEPARTURE_ATC_ATIS_FREQ': 'freqs.ATIS',
-          'DEPARTURE_ATC_GROUND': 'freqs.DELIVERY/GROUND',
-          'DEPARTURE_ATC_APPROACH': 'freqs.APPROACH',
-          'DEPARTURE_ATC_TELEPHONE': 'freqs.TELEPHONE',
-          'FIC_NAME': 'freqs.FIC_NAME',
-          'FIC_FREQUENCY': 'freqs.FIC_FREQUENCY',
-          'FIC_NAME2': 'freqs.FIC_NAME_2',
-          'FIC_FREQUENCY2': 'freqs.FIC_FREQUENCY_2',
-        }
-        for key, colname in field_mapping.items():
-          freq_raw = row_dict[colname]
-          freq_clean = normalize_freq(freq_raw)
-          js.window.flight_plan_data[key] = freq_clean
-          print(f"  {key}: {js.window.flight_plan_data[key]}")
+            # MAPPING OF THE FREQUENCIES
+            field_mapping = {
+              f"{fname}_ATC_ATIS_FREQ": 'freqs.ATIS',
+              f"{fname}_ATC_GROUND": 'freqs.DELIVERY/GROUND',
+              f"{fname}_ATC_APPROACH": 'freqs.APPROACH',
+              f"{fname}_ATC_TELEPHONE": 'freqs.TELEPHONE',
+              'FIC_NAME': 'freqs.FIC_NAME',
+              'FIC_FREQUENCY': 'freqs.FIC_FREQUENCY',
+              'FIC_NAME2': 'freqs.FIC_NAME_2',
+              'FIC_FREQUENCY2': 'freqs.FIC_FREQUENCY_2',
+            }
 
-        # js.window.flight_plan_data["DEPARTURE_POSITION"]        # Position at apron
-        # js.window.flight_plan_data["DEPARTURE_RUNWAY"]          # The user selected Runway
-        # js.window.flight_plan_data["DEPARTURE_ROUTE_NAME"]      # Departure route name
-        # js.window.flight_plan_data["DEPARTURE_ROUTE_ALTITUDE"]  # Departure route altitude
-        # js.window.flight_plan_data["DEPARTURE_CIRCUIT_ALTITUDE"]  # Departure route altitude
+            # FILL THE FREQUENCIES
+            for key, colname in field_mapping.items():
+              freq_raw = row_dict[colname]
+              freq_clean = normalize_freq(freq_raw)
+              js.window.flight_plan_data[key] = freq_clean
+              print(f"  {key}: {js.window.flight_plan_data[key]}")
 
         # Update all GUI fields from flight_plan_data
-        update_departure_gui_fields()
+        update_aerodrome_gui_fields('DEPARTURE')
+        update_aerodrome_gui_fields('ARRIVAL')
 
         # Update departure image
-        await update_departure_image()
+        await update_aerodrome_image('DEPARTURE')
+        await update_aerodrome_image('ARRIVAL')
 
     def normalize_freq(value):
         # Convert to string and strip brackets/quotes
@@ -943,12 +962,12 @@
 
         # List of all departure fields to clear
         field_ids = [
-          'FLIGHTPLAN_input',
-          'DATETIME_input',
-          'CALLSIGN_input',
-          'AIRCRAFT_TYPE_input',
+          'FLIGHTPLAN',
+          'DATETIME',
+          'CALLSIGN',
+          'AIRCRAFT_TYPE',
           'FLIGHT_RULES_spinner',
-          'POB_input',
+          'POB',
         ]
 
         # Clear GUI fields
@@ -973,37 +992,42 @@
                 js.window.flight_plan_data[key] = ''
 
 
-    def update_departure_gui_fields():
-        """Update all DEPARTURE GUI fields from js.window.flight_plan_data"""
-        print("🔄 Updating DEPARTURE GUI fields...")
+    def update_aerodrome_gui_fields(fname):
+        """Update all DEPARTURE/ARRIVAL GUI fields from js.window.flight_plan_data"""
+        print("🔄 Updating DEPARTURE/ARRIVAL GUI fields...")
 
         # List of field IDs to update
         field_ids = [
-            'DEPARTURE_COUNTRY',
-            'DEPARTURE_ICAO_CITY',
-            'DEPARTURE_CTR',
-            'DEPARTURE_NAME',
-            'DEPARTURE_ICAO',
-            'DEPARTURE_POSITION',
-            'DEPARTURE_RUNWAY',
-            'DEPARTURE_ELEVATION',
-            'DEPARTURE_ROUTE_NAME',
-            'DEPARTURE_ROUTE_ALTITUDE',
-            'DEPARTURE_CIRCUIT_ALTITUDE',
-            'DEPARTURE_ATC_TOWER',
-            'DEPARTURE_ATC_APPROACH',
-            'DEPARTURE_ATC_ATIS_FREQ',
-            'DEPARTURE_ATC_GROUND',
-            'DEPARTURE_ATC_TELEPHONE',
-            'FIC_NAME',
-            'FIC_FREQUENCY',
-            'SQUAWK',
-            'OVERHEAD',
-            'FIC_NAME2',
-            'FIC_FREQUENCY2',
-            'SQUAWK2',
-            'OVERHEAD2',
+            f'{fname}_COUNTRY',
+            f'{fname}_ICAO_CITY',
+            f'{fname}_COUNTRY',
+            f'{fname}_NAME',
+            f'{fname}_ICAO',
+            f'{fname}_POSITION',
+            f'{fname}_RUNWAY',
+            f'{fname}_ELEVATION',
+            f'{fname}_ROUTE_NAME',
+            f'{fname}_ROUTE_ALTITUDE',
+            f'{fname}_CIRCUIT_ALTITUDE',
+            f'{fname}_ATC_TOWER',
+            f'{fname}_ATC_APPROACH',
+            f'{fname}_ATC_ATIS_FREQ',
+            f'{fname}_ATC_GROUND',
+            f'{fname}_ATC_TELEPHONE',
         ]
+
+        # Only update these fields based on DEPARTURE
+        if fname == 'DEPARTURE':
+            field_ids = field_ids + [
+                'FIC_NAME',
+                'FIC_FREQUENCY',
+                'SQUAWK',
+                'OVERHEAD',
+                'FIC_NAME2',
+                'FIC_FREQUENCY2',
+                'SQUAWK2',
+                'OVERHEAD2',
+            ]
 
         updated_count = 0
         for field_id in field_ids:
@@ -1017,7 +1041,7 @@
                 # Convert value to string and handle special cases
                 if value is not None and value != '' and str(value) != 'nan' and str(value) != 'None':
                     # Handle boolean for CTR
-                    if field_id == 'DEPARTURE_CTR':
+                    if field_id == f'{fname}_CTR':
                         if value or str(value).lower() == 'true':
                             element.value = 'CTR'
                         else:
@@ -1035,64 +1059,59 @@
 
         print(f"✅ Updated {updated_count} GUI fields")
 
-        async def clear_enroute_fields():
-            """Clear all ENROUTE GUI fields and flight_plan_data"""
-            print("🧹 Clearing all ENROUTE fields...")
+    async def clear_enroute_fields():
+        """Clear all ENROUTE GUI fields and flight_plan_data"""
+        print("🧹 Clearing all ENROUTE fields...")
 
-            # List of all departure fields to clear
-            field_ids = [
-                'FIC_NAME',
-                'FIC_FREQUENCY',
-                'FIC_NAME2',
-                'FIC_FREQUENCY2'
-                'SQUAWK',
-                'OVERHEAD',
-                'SQUAWK2',
-                'OVERHEAD2',
-            ]
-
-            # Clear GUI fields
-            for field_id in field_ids:
-                element = js.document.getElementById(field_id)
-                if element:
-                    element.value = ''
-
-            # Clear flight_plan_data for departure fields
-            departure_keys = [
-                'FIC_NAME', 'FIC_FREQUENCY', 'FIC_NAME2', 'FIC_FREQUENCY2',
-                'OVERHEAD', 'OVERHEAD2', 'SQUAWK', 'SQUAWK2',
-            ]
-
-            for key in departure_keys:
-                js.window.flight_plan_data[key] = ''
-
-
-    async def clear_departure_fields():
-        """Clear all GENERAL GUI fields and flight_plan_data"""
-        print("🧹 Clearing all DEPARTURE fields...")
-
-        # List of all departure fields to clear
         field_ids = [
-            'DEPARTURE_COUNTRY',
-            'DEPARTURE_ICAO_CITY',
-            'DEPARTURE_CTR',
-            'DEPARTURE_NAME',
-            'DEPARTURE_ICAO',
-            'DEPARTURE_POSITION',
-            'DEPARTURE_RUNWAY',
-            'DEPARTURE_ELEVATION',
-            'DEPARTURE_ROUTE_NAME',
-            'DEPARTURE_ROUTE_ALTITUDE',
-            'DEPARTURE_CIRCUIT_ALTITUDE',
-            'DEPARTURE_ATC_TOWER',
-            'DEPARTURE_ATC_APPROACH',
-            'DEPARTURE_ATC_ATIS_FREQ',
-            'DEPARTURE_ATC_GROUND',
-            'DEPARTURE_ATC_TELEPHONE',
             'FIC_NAME',
             'FIC_FREQUENCY',
             'FIC_NAME2',
             'FIC_FREQUENCY2'
+            'SQUAWK',
+            'OVERHEAD',
+            'SQUAWK2',
+            'OVERHEAD2',
+        ]
+
+        # Clear GUI fields
+        for field_id in field_ids:
+            element = js.document.getElementById(field_id)
+            if element:
+                element.value = ''
+
+        # Clear flight_plan_data for enroute fields
+        enroute_keys = [
+            'FIC_NAME', 'FIC_FREQUENCY', 'FIC_NAME2', 'FIC_FREQUENCY2',
+            'OVERHEAD', 'OVERHEAD2', 'SQUAWK', 'SQUAWK2',
+        ]
+
+        for key in enroute_keys:
+            js.window.flight_plan_data[key] = ''
+
+
+    async def clear_aerodrome_fields(fname):
+        """Clear all GENERAL GUI fields and flight_plan_data"""
+        print(f"🧹 Clearing all {fname} fields...")
+
+        # List of all departure/arrival fields to clear
+        field_ids = [
+            f'{fname}_COUNTRY',
+            f'{fname}_ICAO_CITY',
+            f'{fname}_CTR',
+            f'{fname}_NAME',
+            f'{fname}_ICAO',
+            f'{fname}_POSITION',
+            f'{fname}_RUNWAY',
+            f'{fname}_ELEVATION',
+            f'{fname}_ROUTE_NAME',
+            f'{fname}_ROUTE_ALTITUDE',
+            f'{fname}_CIRCUIT_ALTITUDE',
+            f'{fname}_ATC_TOWER',
+            f'{fname}_ATC_APPROACH',
+            f'{fname}_ATC_ATIS_FREQ',
+            f'{fname}_ATC_GROUND',
+            f'{fname}_ATC_TELEPHONE',
         ]
 
         # Clear GUI fields
@@ -1103,54 +1122,53 @@
 
         # Clear flight_plan_data for departure fields
         departure_keys = [
-            'DEPARTURE_COUNTRY', 'DEPARTURE_ICAO_CITY',
-            'DEPARTURE_ICAO', 'DEPARTURE_ICAO_CITY', 'DEPARTURE_NAME',
-            'DEPARTURE_POSITION', 'DEPARTURE_RUNWAY', 'DEPARTURE_ELEVATION',
-            'DEPARTURE_RUNWAYS', 'DEPARTURE_ROUTE_NAME', 'DEPARTURE_ROUTE_ALTITUDE',
-            'DEPARTURE_CIRCUIT_ALTITUDE', 'DEPARTURE_CTR', 'DEPARTURE_IMAGE',
-            'DEPARTURE_URL_WEBSITE', 'DEPARTURE_URL_WIKIPEDIA', 'DEPARTURE_LATLON',
-            'DEPARTURE_METAR_ICAO', 'DEPARTURE_METAR', 'DEPARTURE_WIND_ENVELOPE',
-            'DEPARTURE_CLOUD', 'DEPARTURE_TIMEZONE', 'DEPARTURE_ATC_TOWER',
-            'DEPARTURE_ATC_ATIS_FREQ', 'DEPARTURE_ATC_GROUND', 'DEPARTURE_ATC_APPROACH',
-            'DEPARTURE_ATC_TELEPHONE',
-            'FIC_NAME', 'FIC_FREQUENCY', 'FIC_NAME2', 'FIC_FREQUENCY2',
+            f'{fname}_COUNTRY', f'{fname}_ICAO_CITY',
+            f'{fname}_ICAO', f'{fname}_ICAO_CITY', f'{fname}_NAME',
+            f'{fname}_POSITION', f'{fname}_RUNWAY', f'{fname}_ELEVATION',
+            f'{fname}_RUNWAYS', f'{fname}_ROUTE_NAME', f'{fname}_ROUTE_ALTITUDE',
+            f'{fname}_CIRCUIT_ALTITUDE', f'{fname}_CTR', f'{fname}_IMAGE',
+            f'{fname}_URL_WEBSITE', f'{fname}_URL_WIKIPEDIA', f'{fname}_LATLON',
+            f'{fname}_METAR_ICAO', f'{fname}_METAR', f'{fname}_WIND_ENVELOPE',
+            f'{fname}_CLOUD', f'{fname}_TIMEZONE', f'{fname}_ATC_TOWER',
+            f'{fname}_ATC_ATIS_FREQ', f'{fname}_ATC_GROUND', f'{fname}_ATC_APPROACH',
+            f'{fname}_ATC_TELEPHONE',
         ]
 
         for key in departure_keys:
-            if key == 'DEPARTURE_CTR':
+            if key == f'{fname}_CTR':
                 js.window.flight_plan_data[key] = False
-            elif key == 'DEPARTURE_LATLON':
+            elif key == f'{fname}_LATLON':
                 js.window.flight_plan_data[key] = [None, None]
-            elif key in ['DEPARTURE_METAR', 'DEPARTURE_WIND_ENVELOPE']:
+            elif key in [f'{fname}_METAR', f'{fname}_WIND_ENVELOPE']:
                 js.window.flight_plan_data[key] = {}
-            elif key in ['DEPARTURE_CLOUD', 'DEPARTURE_RUNWAYS']:
+            elif key in [f'{fname}_CLOUD', f'{fname}_RUNWAYS']:
                 js.window.flight_plan_data[key] = []
             else:
                 js.window.flight_plan_data[key] = ''
 
-        # Reset to default departure image
-        await clear_departure_image()
+        # Reset to default image
+        await clear_aerodrome_image(fname)
 
 
-    async def update_departure_image():
-        """Update departure image from DEPARTURE_IMAGE or use default"""
-        print("🖼️ Updating departure image...")
+    async def update_aerodrome_image(fname):
+        """Update image from DEPARTURE_IMAGE or ARRIVAL_IMAGE or use default"""
+        print(f"🖼️ Updating {fname} image...")
 
         # Get the image URL from flight_plan_data
-        image_url1 = os.path.join(js.window.settings['url_aerodromes_images'], js.window.flight_plan_data['DEPARTURE_ICAO']) + '.png' if js.window.flight_plan_data['DEPARTURE_ICAO'] != '' else None
-        image_url2 = js.window.flight_plan_data.get('DEPARTURE_IMAGE')
+        image_url1 = os.path.join(js.window.settings['url_aerodromes_images'], js.window.flight_plan_data[f'{fname}_ICAO']) + '.png' if js.window.flight_plan_data[f'{fname}_ICAO'] != '' else None
+        image_url2 = js.window.flight_plan_data.get(f'{fname}_IMAGE')
         image_url3 = js.DEFAULT_ICAO_IMAGE
 
         for image_url in [image_url1, image_url2, image_url3]:
-            if await cache_and_display_image(image_url, 'departure_image_cache'):
-                print(f"  📋 DEPARTURE_IMAGE from flight_plan_data: {image_url}")
+            if await cache_and_display_image(image_url, f'{fname}_image_cache'):
+                print(f"  📋 {fname}_IMAGE from flight_plan_data: {image_url}")
                 break
 
 
-    async def clear_departure_image():
-        """Reset departure image to default"""
+    async def clear_aerodrome_image(fname):
+        """Reset aerodrome image to default"""
         print("🔄 Resetting to default image...")
-        await cache_and_display_image(js.DEFAULT_ICAO_IMAGE, 'departure_image_cache')
+        await cache_and_display_image(js.DEFAULT_ICAO_IMAGE, f'{fname}_image_cache')
 
 
     async def cache_and_display_image(url, img_element_id):
@@ -1255,7 +1273,8 @@
 
         # Clear fields
         await clear_general_fields()
-        await clear_departure_fields()
+        await clear_aerodrome_fields('DEPARTURE')
+        await clear_aerodrome_fields('ARRIVAL')
         await clear_enroute_fields()
 
         return current_time
@@ -1280,7 +1299,6 @@
             return
 
         # Parse JSON
-        import json
         try:
             flight_plan_dict = json.loads(json_data)
             print(f"✅ Loaded {len(flight_plan_dict)} fields")
@@ -1291,23 +1309,24 @@
 
             # Update General tab fields
             if flight_plan_dict.get('FLIGHTPLAN'):
-                js.document.getElementById('FLIGHTPLAN_input').value = flight_plan_dict['FLIGHTPLAN']
+                js.document.getElementById('FLIGHTPLAN').value = flight_plan_dict['FLIGHTPLAN']
             if flight_plan_dict.get('CALLSIGN'):
-                js.document.getElementById('CALLSIGN_input').value = flight_plan_dict['CALLSIGN']
+                js.document.getElementById('CALLSIGN').value = flight_plan_dict['CALLSIGN']
             if flight_plan_dict.get('AIRCRAFT_TYPE'):
-                js.document.getElementById('AIRCRAFT_TYPE_input').value = flight_plan_dict['AIRCRAFT_TYPE']
+                js.document.getElementById('AIRCRAFT_TYPE').value = flight_plan_dict['AIRCRAFT_TYPE']
             if flight_plan_dict.get('POB'):
-                js.document.getElementById('POB_input').value = flight_plan_dict['POB']
+                js.document.getElementById('POB').value = flight_plan_dict['POB']
             if flight_plan_dict.get('FLIGHT_RULES'):
                 js.document.getElementById('FLIGHT_RULES_spinner').value = flight_plan_dict['FLIGHT_RULES']
             if flight_plan_dict.get('DATETIME'):
-                js.document.getElementById('DATETIME_input').value = flight_plan_dict['DATETIME']
+                js.document.getElementById('DATETIME').value = flight_plan_dict['DATETIME']
 
             # Update Departure tab fields - call the GUI update function
-            update_departure_gui_fields()
-
+            update_aerodrome_gui_fields('DEPARTURE')
+            update_aerodrome_gui_fields('ARRIVAL')
             # Update departure image
-            await update_departure_image()
+            await update_aerodrome_image('DEPARTURE')
+            await update_aerodrome_image('ARRIVAL')
 
             print(f"✅ Flightplan '{plan_name}' loaded successfully")
 
@@ -1342,20 +1361,21 @@
         """Create new flightplan with current timestamp"""
         # Create new flightplan
         await clear_general_fields()
-        await clear_departure_fields()
+        await clear_aerodrome_fields('DEPARTURE')
+        await clear_aerodrome_fields('ARRIVAL')
         await clear_enroute_fields()
 
     def save_flightplan():
         """Save current flightplan data to localStorage"""
 
         # Read current values from input fields
-        js.window.flight_plan_data["FLIGHTPLAN"] = js.document.getElementById('FLIGHTPLAN_input').value;
-        js.window.flight_plan_data["POB"] = js.document.getElementById('POB_input').value;
+        js.window.flight_plan_data["FLIGHTPLAN"] = js.document.getElementById('FLIGHTPLAN').value;
+        js.window.flight_plan_data["POB"] = js.document.getElementById('POB').value;
         js.window.flight_plan_data["FLIGHT_RULES"] = js.document.getElementById('FLIGHT_RULES_spinner').value;
-        js.window.flight_plan_data["DATETIME"] = js.document.getElementById('DATETIME_input').value;
-        js.window.flight_plan_data["AIRCRAFT_TYPE"] = js.document.getElementById('AIRCRAFT_TYPE_input').value;
-        js.window.flight_plan_data["CALLSIGN"] = js.document.getElementById('CALLSIGN_input').value;
-        js.window.flight_plan_data["CALLSIGN_SHORT"] = js.window.create_callsign_short(js.document.getElementById('CALLSIGN_input').value);
+        js.window.flight_plan_data["DATETIME"] = js.document.getElementById('DATETIME').value;
+        js.window.flight_plan_data["AIRCRAFT_TYPE"] = js.document.getElementById('AIRCRAFT_TYPE').value;
+        js.window.flight_plan_data["CALLSIGN"] = js.document.getElementById('CALLSIGN').value;
+        js.window.flight_plan_data["CALLSIGN_SHORT"] = js.window.create_callsign_short(js.document.getElementById('CALLSIGN').value);
 
         # Read Enroute tab fields
         js.window.flight_plan_data["FIC_NAME"] = js.document.getElementById('FIC_NAME').value;
@@ -1415,7 +1435,6 @@
 
     def print_local_storage():
         # Get localStorage info
-        import sys
 
         print(f"💾 Saved to localStorage: {storage_key}")
         print(f"   Storage Type: Browser localStorage")
@@ -1969,11 +1988,173 @@
 
         return html_string
 
+
+    async def retrieve_metar(fname):
+        """Retrieve METAR data for given fname"""
+        logger.info(f"func: retrieve_metar() - {fname}")
+
+        # Get data
+        flight_plan_data = js.window.flight_plan_data
+        SETTINGS = js.window.settings
+
+        # Gather METAR data and compute
+        fname_METAR = f"{fname}_METAR"
+        fname_RUNWAYS = f"{fname}_RUNWAYS"
+        fname_LATLON = f"{fname}_LATLON"
+        fname_ICAO = f"{fname}_ICAO"
+
+        # filter_on_country = flight_plan_data[f'{fname}_COUNTRY']
+        ICAO = flight_plan_data[fname_ICAO]
+        if not ICAO:
+            print("⚠️ No ICAO code provided")
+            return None
+
+        # Load METAR stations data
+        zip_bytes = await load_cached_zip("metar_stations", url=SETTINGS["METAR_stations"])
+        if not zip_bytes:
+            print("❌ Failed to load METAR stations data")
+            return None
+
+        if zip_bytes:
+            df = extract_csv_from_zip(zip_bytes)
+            js.console.log(f"✅ metar_stations loaded: {len(df)} rows.")
+            print(f"✅ Successfully loaded {len(df)} aerodromes for {metar_stations}")
+        return None
+
+        if ICAO == "":
+            logger.warning(f"Set the ICAO Aerodrome first.")
+            show_popup("Select Aerodrome", "Please select an aerodrome first.")
+            return
+
+        # Retrieve runways
+        rwy_list = flight_plan_data.get(fname_RUNWAYS)
+        if rwy_list == "" or rwy_list is None or len(rwy_list) == 0:
+            _, rwy_list = self.retrieve_runways(
+                flight_plan_data[fname_ICAO], colname="icao"
+            )
+            flight_plan_data.update({fname_RUNWAYS: rwy_list})
+
+        # Retrieve only the valid METAR stations
+        # METAR_STATIONS_VALID = metar_info.filter_valid_metar_stations(load_stations=True)
+
+        # Get top n closest metar stations
+        lat, lon = flight_plan_data[fname_LATLON]
+        closest_metar_stations = metar_info.sort_on_distance_icao_to_metar_stations(
+            fname=None,
+            return_col="icao",
+            lat=lat,
+            lon=lon,
+            filter_on_country=None,
+            n=25,
+            source=source,
+            ui_type="kivy",
+        )
+        logger.info(
+            f"Retrieve closest METAR data for {ICAO} in {fname_METAR} which is {closest_metar_stations[0]}"
+        )
+
+        # Retrieve Metar observations
+        for icao in closest_metar_stations:
+            METAR_DATA = metar_info.get_metar(icao)
+            if METAR_DATA is not None:
+                METAR_ICAO = icao
+                break
+            else:
+                logger.info(f"{icao} was not valid. Trying another METAR station.")
+                METAR_ICAO = ""
+                METAR_DATA = {}
+                time.sleep(0.2)
+
+        # # Add METAR data to flightplan data. The dict needs to be updated first because it is required in the runway prediction hereafter.
+        # flight_plan_data.update({
+        #     fname_METAR: METAR_DATA,
+        #     f'{self.fname}_METAR_ICAO': METAR_ICAO,
+        #     })
+
+        # Predict the runway number based on the METAR data
+        METAR_DATA["RUNWAYS"] = flight_plan_data.get(f"{self.fname}_RUNWAYS", [])
+        RUNWAY_PREDICTED = compute.expected_runway_number(
+            self.fname, data=METAR_DATA, ui_type="kivy"
+        )
+        if RUNWAY_PREDICTED == "":
+            logger.warning(f"No runway predicted. Please check the METAR data.")
+            show_popup(
+                "Runway unknown with variable (VRB) wind",
+                "Runway needs to be set manually.\nPlease check the METAR data.",
+            )
+        else:
+            # Refresh the GUI fields. Do not update all others because it will any custom user input because it is not yet stored.
+            self.RUNWAY_input.text = RUNWAY_PREDICTED
+
+        # Display METAR data based on checkbox state (raw or decoded)
+        if self.METAR_decoded_checkbox.active:
+            self.METAR_input.text = str(METAR_DATA.get("decoded", ""))
+        else:
+            self.METAR_input.text = str(METAR_DATA.get("metar", ""))
+
+        self.METAR_DATETIME.text = (
+            str(METAR_DATA.get("datetime", ""))
+            if METAR_DATA.get("datetime") is not None
+            else ""
+        )
+        self.TAF_input.text = (
+            str(METAR_DATA.get("TAF", "")) if METAR_DATA.get("TAF") is not None else ""
+        )
+
+        # Populate wind input fields with METAR data
+        if "wind" in METAR_DATA and METAR_DATA["wind"]:
+            wind_data = METAR_DATA.get("wind", {})
+            # Format wind direction as three digits with leading zeros
+            self.wind_direction_input.text = format_wind_direction(
+                wind_data.get("direction")
+            )
+            self.wind_speed_input.text = str(wind_data.get("speed") or "")
+            self.wind_gust_input.text = str(wind_data.get("gust") or "")
+            self.wind_variation_input.text = str(wind_data.get("variation") or "")
+
+            # Compute cross/head wind
+            crosswind = compute.crosswind(
+                wind_data.get("direction"), wind_data.get("speed"), RUNWAY_PREDICTED
+            )
+            headwind = compute.headwind(
+                wind_data.get("direction"), wind_data.get("speed"), RUNWAY_PREDICTED
+            )
+            METAR_DATA["wind"]["crosswind"] = (
+                round(crosswind, 1) if crosswind is not None else ""
+            )
+            METAR_DATA["wind"]["headwind"] = (
+                round(headwind, 1) if headwind is not None else ""
+            )
+            self.CROSSWIND_input.text = str(METAR_DATA["wind"]["crosswind"] or "")
+            self.HEADWIND_input.text = str(METAR_DATA["wind"]["headwind"] or "")
+
+        # Update flightplan data with the predicted runway
+        flight_plan_data.update(
+            {
+                f"{self.fname}_RUNWAY": RUNWAY_PREDICTED,
+                fname_METAR: METAR_DATA,
+                f"{self.fname}_METAR_ICAO": METAR_ICAO,
+            }
+        )
+
+        # Add METAR data to flightplan data. The dict needs to be updated first because it is required in the runway prediction hereafter.
+        # flight_plan_data.update({
+        #     fname_METAR: METAR_DATA,
+        #     f'{self.fname}_METAR_ICAO': METAR_ICAO,
+        #     })
+
+        # Compute the wind envelope
+        self.compute_wind_envelope()
+        self.compute_cloud_plot()
+
+
+    # =================================================================
     # Make functions available to JavaScript
     js.window.create_new_flightplan = create_new_flightplan
     js.window.load_flightplan = load_flightplan
     js.window.delete_flightplan = delete_flightplan
     js.window.save_flightplan = save_flightplan
+    js.window.retrieve_metar = retrieve_metar
     js.window.update_flightplan_list = create_proxy(update_flightplan_list)
     js.window.clear_cache = clear_cache
 
@@ -1982,22 +2163,23 @@
     js.window.create_departure_atc = create_proxy(create_departure_atc)
     js.window.create_arrival_atc = create_proxy(create_arrival_atc)
     js.window.create_enroute_atc = create_proxy(create_enroute_atc)
+
     # HELPERS FOR ATC
     js.window.create_callsign_short = create_proxy(create_callsign_short)
     js.window.import_aerodrome_selected = create_proxy(import_aerodrome_selected)
     js.window.generate_summary_html = create_proxy(generate_summary_html)
     js.window.set_fontsizes = create_proxy(set_fontsizes)
 
-    # DEPARTURE TAB
-    js.window.populate_departure_fields_from_icao = create_proxy(populate_departure_fields_from_icao)
-    js.window.update_departure_gui_fields = update_departure_gui_fields
-    js.window.clear_departure_fields = clear_departure_fields
-    js.window.update_departure_image = update_departure_image
-    js.window.clear_departure_image = clear_departure_image
-    js.window.cache_and_display_image = cache_and_display_image
-
     # GENERAL TAB
     js.window.clear_general_fields = clear_general_fields
+
+    # DEPARTURE/ARRIVAL TAB
+    js.window.populate_aerodrome_fields_from_icao = create_proxy(populate_aerodrome_fields_from_icao)
+    js.window.update_aerodrome_gui_fields = update_aerodrome_gui_fields
+    js.window.clear_aerodrome_fields = clear_aerodrome_fields
+    js.window.update_aerodrome_image = update_aerodrome_image
+    js.window.clear_aerodrome_image = clear_aerodrome_image
+    js.window.cache_and_display_image = cache_and_display_image
 
     # ENROUTE TAB
     js.window.clear_enroute_fields = clear_enroute_fields
@@ -2017,21 +2199,27 @@
 
     // Function to check for missing fields and update highlighting
     function updateMissingFields() {
-        const inputs = [DEPARTURE_ATC_GROUND, DEPARTURE_ATC_ATIS_FREQ, DEPARTURE_ATC_TOWER,
-                       DEPARTURE_ROUTE_ALTITUDE, DEPARTURE_ROUTE_NAME, DEPARTURE_RUNWAY,
-                       DEPARTURE_POSITION, DEPARTURE_NAME, DEPARTURE_ICAO,
-                       CALLSIGN_input, AIRCRAFT_TYPE_input, POB_input, FLIGHTPLAN_input,
-                       FIC_NAME, FIC_FREQUENCY, OVERHEAD, SQUAWK,
+        const inputs = [
+          CALLSIGN, AIRCRAFT_TYPE, POB, FLIGHTPLAN,
+          DEPARTURE_ATC_GROUND, DEPARTURE_ATC_ATIS_FREQ, DEPARTURE_ATC_TOWER,
+          DEPARTURE_ROUTE_ALTITUDE, DEPARTURE_ROUTE_NAME, DEPARTURE_RUNWAY,
+          DEPARTURE_POSITION, DEPARTURE_NAME, DEPARTURE_ICAO,
+          ARRIVAL_NAME, ARRIVAL_ICAO,
+          ARRIVAL_RUNWAY,
+          ARRIVAL_ROUTE_NAME, ARRIVAL_ROUTE_ALTITUDE, ARRIVAL_CIRCUIT_ALTITUDE,
+          ARRIVAL_ATC_TOWER,
+          FIC_NAME, FIC_FREQUENCY, OVERHEAD, SQUAWK,
         ];
 
         // Reset all backgrounds first
         inputs.forEach(input => input.style.backgroundColor = '');
 
         const missing = [];
-        if (!FLIGHTPLAN_input.value) { missing.push('Flightplan Name'); FLIGHTPLAN_input.style.backgroundColor = '#ffeb3b'; }
-        if (!CALLSIGN_input.value) { missing.push('CALLSIGN'); CALLSIGN_input.style.backgroundColor = '#ffeb3b'; }
-        if (!AIRCRAFT_TYPE_input.value) { missing.push('Aircraft Type'); AIRCRAFT_TYPE_input.style.backgroundColor = '#ffeb3b'; }
-        if (!POB_input.value) { missing.push('POB'); POB_input.style.backgroundColor = '#ffeb3b'; }
+        if (!FLIGHTPLAN.value) { missing.push('Flightplan Name'); FLIGHTPLAN.style.backgroundColor = '#ffeb3b'; }
+        if (!CALLSIGN.value) { missing.push('CALLSIGN'); CALLSIGN.style.backgroundColor = '#ffeb3b'; }
+        if (!AIRCRAFT_TYPE.value) { missing.push('Aircraft Type'); AIRCRAFT_TYPE.style.backgroundColor = '#ffeb3b'; }
+        if (!POB.value) { missing.push('POB'); POB.style.backgroundColor = '#ffeb3b'; }
+
         if (!DEPARTURE_NAME.value) { missing.push('Aerodrome Name (Dep.)'); DEPARTURE_NAME.style.backgroundColor = '#ffeb3b'; }
         if (!DEPARTURE_ICAO.value) { missing.push('ICAO (Dep.)'); DEPARTURE_ICAO.style.backgroundColor = '#ffeb3b'; }
         if (!DEPARTURE_POSITION.value) { missing.push('Position (Dep.)'); DEPARTURE_POSITION.style.backgroundColor = '#ffeb3b'; }
@@ -2039,16 +2227,25 @@
         if (!DEPARTURE_ROUTE_NAME.value) { missing.push('Route Name (Dep.)'); DEPARTURE_ROUTE_NAME.style.backgroundColor = '#ffeb3b'; }
         if (!DEPARTURE_ROUTE_ALTITUDE.value) { missing.push('Route Altitude (Dep.)'); DEPARTURE_ROUTE_ALTITUDE.style.backgroundColor = '#ffeb3b'; }
         if (!DEPARTURE_ATC_TOWER.value) { missing.push('Freq. Tower/Radio (Dep.)'); DEPARTURE_ATC_TOWER.style.backgroundColor = '#ffeb3b'; }
-        if (!FIC_NAME.value) { missing.push('FIC name'); FIC_NAME.style.backgroundColor = '#ffeb3b'; }
-        if (!FIC_FREQUENCY.value) { missing.push('FIC Freq.'); FIC_FREQUENCY.style.backgroundColor = '#ffeb3b'; }
-        if (!OVERHEAD.value) { missing.push('Overhead point.'); OVERHEAD.style.backgroundColor = '#ffeb3b'; }
-        if (!SQUAWK.value) { missing.push('SQUAWK.'); SQUAWK.style.backgroundColor = '#ffeb3b'; }
         if (DEPARTURE_CTR.value === 'CTR') {
             if (!DEPARTURE_ATC_ATIS_FREQ.value) { missing.push('Freq. ATIS (Dep.)'); DEPARTURE_ATC_ATIS_FREQ.style.backgroundColor = '#ffeb3b'; }
             if (!DEPARTURE_ATC_GROUND.value) { missing.push('Freq. Delivery/Ground (Dep.)'); DEPARTURE_ATC_GROUND.style.backgroundColor = '#ffeb3b'; }
         }
 
-        missing_label.textContent = missing.length ? 'Missing: ' + missing.join(', ') : '';
+        if (!ARRIVAL_NAME.value) { missing.push('Aerodrome Name (Arr.)'); ARRIVAL_NAME.style.backgroundColor = '#ffeb3b'; }
+        if (!ARRIVAL_ICAO.value) { missing.push('ICAO (Arr.)'); ARRIVAL_ICAO.style.backgroundColor = '#ffeb3b'; }
+        if (!ARRIVAL_RUNWAY.value) { missing.push('Runway (Arr.)'); ARRIVAL_RUNWAY.style.backgroundColor = '#ffeb3b'; }
+        if (!ARRIVAL_ROUTE_NAME.value) { missing.push('Route Name (Arr.)'); ARRIVAL_ROUTE_NAME.style.backgroundColor = '#ffeb3b'; }
+        if (!ARRIVAL_ROUTE_ALTITUDE.value) { missing.push('Route Altitude (Arr.)'); ARRIVAL_ROUTE_ALTITUDE.style.backgroundColor = '#ffeb3b'; }
+        if (!ARRIVAL_CIRCUIT_ALTITUDE.value) { missing.push('Route Altitude (Arr.)'); ARRIVAL_CIRCUIT_ALTITUDE.style.backgroundColor = '#ffeb3b'; }
+        if (!ARRIVAL_ATC_TOWER.value) { missing.push('Freq. Tower/Radio (Arr.)'); ARRIVAL_ATC_TOWER.style.backgroundColor = '#ffeb3b'; }
+
+        if (!FIC_NAME.value) { missing.push('FIC name'); FIC_NAME.style.backgroundColor = '#ffeb3b'; }
+        if (!FIC_FREQUENCY.value) { missing.push('FIC Freq.'); FIC_FREQUENCY.style.backgroundColor = '#ffeb3b'; }
+        if (!OVERHEAD.value) { missing.push('Overhead point.'); OVERHEAD.style.backgroundColor = '#ffeb3b'; }
+        if (!SQUAWK.value) { missing.push('SQUAWK.'); SQUAWK.style.backgroundColor = '#ffeb3b'; }
+
+        missing_label.textContent = missing.length ? 'Missing: ' + missing.join(', ') : 'All fields are OK! Create your ATC now.';
     }
 
     // Function to replace INFORMATION with INFO in input fields
@@ -2091,16 +2288,17 @@
     });
 
     // Flightplan elements
-    const CALLSIGN_input = document.getElementById('CALLSIGN_input');
-    const AIRCRAFT_TYPE_input = document.getElementById('AIRCRAFT_TYPE_input');
-    const POB_input = document.getElementById('POB_input');
-    const FLIGHTPLAN_input = document.getElementById('FLIGHTPLAN_input');
-    const DATETIME_input = document.getElementById('DATETIME_input');
+    const CALLSIGN = document.getElementById('CALLSIGN');
+    const AIRCRAFT_TYPE = document.getElementById('AIRCRAFT_TYPE');
+    const POB = document.getElementById('POB');
+    const FLIGHTPLAN = document.getElementById('FLIGHTPLAN');
+    const DATETIME = document.getElementById('DATETIME');
     const FLIGHT_RULES_spinner = document.getElementById('FLIGHT_RULES_spinner');
 
     // Create buttons at the START page
     const new_plan_btn = document.getElementById('new_plan_btn');
     const delete_btn = document.getElementById('delete_btn');
+    const retrieve_metar_btn = document.getElementById('retrieve_metar_btn');
 
     // Create buttons to generate ATC at the ATC page
     const BTN_HTML_SUMMARY = document.getElementById('BTN_HTML_SUMMARY');
@@ -2167,7 +2365,7 @@
 
         // Clear all input fields and departure fields
         await clear_general_fields();
-        DATETIME_input.value = await window.create_new_flightplan();
+        DATETIME.value = await window.create_new_flightplan();
 
         // Store default flight plan data
         window.flight_plan_data = await window.get_default_data();
@@ -2203,6 +2401,12 @@
     delete_btn.onclick = async () => {
       if (pyscriptReady && window.delete_flightplan) {
         await window.delete_flightplan();
+      }
+    };
+
+    retrieve_metar_btn.onclick = async () => {
+      if (pyscriptReady && window.retrieve_metar) {
+        await window.retrieve_metar('DEPARTURE');
       }
     };
 
@@ -2257,11 +2461,16 @@
         }
     });
 
-    const inputs = [DEPARTURE_ATC_GROUND, DEPARTURE_ATC_ATIS_FREQ, DEPARTURE_ATC_TOWER,
-                   DEPARTURE_ROUTE_ALTITUDE, DEPARTURE_ROUTE_NAME, DEPARTURE_RUNWAY,
-                   DEPARTURE_POSITION, DEPARTURE_NAME, DEPARTURE_ICAO,
-                   CALLSIGN_input, AIRCRAFT_TYPE_input, POB_input, FLIGHTPLAN_input,
-                   FIC_NAME, FIC_FREQUENCY, OVERHEAD, SQUAWK,
+    const inputs = [
+      CALLSIGN, AIRCRAFT_TYPE, POB, FLIGHTPLAN,
+      DEPARTURE_ATC_TOWER, DEPARTURE_ATC_ATIS_FREQ, DEPARTURE_ATC_GROUND,
+      DEPARTURE_ROUTE_ALTITUDE, DEPARTURE_ROUTE_NAME, DEPARTURE_RUNWAY,
+      DEPARTURE_POSITION, DEPARTURE_NAME, DEPARTURE_ICAO,
+      ARRIVAL_NAME, ARRIVAL_ICAO,
+      ARRIVAL_RUNWAY,
+      ARRIVAL_ROUTE_NAME, ARRIVAL_ROUTE_ALTITUDE, ARRIVAL_CIRCUIT_ALTITUDE,
+      ARRIVAL_ATC_TOWER,
+      FIC_NAME, FIC_FREQUENCY, OVERHEAD, SQUAWK,
     ];
       inputs.forEach(input => {
         input.addEventListener('input', () => {
@@ -2269,10 +2478,11 @@
           // Reset all backgrounds first
           inputs.forEach(inp => inp.style.backgroundColor = '');
 
-          if (!FLIGHTPLAN_input.value) { missing.push('Flightplan Name'); FLIGHTPLAN_input.style.backgroundColor = '#ffeb3b'; }
-          if (!CALLSIGN_input.value) { missing.push('CALLSIGN'); CALLSIGN_input.style.backgroundColor = '#ffeb3b'; }
-          if (!AIRCRAFT_TYPE_input.value) { missing.push('Aircraft Type'); AIRCRAFT_TYPE_input.style.backgroundColor = '#ffeb3b'; }
-          if (!POB_input.value) { missing.push('POB'); POB_input.style.backgroundColor = '#ffeb3b'; }
+          if (!FLIGHTPLAN.value) { missing.push('Flightplan Name'); FLIGHTPLAN.style.backgroundColor = '#ffeb3b'; }
+          if (!CALLSIGN.value) { missing.push('CALLSIGN'); CALLSIGN.style.backgroundColor = '#ffeb3b'; }
+          if (!AIRCRAFT_TYPE.value) { missing.push('Aircraft Type'); AIRCRAFT_TYPE.style.backgroundColor = '#ffeb3b'; }
+          if (!POB.value) { missing.push('POB'); POB.style.backgroundColor = '#ffeb3b'; }
+
           if (!DEPARTURE_NAME.value) { missing.push('Aerodrome Name (Dep.)'); DEPARTURE_NAME.style.backgroundColor = '#ffeb3b'; }
           if (!DEPARTURE_ICAO.value) { missing.push('ICAO (Dep.)'); DEPARTURE_ICAO.style.backgroundColor = '#ffeb3b'; }
           if (!DEPARTURE_POSITION.value) { missing.push('Position (Dep.)'); DEPARTURE_POSITION.style.backgroundColor = '#ffeb3b'; }
@@ -2280,15 +2490,25 @@
           if (!DEPARTURE_ROUTE_NAME.value) { missing.push('Route Name (Dep.)'); DEPARTURE_ROUTE_NAME.style.backgroundColor = '#ffeb3b'; }
           if (!DEPARTURE_ROUTE_ALTITUDE.value) { missing.push('Route Altitude (Dep.)'); DEPARTURE_ROUTE_ALTITUDE.style.backgroundColor = '#ffeb3b'; }
           if (!DEPARTURE_ATC_TOWER.value) { missing.push('Freq. Tower/Radio (Dep.)'); DEPARTURE_ATC_TOWER.style.backgroundColor = '#ffeb3b'; }
-          if (!FIC_NAME.value) { missing.push('FIC name'); FIC_NAME.style.backgroundColor = '#ffeb3b'; }
-          if (!FIC_FREQUENCY.value) { missing.push('FIC Freq.'); FIC_FREQUENCY.style.backgroundColor = '#ffeb3b'; }
-          if (!OVERHEAD.value) { missing.push('Overhead point.'); OVERHEAD.style.backgroundColor = '#ffeb3b'; }
           if (!SQUAWK.value) { missing.push('SQUAWK.'); SQUAWK.style.backgroundColor = '#ffeb3b'; }
           if (DEPARTURE_CTR.value === 'CTR') {
               if (!DEPARTURE_ATC_ATIS_FREQ.value) { missing.push('Freq. ATIS (Dep.)'); DEPARTURE_ATC_ATIS_FREQ.style.backgroundColor = '#ffeb3b'; }
               if (!DEPARTURE_ATC_GROUND.value) { missing.push('Freq. Delivery/Ground (Dep.)'); DEPARTURE_ATC_GROUND.style.backgroundColor = '#ffeb3b'; }
           }
-          missing_label.textContent = missing.length ? 'Missing: ' + missing.join(', ') : '';
+
+          if (!ARRIVAL_NAME.value) { missing.push('Aerodrome Name (Arr.)'); ARRIVAL_NAME.style.backgroundColor = '#ffeb3b'; }
+          if (!ARRIVAL_ICAO.value) { missing.push('ICAO (Arr.)'); ARRIVAL_ICAO.style.backgroundColor = '#ffeb3b'; }
+          if (!ARRIVAL_RUNWAY.value) { missing.push('Runway (Arr.)'); ARRIVAL_RUNWAY.style.backgroundColor = '#ffeb3b'; }
+          if (!ARRIVAL_ROUTE_NAME.value) { missing.push('Route Name (Arr.)'); ARRIVAL_ROUTE_NAME.style.backgroundColor = '#ffeb3b'; }
+          if (!ARRIVAL_ROUTE_ALTITUDE.value) { missing.push('Route Altitude (Arr.)'); ARRIVAL_ROUTE_ALTITUDE.style.backgroundColor = '#ffeb3b'; }
+          if (!ARRIVAL_CIRCUIT_ALTITUDE.value) { missing.push('Route Altitude (Arr.)'); ARRIVAL_CIRCUIT_ALTITUDE.style.backgroundColor = '#ffeb3b'; }
+          if (!ARRIVAL_ATC_TOWER.value) { missing.push('Freq. Tower/Radio (Arr.)'); ARRIVAL_ATC_TOWER.style.backgroundColor = '#ffeb3b'; }
+
+          if (!FIC_NAME.value) { missing.push('FIC name'); FIC_NAME.style.backgroundColor = '#ffeb3b'; }
+          if (!FIC_FREQUENCY.value) { missing.push('FIC Freq.'); FIC_FREQUENCY.style.backgroundColor = '#ffeb3b'; }
+          if (!OVERHEAD.value) { missing.push('Overhead point.'); OVERHEAD.style.backgroundColor = '#ffeb3b'; }
+
+          missing_label.textContent = missing.length ? 'Missing: ' + missing.join(', ') : 'All fields are OK! Create your ATC now.';
         });
       });
   </script>
@@ -2337,4 +2557,89 @@ const COUNTRIES_DATA = [
       select.appendChild(option);
     });
   }
+</script>
+
+
+<script>
+    function initializeAerodromeFields(fname) {
+        // Populate dropdown on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            populateDropdown(`${fname}_COUNTRY`, COUNTRIES_DATA);
+        });
+
+        // Download the aerodrome data when the country changes
+        document.getElementById(`${fname}_COUNTRY`).addEventListener("change", async function() {
+            const country = this.value;
+            if (country && window.import_aerodrome_selected) {
+                const spinner = document.getElementById('loading-spinner');
+                const spinnerText = spinner.querySelector('.spinner-text');
+                spinnerText.textContent = `Loading aerodrome data for ${country}...`;
+                spinner.style.display = 'flex';
+                document.body.style.cursor = 'wait';
+                document.body.style.overflow = 'hidden';  // Prevent scrolling while loading
+                try {
+                    await window.import_aerodrome_selected(fname, country);
+                } catch (error) {
+                    console.error("Error importing aerodrome data:", error);
+                    alert("Error loading aerodrome data. Please try again.");
+                } finally {
+                    spinner.style.display = 'none';
+                    document.body.style.cursor = '';
+                    document.body.style.overflow = '';  // Restore scrolling
+                }
+            }
+        });
+
+        // Populate fields when ICAO city is selected
+        document.getElementById(`${fname}_ICAO_CITY`).addEventListener("change", async function() {
+            const city_icao = this.value;
+
+            // Clear all aerodrome fields first to prevent data leakage
+            if (window.clear_aerodrome_fields) {
+                await window.clear_aerodrome_fields(fname);
+            }
+            // Clear all enroute fields first to prevent data leakage
+            if (fname === 'DEPARTURE' && window.clear_enroute_fields) {
+                await window.clear_enroute_fields();
+            }
+
+            if (city_icao && window.populate_aerodrome_fields_from_icao) {
+                // Call PyScript function to populate fields
+                await window.populate_aerodrome_fields_from_icao(fname, city_icao);
+                // Set CTR to true for departure city selection
+                if (fname === 'DEPARTURE') {
+                    document.getElementById('DEPARTURE_CTR').value = 'CTR';
+                }
+                // Update missing fields
+                updateMissingFields();
+            }
+        });
+
+        // Auto-save aerodrome data when fields change
+        const fields = [
+            `${fname}_COUNTRY`, `${fname}_ICAO_CITY`, `${fname}_CTR`,
+            `${fname}_NAME`, `${fname}_ICAO`, `${fname}_POSITION`,
+            `${fname}_RUNWAY`, `${fname}_ELEVATION`, `${fname}_ROUTE_NAME`,
+            `${fname}_ROUTE_ALTITUDE`, `${fname}_CIRCUIT_ALTITUDE`,
+            `${fname}_ATC_TOWER`, `${fname}_ATC_APPROACH`,
+            `${fname}_ATC_ATIS_FREQ`, `${fname}_ATC_GROUND`,
+            `${fname}_ATC_TELEPHONE`
+        ];
+
+        fields.forEach(fieldId => {
+            const element = document.getElementById(fieldId);
+            if (element) {
+                element.addEventListener('change', () => {
+                    if (window.flight_plan_data) {
+                        window.flight_plan_data[fieldId] = element.value;
+                        console.log(`Updated ${fieldId}:`, element.value);
+                    }
+                });
+            }
+        });
+    }
+    // Initialize with DEPARTURE
+    initializeAerodromeFields('DEPARTURE');
+    initializeAerodromeFields('ARRIVAL');
+
 </script>
