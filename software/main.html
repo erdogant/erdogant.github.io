@@ -96,7 +96,7 @@
 		<button id="set_datetime_btn">Now</button>
 			</div>
 
-	  <!-- Save + Bottom Buttons Container -->
+	  <!-- Bottom Buttons Container -->
 	  <div id="bottom-container">
     	  <!-- Logo -->
     	  <div class="coffee-container">
@@ -123,11 +123,18 @@
 	  <!-- Departure Information Label -->
 	  <label_h1>Departure Information</label_h1>
 
+        <div class="button-row">
+            <input type="checkbox" id="DEPARTURE_USE_CACHED" name="use_cached_departure" style="width: auto;" checked>
+            <label for="DEPARTURE_USE_CACHED">Load custom aerodrome data when available</label>
+        </div>
+
+
 	  <!-- Line 2: COUNTRY and ICAO_CITY spinners aligned -->
 	  <div class="button-row">
 		<select id="DEPARTURE_COUNTRY">
 			<option value=""></option>
 		</select>
+		<!--<select id="DEPARTURE_ICAO_CITY" onchange="handleIcaoSelection(event, 'DEPARTURE')" onclick="event.stopPropagation()">-->
 		<select id="DEPARTURE_ICAO_CITY">
 		  <option value=""></option>
 		  <!-- ICAO City options will be populated dynamically -->
@@ -192,7 +199,7 @@
 	  </div>-->
 
     <div class="button-row">
-        <button id="metar-taf-embed-departure" style="transition: background-color 0.3s; z-index: 1">Load New METAR-TAF</button>
+        <button id="metar-taf-embed-departure" style="transition: background-color 0.3s; z-index: 1">Load current METAR-TAF</button>
     </div>
     <div class="button-row">
         <input type="text" id="datetime-metar-taf-departure" placeholder="Date and Time for METAR" style="transition: background-color 0.3s">
@@ -288,7 +295,7 @@
             <input type="text" id="datetime-metar-taf-arrival" placeholder="Date and Time">
         </div>-->
         <div class="button-row">
-            <button id="metar-taf-embed-arrival" style="transition: background-color 0.3s; z-index: 1">Load New METAR-TAF</button>
+            <button id="metar-taf-embed-arrival" style="transition: background-color 0.3s; z-index: 1">Load current METAR-TAF</button>
         </div>
         <div class="button-row">
             <input type="text" id="datetime-metar-taf-arrival" placeholder="Date and Time" style="transition: background-color 0.3s">
@@ -400,6 +407,10 @@
 
        <div class="button-row">
            <button id="save_fields_btn" style="background-color: #4CAF50; color: white;" title="Saving fields in flightplan">Save Flightplan</button>
+       </div>
+       <div class="button-row">
+           <button id="save_departure_fields_btn" style="background-color: #4CAF50; color: white;" title="When Loading this Aerodrome the next time, the saved fields will be loaded">Save Departure Fields</button>
+           <button id="save_arrival_fields_btn" style="background-color: #4CAF50; color: white;" title="When Loading this Aerodrome the next time, the saved fields will be loaded">Save Arrival Fields</button>
        </div>
 
 
