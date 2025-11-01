@@ -6,8 +6,6 @@
     <!--RUN FULL SCREEN-->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#2A3F54">
 
   <title>Skywalk Flightplan</title>
@@ -191,14 +189,21 @@
 		<img id="DEPARTURE_image_cache" alt="Departure Aerodrome" style="max-width: 100%; height: auto; border-radius: 10px;">
 	  </div>
 
-	  <div class="button-row">
+	  <!--<div class="button-row">
 		<button id="retrieve_metar_btn">Update METAR/ TAF</button>
-	  </div>
+	  </div>-->
 
+    <div class="button-row">
+        <button id="metar-taf-embed-departure" style="transition: background-color 0.3s">Load/Refresh METAR-TAF</button>
+    </div>
+    <div class="button-row">
+        <input type="text" id="datetime-metar-taf-departure" placeholder="Date and Time" style="transition: background-color 0.3s">
     </div>
 
+    <div id="departureWidgetContainer"></div>
 
 
+    </div>
 
 
     <!-- ============================================= -->
@@ -207,78 +212,93 @@
 
 	<div id="Arrival" class="tabcontent">
 
-	  <!-- Arrival Information Label -->
-	  <label_h1>Arrival Information</label_h1>
+        <!-- Arrival Information Label -->
+        <label_h1>Arrival Information</label_h1>
 
-	  <!-- Line 2: COUNTRY and ICAO_CITY spinners aligned -->
-	  <div class="button-row">
-		<select id="ARRIVAL_COUNTRY">
-			<option value=""></option>
-		</select>
-		<select id="ARRIVAL_ICAO_CITY">
-		  <option value=""></option>
-		  <!-- ICAO City options will be populated dynamically -->
-		</select>
-	  </div>
+        <!-- Line 2: COUNTRY and ICAO_CITY spinners aligned -->
+        <div class="button-row">
+            <select id="ARRIVAL_COUNTRY">
+                <option value=""></option>
+            </select>
+            <select id="ARRIVAL_ICAO_CITY">
+                <option value=""></option>
+                <!-- ICAO City options will be populated dynamically -->
+                </select>
+        </div>
 
-	  <!-- Line 4: NAME and ICAO inputs -->
-	  <div class="button-row">
-		<input type="text" id="ARRIVAL_NAME" placeholder="Airport Name">
-		<input type="text" id="ARRIVAL_ICAO" class="UPPERCASE_input" placeholder="ICAO">
-	  </div>
+        <!-- Line 4: NAME and ICAO inputs -->
+        <div class="button-row">
+            <input type="text" id="ARRIVAL_NAME" placeholder="Airport Name">
+            <input type="text" id="ARRIVAL_ICAO" class="UPPERCASE_input" placeholder="ICAO">
+        </div>
 
-	  <!-- Line 5: POSITION, RUNWAY, ELEVATION inputs -->
-	  <div class="button-row">
-		<input type="text" id="ARRIVAL_POSITION" placeholder="Position (At the Apron)", class="UPPERCASE_input">
-		<select id="ARRIVAL_CTR" onchange="updateMissingFields()">
-		  <option value=""></option>
-		  <option value="CTR">CTR</option>
-		</select>
+        <!-- Line 5: POSITION, RUNWAY, ELEVATION inputs -->
+        <div class="button-row">
+            <input type="text" id="ARRIVAL_POSITION" placeholder="Position (At the Apron)", class="UPPERCASE_input">
+            <select id="ARRIVAL_CTR" onchange="updateMissingFields()">
+        <option value=""></option>
+        <option value="CTR">CTR</option>
+        </select>
 
-	  </div>
+        </div>
 
-	  <div class="button-row">
-		<input type="text" id="ARRIVAL_RUNWAY" placeholder="Runway Number">
-		<input type="text" id="ARRIVAL_ELEVATION" placeholder="Field Elevation (ft)">
-	  </div>
+        <div class="button-row">
+            <input type="text" id="ARRIVAL_RUNWAY" placeholder="Runway Number">
+            <input type="text" id="ARRIVAL_ELEVATION" placeholder="Field Elevation (ft)">
+        </div>
 
-	  <!-- Line 6: ROUTE_NAME, ROUTE_ALTITUDE, CIRCUIT_ALTITUDE inputs -->
-	  <div class="button-row">
-		<input type="text" id="ARRIVAL_ROUTE_NAME" placeholder="Route Name", class="UPPERCASE_input">
-		<input type="text" id="ARRIVAL_ROUTE_ALTITUDE" placeholder="Route Altitude">
-		<input type="text" id="ARRIVAL_CIRCUIT_ALTITUDE" placeholder="Circuit Altitude">
-	  </div>
+        <!-- Line 6: ROUTE_NAME, ROUTE_ALTITUDE, CIRCUIT_ALTITUDE inputs -->
+        <div class="button-row">
+            <input type="text" id="ARRIVAL_ROUTE_NAME" placeholder="Route Name", class="UPPERCASE_input">
+            <input type="text" id="ARRIVAL_ROUTE_ALTITUDE" placeholder="Route Altitude">
+            <input type="text" id="ARRIVAL_CIRCUIT_ALTITUDE" placeholder="Circuit Altitude">
+        </div>
 
-	  <!-- Line 7: Frequency label -->
-	  <label_h1>Frequency</label_h1>
+        <!-- Line 7: Frequency label -->
+        <label_h1>Frequency</label_h1>
 
-	  <!-- Line 8: ATC_TOWER and ATC_APPROACH inputs -->
-	  <div class="button-row">
-		<input type="text" id="ARRIVAL_ATC_TOWER" placeholder="Tower Frequency">
-		<input type="text" id="ARRIVAL_ATC_APPROACH" placeholder="Approach Frequency">
-	  </div>
+        <!-- Line 8: ATC_TOWER and ATC_APPROACH inputs -->
+        <div class="button-row">
+            <input type="text" id="ARRIVAL_ATC_TOWER" placeholder="Tower Frequency">
+            <input type="text" id="ARRIVAL_ATC_APPROACH" placeholder="Approach Frequency">
+        </div>
 
-	  <!-- Line 9: ATC_ATIS_FREQ and ATC_GROUND inputs -->
-	  <div class="button-row">
-		<input type="text" id="ARRIVAL_ATC_ATIS_FREQ" placeholder="ATIS Frequency">
-		<input type="text" id="ARRIVAL_ATC_GROUND" placeholder="Ground Frequency">
-	  </div>
+        <!-- Line 9: ATC_ATIS_FREQ and ATC_GROUND inputs -->
+        <div class="button-row">
+            <input type="text" id="ARRIVAL_ATC_ATIS_FREQ" placeholder="ATIS Frequency">
+            <input type="text" id="ARRIVAL_ATC_GROUND" placeholder="Ground Frequency">
+        </div>
 
-	  <!-- Line 10: ATC_TELEPHONE input -->
-	  <div class="button-row">
-		<input type="text" id="ARRIVAL_ATC_TELEPHONE" placeholder="Telephone">
-	  </div>
+        <!-- Line 10: ATC_TELEPHONE input -->
+        <div class="button-row">
+            <input type="text" id="ARRIVAL_ATC_TELEPHONE" placeholder="Telephone">
+        </div>
 
-	  <!-- ARRIVAL Image -->
-	  <div class="logo-container" style="margin-top: 20px;">
-		<img id="ARRIVAL_image_cache" alt="Arrival Aerodrome" style="max-width: 100%; height: auto; border-radius: 10px;">
-	  </div>
+        <!-- ARRIVAL Image -->
+        <div class="logo-container" style="margin-top: 20px;">
+            <img id="ARRIVAL_image_cache" alt="Arrival Aerodrome" style="max-width: 100%; height: auto; border-radius: 10px;">
+        </div>
 
-	  <div class="button-row">
-		<button id="retrieve_metar_btn">Update METAR/ TAF</button>
-	  </div>
 
-       </div>
+        <!--<div class="button-row">
+            <button id="retrieve_metar_btn">Update METAR/ TAF</button>
+        </div>-->
+        <!--<div class="button-row">
+            <button id="metar-taf-embed-arrival">Load/Refresh METAR-TAF</button>
+        </div>
+        <div class="button-row">
+            <input type="text" id="datetime-metar-taf-arrival" placeholder="Date and Time">
+        </div>-->
+        <div class="button-row">
+            <button id="metar-taf-embed-arrival" style="transition: background-color 0.3s">Load/Refresh METAR-TAF</button>
+        </div>
+        <div class="button-row">
+            <input type="text" id="datetime-metar-taf-arrival" placeholder="Date and Time" style="transition: background-color 0.3s">
+        </div>
+
+        <div id="arrivalWidgetContainer"></div>
+
+    </div>
 
 
     <!-- =============== TAB ENROUTE =============== -->
@@ -349,13 +369,15 @@
             </div>
         </div>
 
-        <label_h1>Air Traffic Control (ATC)</label_h1>
+        <label_h1>Required Fields</label_h1>
         <!-- Bottom Buttons Container -->
     	  <div id="bottom-container">
     		<div class="warning" id="missing_label">Missing: Flightplan Name, CALLSIGN, Aircraft Type</div>
     	  </div>
 
-        <div class="button-row" style="border: 2px solid purple; border-radius: 10px; padding: 10px;">
+       <label_h1>Air Traffic Control (ATC)</label_h1>
+
+        <div class="button-row" style="border: 2px solid lightgrey; border-radius: 10px; padding: 10px;">
             <button id="BTN_HTML_SUMMARY">Create Summary ATC</button>
             <button id="BTN_HTML_SUMMARY_REV">Create Reverse</button>
         </div>
@@ -372,6 +394,8 @@
             <button id="BTN_HTML_EN_REV">Create Reverse</button>
         </div>
 
+        <label_h1>Disclaimer</label_h1>
+        <div class="disclaimer" style="margin-bottom: 20px; border: 2px solid red; border-radius: 10px; padding: 10px;">SkyWalk is provided as-is without any warranty or guarantee. SkyWalk is only to be used for educational purposes and not for commercial or professional use. The developers are not responsible for any damages or losses resulting from the use of this app.</div>
         <!--
         <div class="button-row">
             <select id="DEPARTURE_COUNTRY_DEFAULT">
@@ -403,7 +427,7 @@
     <div id="Config" class="tabcontent">
         <!-- CONFIGURATIONS -->
         <label_h1>Information</label_h1>
-        <div class="info" style="margin-bottom: 20px;">SkyWalk is a web-based tool designed to help pilots communicate effectively with Air Traffic Control (ATC). The app is free for use and does not require any registration or login. If you enjoy using SkyWalk, please consider supporting by donating a coffee.</div>
+        <div class="info" style="margin-bottom: 20px;">SkyWalk is a web-based tool designed to help pilots communicate effectively with Air Traffic Control (ATC). The app is free for use, is for educational purposes and does not require any registration or login. If you enjoy using SkyWalk, please consider supporting by donating a coffee.</div>
 
         <label_h1>Cleaning</label_h1>
         <div class="button-row" style="margin-top: 20px;">
@@ -411,73 +435,174 @@
         </div>
         <div class="warning" style="margin-bottom: 20px;">Warning: This will permanently delete all saved flightplans from your local browser storage. The reason for using this is when you want to start fresh or when you suspect that your flightplans are corrupted or the ATC output does not show or update. This action cannot be undone.</div>
 
-        <label_h1>Disclaimer</label_h1>
-        <div class="disclaimer" style="margin-bottom: 20px;">SkyWalk is provided as-is without any warranty or guarantee. The developers are not responsible for any damages or losses resulting from the use of this app. SkyWalk is only to be used for educational purposes and not for commercial or professional use.</div>
-
     </div>
 
-    <script>
-      // Populate dropdowns and setup event listeners on page load
-        window.addEventListener('DOMContentLoaded', () => {
-          // Populate dropdowns
-          // populateDropdown('DEPARTURE_COUNTRY_DEFAULT', COUNTRIES_DATA);
-          // populateDropdown('ARRIVAL_COUNTRY_DEFAULT', COUNTRIES_DATA);
 
-          console.log('Settings initialized');
 
-          // Update settings when changed
-          document.getElementById('user_usage_type').addEventListener('change', (e) => {
-              if (window.settings) {
-                  window.settings.user_usage_type = e.target.value;
-                  console.log('Updated output type:', window.settings.user_usage_type);
-                  window.settings.fontsizes = window.set_fontsizes({
-                      user_usage_type: window.settings.user_usage_type,
-                      user_select_cols: window.settings.user_select_cols
-                  });
-              }
-          });
+<script>
+    function checkMetarAge() {
+      /* Check datetime of METAR data and update UI colors.
+       *
+       * This function checks the datetime of displayed METAR data and updates the UI to indicate staleness.
+       * If METAR data is older than 15 minutes:
+       * - Sets elements' background to light red
+       * Used to visually alert user that METAR data should be refreshed.
+       */
+        function updateColors(prefix) {
+            const dateField = document.getElementById(`datetime-metar-taf-${prefix}`);
+            const button = document.getElementById(`metar-taf-embed-${prefix}`);
+            if (!dateField?.value) return;
 
-          document.getElementById('user_select_cols').addEventListener('change', (e) => {
-              if (window.settings) {
-                  window.settings.user_select_cols = e.target.value;
-                  console.log('Updated nr. columns:', window.settings.user_select_cols);
-                  window.settings.fontsizes = window.set_fontsizes({
-                      user_usage_type: window.settings.user_usage_type,
-                      user_select_cols: window.settings.user_select_cols
-                  });
-              }
-          });
+            const metarTime = new Date(dateField.value);
+            const now = new Date();
+            const diff = now - metarTime;
+            const isOld = diff > 15 * 60 * 1000; // 15 minutes in milliseconds
 
-          // document.getElementById('DEPARTURE_COUNTRY_DEFAULT').addEventListener('change', (e) => {
-          //     if (window.settings) {
-          //         window.settings.DEPARTURE_COUNTRY = e.target.value;
-          //         console.log('Updated DEPARTURE_COUNTRY:', e.target.value);
-          //     }
-          // });
+            dateField.style.backgroundColor = isOld ? '#ffebee' : '';
+            button.style.backgroundColor = isOld ? '#ffebee' : '';
+        }
 
-          // document.getElementById('ARRIVAL_COUNTRY_DEFAULT').addEventListener('change', (e) => {
-          //     if (window.settings) {
-          //         window.settings.ARRIVAL_COUNTRY = e.target.value;
-          //         console.log('Updated ARRIVAL_COUNTRY:', e.target.value);
-          //     }
-          // });
+        updateColors('departure');
+        updateColors('arrival');
+    }
 
-          // document.getElementById('MAX_HEADWIND_LIMIT').addEventListener('change', (e) => {
-          //     if (window.settings) {
-          //         window.settings.MAX_HEADWIND_LIMIT = e.target.value;
-          //         console.log('Updated MAX_HEADWIND_LIMIT:', e.target.value);
-          //     }
-          // });
+    setInterval(checkMetarAge, 60000); // Check every minute
 
-          // document.getElementById('MAX_CROSSWIND_LIMIT').addEventListener('change', (e) => {
-          //     if (window.settings) {
-          //         window.settings.MAX_CROSSWIND_LIMIT = e.target.value;
-          //         console.log('Updated MAX_CROSSWIND_LIMIT:', e.target.value);
-          //     }
-          // });
+    function createMetarWidget(containerId, icao, name, uniqueSuffix) {
+      console.log(`🛫 Creating METAR widget for ${icao}`);
+      if (icao === 'unknown') {
+          window.alert("Please fill in ICAO field first before loading METAR data");
+          return;
+      }
+
+      // Clear previous widget (if any)
+        const container = document.getElementById(containerId);
+        container.innerHTML = '';
+
+        // Create unique ID for this widget instance
+        const widgetId = `metartaf-${uniqueSuffix}`;
+
+
+        // Create <a> element
+        const link = document.createElement('a');
+        link.href = `https://metar-taf.com/metar/${icao}`;
+        link.id = widgetId;
+        link.textContent = `METAR ${name}`;
+        link.style = "font-size:16px; font-weight:500; color:#000; width:310px; height:435px; display:block";
+
+        // Append link to container
+        container.appendChild(link);
+
+        // Create <script> element
+        const script = document.createElement('script');
+        script.async = true;
+        script.defer = true;
+        script.crossOrigin = "anonymous";
+        script.src = `https://metar-taf.com/embed-js/${icao}?u=39426&qnh=hPa&rh=dp&target=${uniqueSuffix}`;
+
+        // Append script to container
+        container.appendChild(script);
+    }
+
+    // Event listener for button
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('metar-taf-embed-departure')?.addEventListener('click', () => {
+        const name = document.getElementById('DEPARTURE_NAME').value || 'Unknown Airport';
+        const icao = document.getElementById('DEPARTURE_ICAO').value.toUpperCase() || 'unknown';
+        // Update datetime field with current time
+        const now = new Date();
+        const dateStr = now.toLocaleString('en-US', {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false});
+        // Reset colors
+        const button = document.getElementById('metar-taf-embed-departure');
+        const dateField = document.getElementById('datetime-metar-taf-departure');
+        button.style.backgroundColor = '';
+        dateField.style.backgroundColor = '';
+        dateField.value = dateStr;
+        // Create the widget
+        createMetarWidget('departureWidgetContainer', icao, name, 'DEPARTURE');
         });
 
-        </script>
+        document.getElementById('metar-taf-embed-arrival')?.addEventListener('click', () => {
+        const name = document.getElementById('ARRIVAL_NAME').value || 'Unknown Airport';
+        const icao = document.getElementById('ARRIVAL_ICAO').value.toUpperCase() || 'unknown';
+        // Update datetime field with current time
+        const now = new Date();
+        const dateStr = now.toLocaleString('en-US', {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false});
+        // Reset colors
+        const button = document.getElementById('metar-taf-embed-arrival');
+        const dateField = document.getElementById('datetime-metar-taf-arrival');
+        button.style.backgroundColor = '';
+        dateField.style.backgroundColor = '';
+        dateField.value = dateStr;
+        // Create the widget
+        createMetarWidget('arrivalWidgetContainer', icao, name, 'ARRIVAL');
+      });
+    });
+
+    </script>
+
+<script>
+    // Populate dropdowns and setup event listeners on page load
+    window.addEventListener('DOMContentLoaded', () => {
+    // Populate dropdowns
+    // populateDropdown('DEPARTURE_COUNTRY_DEFAULT', COUNTRIES_DATA);
+    // populateDropdown('ARRIVAL_COUNTRY_DEFAULT', COUNTRIES_DATA);
+
+    console.log('Settings initialized');
+
+    // Update settings when changed
+    document.getElementById('user_usage_type').addEventListener('change', (e) => {
+        if (window.settings) {
+            window.settings.user_usage_type = e.target.value;
+            console.log('Updated output type:', window.settings.user_usage_type);
+            window.settings.fontsizes = window.set_fontsizes({
+                user_usage_type: window.settings.user_usage_type,
+                user_select_cols: window.settings.user_select_cols
+            });
+        }
+    });
+
+    document.getElementById('user_select_cols').addEventListener('change', (e) => {
+        if (window.settings) {
+            window.settings.user_select_cols = e.target.value;
+            console.log('Updated nr. columns:', window.settings.user_select_cols);
+            window.settings.fontsizes = window.set_fontsizes({
+                user_usage_type: window.settings.user_usage_type,
+                user_select_cols: window.settings.user_select_cols
+            });
+        }
+    });
+
+    // document.getElementById('DEPARTURE_COUNTRY_DEFAULT').addEventListener('change', (e) => {
+    //     if (window.settings) {
+    //         window.settings.DEPARTURE_COUNTRY = e.target.value;
+    //         console.log('Updated DEPARTURE_COUNTRY:', e.target.value);
+    //     }
+    // });
+
+    // document.getElementById('ARRIVAL_COUNTRY_DEFAULT').addEventListener('change', (e) => {
+    //     if (window.settings) {
+    //         window.settings.ARRIVAL_COUNTRY = e.target.value;
+    //         console.log('Updated ARRIVAL_COUNTRY:', e.target.value);
+    //     }
+    // });
+
+    // document.getElementById('MAX_HEADWIND_LIMIT').addEventListener('change', (e) => {
+    //     if (window.settings) {
+    //         window.settings.MAX_HEADWIND_LIMIT = e.target.value;
+    //         console.log('Updated MAX_HEADWIND_LIMIT:', e.target.value);
+    //     }
+    // });
+
+    // document.getElementById('MAX_CROSSWIND_LIMIT').addEventListener('change', (e) => {
+    //     if (window.settings) {
+    //         window.settings.MAX_CROSSWIND_LIMIT = e.target.value;
+    //         console.log('Updated MAX_CROSSWIND_LIMIT:', e.target.value);
+    //     }
+    // });
+});
+
+</script>
 
 
 <!-- Javascript functionality -->
@@ -2404,11 +2529,11 @@
       }
     };
 
-    retrieve_metar_btn.onclick = async () => {
-      if (pyscriptReady && window.retrieve_metar) {
-        await window.retrieve_metar('DEPARTURE');
-      }
-    };
+    // retrieve_metar_btn.onclick = async () => {
+    //   if (pyscriptReady && window.retrieve_metar) {
+    //     await window.retrieve_metar('DEPARTURE');
+    //   }
+    // };
 
 
 

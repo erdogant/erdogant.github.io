@@ -263,7 +263,7 @@ input[type="text"]:hover {
 }
 .disclaimer {
     font-size: 12px;
-    color: orange;
+    color: red;
     margin: 4px 0;
     text-align: center;
 }
