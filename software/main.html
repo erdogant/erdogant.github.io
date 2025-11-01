@@ -9,6 +9,12 @@
   <meta name="theme-color" content="#2A3F54">
 
   <title>Skywalk Flightplan</title>
+
+  <!--<link rel="shortcut icon" type="image/x-icon" href="https://erdogant.github.io/datasets/skywalk/figs/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://erdogant.github.io/datasets/skywalk/figs/icon32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://erdogant.github.io/datasets/skywalk/figs/icon16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://erdogant.github.io/datasets/skywalk/figs/icon180.png">-->
+
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://pyscript.net/releases/2025.8.1/core.css">
   <script type="module" src="https://pyscript.net/releases/2025.8.1/core.js"></script>
@@ -76,7 +82,7 @@
 	  <!-- Persons on Board + Flight Rules row -->
 	  <div class="button-row">
 		<input type="text" id="POB" placeholder="Persons on Board">
-		<select id="FLIGHT_RULES_spinner">
+		<select id="FLIGHT_RULES">
 		  <option value="VFR">VFR</option>
 		  <option value="IFR">IFR</option>
 		</select>
@@ -184,7 +190,7 @@
 	  </div>-->
 
     <div class="button-row">
-        <button id="metar-taf-embed-departure" style="transition: background-color 0.3s">Refresh METAR-TAF</button>
+        <button id="metar-taf-embed-departure" style="transition: background-color 0.3s; z-index: 1">Load New METAR-TAF</button>
     </div>
     <div class="button-row">
         <input type="text" id="datetime-metar-taf-departure" placeholder="Date and Time for METAR" style="transition: background-color 0.3s">
@@ -210,7 +216,6 @@
             <select id="ARRIVAL_COUNTRY">
                 <option value=""></option>
             </select>
-            <!--<select id="ARRIVAL_ICAO_CITY" onchange="preserveFormFields()" onfocus="preserveFormFields()">-->
                 <select id="ARRIVAL_ICAO_CITY">
                 <option value=""></option>
                 <!-- ICAO City options will be populated dynamically -->
@@ -281,7 +286,7 @@
             <input type="text" id="datetime-metar-taf-arrival" placeholder="Date and Time">
         </div>-->
         <div class="button-row">
-            <button id="metar-taf-embed-arrival" style="transition: background-color 0.3s">Refresh METAR-TAF</button>
+            <button id="metar-taf-embed-arrival" style="transition: background-color 0.3s; z-index: 1">Load New METAR-TAF</button>
         </div>
         <div class="button-row">
             <input type="text" id="datetime-metar-taf-arrival" placeholder="Date and Time" style="transition: background-color 0.3s">
@@ -395,8 +400,6 @@
            <button id="save_fields_btn" style="background-color: #4CAF50; color: white;" title="Saving fields in flightplan">Save Flightplan</button>
        </div>
 
-       <label_h1>Disclaimer</label_h1>
-        <div class="disclaimer" style="margin-bottom: 20px; border: 2px solid red; border-radius: 10px; padding: 10px;">SkyWalk is provided “as is,” without any warranties, express or implied. It is intended for educational use. The developers assume no liability for any damages arising from its use.</div>
 
         <!--
         <div class="button-row">
@@ -437,6 +440,9 @@
         </div>
         <div class="warning" style="margin-bottom: 20px;">Warning: This will permanently delete all saved flightplans and aerodrome images from your local browser storage. The reason for using this is when you want to start fresh or when you suspect that your flightplans or images are corrupted or the ATC page does not show or update. This action cannot be undone.</div>
 
+        <label_h1>Disclaimer</label_h1>
+         <div class="disclaimer" style="margin-bottom: 20px; border: 2px solid red; border-radius: 10px; padding: 10px;">SkyWalk is provided “as is,” without any warranties, express or implied. SkyWalk is intended for educational use. The developers assume no liability for any damages arising from using this application.</div>
+
     </div>
 
 
@@ -458,64 +464,6 @@
 
 <script>
 
-    let formFields = {};
-    let isRestoring = false;
-
-    // function preserveFormFields() {
-    //     // This function only for a weird fix for mobile phones.
-    //     /*
-    //     This script fixes weird behavior that is only seen on mobile Phones.
-    //     When a new ICAO is selected in ARRIVAL, it clears some of the fields in Departure tab.
-    //     This function prevents from doing that. So it is a fix to preserve form field info and otherwise restore during tab navigation.
-
-    //     When switching between tabs, certain form fields like DEPARTURE_POSITION,
-    //     DEPARTURE_ROUTE_NAME, ARRIVAL_ICAO_CITY etc. may get cleared. This code stores
-    //     those field values and restores them if they are inadvertently cleared.
-
-    //     The restoration logic:
-    //     - Saves field values before tab switches
-    //     - Checks if fields were cleared after switching
-    //     - Restores original values for cleared fields
-    //     */
-    //     if (isRestoring) return;
-    //     // Save important form fields
-    //     const fieldsToPreserve = [
-    //         'DEPARTURE_POSITION', 'DEPARTURE_ROUTE_NAME', 'ARRIVAL_ICAO_CITY',
-    //         'DEPARTURE_NAME', 'DEPARTURE_ICAO', 'DEPARTURE_RUNWAY', 'DEPARTURE_ELEVATION',
-    //         'DEPARTURE_ROUTE_ALTITUDE', 'DEPARTURE_CIRCUIT_ALTITUDE',
-    //     ];
-    //     fieldsToPreserve.forEach(id => {
-    //         const element = document.getElementById(id);
-    //         if (element && element.value) {
-    //             formFields[id] = element.value;
-    //         }
-    //     });
-    // }
-
-    // // Restore form fields if they get cleared
-    // function restoreFormFields() {
-    //     if (isRestoring) return;
-    //     isRestoring = true;
-    //     try {
-    //         Object.keys(formFields).forEach(id => {
-    //             const element = document.getElementById(id);
-    //             if (element && !element.value && formFields[id]) {
-    //                 element.value = formFields[id];
-    //             }
-    //         });
-    //     } finally {
-    //         isRestoring = false;
-    //     }
-    // }
-
-    // // Check fields after tab changes
-    // document.querySelectorAll('.tablinks').forEach(tab => {
-    //     tab.addEventListener('click', () => {
-    //         preserveFormFields();
-    //         setTimeout(restoreFormFields, 100);
-    //     });
-    // });
-
     // Add save button functionality
     document.getElementById('save_fields_btn')?.addEventListener('click', () => {
       if (pyscriptReady && window.save_flightplan) {
@@ -533,19 +481,6 @@
           console.error("Error saving flightplan data:", error);
         }
       }
-
-
-      // // preserveFormFields();
-      //   lastSavedFields = {...formFields};
-      //   // Visual feedback
-      //   const saveBtn = document.getElementById('save_fields_btn');
-      //   const originalColor = saveBtn.style.backgroundColor;
-      //   saveBtn.style.backgroundColor = '#45a049';
-      //   saveBtn.textContent = 'Saved!';
-      //   setTimeout(() => {
-      //       saveBtn.style.backgroundColor = originalColor;
-      //       saveBtn.textContent = 'Save Fields';
-      //   }, 1000);
     });
 
     function checkMetarAge() {
@@ -674,13 +609,13 @@
 
 <script>
     // Populate dropdowns and setup event listeners on page load
-    window.addEventListener('DOMContentLoaded', () => {
+    // window.addEventListener('DOMContentLoaded', () => {
     // Populate dropdowns
     // populateDropdown('DEPARTURE_COUNTRY_DEFAULT', COUNTRIES_DATA);
     // populateDropdown('ARRIVAL_COUNTRY_DEFAULT', COUNTRIES_DATA);
 
-    console.log('DOM Content Loaded');
-});
+    // console.log('DOM Content Loaded');
+    // });
 
     document.getElementById('user_usage_type').addEventListener('change', (e) => {
         if (window.settings) {
@@ -1089,7 +1024,7 @@
             # Store data in global variable
             if fname == 'DEPARTURE':
                 js.window.AERODROME_DEPARTURE_DATA = df.to_dict('records')
-            else:
+            elif fname == 'ARRIVAL':
                 js.window.AERODROME_ARRIVAL_DATA = df.to_dict('records')
 
             # Populate DEPARTURE_ICAO_CITY dropdown with aerodrome data
@@ -1157,7 +1092,12 @@
         js.window.flight_plan_data[f"{fname}_RUNWAY"] = normalize_freq(rwy_ids)
         js.window.flight_plan_data[f"{fname}_NAME"] = row_dict['name']
         js.window.flight_plan_data[f"{fname}_ELEVATION"] = str(row_dict['elevation_aerodrome'])
-        js.window.flight_plan_data[f"{fname}_CTR"] = 'CTR' if CTR_BOOL else ''
+
+        ctr_value = 'CTR' if CTR_BOOL else ''
+        js.window.flight_plan_data[f"{fname}_CTR"] = ctr_value
+        js.document.getElementById(f'{fname}_CTR').value = ctr_value
+        js.document.getElementById(f'{fname}_CTR').dispatchEvent(js.Event.new('change'))
+
         js.window.flight_plan_data[f"{fname}_COUNTRY"] = row_dict['country']
         js.window.flight_plan_data[f"{fname}_IMAGE"] = row_dict.get('url.wikipedia.aerodrome.image', None)
         js.window.flight_plan_data[f"{fname}_URL_WEBSITE"] = row_dict.get('url.website', '')
@@ -1188,13 +1128,13 @@
               js.window.flight_plan_data[key] = freq_clean
               print(f"  {key}: {js.window.flight_plan_data[key]}")
 
-        # Update all GUI fields from flight_plan_data
-        update_aerodrome_gui_fields('DEPARTURE')
-        update_aerodrome_gui_fields('ARRIVAL')
-
-        # Update departure image
-        await update_aerodrome_image('DEPARTURE')
-        await update_aerodrome_image('ARRIVAL')
+        # Update all GUI fields and images
+        if fname == 'DEPARTURE':
+              update_aerodrome_gui_fields('DEPARTURE')
+              await update_aerodrome_image('DEPARTURE')
+        elif fname == 'ARRIVAL':
+              update_aerodrome_gui_fields('ARRIVAL')
+              await update_aerodrome_image('ARRIVAL')
 
     def normalize_freq(value):
         # Convert to string and strip brackets/quotes
@@ -1225,7 +1165,7 @@
           'DATETIME',
           'CALLSIGN',
           'AIRCRAFT_TYPE',
-          'FLIGHT_RULES_spinner',
+          'FLIGHT_RULES',
           'POB',
         ]
 
@@ -1233,17 +1173,13 @@
         for field_id in field_ids:
             element = js.document.getElementById(field_id)
             if element:
-                if field_id == 'FLIGHT_RULES_spinner':
+                if field_id == 'FLIGHT_RULES':
                     element.value = 'VFR'
                 else:
                     element.value = ''
 
-        # Clear flight_plan_data for departure fields
-        keys = [
-            'FLIGHTPLAN', 'DATETIME', 'CALLSIGN', 'CALLSIGN_SHORT',
-            'AIRCRAFT_TYPE', 'FLIGHT_RULES', 'POB',
-        ]
-
+        # Clear flight_plan_data
+        keys = field_ids + ['CALLSIGN_SHORT']
         for key in keys:
             if key == 'FLIGHT_RULES':
                 js.window.flight_plan_data[key] = 'VFR'
@@ -1251,8 +1187,27 @@
                 js.window.flight_plan_data[key] = ''
 
 
+    def update_general_gui_fields(flight_plan_dict):
+        """Update GENERAL GUI fields from js.window.flight_plan_data"""
+        print("🔄 Updating GENERAL GUI fields...")
+
+        if flight_plan_dict.get('FLIGHTPLAN'):
+            js.document.getElementById('FLIGHTPLAN').value = flight_plan_dict['FLIGHTPLAN']
+        if flight_plan_dict.get('CALLSIGN'):
+            js.document.getElementById('CALLSIGN').value = flight_plan_dict['CALLSIGN']
+        if flight_plan_dict.get('AIRCRAFT_TYPE'):
+            js.document.getElementById('AIRCRAFT_TYPE').value = flight_plan_dict['AIRCRAFT_TYPE']
+        if flight_plan_dict.get('POB'):
+            js.document.getElementById('POB').value = flight_plan_dict['POB']
+        if flight_plan_dict.get('FLIGHT_RULES'):
+            js.document.getElementById('FLIGHT_RULES').value = flight_plan_dict['FLIGHT_RULES']
+        if flight_plan_dict.get('DATETIME'):
+            js.document.getElementById('DATETIME').value = flight_plan_dict['DATETIME']
+
+
+
     def update_aerodrome_gui_fields(fname):
-        """Update all DEPARTURE/ARRIVAL GUI fields from js.window.flight_plan_data"""
+        """Update GENERAL GUI fields from js.window.flight_plan_data"""
         print("🔄 Updating DEPARTURE/ARRIVAL GUI fields...")
 
         # List of field IDs to update
@@ -1268,6 +1223,7 @@
             f'{fname}_ROUTE_NAME',
             f'{fname}_ROUTE_ALTITUDE',
             f'{fname}_CIRCUIT_ALTITUDE',
+            f'{fname}_CTR',
             f'{fname}_ATC_TOWER',
             f'{fname}_ATC_APPROACH',
             f'{fname}_ATC_ATIS_FREQ',
@@ -1318,6 +1274,75 @@
 
         print(f"✅ Updated {updated_count} GUI fields")
 
+
+    def update_aerodrome_gui_fields(fname):
+        """Update all DEPARTURE/ARRIVAL GUI fields from js.window.flight_plan_data"""
+        print("🔄 Updating DEPARTURE/ARRIVAL GUI fields...")
+
+        # List of field IDs to update
+        field_ids = [
+            f'{fname}_COUNTRY',
+            f'{fname}_ICAO_CITY',
+            f'{fname}_COUNTRY',
+            f'{fname}_NAME',
+            f'{fname}_ICAO',
+            f'{fname}_POSITION',
+            f'{fname}_RUNWAY',
+            f'{fname}_ELEVATION',
+            f'{fname}_ROUTE_NAME',
+            f'{fname}_ROUTE_ALTITUDE',
+            f'{fname}_CIRCUIT_ALTITUDE',
+            f'{fname}_CTR',
+            f'{fname}_ATC_TOWER',
+            f'{fname}_ATC_APPROACH',
+            f'{fname}_ATC_ATIS_FREQ',
+            f'{fname}_ATC_GROUND',
+            f'{fname}_ATC_TELEPHONE',
+        ]
+
+        # Only update these fields based on DEPARTURE
+        if fname == 'DEPARTURE':
+            field_ids = field_ids + [
+                'FIC_NAME',
+                'FIC_FREQUENCY',
+                'SQUAWK',
+                'OVERHEAD',
+                'FIC_NAME2',
+                'FIC_FREQUENCY2',
+                'SQUAWK2',
+                'OVERHEAD2',
+            ]
+
+        updated_count = 0
+        for field_id in field_ids:
+            # Get the value from flight_plan_data
+            value = js.window.flight_plan_data.get(field_id)
+
+            # Get the HTML element
+            element = js.document.getElementById(field_id)
+
+            if element:
+                # Convert value to string and handle special cases
+                if value is not None and value != '' and str(value) != 'nan' and str(value) != 'None':
+                    # Handle boolean for CTR
+                    if field_id == f'{fname}_CTR':
+                        if value or str(value).lower() == 'true':
+                            element.value = 'CTR'
+                        else:
+                            element.value = ''
+                    else:
+                        element.value = str(value)
+
+                    updated_count += 1
+                    logger.debug(f"  ✓ Updated {field_id}: {element.value}")
+                else:
+                    # Clear the field if no value
+                    element.value = ''
+            else:
+                logger.info(f"  ⚠️ Element not found: {field_id}")
+
+        logger.info(f"✅ Updated {updated_count} GUI fields")
+
     async def clear_enroute_fields():
         """Clear all ENROUTE GUI fields and flight_plan_data"""
         print("🧹 Clearing all ENROUTE fields...")
@@ -1337,7 +1362,13 @@
         for field_id in field_ids:
             element = js.document.getElementById(field_id)
             if element:
+                print(f"  Clearing {field_id}")
                 element.value = ''
+                # Ensure the value is actually cleared
+                if element.value:
+                    print(f"⚠️ Warning: Failed to clear {field_id}")
+                    # Try forcing the clear
+                    js.eval(f'document.getElementById("{field_id}").value = ""')
 
         # Clear flight_plan_data for enroute fields
         enroute_keys = [
@@ -1350,10 +1381,10 @@
 
 
     async def clear_aerodrome_fields(fname):
-        """Clear all GENERAL GUI fields and flight_plan_data"""
+        """Clear all aerodrome GUI fields and flight_plan_data"""
         print(f"🧹 Clearing all {fname} fields...")
 
-        # List of all departure/arrival fields to clear
+        # List of all departure/arrival fields to clear - ensure critical fields are included
         field_ids = [
             f'{fname}_COUNTRY',
             f'{fname}_ICAO_CITY',
@@ -1371,13 +1402,20 @@
             f'{fname}_ATC_ATIS_FREQ',
             f'{fname}_ATC_GROUND',
             f'{fname}_ATC_TELEPHONE',
+            f'datetime-metar-taf-{fname}',
         ]
+
+        print(f"Clearing fields for {fname}:")
 
         # Clear GUI fields
         for field_id in field_ids:
             element = js.document.getElementById(field_id)
             if element:
+                print(f"  Clearing {field_id}")
                 element.value = ''
+                # Trigger change event to update any dependent fields
+                if field_id.endswith('_CTR'):
+                    js.document.getElementById(field_id).dispatchEvent(js.Event.new('change'))
 
         # Clear flight_plan_data for departure fields
         departure_keys = [
@@ -1414,6 +1452,9 @@
         print(f"🖼️ Updating {fname} image...")
 
         # Get the image URL from flight_plan_data
+        # 1. from GitHub
+        # 2. from wikipedia
+        # 3. from default
         image_url1 = os.path.join(js.window.settings['url_aerodromes_images'], js.window.flight_plan_data[f'{fname}_ICAO']) + '.png' if js.window.flight_plan_data[f'{fname}_ICAO'] != '' else None
         image_url2 = js.window.flight_plan_data.get(f'{fname}_IMAGE')
         image_url3 = js.DEFAULT_ICAO_IMAGE
@@ -1528,7 +1569,7 @@
         """Initialize new flightplan - returns current datetime for UI"""
         # Get current datetime for UI
         current_time = datetime.now().strftime("%d-%m-%Y %H:%M")
-        print("New flightplan initialized - fields cleared")
+        print("🆕 Creating new flightplan...")
 
         # Clear fields
         await clear_general_fields()
@@ -1536,11 +1577,18 @@
         await clear_aerodrome_fields('ARRIVAL')
         await clear_enroute_fields()
 
+        print("✅ New flightplan initialized - all fields cleared")
         return current_time
 
     async def load_flightplan():
         """Load selected flightplan from localStorage"""
         plan_name = js.document.getElementById('plan_spinner').value
+
+        # First clear all fields
+        # await clear_general_fields()
+        # await clear_aerodrome_fields('DEPARTURE')
+        # await clear_aerodrome_fields('ARRIVAL')
+        # await clear_enroute_fields()
 
         if not plan_name or plan_name == "":
             print("⚠️ No flightplan selected")
@@ -1562,33 +1610,19 @@
             flight_plan_dict = json.loads(json_data)
             print(f"✅ Loaded {len(flight_plan_dict)} fields")
 
-            # Update js.window.flight_plan_data
+            # Fill the flight_plan_data dictionary from the loaded JSON data
             for key, value in flight_plan_dict.items():
                 js.window.flight_plan_data[key] = value
 
-            # Update General tab fields
-            if flight_plan_dict.get('FLIGHTPLAN'):
-                js.document.getElementById('FLIGHTPLAN').value = flight_plan_dict['FLIGHTPLAN']
-            if flight_plan_dict.get('CALLSIGN'):
-                js.document.getElementById('CALLSIGN').value = flight_plan_dict['CALLSIGN']
-            if flight_plan_dict.get('AIRCRAFT_TYPE'):
-                js.document.getElementById('AIRCRAFT_TYPE').value = flight_plan_dict['AIRCRAFT_TYPE']
-            if flight_plan_dict.get('POB'):
-                js.document.getElementById('POB').value = flight_plan_dict['POB']
-            if flight_plan_dict.get('FLIGHT_RULES'):
-                js.document.getElementById('FLIGHT_RULES_spinner').value = flight_plan_dict['FLIGHT_RULES']
-            if flight_plan_dict.get('DATETIME'):
-                js.document.getElementById('DATETIME').value = flight_plan_dict['DATETIME']
-
-            # Update Departure tab fields - call the GUI update function
+            # Update GUI FIELDS
+            update_general_gui_fields(flight_plan_dict)
             update_aerodrome_gui_fields('DEPARTURE')
             update_aerodrome_gui_fields('ARRIVAL')
-            # Update departure image
+            # Update IMAGES
             await update_aerodrome_image('DEPARTURE')
             await update_aerodrome_image('ARRIVAL')
 
             print(f"✅ Flightplan '{plan_name}' loaded successfully")
-
         except Exception as e:
             print(f"❌ Error loading flightplan: {e}")
             js.window.alert(f"❌ Error loading flightplan: {e}")
@@ -1618,7 +1652,6 @@
         update_flightplan_list()
 
         """Create new flightplan with current timestamp"""
-        # Create new flightplan
         await clear_general_fields()
         await clear_aerodrome_fields('DEPARTURE')
         await clear_aerodrome_fields('ARRIVAL')
@@ -1630,7 +1663,7 @@
         # Read current values from input fields
         js.window.flight_plan_data["FLIGHTPLAN"] = js.document.getElementById('FLIGHTPLAN').value;
         js.window.flight_plan_data["POB"] = js.document.getElementById('POB').value;
-        js.window.flight_plan_data["FLIGHT_RULES"] = js.document.getElementById('FLIGHT_RULES_spinner').value;
+        js.window.flight_plan_data["FLIGHT_RULES"] = js.document.getElementById('FLIGHT_RULES').value;
         js.window.flight_plan_data["DATETIME"] = js.document.getElementById('DATETIME').value;
         js.window.flight_plan_data["AIRCRAFT_TYPE"] = js.document.getElementById('AIRCRAFT_TYPE').value;
         js.window.flight_plan_data["CALLSIGN"] = js.document.getElementById('CALLSIGN').value;
@@ -2247,6 +2280,7 @@
 
         return html_string
 
+    # =================================================================
 
     async def retrieve_metar(fname):
         """Retrieve METAR data for given fname"""
@@ -2413,7 +2447,7 @@
     js.window.load_flightplan = load_flightplan
     js.window.delete_flightplan = delete_flightplan
     js.window.save_flightplan = save_flightplan
-    js.window.retrieve_metar = retrieve_metar
+    # js.window.retrieve_metar = retrieve_metar
     js.window.update_flightplan_list = create_proxy(update_flightplan_list)
     js.window.clear_cache = clear_cache
 
@@ -2435,9 +2469,12 @@
     # DEPARTURE/ARRIVAL TAB
     js.window.populate_aerodrome_fields_from_icao = create_proxy(populate_aerodrome_fields_from_icao)
     js.window.update_aerodrome_gui_fields = update_aerodrome_gui_fields
-    js.window.clear_aerodrome_fields = clear_aerodrome_fields
+    js.window.update_general_gui_fields = update_general_gui_fields
     js.window.update_aerodrome_image = update_aerodrome_image
+    # CLEAR FIELDS
+    js.window.clear_aerodrome_fields = clear_aerodrome_fields
     js.window.clear_aerodrome_image = clear_aerodrome_image
+
     js.window.cache_and_display_image = cache_and_display_image
 
     # ENROUTE TAB
@@ -2458,16 +2495,32 @@
 
     // Function to check for missing fields and update highlighting
     function updateMissingFields() {
+        console.log("Updating missing fields...");
         const inputs = [
-          CALLSIGN, AIRCRAFT_TYPE, POB, FLIGHTPLAN,
-          DEPARTURE_ATC_GROUND, DEPARTURE_ATC_ATIS_FREQ, DEPARTURE_ATC_TOWER,
-          DEPARTURE_ROUTE_ALTITUDE, DEPARTURE_ROUTE_NAME, DEPARTURE_RUNWAY,
-          DEPARTURE_POSITION, DEPARTURE_NAME, DEPARTURE_ICAO,
-          ARRIVAL_NAME, ARRIVAL_ICAO,
+          CALLSIGN,
+          AIRCRAFT_TYPE,
+          POB,
+          FLIGHTPLAN,
+          DEPARTURE_ATC_GROUND,
+          DEPARTURE_ATC_ATIS_FREQ,
+          DEPARTURE_ATC_TOWER,
+          DEPARTURE_ROUTE_ALTITUDE,
+          DEPARTURE_ROUTE_NAME,
+          DEPARTURE_RUNWAY,
+          DEPARTURE_POSITION,
+          DEPARTURE_NAME,
+          DEPARTURE_ICAO,
+          ARRIVAL_NAME,
+          ARRIVAL_ICAO,
           ARRIVAL_RUNWAY,
-          ARRIVAL_ROUTE_NAME, ARRIVAL_ROUTE_ALTITUDE, ARRIVAL_CIRCUIT_ALTITUDE,
+          ARRIVAL_ROUTE_NAME,
+          ARRIVAL_ROUTE_ALTITUDE,
+          ARRIVAL_CIRCUIT_ALTITUDE,
           ARRIVAL_ATC_TOWER,
-          FIC_NAME, FIC_FREQUENCY, OVERHEAD, SQUAWK,
+          FIC_NAME,
+          FIC_FREQUENCY,
+          OVERHEAD,
+          SQUAWK,
         ];
 
         // Reset all backgrounds first
@@ -2559,12 +2612,12 @@
     const POB = document.getElementById('POB');
     const FLIGHTPLAN = document.getElementById('FLIGHTPLAN');
     const DATETIME = document.getElementById('DATETIME');
-    const FLIGHT_RULES_spinner = document.getElementById('FLIGHT_RULES_spinner');
+    const FLIGHT_RULES = document.getElementById('FLIGHT_RULES');
 
     // Create buttons at the START page
     const new_plan_btn = document.getElementById('new_plan_btn');
     const delete_btn = document.getElementById('delete_btn');
-    const retrieve_metar_btn = document.getElementById('retrieve_metar_btn');
+    // const retrieve_metar_btn = document.getElementById('retrieve_metar_btn');
 
     // Create buttons to generate ATC at the ATC page
     const BTN_HTML_SUMMARY = document.getElementById('BTN_HTML_SUMMARY');
@@ -2672,7 +2725,6 @@
         // Restore settings from cache
         restoreSettingsFromCache();
         console.log("Display settings data is restored from cache.");
-
         // Hide loading spinner once everything is ready
         document.getElementById('loading-spinner').style.display = 'none';
       }
@@ -2806,15 +2858,30 @@
     });
 
     const inputs = [
-      CALLSIGN, AIRCRAFT_TYPE, POB, FLIGHTPLAN,
-      DEPARTURE_ATC_TOWER, DEPARTURE_ATC_ATIS_FREQ, DEPARTURE_ATC_GROUND,
-      DEPARTURE_ROUTE_ALTITUDE, DEPARTURE_ROUTE_NAME, DEPARTURE_RUNWAY,
-      DEPARTURE_POSITION, DEPARTURE_NAME, DEPARTURE_ICAO,
-      ARRIVAL_NAME, ARRIVAL_ICAO,
+      CALLSIGN,
+      AIRCRAFT_TYPE,
+      POB,
+      FLIGHTPLAN,
+      DEPARTURE_ATC_TOWER,
+      DEPARTURE_ATC_ATIS_FREQ,
+      DEPARTURE_ATC_GROUND,
+      DEPARTURE_ROUTE_ALTITUDE,
+      DEPARTURE_ROUTE_NAME,
+      DEPARTURE_RUNWAY,
+      DEPARTURE_POSITION,
+      DEPARTURE_NAME,
+      DEPARTURE_ICAO,
+      ARRIVAL_NAME,
+      ARRIVAL_ICAO,
       ARRIVAL_RUNWAY,
-      ARRIVAL_ROUTE_NAME, ARRIVAL_ROUTE_ALTITUDE, ARRIVAL_CIRCUIT_ALTITUDE,
+      ARRIVAL_ROUTE_NAME,
+      ARRIVAL_ROUTE_ALTITUDE,
+      ARRIVAL_CIRCUIT_ALTITUDE,
       ARRIVAL_ATC_TOWER,
-      FIC_NAME, FIC_FREQUENCY, OVERHEAD, SQUAWK,
+      FIC_NAME,
+      FIC_FREQUENCY,
+      OVERHEAD,
+      SQUAWK,
     ];
       inputs.forEach(input => {
         input.addEventListener('input', () => {
@@ -2883,11 +2950,6 @@ const COUNTRIES_DATA = [
   'New Zealand', 'Palau', 'Papua New Guinea',
 ];
 
-  /**
-   * Generic function to populate a dropdown with data
-   * @param {string} selectId - The ID of the select element to populate
-   * @param {Array} dataArray - Array of items to populate the dropdown with
-   */
   function populateDropdown(selectId, dataArray) {
     const select = document.getElementById(selectId);
     if (!select) {
@@ -2950,10 +3012,6 @@ const COUNTRIES_DATA = [
             if (city_icao && window.populate_aerodrome_fields_from_icao) {
                 // Call PyScript function to populate fields
                 await window.populate_aerodrome_fields_from_icao(fname, city_icao);
-                // Set CTR to true for departure city selection
-                if (fname === 'DEPARTURE') {
-                    document.getElementById('DEPARTURE_CTR').value = 'CTR';
-                }
                 // Update missing fields
                 updateMissingFields();
             }
@@ -2961,12 +3019,21 @@ const COUNTRIES_DATA = [
 
         // Auto-save aerodrome data when fields change
         const fields = [
-            `${fname}_COUNTRY`, `${fname}_ICAO_CITY`, `${fname}_CTR`,
-            `${fname}_NAME`, `${fname}_ICAO`, `${fname}_POSITION`,
-            `${fname}_RUNWAY`, `${fname}_ELEVATION`, `${fname}_ROUTE_NAME`,
-            `${fname}_ROUTE_ALTITUDE`, `${fname}_CIRCUIT_ALTITUDE`,
-            `${fname}_ATC_TOWER`, `${fname}_ATC_APPROACH`,
-            `${fname}_ATC_ATIS_FREQ`, `${fname}_ATC_GROUND`,
+            `${fname}_COUNTRY`,
+            `${fname}_ICAO_CITY`,
+            `${fname}_CTR`,
+            `${fname}_NAME`,
+            `${fname}_ICAO`,
+            `${fname}_POSITION`,
+            `${fname}_RUNWAY`,
+            `${fname}_ELEVATION`,
+            `${fname}_ROUTE_NAME`,
+            `${fname}_ROUTE_ALTITUDE`,
+            `${fname}_CIRCUIT_ALTITUDE`,
+            `${fname}_ATC_TOWER`,
+            `${fname}_ATC_APPROACH`,
+            `${fname}_ATC_ATIS_FREQ`,
+            `${fname}_ATC_GROUND`,
             `${fname}_ATC_TELEPHONE`
         ];
 
