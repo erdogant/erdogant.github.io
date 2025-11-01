@@ -44,6 +44,7 @@
 		<a href="https://erdogant.github.io/skywalk-docs/pages/html/index.html" target="_blank">
 		  <img id="skywalk_logo" alt="SkyWalk">
 		</a>
+		<div class="version" style="margin-bottom: 5px; ">version: 1.0.0</div>
 	  </div>
 
 	  <label_h1>Flightplan</label_h1>
@@ -86,17 +87,6 @@
 		<input type="text" id="DATETIME" placeholder="dd-mm-yyyy hh:mm">
 		<button id="set_datetime_btn">Now</button>
 			</div>
-			<script>
-			    document.getElementById('set_datetime_btn').addEventListener('click', () => {
-				const now = new Date();
-				const day = String(now.getDate()).padStart(2, '0');
-				const month = String(now.getMonth() + 1).padStart(2, '0');
-				const year = now.getFullYear();
-				const hours = String(now.getHours()).padStart(2, '0');
-				const minutes = String(now.getMinutes()).padStart(2, '0');
-				document.getElementById('DATETIME').value = `${day}-${month}-${year} ${hours}:${minutes}`;
-		});
-			</script>
 
 	  <!-- Save + Bottom Buttons Container -->
 	  <div id="bottom-container">
@@ -194,10 +184,10 @@
 	  </div>-->
 
     <div class="button-row">
-        <button id="metar-taf-embed-departure" style="transition: background-color 0.3s">Load/Refresh METAR-TAF</button>
+        <button id="metar-taf-embed-departure" style="transition: background-color 0.3s">Refresh METAR-TAF</button>
     </div>
     <div class="button-row">
-        <input type="text" id="datetime-metar-taf-departure" placeholder="Date and Time" style="transition: background-color 0.3s">
+        <input type="text" id="datetime-metar-taf-departure" placeholder="Date and Time for METAR" style="transition: background-color 0.3s">
     </div>
 
     <div id="departureWidgetContainer"></div>
@@ -284,13 +274,13 @@
             <button id="retrieve_metar_btn">Update METAR/ TAF</button>
         </div>-->
         <!--<div class="button-row">
-            <button id="metar-taf-embed-arrival">Load/Refresh METAR-TAF</button>
+            <button id="metar-taf-embed-arrival">Refresh METAR-TAF</button>
         </div>
         <div class="button-row">
             <input type="text" id="datetime-metar-taf-arrival" placeholder="Date and Time">
         </div>-->
         <div class="button-row">
-            <button id="metar-taf-embed-arrival" style="transition: background-color 0.3s">Load/Refresh METAR-TAF</button>
+            <button id="metar-taf-embed-arrival" style="transition: background-color 0.3s">Refresh METAR-TAF</button>
         </div>
         <div class="button-row">
             <input type="text" id="datetime-metar-taf-arrival" placeholder="Date and Time" style="transition: background-color 0.3s">
@@ -349,50 +339,56 @@
         <!-- ATC -->
         <label_h1>Display Settings</label_h1>
 
-        <div class="button-row">
-            <div style="display:flex; flex-direction:column; flex:1; margin-right:10px;">
-                <label for="user_usage_type">Choose Output</label>
-                <select id="user_usage_type">
-                    <option value="print" selected>Print</option>
-                    <option value="view">Screen</option>
-                </select>
-            </div>
+        <div style="border: 1px solid lightgrey; border-radius: 10px; padding: 10px;">
+            <div class="button-row">
+                <div style="display:flex; flex-direction:column; flex:1; margin-right:10px;">
+                    <label for="user_usage_type">Choose Output</label>
+                    <select id="user_usage_type">
+                        <option value="print" selected>Print</option>
+                        <option value="view">Screen</option>
+                    </select>
+                </div>
 
-
-            <div style="display:flex; flex-direction:column; flex:1;">
-                <label for="user_select_cols">Columns</label>
-                <select id="user_select_cols">
-                    <option value="1">1</option>
-                    <option value="2" selected>2</option>
-                    <option value="3">3</option>
-                </select>
+                <div style="display:flex; flex-direction:column; flex:1;">
+                    <label for="user_select_cols">Columns</label>
+                    <select id="user_select_cols">
+                        <option value="1">1</option>
+                        <option value="2" selected>2</option>
+                        <option value="3">3</option>
+                    </select>
+                </div>
             </div>
         </div>
 
         <label_h1>Required Fields</label_h1>
-        <!-- Bottom Buttons Container -->
-    	  <div id="bottom-container">
-    		<div class="warning" id="missing_label">Missing: Flightplan Name, CALLSIGN, Aircraft Type</div>
-    	  </div>
+        <div style="border: 1px solid lightgrey; border-radius: 10px; padding: 10px;">
+            <div id="bottom-container">
+                <div class="warning" id="missing_label">Missing: Flightplan Name, CALLSIGN, Aircraft Type</div>
+            </div>
+        </div>
+
 
        <label_h1>Air Traffic Control (ATC)</label_h1>
 
-        <div class="button-row" style="border: 2px solid lightgrey; border-radius: 10px; padding: 10px;">
-            <button id="BTN_HTML_SUMMARY">Create Summary ATC</button>
-            <button id="BTN_HTML_SUMMARY_REV">Create Reverse</button>
-        </div>
-        <div class="button-row">
-            <button id="BTN_HTML_DEPARTURE">Create Departure ATC</button>
-            <button id="BTN_HTML_DEPARTURE_REV">Create Reverse</button>
-        </div>
-        <div class="button-row">
-            <button id="BTN_HTML_ARRIVAL">Create Arrival ATC</button>
-            <button id="BTN_HTML_ARRIVAL_REV">Create Reverse</button>
-        </div>
-        <div class="button-row">
-            <button id="BTN_HTML_ENROUTE">Create Enroute ATC</button>
-            <button id="BTN_HTML_EN_REV">Create Reverse</button>
-        </div>
+       <div style="border: 1px solid lightgrey; border-radius: 10px; padding: 10px;">
+           <div class="button-row">
+               <button id="BTN_HTML_SUMMARY">Summary ATC</button>
+                <button id="BTN_HTML_SUMMARY_REV">Reverse</button>
+            </div>
+            <div class="button-row">
+                <button id="BTN_HTML_DEPARTURE">Departure ATC</button>
+                <button id="BTN_HTML_DEPARTURE_REV">Reverse</button>
+            </div>
+            <div class="button-row">
+                <button id="BTN_HTML_ARRIVAL">Arrival ATC</button>
+                <button id="BTN_HTML_ARRIVAL_REV">Reverse</button>
+            </div>
+            <div class="button-row">
+                <button id="BTN_HTML_ENROUTE">Enroute ATC</button>
+                <button id="BTN_HTML_EN_REV">Reverse</button>
+            </div>
+       </div>
+
 
         <label_h1>Disclaimer</label_h1>
         <div class="disclaimer" style="margin-bottom: 20px; border: 2px solid red; border-radius: 10px; padding: 10px;">SkyWalk is provided as-is without any warranty or guarantee. SkyWalk is only to be used for educational purposes and not for commercial or professional use. The developers are not responsible for any damages or losses resulting from the use of this app.</div>
@@ -438,6 +434,21 @@
     </div>
 
 
+<script>
+    document.getElementById('set_datetime_btn').addEventListener('click', () => {
+      /*Update datetime field to current time.
+      Updates the datetime input field with the current date and time in format DD-MM-YYYY HH:MM.
+      The button click handler sets the input value to the current timestamp when clicked.
+      */
+	const now = new Date();
+	const day = String(now.getDate()).padStart(2, '0');
+	const month = String(now.getMonth() + 1).padStart(2, '0');
+	const year = now.getFullYear();
+	const hours = String(now.getHours()).padStart(2, '0');
+	const minutes = String(now.getMinutes()).padStart(2, '0');
+	document.getElementById('DATETIME').value = `${day}-${month}-${year} ${hours}:${minutes}`;
+	});
+</script>
 
 <script>
     function checkMetarAge() {
@@ -453,7 +464,16 @@
             const button = document.getElementById(`metar-taf-embed-${prefix}`);
             if (!dateField?.value) return;
 
-            const metarTime = new Date(dateField.value);
+            // Parse the date parts
+            const [datePart, timePart] = dateField.value.split(' ');
+            const [day, month, year] = datePart.split('-');
+            const [hours, minutes] = timePart.split(':');
+
+            // Create date objects with the same timezone
+            const metarTime = new Date();
+            metarTime.setFullYear(parseInt(year), parseInt(month) - 1, parseInt(day));
+            metarTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+
             const now = new Date();
             const diff = now - metarTime;
             const isOld = diff > 15 * 60 * 1000; // 15 minutes in milliseconds
@@ -466,6 +486,8 @@
         updateColors('arrival');
     }
 
+    // Initial check and start interval
+    checkMetarAge();
     setInterval(checkMetarAge, 60000); // Check every minute
 
     function createMetarWidget(containerId, icao, name, uniqueSuffix) {
@@ -511,7 +533,11 @@
         const icao = document.getElementById('DEPARTURE_ICAO').value.toUpperCase() || 'unknown';
         // Update datetime field with current time
         const now = new Date();
-        const dateStr = now.toLocaleString('en-US', {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false});
+        const dateStr = String(now.getDate()).padStart(2, '0') + '-' +
+                        String(now.getMonth() + 1).padStart(2, '0') + '-' +
+                        now.getFullYear() + ' ' +
+                        String(now.getHours()).padStart(2, '0') + ':' +
+                        String(now.getMinutes()).padStart(2, '0');
         // Reset colors
         const button = document.getElementById('metar-taf-embed-departure');
         const dateField = document.getElementById('datetime-metar-taf-departure');
@@ -527,7 +553,11 @@
         const icao = document.getElementById('ARRIVAL_ICAO').value.toUpperCase() || 'unknown';
         // Update datetime field with current time
         const now = new Date();
-        const dateStr = now.toLocaleString('en-US', {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false});
+        const dateStr = String(now.getDate()).padStart(2, '0') + '-' +
+                        String(now.getMonth() + 1).padStart(2, '0') + '-' +
+                        now.getFullYear() + ' ' +
+                        String(now.getHours()).padStart(2, '0') + ':' +
+                        String(now.getMinutes()).padStart(2, '0');
         // Reset colors
         const button = document.getElementById('metar-taf-embed-arrival');
         const dateField = document.getElementById('datetime-metar-taf-arrival');
