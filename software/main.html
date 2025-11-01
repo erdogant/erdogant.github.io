@@ -210,7 +210,7 @@
             <select id="ARRIVAL_COUNTRY">
                 <option value=""></option>
             </select>
-            <select id="ARRIVAL_ICAO_CITY">
+            <select id="ARRIVAL_ICAO_CITY" onchange="preserveFormFields()" onfocus="preserveFormFields()">
                 <option value=""></option>
                 <!-- ICAO City options will be populated dynamically -->
                 </select>
@@ -451,6 +451,44 @@
 </script>
 
 <script>
+    // Store form field values
+    let formFields = {};
+    let isRestoring = false;
+
+    function preserveFormFields() {
+        if (isRestoring) return;
+        // Save important form fields
+        const fieldsToPreserve = ['DEPARTURE_POSITION', 'DEPARTURE_ROUTE_NAME', 'ARRIVAL_ICAO_CITY'];
+        fieldsToPreserve.forEach(id => {
+            const element = document.getElementById(id);
+            if (element && element.value) {
+                formFields[id] = element.value;
+            }
+        });
+    }
+
+    // Restore form fields if they get cleared
+    function restoreFormFields() {
+        if (isRestoring) return;
+        isRestoring = true;
+        try {
+            Object.keys(formFields).forEach(id => {
+                const element = document.getElementById(id);
+                if (element && !element.value && formFields[id]) {
+                    element.value = formFields[id];
+                }
+            });
+        } finally {
+            isRestoring = false;
+        }
+    }
+
+    // Check fields periodically and after tab changes
+    setInterval(restoreFormFields, 1000);
+    document.querySelectorAll('.tablinks').forEach(tab => {
+        tab.addEventListener('click', () => setTimeout(restoreFormFields, 100));
+    });
+
     function checkMetarAge() {
       /* Check datetime of METAR data and update UI colors.
        *
