@@ -190,7 +190,7 @@
         <input type="text" id="datetime-metar-taf-departure" placeholder="Date and Time for METAR" style="transition: background-color 0.3s">
     </div>
 
-    <div id="departureWidgetContainer"></div>
+    <div id="departureWidgetContainer" style="text-align: center;"></div>
 
 
     </div>
@@ -210,7 +210,8 @@
             <select id="ARRIVAL_COUNTRY">
                 <option value=""></option>
             </select>
-            <select id="ARRIVAL_ICAO_CITY" onchange="preserveFormFields()" onfocus="preserveFormFields()">
+            <!--<select id="ARRIVAL_ICAO_CITY" onchange="preserveFormFields()" onfocus="preserveFormFields()">-->
+                <select id="ARRIVAL_ICAO_CITY">
                 <option value=""></option>
                 <!-- ICAO City options will be populated dynamically -->
                 </select>
@@ -286,7 +287,7 @@
             <input type="text" id="datetime-metar-taf-arrival" placeholder="Date and Time" style="transition: background-color 0.3s">
         </div>
 
-        <div id="arrivalWidgetContainer"></div>
+        <div id="arrivalWidgetContainer" style="text-align: center;"></div>
 
     </div>
 
@@ -390,8 +391,13 @@
        </div>
 
 
-        <label_h1>Disclaimer</label_h1>
-        <div class="disclaimer" style="margin-bottom: 20px; border: 2px solid red; border-radius: 10px; padding: 10px;">SkyWalk is provided as-is without any warranty or guarantee. SkyWalk is only to be used for educational purposes and not for commercial or professional use. The developers are not responsible for any damages or losses resulting from the use of this app.</div>
+       <div class="button-row">
+           <button id="save_fields_btn" style="background-color: #4CAF50; color: white;" title="Saving fields in flightplan">Save Flightplan</button>
+       </div>
+
+       <label_h1>Disclaimer</label_h1>
+        <div class="disclaimer" style="margin-bottom: 20px; border: 2px solid red; border-radius: 10px; padding: 10px;">SkyWalk is provided “as is,” without any warranties, express or implied. It is intended for educational use. The developers assume no liability for any damages arising from its use.</div>
+
         <!--
         <div class="button-row">
             <select id="DEPARTURE_COUNTRY_DEFAULT">
@@ -429,7 +435,7 @@
         <div class="button-row" style="margin-top: 20px;">
             <button id="clear_cache_btn" style="background-color: #ff4444; color: white;">Clear Cache</button>
         </div>
-        <div class="warning" style="margin-bottom: 20px;">Warning: This will permanently delete all saved flightplans from your local browser storage. The reason for using this is when you want to start fresh or when you suspect that your flightplans are corrupted or the ATC output does not show or update. This action cannot be undone.</div>
+        <div class="warning" style="margin-bottom: 20px;">Warning: This will permanently delete all saved flightplans and aerodrome images from your local browser storage. The reason for using this is when you want to start fresh or when you suspect that your flightplans or images are corrupted or the ATC page does not show or update. This action cannot be undone.</div>
 
     </div>
 
@@ -451,42 +457,95 @@
 </script>
 
 <script>
-    // Store form field values
+
     let formFields = {};
     let isRestoring = false;
 
-    function preserveFormFields() {
-        if (isRestoring) return;
-        // Save important form fields
-        const fieldsToPreserve = ['DEPARTURE_POSITION', 'DEPARTURE_ROUTE_NAME', 'ARRIVAL_ICAO_CITY'];
-        fieldsToPreserve.forEach(id => {
-            const element = document.getElementById(id);
-            if (element && element.value) {
-                formFields[id] = element.value;
-            }
-        });
-    }
+    // function preserveFormFields() {
+    //     // This function only for a weird fix for mobile phones.
+    //     /*
+    //     This script fixes weird behavior that is only seen on mobile Phones.
+    //     When a new ICAO is selected in ARRIVAL, it clears some of the fields in Departure tab.
+    //     This function prevents from doing that. So it is a fix to preserve form field info and otherwise restore during tab navigation.
 
-    // Restore form fields if they get cleared
-    function restoreFormFields() {
-        if (isRestoring) return;
-        isRestoring = true;
+    //     When switching between tabs, certain form fields like DEPARTURE_POSITION,
+    //     DEPARTURE_ROUTE_NAME, ARRIVAL_ICAO_CITY etc. may get cleared. This code stores
+    //     those field values and restores them if they are inadvertently cleared.
+
+    //     The restoration logic:
+    //     - Saves field values before tab switches
+    //     - Checks if fields were cleared after switching
+    //     - Restores original values for cleared fields
+    //     */
+    //     if (isRestoring) return;
+    //     // Save important form fields
+    //     const fieldsToPreserve = [
+    //         'DEPARTURE_POSITION', 'DEPARTURE_ROUTE_NAME', 'ARRIVAL_ICAO_CITY',
+    //         'DEPARTURE_NAME', 'DEPARTURE_ICAO', 'DEPARTURE_RUNWAY', 'DEPARTURE_ELEVATION',
+    //         'DEPARTURE_ROUTE_ALTITUDE', 'DEPARTURE_CIRCUIT_ALTITUDE',
+    //     ];
+    //     fieldsToPreserve.forEach(id => {
+    //         const element = document.getElementById(id);
+    //         if (element && element.value) {
+    //             formFields[id] = element.value;
+    //         }
+    //     });
+    // }
+
+    // // Restore form fields if they get cleared
+    // function restoreFormFields() {
+    //     if (isRestoring) return;
+    //     isRestoring = true;
+    //     try {
+    //         Object.keys(formFields).forEach(id => {
+    //             const element = document.getElementById(id);
+    //             if (element && !element.value && formFields[id]) {
+    //                 element.value = formFields[id];
+    //             }
+    //         });
+    //     } finally {
+    //         isRestoring = false;
+    //     }
+    // }
+
+    // // Check fields after tab changes
+    // document.querySelectorAll('.tablinks').forEach(tab => {
+    //     tab.addEventListener('click', () => {
+    //         preserveFormFields();
+    //         setTimeout(restoreFormFields, 100);
+    //     });
+    // });
+
+    // Add save button functionality
+    document.getElementById('save_fields_btn')?.addEventListener('click', () => {
+      if (pyscriptReady && window.save_flightplan) {
         try {
-            Object.keys(formFields).forEach(id => {
-                const element = document.getElementById(id);
-                if (element && !element.value && formFields[id]) {
-                    element.value = formFields[id];
-                }
-            });
-        } finally {
-            isRestoring = false;
+          // Get flightplan name
+          const flightplanName = document.getElementById('FLIGHTPLAN')?.value;
+          if (!flightplanName) {
+            window.alert("⚠️ Please enter a Flightplan name before saving");
+            return;
+          }
+          window.save_flightplan();
+          console.log("Flightplan saved to local cache");
+          window.alert("✓ Flightplan saved on local device");
+        } catch (error) {
+          console.error("Error saving flightplan data:", error);
         }
-    }
+      }
 
-    // Check fields periodically and after tab changes
-    setInterval(restoreFormFields, 1000);
-    document.querySelectorAll('.tablinks').forEach(tab => {
-        tab.addEventListener('click', () => setTimeout(restoreFormFields, 100));
+
+      // // preserveFormFields();
+      //   lastSavedFields = {...formFields};
+      //   // Visual feedback
+      //   const saveBtn = document.getElementById('save_fields_btn');
+      //   const originalColor = saveBtn.style.backgroundColor;
+      //   saveBtn.style.backgroundColor = '#45a049';
+      //   saveBtn.textContent = 'Saved!';
+      //   setTimeout(() => {
+      //       saveBtn.style.backgroundColor = originalColor;
+      //       saveBtn.textContent = 'Save Fields';
+      //   }, 1000);
     });
 
     function checkMetarAge() {
@@ -529,13 +588,25 @@
     setInterval(checkMetarAge, 60000); // Check every minute
 
     function createMetarWidget(containerId, icao, name, uniqueSuffix) {
-      console.log(`🛫 Creating METAR widget for ${icao}`);
-      if (icao === 'unknown') {
-          window.alert("Please fill in ICAO field first before loading METAR data");
-          return;
-      }
+        /*Create and embed a METAR widget for an aerodrome.
+        This function creates and embeds a METAR widget for an aerodrome.
+        It displays METAR data, from METAR-TAF website by embedding it from metar-taf.com.
+        It does so by creating container element and injecting widget into specified container.
 
-      // Clear previous widget (if any)
+        Args:
+            containerId (str): ID of container element to create widget in
+            icao (str): ICAO code of aerodrome
+            name (str): Display name of aerodrome
+            uniqueSuffix (str): Unique suffix for widget IDs
+        */
+
+        console.log(`🛫 Creating METAR widget for ${icao}`);
+        if (icao === 'unknown') {
+            window.alert("Please fill in ICAO field first before loading METAR data");
+            return;
+        }
+
+        // Clear previous widget (if any)
         const container = document.getElementById(containerId);
         container.innerHTML = '';
 
@@ -547,8 +618,8 @@
         const link = document.createElement('a');
         link.href = `https://metar-taf.com/metar/${icao}`;
         link.id = widgetId;
-        link.textContent = `METAR ${name}`;
-        link.style = "font-size:16px; font-weight:500; color:#000; width:310px; height:435px; display:block";
+        link.innerHTML = `METAR ${name}`;
+        link.style = "font-size:16px; font-weight:400; color:#000; width:310px; height:435px; display:block";
 
         // Append link to container
         container.appendChild(link);
@@ -571,11 +642,7 @@
         const icao = document.getElementById('DEPARTURE_ICAO').value.toUpperCase() || 'unknown';
         // Update datetime field with current time
         const now = new Date();
-        const dateStr = String(now.getDate()).padStart(2, '0') + '-' +
-                        String(now.getMonth() + 1).padStart(2, '0') + '-' +
-                        now.getFullYear() + ' ' +
-                        String(now.getHours()).padStart(2, '0') + ':' +
-                        String(now.getMinutes()).padStart(2, '0');
+        const dateStr = String(now.getDate()).padStart(2, '0') + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + now.getFullYear() + ' ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
         // Reset colors
         const button = document.getElementById('metar-taf-embed-departure');
         const dateField = document.getElementById('datetime-metar-taf-departure');
@@ -591,11 +658,7 @@
         const icao = document.getElementById('ARRIVAL_ICAO').value.toUpperCase() || 'unknown';
         // Update datetime field with current time
         const now = new Date();
-        const dateStr = String(now.getDate()).padStart(2, '0') + '-' +
-                        String(now.getMonth() + 1).padStart(2, '0') + '-' +
-                        now.getFullYear() + ' ' +
-                        String(now.getHours()).padStart(2, '0') + ':' +
-                        String(now.getMinutes()).padStart(2, '0');
+        const dateStr = String(now.getDate()).padStart(2, '0') + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + now.getFullYear() + ' ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
         // Reset colors
         const button = document.getElementById('metar-taf-embed-arrival');
         const dateField = document.getElementById('datetime-metar-taf-arrival');
@@ -616,17 +679,19 @@
     // populateDropdown('DEPARTURE_COUNTRY_DEFAULT', COUNTRIES_DATA);
     // populateDropdown('ARRIVAL_COUNTRY_DEFAULT', COUNTRIES_DATA);
 
-    console.log('Settings initialized');
+    console.log('DOM Content Loaded');
+});
 
-    // Update settings when changed
     document.getElementById('user_usage_type').addEventListener('change', (e) => {
         if (window.settings) {
             window.settings.user_usage_type = e.target.value;
-            console.log('Updated output type:', window.settings.user_usage_type);
+            console.log('Updated usage type:', window.settings.user_usage_type);
             window.settings.fontsizes = window.set_fontsizes({
                 user_usage_type: window.settings.user_usage_type,
                 user_select_cols: window.settings.user_select_cols
             });
+            // Save to localStorage
+            localStorage.setItem('user_usage_type', e.target.value);
         }
     });
 
@@ -638,6 +703,8 @@
                 user_usage_type: window.settings.user_usage_type,
                 user_select_cols: window.settings.user_select_cols
             });
+            // Save to localStorage
+            localStorage.setItem('user_select_cols', e.target.value);
         }
     });
 
@@ -668,7 +735,6 @@
     //         console.log('Updated MAX_CROSSWIND_LIMIT:', e.target.value);
     //     }
     // });
-});
 
 </script>
 
@@ -2439,6 +2505,13 @@
         if (!SQUAWK.value) { missing.push('SQUAWK.'); SQUAWK.style.backgroundColor = '#ffeb3b'; }
 
         missing_label.textContent = missing.length ? 'Missing: ' + missing.join(', ') : 'All fields are OK! Create your ATC now.';
+        if (!missing.length) {
+          missing_label.style.fontSize = '12px';
+          missing_label.style.color = 'green';
+        } else {
+          missing_label.style.fontSize = '';
+          missing_label.style.color = '';
+        }
     }
 
     // Function to replace INFORMATION with INFO in input fields
@@ -2460,13 +2533,13 @@
         const currentTab = currentActiveTab ? currentActiveTab.getAttribute("data-tab") : null;
 
         // Save data when switching tabs
-        if (pyscriptReady && window.save_flightplan && currentTab && currentTab !== targetTab) {
-          try {
-            await window.save_flightplan();
-          } catch (error) {
-            console.error("Error saving data before tab switch:", error);
-          }
-        }
+        // if (pyscriptReady && window.save_flightplan && currentTab && currentTab !== targetTab) {
+        //   try {
+        //     await window.save_flightplan();
+        //   } catch (error) {
+        //     console.error("Error saving data before tab switch:", error);
+        //   }
+        // }
 
         // Switch tabs
         tabButtons.forEach(b => b.classList.remove("active"));
@@ -2528,15 +2601,78 @@
     // Wait for PyScript to be ready
     let pyscriptReady = false;
 
-    // Check if PyScript is ready
+    function restoreSettingsFromCache() {
+      /**
+       * Restores user interface settings from browser localStorage if they exist
+       * and updates font sizes accordingly.
+       *
+       * Specifically:
+       * - Restores user_usage_type setting from localStorage
+       * - Restores user_select_cols setting from localStorage
+       * - Updates corresponding UI elements with restored values
+       * - Updates font sizes based on restored settings
+       *
+       * If settings don't exist in localStorage, default values will be used.
+       * Any errors during restoration are caught and logged to console.
+       */
+        try {
+            // Restore settings from localStorage if they exist
+            const savedUsageType = localStorage.getItem('user_usage_type');
+            const savedColumns = localStorage.getItem('user_select_cols');
+
+            if (savedUsageType) {
+                window.settings.user_usage_type = savedUsageType;
+                const usageTypeElement = document.getElementById('user_usage_type');
+                if (usageTypeElement) {
+                    usageTypeElement.value = savedUsageType;
+                }
+            }
+            if (savedColumns) {
+                window.settings.user_select_cols = savedColumns;
+                const columnsElement = document.getElementById('user_select_cols');
+                if (columnsElement) {
+                    columnsElement.value = savedColumns;
+                }
+            }
+
+            // Update font sizes with possibly restored settings
+            if (window.settings && window.set_fontsizes) {
+                window.settings.fontsizes = window.set_fontsizes({
+                    user_usage_type: window.settings.user_usage_type,
+                    user_select_cols: window.settings.user_select_cols
+                });
+            }
+        } catch (error) {
+            console.error('Error restoring settings:', error);
+        }
+    }
+
+    // INITIALIZATOIN WHEN PYSCRIPT IS READY
     function checkPyScriptReady() {
+      /**
+       * Checks if PyScript is ready by testing if key functions are available.
+       * Also initializes default flight plan data and settings if PyScript is ready.
+       *
+       * Key initializations:
+       * - Sets window.flight_plan_data with default values
+       * - Sets window.settings with default settings
+       * - Restores cached display settings
+       * - Hides loading spinner once complete
+       *
+       */
       if (typeof window.create_new_flightplan === 'function') {
         pyscriptReady = true;
         console.log("PyScript is ready!");
+        // Get default flight plan data
         window.flight_plan_data = window.get_default_data();
         console.log("Default data is initialized.");
-        window.settings = window.get_default_settings()
+        // Get default settings
+        window.settings = window.get_default_settings();
         console.log("Settings data is initialized.");
+        // Restore settings from cache
+        restoreSettingsFromCache();
+        console.log("Display settings data is restored from cache.");
+
         // Hide loading spinner once everything is ready
         document.getElementById('loading-spinner').style.display = 'none';
       }
@@ -2635,6 +2771,21 @@
 
     // Add clear cache button handler
     document.getElementById('clear_cache_btn')?.addEventListener('click', async () => {
+      /**
+      * Clears the browser's cached data and reloads the page.
+      * Shows a confirmation dialog before clearing.
+      * Displays a loading spinner while clearing.
+      *
+      * Steps:
+      * 1. Shows confirmation dialog
+      * 2. If confirmed:
+      *   - Shows loading spinner
+      *   - Calls window.clear_cache()
+      *   - On success: Shows success message and reloads page
+      *   - On error: Shows error message
+      * 3. Always hides spinner when complete
+      *
+      */
         if (!confirm('This will clear all saved (cached) data. Are you sure?')) return;
 
         const spinner = document.getElementById('loading-spinner');
@@ -2718,10 +2869,10 @@ const COUNTRIES_DATA = [
   'Albania', 'Austria', 'Belarus', 'Belgium',
   'Bulgaria', 'Croatia', 'Cyprus', 'Czech Republic', 'Denmark', 'Estonia',
   'Finland', 'France', 'Germany', 'Greece', 'Hungary', 'Iceland', 'Ireland',
-  'Italy', 'Latvia', 'Lithuania', 'Luxembourg', 'Malta',
+  'Italy', 'Luxembourg', 'Malta',
   'Moldova  Republic Of', 'Montenegro', 'Netherlands',
   'Norway', 'Poland', 'Portugal', 'Romania',
-  'Slovakia', 'Slovenia', 'Spain', 'Sweden', 'Switzerland', 'Turkey',
+  'Spain', 'Sweden', 'Switzerland', 'Turkey',
   'United Kingdom',
 
   // Americas (North, Central, South, Caribbean)
