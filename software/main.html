@@ -7,6 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#2A3F54">
+  <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
+  <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
 
   <title>Skywalk Flightplan</title>
 
@@ -182,7 +184,7 @@
 
 	  <!-- Departure Image -->
 	  <div class="logo-container" style="margin-top: 20px;">
-		<img id="DEPARTURE_image_cache" alt="Departure Aerodrome" style="max-width: 100%; height: auto; border-radius: 10px;">
+		<img id="DEPARTURE_image_cache" alt="Departure Aerodrome" style="max-width: 100%; height: auto; border-radius: 10px; cursor: pointer;" onclick="openAerodromeMap('DEPARTURE')">
 	  </div>
 
 	  <!--<div class="button-row">
@@ -271,9 +273,9 @@
         </div>
 
         <!-- ARRIVAL Image -->
-        <div class="logo-container" style="margin-top: 20px;">
-            <img id="ARRIVAL_image_cache" alt="Arrival Aerodrome" style="max-width: 100%; height: auto; border-radius: 10px;">
-        </div>
+      	  <div class="logo-container" style="margin-top: 20px;">
+      		<img id="ARRIVAL_image_cache" alt="Arrival Aerodrome" style="max-width: 100%; height: auto; border-radius: 10px; cursor: pointer;" onclick="openAerodromeMap('ARRIVAL')">
+      	  </div>
 
 
         <!--<div class="button-row">
@@ -521,6 +523,19 @@
     // Initial check and start interval
     checkMetarAge();
     setInterval(checkMetarAge, 60000); // Check every minute
+
+    function openAerodromeMap(fname) {
+        const latlon = window.flight_plan_data[`${fname}_LATLON`];
+        const icao = window.flight_plan_data[`${fname}_ICAO`]
+        if (latlon && latlon[0] && latlon[1]) {
+            const [lat, lon] = latlon;
+            const url = `https://www.google.com/maps?q=${lat},${lon}&z=14`;
+            // const url = `https://metar-taf.com/airport/${icao}`;
+            window.open(url, '_blank');
+        } else {
+            console.log(`No coordinates available for ${fname} aerodrome`);
+        }
+    }
 
     function createMetarWidget(containerId, icao, name, uniqueSuffix) {
         /*Create and embed a METAR widget for an aerodrome.
