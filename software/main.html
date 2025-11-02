@@ -52,7 +52,7 @@
 		<a href="https://erdogant.github.io/skywalk-docs/pages/html/index.html" target="_blank">
 		  <img id="skywalk_logo" alt="SkyWalk">
 		</a>
-		<div class="version" style="margin-bottom: 5px; ">version: 0.1.0</div>
+		<div class="version" style="margin-bottom: 5px; ">version: 0.2.0</div>
 	  </div>
 
 	  <label_h1>Flightplan</label_h1>
@@ -135,15 +135,16 @@
 		</select>
 	  </div>
 
-    <div class="button-row">
-        <button id="DEPARTURE_USE_CACHED" onclick="window.load_aerodrome_from_json('DEPARTURE')" style="width: auto;">Load your custom aerodrome data</button>
-    </div>
 
 	  <!-- Line 4: NAME and ICAO inputs -->
 	  <div class="button-row">
 		<input type="text" id="DEPARTURE_NAME" placeholder="Airport Name">
 		<input type="text" id="DEPARTURE_ICAO" class="UPPERCASE_input" placeholder="ICAO">
 	  </div>
+
+    <div class="button-row">
+        <button id="DEPARTURE_USE_CACHED" onclick="window.load_aerodrome_from_json('DEPARTURE')" style="width: auto;">Load your personalized aerodrome data</button>
+    </div>
 
 	  <!-- Line 5: POSITION, RUNWAY, ELEVATION inputs -->
 	  <div class="button-row">
@@ -206,6 +207,10 @@
     <div id="departureWidgetContainer" style="text-align: center;"></div>
 
 
+    <div class="button-row">
+        <button id="save_fields_btn_departure" style="background-color: #4CAF50; color: white;" title="Save fields for this Aerodrome">Save Aerodrome</button>
+    </div>
+
     </div>
 
 
@@ -229,15 +234,16 @@
                 </select>
         </div>
 
-        <div class="button-row">
-            <button id="ARRIVAL_USE_CACHED" onclick="window.load_aerodrome_from_json('ARRIVAL')" style="width: auto;">Load your custom aerodrome data</button>
-	    </div>
 
 	<!-- Line 4: NAME and ICAO inputs -->
         <div class="button-row">
             <input type="text" id="ARRIVAL_NAME" placeholder="Airport Name">
             <input type="text" id="ARRIVAL_ICAO" class="UPPERCASE_input" placeholder="ICAO">
         </div>
+
+        <div class="button-row">
+            <button id="ARRIVAL_USE_CACHED" onclick="window.load_aerodrome_from_json('ARRIVAL')" style="width: auto;">Load your personalized aerodrome information</button>
+	    </div>
 
         <!-- Line 5: POSITION, RUNWAY, ELEVATION inputs -->
         <div class="button-row">
@@ -304,6 +310,10 @@
 
         <div id="arrivalWidgetContainer" style="text-align: center;"></div>
 
+        <div class="button-row">
+            <button id="save_fields_btn_arrival" style="background-color: #4CAF50; color: white;" title="Save fields for this Aerodrome">Save Aerodrome</button>
+        </div>
+
     </div>
 
 
@@ -333,6 +343,15 @@
           <input type="text" id="SQUAWK" placeholder="SQUAWK">
         </div>
 
+       	<!--Create selectionbox that is populated with previously cached FICs-->
+    	<div class="button-row">
+               	<select id="fic_spinner">
+             	  <option value="">Select saved FIC</option>
+               	</select>
+                <button id="fic_save_btn" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">💾</button>
+                <button id="fic_delete_btn" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">🗑️</button>
+    	</div>
+
         <!-- Line: SECOND FIC label -->
         <label_h1>SECOND FIC</label_h1>
 
@@ -345,8 +364,17 @@
           <input type="text" id="OVERHEAD2" placeholder="Overhead Point", class="UPPERCASE_input">
           <input type="text" id="SQUAWK2" placeholder="SQUAWK">
         </div>
-    </div>
 
+       	<!--Create selectionbox that is populated with previously cached FICs-->
+    	<div class="button-row">
+               	<select id="fic_spinner2">
+             	  <option value="">Select saved FIC</option>
+               	</select>
+                <button id="fic_save_btn2" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">💾</button>
+                <button id="fic_delete_btn2" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">🗑️</button>
+    	</div>
+
+    </div>
 
     <!-- =============== TAB ATC =============== -->
 
@@ -488,13 +516,41 @@
           window.save_flightplan();
 
           // Save aerodrome data to JSON files
-          window.save_aerodrome_to_json('DEPARTURE');
-          window.save_aerodrome_to_json('ARRIVAL');
+          // window.save_aerodrome_to_json('DEPARTURE');
+          // window.save_aerodrome_to_json('ARRIVAL');
+          // window.save_enroute_to_json('ENROUTE1');
+          // window.save_enroute_to_json('ENROUTE2');
 
           window.alert("✓ Flightplan saved on local device");
 
         } catch (error) {
           console.error("Error saving flightplan data:", error);
+        }
+      }
+    });
+
+    // Add save button functionality
+    document.getElementById('save_fields_btn_departure')?.addEventListener('click', () => {
+      if (pyscriptReady && window.save_flightplan) {
+        try {
+            // Save aerodrome data to JSON files
+            window.save_aerodrome_to_json('DEPARTURE');
+            window.alert("✓ Aerodrome for Departure saved on local device");
+        } catch (error) {
+          console.error("Error saving Aerodrome data:", error);
+        }
+      }
+    });
+
+    // Add save button functionality
+    document.getElementById('save_fields_btn_arrival')?.addEventListener('click', () => {
+      if (pyscriptReady && window.save_flightplan) {
+        try {
+            // Save aerodrome data to JSON files
+            window.save_aerodrome_to_json('ARRIVAL');
+            window.alert("✓ Aerodrome for Arrival saved on local device");
+        } catch (error) {
+          console.error("Error saving Aerodrome data:", error);
         }
       }
     });
@@ -756,6 +812,22 @@
 <py-config>
   packages = ["pandas", "numpy", "jinja2"]
 </py-config>
+
+<script>
+// Add event listeners for FIC spinners
+document.getElementById('fic_spinner')?.addEventListener('change', function() {
+    if (this.value && window.load_enroute_fic) {
+        window.load_enroute_fic('fic_spinner');
+    }
+});
+
+document.getElementById('fic_spinner2')?.addEventListener('change', function() {
+    if (this.value && window.load_enroute_fic) {
+        window.load_enroute_fic('fic_spinner2');
+    }
+});
+</script>
+
 
 <!-- PyScript for flightplan functionality -->
   <script type="py">
@@ -1238,6 +1310,27 @@
                 js.document.getElementById(field).value = flight_plan_dict[field]
 
 
+    def update_enroute_gui_fields(enroute_dict):
+        """Update ENROUTE GUI fields from js.window.flight_plan_data"""
+        print('----> update_enroute_gui_fields()')
+        print("🔄 Updating ENROUTE GUI fields...")
+
+        # Get all fields that need updating
+        fields = ['FIC_NAME', 'FIC_FREQUENCY', 'OVERHEAD', 'SQUAWK', 'FIC_NAME2', 'FIC_FREQUENCY2', 'OVERHEAD2', 'SQUAWK2']
+
+        # Update each GUI field from flight_plan_data
+        for field in fields:
+            element = js.document.getElementById(field)
+            if element:
+                value = js.window.flight_plan_data.get(field, '')
+                element.value = value if value not in ('', None, 'None', 'nan') else ''
+
+        for field in fields:
+            if enroute_dict.get(field):
+                js.document.getElementById(field).value = enroute_dict[field]
+
+
+
     def update_aerodrome_gui_fields(fname):
         """Update GENERAL GUI fields from js.window.flight_plan_data"""
         print('----> update_aerodrome_gui_fields()')
@@ -1313,30 +1406,40 @@
         print('----> clear_enroute_fields()')
         print("🧹 Clearing all ENROUTE fields...")
 
-        field_ids = [
-            'FIC_NAME',
-            'FIC_FREQUENCY',
-            'FIC_NAME2',
-            'FIC_FREQUENCY2'
-            'SQUAWK',
-            'OVERHEAD',
-            'SQUAWK2',
-            'OVERHEAD2',
-        ]
-
         # Clear GUI fields
-        for field_id in field_ids:
-            element = js.document.getElementById(field_id)
-            if element:
-                print(f"  Clearing {field_id}")
-                element.value = ''
-                # Ensure the value is actually cleared
-                if element.value:
-                    print(f"⚠️ Warning: Failed to clear {field_id}")
-                    # Try forcing the clear
-                    js.eval(f'document.getElementById("{field_id}").value = ""')
+        js.document.getElementById('FIC_NAME').value = ''
+        js.document.getElementById('FIC_FREQUENCY').value = ''
+        js.document.getElementById('OVERHEAD').value = ''
+        js.document.getElementById('SQUAWK').value = ''
+        js.document.getElementById('FIC_NAME2').value = ''
+        js.document.getElementById('FIC_FREQUENCY2').value = ''
+        js.document.getElementById('OVERHEAD2').value = ''
+        js.document.getElementById('SQUAWK2').value = ''
 
-        # Clear flight_plan_data for enroute fields
+        # field_ids = [
+        #     'FIC_NAME',
+        #     'FIC_FREQUENCY',
+        #     'FIC_NAME2',
+        #     'FIC_FREQUENCY2'
+        #     'SQUAWK',
+        #     'OVERHEAD',
+        #     'SQUAWK2',
+        #     'OVERHEAD2',
+        # ]
+
+        # # Clear GUI fields
+        # for field_id in field_ids:
+        #     element = js.document.getElementById(field_id)
+        #     if element:
+        #         print(f"  Clearing {field_id}")
+        #         element.value = ''
+        #         # Ensure the value is actually cleared
+        #         if element.value:
+        #             print(f"⚠️ Warning: Failed to clear {field_id}")
+        #             # Try forcing the clear
+        #             js.eval(f'document.getElementById("{field_id}").value = ""')
+
+        # Clear enroute fields
         enroute_keys = [
             'FIC_NAME', 'FIC_FREQUENCY', 'FIC_NAME2', 'FIC_FREQUENCY2',
             'OVERHEAD', 'OVERHEAD2', 'SQUAWK', 'SQUAWK2',
@@ -1531,27 +1634,6 @@
         return runways
 
 
-    async def clear_enroute_fields():
-        """Clear all ENROUTE GUI fields and flight_plan_data"""
-        print("🧹 Clearing all ENROUTE fields...")
-
-        # Clear GUI fields
-        js.document.getElementById('OVERHEAD').value = ''
-        js.document.getElementById('OVERHEAD2').value = ''
-        js.document.getElementById('SQUAWK').value = ''
-        js.document.getElementById('SQUAWK2').value = ''
-        js.document.getElementById('FIC_NAME').value = ''
-        js.document.getElementById('FIC_NAME2').value = ''
-        js.document.getElementById('FIC_FREQUENCY').value = ''
-        js.document.getElementById('FIC_FREQUENCY2').value = ''
-
-        # Clear flight_plan_data
-        keys = ['OVERHEAD', 'OVERHEAD2', 'SQUAWK', 'SQUAWK2',
-                'FIC_NAME', 'FIC_NAME2', 'FIC_FREQUENCY', 'FIC_FREQUENCY2']
-        for key in keys:
-            js.window.flight_plan_data[key] = ''
-
-
     async def create_new_flightplan():
         """Initialize new flightplan - returns current datetime for UI"""
         # Get current datetime for UI
@@ -1594,13 +1676,114 @@
         js.document.getElementById('plan_spinner').value = ""
 
         # Update the flightplan list
-        update_flightplan_list()
+        update_dropdown_flightplans()
 
         """Create new flightplan with current timestamp"""
         await clear_general_fields()
         await clear_aerodrome_fields('DEPARTURE')
         await clear_aerodrome_fields('ARRIVAL')
         await clear_enroute_fields()
+
+
+    async def delete_enroute_fic(spinner_name):
+        """Delete selected enroute FIC from localStorage"""
+        user_selection = js.document.getElementById(spinner_name).value
+
+        if not user_selection or user_selection == "":
+            print("⚠️ No Enroute FIC selected")
+            return
+
+        # Confirm deletion
+        if not js.window.confirm(f"Are you sure you want to delete '{user_selection}'?"):
+            print("❌ Deletion cancelled")
+            return
+
+        # Delete from localStorage
+        storage_key = f"ENROUTE_{user_selection}"
+        js.localStorage.removeItem(storage_key)
+        print(f"✅ ENROUTE FIC '{user_selection}' deleted")
+
+        # Clear the GUI dropdown selection
+        js.document.getElementById(spinner_name).value = ""
+
+        # Clear the GUI fields
+        if spinner_name == 'fic_spinner':
+            js.document.getElementById('FIC_NAME').value = ''
+            js.document.getElementById('FIC_FREQUENCY').value = ''
+            js.document.getElementById('OVERHEAD').value = ''
+            js.document.getElementById('SQUAWK').value = ''
+        elif spinner_name == 'fic_spinner2':
+            js.document.getElementById('FIC_NAME2').value = ''
+            js.document.getElementById('FIC_FREQUENCY2').value = ''
+            js.document.getElementById('OVERHEAD2').value = ''
+            js.document.getElementById('SQUAWK2').value = ''
+
+        # Update the enroute list
+        update_dropdown_enroute_FIC()
+
+
+    async def load_enroute_fic(spinner_name):
+        """Load selected FIC from localStorage"""
+
+        # Get the user selection from the spinner element
+        user_selection = js.document.getElementById(spinner_name).value
+
+        if not user_selection or user_selection == "":
+            print("⚠️ No Enroute FIC selected")
+            return
+
+        print(f"📂 Loading Enroute: {user_selection}")
+
+        # Clear relevant fields based on spinner
+        if spinner_name == 'fic_spinner':
+            js.document.getElementById('FIC_NAME').value = ''
+            js.document.getElementById('FIC_FREQUENCY').value = ''
+            js.document.getElementById('OVERHEAD').value = ''
+            js.document.getElementById('SQUAWK').value = ''
+        elif spinner_name == 'fic_spinner2':
+            js.document.getElementById('FIC_NAME2').value = ''
+            js.document.getElementById('FIC_FREQUENCY2').value = ''
+            js.document.getElementById('OVERHEAD2').value = ''
+            js.document.getElementById('SQUAWK2').value = ''
+
+        print(f"📂 Loading Enroute: {user_selection}")
+
+        # Load from localStorage
+        storage_key = f"ENROUTE_{user_selection}"
+        json_data = js.localStorage.getItem(storage_key)
+
+        if not json_data:
+            print(f"⚠️ ENROUTE not found: {user_selection}")
+            js.window.alert(f"⚠️ ENROUTE '{user_selection}' not found")
+            return
+
+        # Parse JSON
+        try:
+            enroute_dict = json.loads(json_data)
+            print(f"✅ Loaded ENROUTE: {len(enroute_dict)} fields for {spinner_name}")
+
+            # Update the keys in enroute_dict in case of fic_spinner2
+            if spinner_name == 'fic_spinner2':
+                enroute_dict['FIC_NAME2'] = enroute_dict.pop('FIC_NAME', None)
+                enroute_dict['FIC_FREQUENCY2'] = enroute_dict.pop('FIC_FREQUENCY', None)
+                enroute_dict['OVERHEAD2'] = enroute_dict.pop('OVERHEAD', None)
+                enroute_dict['SQUAWK2'] = enroute_dict.pop('SQUAWK', None)
+
+            # Fill the flight_plan_data dictionary
+            for key, value in enroute_dict.items():
+                print(f"ENROUTE Key: {key}, Value: {value}")
+                js.window.flight_plan_data[key] = value if value not in ('', None, 'None', 'nan') else ''
+
+            # Update GUI FIELDS
+            update_enroute_gui_fields(enroute_dict)
+            # Update missing fields colors
+            js.window.updateMissingFields()
+
+
+            print(f"✅ Flightplan '{user_selection}' loaded successfully")
+        except Exception as e:
+            print(f"❌ Error loading flightplan: {e}")
+            js.window.alert(f"❌ Error loading flightplan: {e}")
 
 
     async def load_flightplan():
@@ -1720,7 +1903,8 @@
             # print_local_storage()
 
             # Update the list of saved flightplans
-            update_flightplan_list()
+            update_dropdown_flightplans()
+            update_dropdown_enroute_FIC()
 
             print("---------------DATA SAVED-------------------")
             return True
@@ -1733,7 +1917,7 @@
         It will clear existing fields, load the saved data into flight_plan_data, update GUI fields and images.
 
         Args:
-            fname (str): Either 'DEPARTURE' or 'ARRIVAL' to indicate which aerodrome data to load
+            fname (str): Either 'DEPARTURE' or 'ARRIVAL' or 'ENROUTE' to indicate which aerodrome data to load
 
         Example:
             load_aerodrome_from_json('DEPARTURE')
@@ -1748,7 +1932,7 @@
 
         if not json_data:
             print(f"⚠️ Aeordrome data not found: {cache_key}")
-            js.window.alert(f"No custom aerodrome data found for {selected_icao}");
+            js.window.alert(f"No custom aerodrome data found for {selected_icao} in {fname}");
             return
 
         # Parse JSON
@@ -1761,7 +1945,7 @@
             # First clear aerodrome fields
             await clear_aerodrome_fields(fname)
 
-            # Fill the flight_plan_data dictionary from the loaded JSON data
+            # Overwrite the keys in the flight_plan_data dictionary from the loaded JSON data
             for key, value in fname_dict.items():
                 js.window.flight_plan_data[key] = value
 
@@ -1784,53 +1968,133 @@
 
 
     def save_aerodrome_to_json(fname):
-        """Save custom aerodrome data (ICAO) to localStorage"""
+        """Save custom aerodrome data (ICAO) to localStorage
+
+        Saves data for either departure/arrival aerodrome data to browser's localStorage.
+        For departure/arrival, saves relevant fields starting with that prefix.
+        For enroute, saves specific enroute-related fields.
+        All fields are saved but not all are loaded in load_aerodrome_from_json such as RUNWAY since they depend on weather conditions.
+
+        Args:
+            fname (str): Either 'DEPARTURE', 'ARRIVAL' to indicate what data to save
+
+        The data is saved with a key format of:
+        - For departure/arrival: [DEPARTURE|ARRIVAL]_[ICAO]
+
+        Example:
+            save_aerodrome_to_json('DEPARTURE')
+            save_aerodrome_to_json('ARRIVAL')
+        """
         print(f'----> save_aerodrome_to_json({fname})')
+        dict_fname = {}
 
         # Get flightplan data from dictionary
         flight_data = js.window.flight_plan_data
 
-        # Retrieve only DEPARTURE_ OR ARRIVAL_ keys for dictionary
-        dict_fname = {k: v for k, v in flight_data.items() if k.startswith(fname)}
+        if fname == 'DEPARTURE' or fname == 'ARRIVAL':
+            # Create Cache key
+            cache_key = fname + '_' + flight_data[f"{fname}_ICAO"]
+            # Retrieve keys for dictionary
+            dict_fname = {k: v for k, v in flight_data.items() if k.startswith(fname)}
 
-        # Update the dictionary with data from GUI
-        for key in dict_fname.keys():
-            # Do not store RUNWAY keys because runways are determined by the weather conditions
-            element = js.document.getElementById(key)
-            # Check whether field GUI exists using truthiness check which handles JsNull
-            if element and hasattr(element, 'value'):
-                field_value = element.value
-                if field_value and str(field_value) not in ('nan', 'None', ''):
-                    cache_key = fname + '_' + flight_data[f"{fname}_ICAO"]
-                    print(f'Saving to {cache_key} dictionary: {key}: {field_value}')
-                    dict_fname[key] = field_value
+            # Update the dictionary with data from GUI
+            for key in dict_fname.keys():
+                # Do not store RUNWAY keys because runways are determined by the weather conditions
+                element = js.document.getElementById(key)
+                # Check whether field GUI exists using truthiness check which handles JsNull
+                if element and hasattr(element, 'value'):
+                    field_value = element.value
+                    if field_value and str(field_value) not in ('nan', 'None', ''):
+                        print(f'Saving to {cache_key} dictionary: {key}: {field_value}')
+                        dict_fname[key] = field_value
+        else:
+            print(f'{fname} not valid to save to JSON')
+            return
 
-        # Also store the enroute information in case of departure
-        if fname == 'DEPARTURE':
-            enroute_fields = {
-                'FIC_NAME': js.document.getElementById('FIC_NAME').value,
-                'FIC_FREQUENCY': js.document.getElementById('FIC_FREQUENCY').value,
-                'FIC_NAME2': js.document.getElementById('FIC_NAME2').value,
-                'FIC_FREQUENCY2': js.document.getElementById('FIC_FREQUENCY2').value,
-                'OVERHEAD': js.document.getElementById('OVERHEAD').value,
-                'OVERHEAD2': js.document.getElementById('OVERHEAD2').value,
-                'SQUAWK': js.document.getElementById('SQUAWK').value,
-                'SQUAWK2': js.document.getElementById('SQUAWK2').value
-            }
-            # Only store non-empty values
-            for key, value in enroute_fields.items():
-                if value and str(value) not in ('nan', 'None', ''):
-                    dict_fname[key] = value
-
+        # if fname == 'DEPARTURE':
+        #     # Create cache key
+        #     cache_key = fname + '_' + flight_data[f"{fname}_ICAO"]
+        #     enroute_fields = {
+        #         'FIC_NAME': js.document.getElementById('FIC_NAME').value,
+        #         'FIC_FREQUENCY': js.document.getElementById('FIC_FREQUENCY').value,
+        #         'FIC_NAME2': js.document.getElementById('FIC_NAME2').value,
+        #         'FIC_FREQUENCY2': js.document.getElementById('FIC_FREQUENCY2').value,
+        #         'OVERHEAD': js.document.getElementById('OVERHEAD').value,
+        #         'OVERHEAD2': js.document.getElementById('OVERHEAD2').value,
+        #         'SQUAWK': js.document.getElementById('SQUAWK').value,
+        #         'SQUAWK2': js.document.getElementById('SQUAWK2').value
+        #     }
+        #     # Only store non-empty values
+        #     for key, value in enroute_fields.items():
+        #         if value and str(value) not in ('nan', 'None', ''):
+        #             dict_fname[key] = value
 
         # Save to cache
-        cache_key = fname + '_' + flight_data[f"{fname}_ICAO"]
         print(f'----> AERODROME SAVED: {cache_key}')
         # Convert to JSON string
         json_data = json.dumps(dict_fname)
         # Save to cache
         js.localStorage.setItem(cache_key, json_data)
         # save_to_cache(cache_key, dict_fname)
+
+
+    def save_enroute_to_json(prefix):
+        """Save custom enroute data to localStorage.
+
+        Args:
+            prefix (str): 'ENROUTE1', 'ENROUTE2'
+        """
+        print(f'----> save_enroute_to_json({prefix})')
+
+        # Create empty dict
+        dict_enroute = {}
+
+        # Store the FIC to localStorage
+        if prefix == 'ENROUTE1':
+            # Create cache key
+            listname = js.document.getElementById('FIC_NAME').value
+            cache_key = 'ENROUTE_' + listname.upper().strip()
+
+            enroute_fields = {
+                'FIC_NAME': js.document.getElementById('FIC_NAME').value,
+                'FIC_FREQUENCY': js.document.getElementById('FIC_FREQUENCY').value,
+                'OVERHEAD': js.document.getElementById('OVERHEAD').value,
+                'SQUAWK': js.document.getElementById('SQUAWK').value,
+            }
+        elif prefix == 'ENROUTE2':
+            # Create cache key
+            listname = js.document.getElementById('FIC_NAME2').value
+            cache_key = 'ENROUTE_' + listname.upper().strip()
+
+            enroute_fields = {
+                'FIC_NAME': js.document.getElementById('FIC_NAME2').value,
+                'FIC_FREQUENCY': js.document.getElementById('FIC_FREQUENCY2').value,
+                'OVERHEAD': js.document.getElementById('OVERHEAD2').value,
+                'SQUAWK': js.document.getElementById('SQUAWK2').value
+            }
+        else:
+            print(f'Invalid prefix: {prefix}')
+            return
+
+        if not listname or listname == '':
+            return
+
+        # Only store non-empty values
+        for key, value in enroute_fields.items():
+            if value and str(value) not in ('nan', 'None', ''):
+                dict_enroute[key] = value
+            else:
+                dict_enroute[key] = ''
+
+        # Save to cache
+        print(f'----> {prefix} SAVED: {cache_key}')
+        # Convert to JSON string
+        json_data = json.dumps(dict_enroute)
+        # Save to cache
+        js.localStorage.setItem(cache_key, json_data)
+        # Update FIC dropdown after saving
+        update_dropdown_enroute_FIC()
+        print(f"✅ FIC data saved and dropdown updated")
 
 
     def print_local_storage():
@@ -1856,7 +2120,8 @@
             print(f"   - Chrome: ~/.config/google-chrome/Default/Local Storage")
             print(f"   - Firefox: ~/.mozilla/firefox/<profile>/storage/default")
 
-    def update_flightplan_list():
+
+    def update_dropdown_flightplans():
         """Update the flightplan dropdown with saved plans from localStorage"""
         print("🔄 Updating flightplan list...")
 
@@ -1890,6 +2155,43 @@
             print(f"✅ Found {len(flightplan_names)} saved flightplans")
         else:
             print("⚠️ Flightplan dropdown not found")
+
+
+    def update_dropdown_enroute_FIC():
+        """Update the FICS dropdowns with cached FICs"""
+        print("🔄 Updating FICS in ENROUTE...")
+
+        # Get all keys from localStorage
+        storage_length = js.localStorage.length
+        FIC_names = []
+
+        for i in range(storage_length):
+            key = js.localStorage.key(i)
+            if key and str(key).startswith('ENROUTE_'):
+                fic_name = str(key).replace('ENROUTE_', '')
+                FIC_names.append(fic_name)
+
+        # Sort alphabetically
+        FIC_names.sort()
+
+        # Update both dropdowns
+        for spinner_id in ['fic_spinner', 'fic_spinner2']:
+            select = js.document.getElementById(spinner_id)
+            if select:
+                # Clear existing options except the first placeholder
+                select.innerHTML = '<option value="">Select FIC</option>'
+
+                # Add each FIC as an option
+                for name in FIC_names:
+                    option = js.document.createElement('option')
+                    option.value = name
+                    option.textContent = name
+                    select.appendChild(option)
+
+                print(f"✅ Updated {spinner_id} with {len(FIC_names)} FICs")
+            else:
+                print(f"⚠️ FICs dropdown not found: {spinner_id}")
+
 
     async def create_summary_atc(reverse_path=False):
         """Create ATC summary (placeholder function)"""
@@ -2391,7 +2693,7 @@
     # =================================================================
 
     async def retrieve_metar(fname):
-        """Retrieve METAR data for given fname"""
+        # Retrieve METAR data for given fname
         logger.info(f"func: retrieve_metar() - {fname}")
 
         # Get data
@@ -2557,10 +2859,14 @@
     js.window.load_flightplan = load_flightplan
     js.window.delete_flightplan = delete_flightplan
     js.window.save_flightplan = save_flightplan
+    js.window.load_enroute_fic = load_enroute_fic
+    js.window.delete_enroute_fic = delete_enroute_fic
+    js.window.save_enroute_to_json = save_enroute_to_json
     js.window.save_aerodrome_to_json = save_aerodrome_to_json
     js.window.load_aerodrome_from_json = load_aerodrome_from_json
     # js.window.retrieve_metar = retrieve_metar
-    js.window.update_flightplan_list = create_proxy(update_flightplan_list)
+    js.window.update_dropdown_flightplans = create_proxy(update_dropdown_flightplans)
+    js.window.update_dropdown_enroute_FIC = create_proxy(update_dropdown_enroute_FIC)
     js.window.clear_cache = clear_cache
 
     # ATC
@@ -2582,6 +2888,7 @@
     js.window.populate_aerodrome_fields_from_icao = create_proxy(populate_aerodrome_fields_from_icao)
     js.window.update_aerodrome_gui_fields = update_aerodrome_gui_fields
     js.window.update_general_gui_fields = update_general_gui_fields
+    js.window.update_enroute_gui_fields = update_enroute_gui_fields
     js.window.update_aerodrome_image = update_aerodrome_image
     # CLEAR FIELDS
     js.window.clear_aerodrome_fields = clear_aerodrome_fields
@@ -2596,8 +2903,11 @@
     js.window.get_default_data = get_default_data
     js.window.get_default_settings = get_default_settings
 
-    # Load the flightplan list on startup
-    update_flightplan_list()
+    # FLIGHTPLAN LIST IN CACHE
+    update_dropdown_flightplans()
+
+    # FIC LIST IN CACHE
+    update_dropdown_enroute_FIC()
   </script>
 
 
@@ -2730,6 +3040,11 @@
     // Create buttons at the START page
     const new_plan_btn = document.getElementById('new_plan_btn');
     const delete_btn = document.getElementById('delete_btn');
+    const fic_delete_btn = document.getElementById('fic_delete_btn');
+    const fic_save_btn = document.getElementById('fic_save_btn');
+    const fic_save_btn2 = document.getElementById('fic_save_btn2');
+
+
     // const retrieve_metar_btn = document.getElementById('retrieve_metar_btn');
 
     // Create buttons to generate ATC at the ATC page
@@ -2866,6 +3181,8 @@
 
         // Clear plan spinner selection
         document.getElementById('plan_spinner').value = "";
+        document.getElementById('fic_spinner').value = "";
+        document.getElementById('fic_spinner2').value = "";
         // Update missing fields
         updateMissingFields();
         // Show success message to user
@@ -2897,6 +3214,44 @@
         await window.delete_flightplan();
       }
     };
+
+    document.getElementById('fic_delete_btn')?.addEventListener('click', async () => {
+      if (pyscriptReady && window.delete_enroute_fic) {
+        await window.delete_enroute_fic('fic_spinner');
+      }
+    });
+
+    document.getElementById('fic_delete_btn2')?.addEventListener('click', async () => {
+      if (pyscriptReady && window.delete_enroute_fic) {
+        await window.delete_enroute_fic('fic_spinner2');
+      }
+    });
+
+    // Add save button functionality
+    document.getElementById('fic_save_btn')?.addEventListener('click', () => {
+      if (pyscriptReady && window.save_flightplan) {
+        try {
+            // Save FIC data to JSON files
+            window.save_enroute_to_json('ENROUTE1');
+            window.alert("✓ FIC is saved on local device");
+        } catch (error) {
+          console.error("Error saving FIC data:", error);
+        }
+      }
+    });
+
+    // Add save button functionality
+    document.getElementById('fic_save_btn2')?.addEventListener('click', () => {
+      if (pyscriptReady && window.save_flightplan) {
+        try {
+            // Save FIC data to JSON files
+            window.save_enroute_to_json('ENROUTE2');
+            window.alert("✓ FIC2 is saved on local device");
+        } catch (error) {
+          console.error("Error saving FIC2 data:", error);
+        }
+      }
+    });
 
     // DEPARTURE_USE_CACHED.onclick = async () => {
     //   if (pyscriptReady && window.load_aerodrome_from_json) {
