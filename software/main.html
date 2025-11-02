@@ -52,7 +52,7 @@
 		<a href="https://erdogant.github.io/skywalk-docs/pages/html/index.html" target="_blank">
 		  <img id="skywalk_logo" alt="SkyWalk">
 		</a>
-		<div class="version" style="margin-bottom: 5px; ">version: 1.0.0</div>
+		<div class="version" style="margin-bottom: 5px; ">version: 0.1.0</div>
 	  </div>
 
 	  <label_h1>Flightplan</label_h1>
@@ -241,10 +241,9 @@
         <div class="button-row">
             <input type="text" id="ARRIVAL_POSITION" placeholder="Position (At the Apron)", class="UPPERCASE_input">
             <select id="ARRIVAL_CTR" onchange="updateMissingFields()">
-        <option value=""></option>
-        <option value="CTR">CTR</option>
-        </select>
-
+                <option value=""></option>
+                <option value="CTR">CTR</option>
+            </select>
         </div>
 
         <div class="button-row">
@@ -1217,24 +1216,15 @@
         """Update GENERAL GUI fields from js.window.flight_plan_data"""
         print("🔄 Updating GENERAL GUI fields...")
 
-        if flight_plan_dict.get('FLIGHTPLAN'):
-            js.document.getElementById('FLIGHTPLAN').value = flight_plan_dict['FLIGHTPLAN']
-        if flight_plan_dict.get('CALLSIGN'):
-            js.document.getElementById('CALLSIGN').value = flight_plan_dict['CALLSIGN']
-        if flight_plan_dict.get('AIRCRAFT_TYPE'):
-            js.document.getElementById('AIRCRAFT_TYPE').value = flight_plan_dict['AIRCRAFT_TYPE']
-        if flight_plan_dict.get('POB'):
-            js.document.getElementById('POB').value = flight_plan_dict['POB']
-        if flight_plan_dict.get('FLIGHT_RULES'):
-            js.document.getElementById('FLIGHT_RULES').value = flight_plan_dict['FLIGHT_RULES']
-        if flight_plan_dict.get('DATETIME'):
-            js.document.getElementById('DATETIME').value = flight_plan_dict['DATETIME']
-
+        fields = ['FLIGHTPLAN', 'CALLSIGN', 'AIRCRAFT_TYPE', 'POB', 'FLIGHT_RULES', 'DATETIME']
+        for field in fields:
+            if flight_plan_dict.get(field):
+                js.document.getElementById(field).value = flight_plan_dict[field]
 
 
     def update_aerodrome_gui_fields(fname):
         """Update GENERAL GUI fields from js.window.flight_plan_data"""
-        print("🔄 Updating DEPARTURE/ARRIVAL GUI fields...")
+        print(f"🔄 Updating {fname} GUI fields...")
 
         # List of field IDs to update
         field_ids = [
@@ -1300,74 +1290,6 @@
 
         print(f"✅ Updated {updated_count} GUI fields")
 
-
-    def update_aerodrome_gui_fields(fname):
-        """Update all DEPARTURE/ARRIVAL GUI fields from js.window.flight_plan_data"""
-        print("🔄 Updating DEPARTURE/ARRIVAL GUI fields...")
-
-        # List of field IDs to update
-        field_ids = [
-            f'{fname}_COUNTRY',
-            f'{fname}_ICAO_CITY',
-            f'{fname}_COUNTRY',
-            f'{fname}_NAME',
-            f'{fname}_ICAO',
-            f'{fname}_POSITION',
-            f'{fname}_RUNWAY',
-            f'{fname}_ELEVATION',
-            f'{fname}_ROUTE_NAME',
-            f'{fname}_ROUTE_ALTITUDE',
-            f'{fname}_CIRCUIT_ALTITUDE',
-            f'{fname}_CTR',
-            f'{fname}_ATC_TOWER',
-            f'{fname}_ATC_APPROACH',
-            f'{fname}_ATC_ATIS_FREQ',
-            f'{fname}_ATC_GROUND',
-            f'{fname}_ATC_TELEPHONE',
-        ]
-
-        # Only update these fields based on DEPARTURE
-        if fname == 'DEPARTURE':
-            field_ids = field_ids + [
-                'FIC_NAME',
-                'FIC_FREQUENCY',
-                'SQUAWK',
-                'OVERHEAD',
-                'FIC_NAME2',
-                'FIC_FREQUENCY2',
-                'SQUAWK2',
-                'OVERHEAD2',
-            ]
-
-        updated_count = 0
-        for field_id in field_ids:
-            # Get the value from flight_plan_data
-            value = js.window.flight_plan_data.get(field_id)
-
-            # Get the HTML element
-            element = js.document.getElementById(field_id)
-
-            if element:
-                # Convert value to string and handle special cases
-                if value is not None and value != '' and str(value) != 'nan' and str(value) != 'None':
-                    # Handle boolean for CTR
-                    if field_id == f'{fname}_CTR':
-                        if value or str(value).lower() == 'true':
-                            element.value = 'CTR'
-                        else:
-                            element.value = ''
-                    else:
-                        element.value = str(value)
-
-                    updated_count += 1
-                    logger.debug(f"  ✓ Updated {field_id}: {element.value}")
-                else:
-                    # Clear the field if no value
-                    element.value = ''
-            else:
-                logger.info(f"  ⚠️ Element not found: {field_id}")
-
-        logger.info(f"✅ Updated {updated_count} GUI fields")
 
     async def clear_enroute_fields():
         """Clear all ENROUTE GUI fields and flight_plan_data"""
@@ -1683,10 +1605,10 @@
         await clear_aerodrome_fields('ARRIVAL')
         await clear_enroute_fields()
 
-    def save_flightplan():
+    def save_flightplan(to_cache=True):
         """Save current flightplan data to localStorage"""
 
-        # Read current values from input fields
+        # Read GENERAL tab fields
         js.window.flight_plan_data["FLIGHTPLAN"] = js.document.getElementById('FLIGHTPLAN').value;
         js.window.flight_plan_data["POB"] = js.document.getElementById('POB').value;
         js.window.flight_plan_data["FLIGHT_RULES"] = js.document.getElementById('FLIGHT_RULES').value;
@@ -1695,7 +1617,7 @@
         js.window.flight_plan_data["CALLSIGN"] = js.document.getElementById('CALLSIGN').value;
         js.window.flight_plan_data["CALLSIGN_SHORT"] = js.window.create_callsign_short(js.document.getElementById('CALLSIGN').value);
 
-        # Read Enroute tab fields
+        # Read ENROUTE tab fields
         js.window.flight_plan_data["FIC_NAME"] = js.document.getElementById('FIC_NAME').value;
         js.window.flight_plan_data["FIC_FREQUENCY"] = js.document.getElementById('FIC_FREQUENCY').value;
         js.window.flight_plan_data["OVERHEAD"] = js.document.getElementById('OVERHEAD').value;
@@ -1705,16 +1627,17 @@
         js.window.flight_plan_data["OVERHEAD2"] = js.document.getElementById('OVERHEAD2').value;
         js.window.flight_plan_data["SQUAWK2"] = js.document.getElementById('SQUAWK2').value;
 
+        # Read DEPARTURE tab fields
+        js.window.flight_plan_data["DEPARTURE_ROUTE_NAME"] = js.document.getElementById('DEPARTURE_ROUTE_NAME').value;
+        js.window.flight_plan_data["DEPARTURE_POSITION"] = js.document.getElementById('DEPARTURE_POSITION').value;
+        js.window.flight_plan_data["ARRIVAL_ROUTE_NAME"] = js.document.getElementById('ARRIVAL_ROUTE_NAME').value;
+        js.window.flight_plan_data["ARRIVAL_POSITION"] = js.document.getElementById('ARRIVAL_POSITION').value;
+
         # Get flightplan name
         flightplan_name = js.window.flight_plan_data.get("FLIGHTPLAN", "")
 
-        if not flightplan_name or flightplan_name == "":
-            print("⚠️ Flightplan not saved. Name is required")
-            # js.window.alert("⚠️ Please enter a flightplan name before saving")
-            return False
-
         # Print the saved variables array
-        print("-------------SAVE FLIGHTPLAN DATA-------------")
+        print("-------------SAVE FLIGHTPLAN DATA TO DICT-------------")
         print(f"  Flightplan Name: {flightplan_name}")
 
         # Convert flight_plan_data to JSON string
@@ -1730,26 +1653,33 @@
             except Exception as e:
                 print(f"⚠️ Failed to save {key}: {e}")
 
-        # Print saved data
-        # for key, value in flight_plan_dict.items():
-        #    if value != '' and value != None and value != {} and value != []:
-        #        print(f"  {key}: '{value}'")
+        # Print Data
+        for key, value in flight_plan_dict.items():
+            if value != '' and value != None and value != {} and value != []:
+                print(f"  {key}: '{value}'")
 
-        # Convert to JSON string
-        json_data = json.dumps(flight_plan_dict)
+        if to_cache:
+            print("-------------SAVE FLIGHTPLAN DATA TO CACHE-------------")
 
-        # Save to localStorage with key "flightplan_[name]"
-        storage_key = f"flightplan_{flightplan_name}"
-        js.localStorage.setItem(storage_key, json_data)
+            if not flightplan_name or flightplan_name == "":
+                print("⚠️ Flightplan not saved. Name is required")
+                return False
 
-        # Get localStorage info
-        # print_local_storage()
+            # Convert to JSON string
+            json_data = json.dumps(flight_plan_dict)
 
-        # Update the list of saved flightplans
-        update_flightplan_list()
+            # Save to localStorage with key "flightplan_[name]"
+            storage_key = f"flightplan_{flightplan_name}"
+            js.localStorage.setItem(storage_key, json_data)
 
-        print("---------------DATA SAVED-------------------")
-        return True
+            # Get localStorage info
+            # print_local_storage()
+
+            # Update the list of saved flightplans
+            update_flightplan_list()
+
+            print("---------------DATA SAVED-------------------")
+            return True
 
     def print_local_storage():
         # Get localStorage info
@@ -2527,15 +2457,15 @@
           AIRCRAFT_TYPE,
           POB,
           FLIGHTPLAN,
+          DEPARTURE_NAME,
+          DEPARTURE_ICAO,
+          DEPARTURE_POSITION,
           DEPARTURE_ATC_GROUND,
           DEPARTURE_ATC_ATIS_FREQ,
           DEPARTURE_ATC_TOWER,
           DEPARTURE_ROUTE_ALTITUDE,
           DEPARTURE_ROUTE_NAME,
           DEPARTURE_RUNWAY,
-          DEPARTURE_POSITION,
-          DEPARTURE_NAME,
-          DEPARTURE_ICAO,
           ARRIVAL_NAME,
           ARRIVAL_ICAO,
           ARRIVAL_RUNWAY,
@@ -2820,31 +2750,55 @@
 
 
     document.getElementById('BTN_HTML_SUMMARY')?.addEventListener('click', () => {
-      if (window.create_summary_atc) { window.create_summary_atc(); }
+      if (window.create_summary_atc) {
+        window.save_flightplan({to_cache: false})
+        window.create_summary_atc();
+      }
     });
     document.getElementById('BTN_HTML_SUMMARY_REV')?.addEventListener('click', () => {
-      if (window.create_summary_atc) { window.create_summary_atc({ reverse_path: true }); }
+      if (window.create_summary_atc) {
+        window.save_flightplan({to_cache: false})
+        window.create_summary_atc({ reverse_path: true });
+      }
     });
 
     document.getElementById('BTN_HTML_DEPARTURE')?.addEventListener('click', () => {
-      if (window.create_departure_atc) { window.create_departure_atc(); }
+      if (window.create_departure_atc) {
+        window.save_flightplan({to_cache: false})
+        window.create_departure_atc();
+      }
     });
     document.getElementById('BTN_HTML_DEPARTURE_REV')?.addEventListener('click', () => {
-      if (window.create_departure_atc) { window.create_departure_atc({ reverse_path: true }); }
+      if (window.create_departure_atc) {
+        window.save_flightplan({to_cache: false})
+        window.create_departure_atc({ reverse_path: true });
+      }
     });
 
     document.getElementById('BTN_HTML_ARRIVAL')?.addEventListener('click', () => {
-      if (window.create_arrival_atc) { window.create_arrival_atc(); }
+      if (window.create_arrival_atc) {
+        window.save_flightplan({to_cache: false})
+        window.create_arrival_atc();
+      }
     });
     document.getElementById('BTN_HTML_ARRIVAL_REV')?.addEventListener('click', () => {
-      if (window.create_arrival_atc) { window.create_arrival_atc({ reverse_path: true }); }
+      if (window.create_arrival_atc) {
+        window.save_flightplan({to_cache: false})
+        window.create_arrival_atc({ reverse_path: true });
+      }
     });
 
     document.getElementById('BTN_HTML_ENROUTE')?.addEventListener('click', () => {
-      if (window.create_enroute_atc) { window.create_enroute_atc(); }
+      if (window.create_enroute_atc) {
+        window.save_flightplan({to_cache: false})
+        window.create_enroute_atc();
+      }
     });
     document.getElementById('BTN_HTML_EN_REV')?.addEventListener('click', () => {
-      if (window.create_enroute_atc) { window.create_enroute_atc({ reverse_path: true }); }
+      if (window.create_enroute_atc) {
+        window.save_flightplan({to_cache: false})
+        window.create_enroute_atc({ reverse_path: true });
+      }
     });
 
     // Add clear cache button handler
