@@ -123,23 +123,21 @@
 	  <!-- Departure Information Label -->
 	  <label_h1>Departure Information</label_h1>
 
-        <div class="button-row">
-            <input type="checkbox" id="DEPARTURE_USE_CACHED" name="use_cached_departure" style="width: auto;" checked>
-            <label for="DEPARTURE_USE_CACHED">Load custom aerodrome data when available</label>
-        </div>
-
 
 	  <!-- Line 2: COUNTRY and ICAO_CITY spinners aligned -->
 	  <div class="button-row">
 		<select id="DEPARTURE_COUNTRY">
 			<option value=""></option>
 		</select>
-		<!--<select id="DEPARTURE_ICAO_CITY" onchange="handleIcaoSelection(event, 'DEPARTURE')" onclick="event.stopPropagation()">-->
 		<select id="DEPARTURE_ICAO_CITY">
 		  <option value=""></option>
 		  <!-- ICAO City options will be populated dynamically -->
 		</select>
 	  </div>
+
+    <div class="button-row">
+        <button id="DEPARTURE_USE_CACHED" onclick="window.load_aerodrome_from_json('DEPARTURE')" style="width: auto;">Load your custom aerodrome data</button>
+    </div>
 
 	  <!-- Line 4: NAME and ICAO inputs -->
 	  <div class="button-row">
@@ -231,7 +229,11 @@
                 </select>
         </div>
 
-        <!-- Line 4: NAME and ICAO inputs -->
+        <div class="button-row">
+            <button id="ARRIVAL_USE_CACHED" onclick="window.load_aerodrome_from_json('ARRIVAL')" style="width: auto;">Load your custom aerodrome data</button>
+	    </div>
+
+	<!-- Line 4: NAME and ICAO inputs -->
         <div class="button-row">
             <input type="text" id="ARRIVAL_NAME" placeholder="Airport Name">
             <input type="text" id="ARRIVAL_ICAO" class="UPPERCASE_input" placeholder="ICAO">
@@ -407,10 +409,6 @@
        <div class="button-row">
            <button id="save_fields_btn" style="background-color: #4CAF50; color: white;" title="Saving fields in flightplan">Save Flightplan</button>
        </div>
-       <div class="button-row">
-           <button id="save_departure_fields_btn" style="background-color: #4CAF50; color: white;" title="When Loading this Aerodrome the next time, the saved fields will be loaded">Save Departure Fields</button>
-           <button id="save_arrival_fields_btn" style="background-color: #4CAF50; color: white;" title="When Loading this Aerodrome the next time, the saved fields will be loaded">Save Arrival Fields</button>
-       </div>
 
 
         <!--
@@ -482,13 +480,19 @@
         try {
           // Get flightplan name
           const flightplanName = document.getElementById('FLIGHTPLAN')?.value;
-          if (!flightplanName) {
-            window.alert("⚠️ Please enter a Flightplan name before saving");
+          if (!flightplanName) { window.alert("⚠️ Please enter a Flightplan name before saving");
             return;
           }
+
+          // Save flightplan data to JSON files
           window.save_flightplan();
-          console.log("Flightplan saved to local cache");
+
+          // Save aerodrome data to JSON files
+          window.save_aerodrome_to_json('DEPARTURE');
+          window.save_aerodrome_to_json('ARRIVAL');
+
           window.alert("✓ Flightplan saved on local device");
+
         } catch (error) {
           console.error("Error saving flightplan data:", error);
         }
@@ -809,6 +813,7 @@
 
     def get_default_settings():
         """Get default settings"""
+        print('----> get_default_settings()')
         data = {
             'DEPARTURE_COUNTRY': '',
             'DEPARTURE_ICAO': '',
@@ -847,6 +852,7 @@
 
     def get_default_data():
         """Get default flightplan data structure - copied from utils_skywalk.py"""
+        print('----> get_default_data()')
         data = {
             # General/Flightplan
             'FLIGHTPLAN': '',           # Name of the flightplan
@@ -922,7 +928,6 @@
             'FIC_FREQUENCY': '',        # FIC frequency
             'OVERHEAD': '',             # Overhead point
             'SQUAWK': '',               # Squawk code
-
             # Enroute (second FIC/overhead/squawk)
             'FIC_NAME2': '',            # Second FIC name
             'FIC_FREQUENCY2': '',       # Second FIC frequency
@@ -951,7 +956,7 @@
 
     def is_cached(cache_key):
         try:
-            cached = js.localStorage.getItem(f"skywalk_{cache_key}")
+            cached = js.localStorage.getItem(cache_key)
             # Check if value exists and is truthy (not null/undefined)
             return bool(cached)
         except:
@@ -962,7 +967,7 @@
         try:
             if encode_base64:
                 data = base64.b64encode(data).decode('utf-8')
-            js.localStorage.setItem(f"skywalk_{cache_key}", data)
+            js.localStorage.setItem(cache_key, data)
             print(f"💾 Cached {cache_key}: {len(data)} bytes")
             return True
         except Exception as e:
@@ -972,7 +977,7 @@
 
     def load_from_cache(cache_key):
         try:
-            cached_data = js.localStorage.getItem(f"skywalk_{cache_key}")
+            cached_data = js.localStorage.getItem(cache_key)
             if cached_data:
                 # Decode base64 string to bytes
                 data = base64.b64decode(cached_data)
@@ -1004,6 +1009,7 @@
 
     # Extract CSV inside the ZIP
     def extract_csv_from_zip(zip_bytes, password=None):
+        print('----> extract_csv_from_zip()')
         try:
             print(f"🔓 Extracting ZIP file ({len(zip_bytes)} bytes)...")
             with zipfile.ZipFile(BytesIO(zip_bytes)) as z:
@@ -1030,6 +1036,7 @@
 
     # Main loader: called from JS
     async def import_aerodrome_selected(fname, country):
+        print('----> import_aerodrome_selected()')
         print(f"🌍 Loading {fname} aerodrome data for: {country}")
         zip_bytes = None
 
@@ -1085,6 +1092,7 @@
 
     async def populate_aerodrome_fields_from_icao(fname, city_icao):
         """Populate departure/arrival fields when ICAO city is selected."""
+        print('----> populate_aerodrome_fields_from_icao()')
         print(f"🔍 Searching for data: {city_icao}")
 
         # Get the stored dataframe
@@ -1154,12 +1162,19 @@
               print(f"  {key}: {js.window.flight_plan_data[key]}")
 
         # Update all GUI fields and images
-        if fname == 'DEPARTURE':
-              update_aerodrome_gui_fields('DEPARTURE')
-              await update_aerodrome_image('DEPARTURE')
-        elif fname == 'ARRIVAL':
-              update_aerodrome_gui_fields('ARRIVAL')
-              await update_aerodrome_image('ARRIVAL')
+        # if fname == 'DEPARTURE':
+        #       update_aerodrome_gui_fields('DEPARTURE')
+        #       await update_aerodrome_image('DEPARTURE')
+        # elif fname == 'ARRIVAL':
+        #       update_aerodrome_gui_fields('ARRIVAL')
+        #       await update_aerodrome_image('ARRIVAL')
+
+        # Update GUI fields for aerodrome
+        update_aerodrome_gui_fields(fname)
+        # Update images for aerodrome
+        await update_aerodrome_image(fname)
+        # Remove METAR widget
+        remove_metar_widget(fname)
 
     def normalize_freq(value):
         # Convert to string and strip brackets/quotes
@@ -1214,6 +1229,7 @@
 
     def update_general_gui_fields(flight_plan_dict):
         """Update GENERAL GUI fields from js.window.flight_plan_data"""
+        print('----> update_general_gui_fields()')
         print("🔄 Updating GENERAL GUI fields...")
 
         fields = ['FLIGHTPLAN', 'CALLSIGN', 'AIRCRAFT_TYPE', 'POB', 'FLIGHT_RULES', 'DATETIME']
@@ -1224,6 +1240,7 @@
 
     def update_aerodrome_gui_fields(fname):
         """Update GENERAL GUI fields from js.window.flight_plan_data"""
+        print('----> update_aerodrome_gui_fields()')
         print(f"🔄 Updating {fname} GUI fields...")
 
         # List of field IDs to update
@@ -1293,6 +1310,7 @@
 
     async def clear_enroute_fields():
         """Clear all ENROUTE GUI fields and flight_plan_data"""
+        print('----> clear_enroute_fields()')
         print("🧹 Clearing all ENROUTE fields...")
 
         field_ids = [
@@ -1326,6 +1344,26 @@
 
         for key in enroute_keys:
             js.window.flight_plan_data[key] = ''
+
+
+    def remove_metar_widget(fname):
+        """Remove METAR widget for the specified aerodrome if it exists"""
+        print(f"---> remove_metar_widget({fname})")
+
+        # Clear the METAR container
+        widget_id = f"{fname.lower()}WidgetContainer"
+        widget = js.document.getElementById(widget_id)
+        if widget:
+            widget.innerHTML = ''  # Clear the container instead of removing it
+            print(f"🧹 Cleared METAR widget for {fname}")
+
+        # Clear the datetime field
+        datetime_field = js.document.getElementById(f'datetime-metar-taf-{fname.lower()}')
+        datetime_field.value = ''
+        js.window.flight_plan_data['METAR_DATETIME'] = ''
+        print(f"🧹 Cleared METAR datetime for {fname}")
+
+
 
 
     async def clear_aerodrome_fields(fname):
@@ -1513,6 +1551,7 @@
         for key in keys:
             js.window.flight_plan_data[key] = ''
 
+
     async def create_new_flightplan():
         """Initialize new flightplan - returns current datetime for UI"""
         # Get current datetime for UI
@@ -1525,8 +1564,44 @@
         await clear_aerodrome_fields('ARRIVAL')
         await clear_enroute_fields()
 
+        # Remove METAR widget
+        remove_metar_widget('DEPARTURE')
+        remove_metar_widget('ARRIVAL')
+
         print("✅ New flightplan initialized - all fields cleared")
         return current_time
+
+
+    async def delete_flightplan():
+        """Delete selected flightplan from localStorage"""
+        plan_name = js.document.getElementById('plan_spinner').value
+
+        if not plan_name or plan_name == "":
+            print("⚠️ No flightplan selected")
+            return
+
+        # Confirm deletion
+        if not js.window.confirm(f"Are you sure you want to delete '{plan_name}'?"):
+            print("❌ Deletion cancelled")
+            return
+
+        # Delete from localStorage
+        storage_key = f"flightplan_{plan_name}"
+        js.localStorage.removeItem(storage_key)
+        print(f"✅ Flightplan '{plan_name}' deleted")
+
+        # Clear the dropdown selection
+        js.document.getElementById('plan_spinner').value = ""
+
+        # Update the flightplan list
+        update_flightplan_list()
+
+        """Create new flightplan with current timestamp"""
+        await clear_general_fields()
+        await clear_aerodrome_fields('DEPARTURE')
+        await clear_aerodrome_fields('ARRIVAL')
+        await clear_enroute_fields()
+
 
     async def load_flightplan():
         """Load selected flightplan from localStorage"""
@@ -1575,35 +1650,7 @@
             print(f"❌ Error loading flightplan: {e}")
             js.window.alert(f"❌ Error loading flightplan: {e}")
 
-    async def delete_flightplan():
-        """Delete selected flightplan from localStorage"""
-        plan_name = js.document.getElementById('plan_spinner').value
 
-        if not plan_name or plan_name == "":
-            print("⚠️ No flightplan selected")
-            return
-
-        # Confirm deletion
-        if not js.window.confirm(f"Are you sure you want to delete '{plan_name}'?"):
-            print("❌ Deletion cancelled")
-            return
-
-        # Delete from localStorage
-        storage_key = f"flightplan_{plan_name}"
-        js.localStorage.removeItem(storage_key)
-        print(f"✅ Flightplan '{plan_name}' deleted")
-
-        # Clear the dropdown selection
-        js.document.getElementById('plan_spinner').value = ""
-
-        # Update the flightplan list
-        update_flightplan_list()
-
-        """Create new flightplan with current timestamp"""
-        await clear_general_fields()
-        await clear_aerodrome_fields('DEPARTURE')
-        await clear_aerodrome_fields('ARRIVAL')
-        await clear_enroute_fields()
 
     def save_flightplan(to_cache=True):
         """Save current flightplan data to localStorage"""
@@ -1627,7 +1674,7 @@
         js.window.flight_plan_data["OVERHEAD2"] = js.document.getElementById('OVERHEAD2').value;
         js.window.flight_plan_data["SQUAWK2"] = js.document.getElementById('SQUAWK2').value;
 
-        # Read DEPARTURE tab fields
+        # Read DEPARTURE tab fields (these are extra as there was an issue on the mobile phone that these fields were not being set )
         js.window.flight_plan_data["DEPARTURE_ROUTE_NAME"] = js.document.getElementById('DEPARTURE_ROUTE_NAME').value;
         js.window.flight_plan_data["DEPARTURE_POSITION"] = js.document.getElementById('DEPARTURE_POSITION').value;
         js.window.flight_plan_data["ARRIVAL_ROUTE_NAME"] = js.document.getElementById('ARRIVAL_ROUTE_NAME').value;
@@ -1658,12 +1705,9 @@
             if value != '' and value != None and value != {} and value != []:
                 print(f"  {key}: '{value}'")
 
-        if to_cache:
+        # Save to cache
+        if to_cache and flightplan_name and flightplan_name != "":
             print("-------------SAVE FLIGHTPLAN DATA TO CACHE-------------")
-
-            if not flightplan_name or flightplan_name == "":
-                print("⚠️ Flightplan not saved. Name is required")
-                return False
 
             # Convert to JSON string
             json_data = json.dumps(flight_plan_dict)
@@ -1680,6 +1724,114 @@
 
             print("---------------DATA SAVED-------------------")
             return True
+
+
+    async def load_aerodrome_from_json(fname):
+        """Load aerodrome data for departure or arrival from localStorage.
+
+        This function loads cached aerodrome data for either departure or arrival from browser localStorage.
+        It will clear existing fields, load the saved data into flight_plan_data, update GUI fields and images.
+
+        Args:
+            fname (str): Either 'DEPARTURE' or 'ARRIVAL' to indicate which aerodrome data to load
+
+        Example:
+            load_aerodrome_from_json('DEPARTURE')
+            load_aerodrome_from_json('ARRIVAL')
+        """
+        # Make cache key
+        selected_icao = js.document.getElementById(f'{fname}_ICAO').value.upper() or ''
+        cache_key = fname + '_' + selected_icao
+
+        # Load cached data
+        json_data = js.localStorage.getItem(cache_key)
+
+        if not json_data:
+            print(f"⚠️ Aeordrome data not found: {cache_key}")
+            js.window.alert(f"No custom aerodrome data found for {selected_icao}");
+            return
+
+        # Parse JSON
+        try:
+            fname_dict = json.loads(json_data)
+            fname_dict[f'{fname}_RUNWAY'] = ''
+
+            print(f"✅ Loaded {len(fname_dict)} fields")
+
+            # First clear aerodrome fields
+            await clear_aerodrome_fields(fname)
+
+            # Fill the flight_plan_data dictionary from the loaded JSON data
+            for key, value in fname_dict.items():
+                js.window.flight_plan_data[key] = value
+
+            # Update GUI fields
+            update_aerodrome_gui_fields(fname)
+
+            # Update images
+            await update_aerodrome_image(fname)
+
+            # Update missing fields colors
+            js.window.updateMissingFields()
+
+            # Remove METAR widget
+            remove_metar_widget(fname)
+
+            print(f"✅ Aerodrome data loaded successfully for {fname}")
+        except Exception as e:
+            print(f"❌ Error loading aerodrome data: {str(e)}")
+            js.window.alert(f"❌ Error loading aerodrome data: {str(e)}")
+
+
+    def save_aerodrome_to_json(fname):
+        """Save custom aerodrome data (ICAO) to localStorage"""
+        print(f'----> save_aerodrome_to_json({fname})')
+
+        # Get flightplan data from dictionary
+        flight_data = js.window.flight_plan_data
+
+        # Retrieve only DEPARTURE_ OR ARRIVAL_ keys for dictionary
+        dict_fname = {k: v for k, v in flight_data.items() if k.startswith(fname)}
+
+        # Update the dictionary with data from GUI
+        for key in dict_fname.keys():
+            # Do not store RUNWAY keys because runways are determined by the weather conditions
+            element = js.document.getElementById(key)
+            # Check whether field GUI exists using truthiness check which handles JsNull
+            if element and hasattr(element, 'value'):
+                field_value = element.value
+                if field_value and str(field_value) not in ('nan', 'None', ''):
+                    cache_key = fname + '_' + flight_data[f"{fname}_ICAO"]
+                    print(f'Saving to {cache_key} dictionary: {key}: {field_value}')
+                    dict_fname[key] = field_value
+
+        # Also store the enroute information in case of departure
+        if fname == 'DEPARTURE':
+            enroute_fields = {
+                'FIC_NAME': js.document.getElementById('FIC_NAME').value,
+                'FIC_FREQUENCY': js.document.getElementById('FIC_FREQUENCY').value,
+                'FIC_NAME2': js.document.getElementById('FIC_NAME2').value,
+                'FIC_FREQUENCY2': js.document.getElementById('FIC_FREQUENCY2').value,
+                'OVERHEAD': js.document.getElementById('OVERHEAD').value,
+                'OVERHEAD2': js.document.getElementById('OVERHEAD2').value,
+                'SQUAWK': js.document.getElementById('SQUAWK').value,
+                'SQUAWK2': js.document.getElementById('SQUAWK2').value
+            }
+            # Only store non-empty values
+            for key, value in enroute_fields.items():
+                if value and str(value) not in ('nan', 'None', ''):
+                    dict_fname[key] = value
+
+
+        # Save to cache
+        cache_key = fname + '_' + flight_data[f"{fname}_ICAO"]
+        print(f'----> AERODROME SAVED: {cache_key}')
+        # Convert to JSON string
+        json_data = json.dumps(dict_fname)
+        # Save to cache
+        js.localStorage.setItem(cache_key, json_data)
+        # save_to_cache(cache_key, dict_fname)
+
 
     def print_local_storage():
         # Get localStorage info
@@ -2399,10 +2551,14 @@
 
     # =================================================================
     # Make functions available to JavaScript
+    # =================================================================
+
     js.window.create_new_flightplan = create_new_flightplan
     js.window.load_flightplan = load_flightplan
     js.window.delete_flightplan = delete_flightplan
     js.window.save_flightplan = save_flightplan
+    js.window.save_aerodrome_to_json = save_aerodrome_to_json
+    js.window.load_aerodrome_from_json = load_aerodrome_from_json
     # js.window.retrieve_metar = retrieve_metar
     js.window.update_flightplan_list = create_proxy(update_flightplan_list)
     js.window.clear_cache = clear_cache
@@ -2444,6 +2600,7 @@
     update_flightplan_list()
   </script>
 
+
   <!-- Vanilla JS for tabs and flightplan buttons -->
   <script>
     const tabButtons = document.querySelectorAll(".tablinks");
@@ -2451,7 +2608,7 @@
 
     // Function to check for missing fields and update highlighting
     function updateMissingFields() {
-        console.log("Updating missing fields...");
+        console.log("---> updateMissingFields()");
         const inputs = [
           CALLSIGN,
           AIRCRAFT_TYPE,
@@ -2740,6 +2897,13 @@
         await window.delete_flightplan();
       }
     };
+
+    // DEPARTURE_USE_CACHED.onclick = async () => {
+    //   if (pyscriptReady && window.load_aerodrome_from_json) {
+    //     console.log("✅ ---> load_aerodrome_from_json('DEPARTURE')");
+    //     await window.load_aerodrome_from_json('DEPARTURE');
+    //   }
+    // };
 
     // retrieve_metar_btn.onclick = async () => {
     //   if (pyscriptReady && window.retrieve_metar) {
