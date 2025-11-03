@@ -373,3 +373,62 @@ input[type="text"]:hover {
         transform: rotate(360deg);
     }
 }
+
+/* MAP container */
+#map-container {
+    height: 300px;
+    width: 100%;
+    max-width: 800px;
+    margin: 20px auto;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    position: relative;
+}
+#route-map {
+    height: 100%;
+    width: 100%;
+    border-radius: 4px;
+    background: #fff;
+}
+.leaflet-container {
+    background: #fff !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+.leaflet-control-container .leaflet-top {
+    z-index: 1000;
+}
+
+.map-controls {
+    display: none;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 8px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+    user-select: none;
+}
+
+.map-controls label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.map-controls input[type="checkbox"] {
+    margin: 0;
+    cursor: pointer;
+}
+
+/* Simple buttons */
+.map-controls.visible {
+    display: block;
+    text-align: center;
+    margin-bottom: 10px;
+}
+.map-controls button,
+.map-controls select {
+    padding: 5px 10px;
+    margin: 0 5px;
+}

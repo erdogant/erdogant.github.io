@@ -52,7 +52,7 @@
 		<a href="https://erdogant.github.io/skywalk-docs/pages/html/index.html" target="_blank">
 		  <img id="skywalk_logo" alt="SkyWalk">
 		</a>
-		<div class="version" style="margin-bottom: 5px; ">version: 0.2.0</div>
+		<div class="version" style="margin-bottom: 5px; ">version: 0.3.0</div>
 	  </div>
 
 	  <label_h1>Flightplan</label_h1>
@@ -70,10 +70,14 @@
 	  <!-- Flightplan Name row -->
 	  <div class="button-row">
 		<input type="text" id="FLIGHTPLAN" placeholder="Flightplan Name">
+		<input type="text" id="DATETIME" placeholder="dd-mm-yyyy hh:mm">
+		<!--<button id="set_datetime_btn">Now</button>-->
+		<button id="set_datetime_btn" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">⏰</button>
 	  </div>
 
+
 	  <!-- Aircraft Info Label -->
-	  <label_h1>Aircraft Info</label_h1>
+	  <label_h1>Aircraft</label_h1>
 
 	  <!-- CALLSIGN + Aircraft Type row -->
 	  <div class="button-row">
@@ -90,11 +94,6 @@
 		</select>
 	  </div>
 
-	<!-- Datetime row -->
-	<div class="button-row">
-		<input type="text" id="DATETIME" placeholder="dd-mm-yyyy hh:mm">
-		<button id="set_datetime_btn">Now</button>
-			</div>
 
 	  <!-- Bottom Buttons Container -->
 	  <div id="bottom-container">
@@ -123,6 +122,11 @@
 	  <!-- Departure Information Label -->
 	  <label_h1>Departure Information</label_h1>
 
+	  <!-- Departure Image -->
+	  <div class="logo-container" style="margin-top: 20px;">
+		<img id="DEPARTURE_image_cache" alt="Departure Aerodrome" style="max-width: 100%; height: auto; border-radius: 10px; cursor: pointer;" onclick="openAerodromeMap('DEPARTURE')">
+	  </div>
+
 
 	  <!-- Line 2: COUNTRY and ICAO_CITY spinners aligned -->
 	  <div class="button-row">
@@ -145,6 +149,8 @@
     <div class="button-row">
         <button id="DEPARTURE_USE_CACHED" onclick="window.load_aerodrome_from_json('DEPARTURE')" style="width: auto;">Load your personalized aerodrome data</button>
     </div>
+
+    <label_h1>Aerodrome</label_h1>
 
 	  <!-- Line 5: POSITION, RUNWAY, ELEVATION inputs -->
 	  <div class="button-row">
@@ -189,22 +195,22 @@
 	  </div>
 
 	  <!-- Departure Image -->
-	  <div class="logo-container" style="margin-top: 20px;">
+	  <!--<div class="logo-container" style="margin-top: 20px;">
 		<img id="DEPARTURE_image_cache" alt="Departure Aerodrome" style="max-width: 100%; height: auto; border-radius: 10px; cursor: pointer;" onclick="openAerodromeMap('DEPARTURE')">
-	  </div>
+	  </div>-->
 
 	  <!--<div class="button-row">
 		<button id="retrieve_metar_btn">Update METAR/ TAF</button>
 	  </div>-->
 
+   <label_h1>METAR</label_h1>
+
     <div class="button-row">
-        <button id="metar-taf-embed-departure" style="transition: background-color 0.3s; z-index: 1">Load current METAR-TAF</button>
-    </div>
-    <div class="button-row">
+        <button id="metar-taf-embed-departure" style="transition: background-color 0.3s; z-index: 1">Load METAR</button>
         <input type="text" id="datetime-metar-taf-departure" placeholder="Date and Time for METAR" style="transition: background-color 0.3s">
     </div>
 
-    <div id="departureWidgetContainer" style="text-align: center;"></div>
+    <div id="departureWidgetContainer" style="display: flex; justify-content: center; align-items: center;"></div>
 
 
     <div class="button-row">
@@ -222,6 +228,11 @@
 
         <!-- Arrival Information Label -->
         <label_h1>Arrival Information</label_h1>
+
+        <!-- ARRIVAL Image -->
+      	  <div class="logo-container" style="margin-top: 20px;">
+      		<img id="ARRIVAL_image_cache" alt="Arrival Aerodrome" style="max-width: 100%; height: auto; border-radius: 10px; cursor: pointer;" onclick="openAerodromeMap('ARRIVAL')">
+      	  </div>
 
         <!-- Line 2: COUNTRY and ICAO_CITY spinners aligned -->
         <div class="button-row">
@@ -244,6 +255,8 @@
         <div class="button-row">
             <button id="ARRIVAL_USE_CACHED" onclick="window.load_aerodrome_from_json('ARRIVAL')" style="width: auto;">Load your personalized aerodrome information</button>
 	    </div>
+
+     <label_h1>Aerodrome</label_h1>
 
         <!-- Line 5: POSITION, RUNWAY, ELEVATION inputs -->
         <div class="button-row">
@@ -287,11 +300,11 @@
         </div>
 
         <!-- ARRIVAL Image -->
-      	  <div class="logo-container" style="margin-top: 20px;">
+      	  <!--<div class="logo-container" style="margin-top: 20px;">
       		<img id="ARRIVAL_image_cache" alt="Arrival Aerodrome" style="max-width: 100%; height: auto; border-radius: 10px; cursor: pointer;" onclick="openAerodromeMap('ARRIVAL')">
-      	  </div>
+      	  </div>-->
 
-
+         <label_h1>METAR</label_h1>
         <!--<div class="button-row">
             <button id="retrieve_metar_btn">Update METAR/ TAF</button>
         </div>-->
@@ -302,13 +315,11 @@
             <input type="text" id="datetime-metar-taf-arrival" placeholder="Date and Time">
         </div>-->
         <div class="button-row">
-            <button id="metar-taf-embed-arrival" style="transition: background-color 0.3s; z-index: 1">Load current METAR-TAF</button>
-        </div>
-        <div class="button-row">
+            <button id="metar-taf-embed-arrival" style="transition: background-color 0.3s; z-index: 1">Load METAR</button>
             <input type="text" id="datetime-metar-taf-arrival" placeholder="Date and Time" style="transition: background-color 0.3s">
         </div>
 
-        <div id="arrivalWidgetContainer" style="text-align: center;"></div>
+        <div id="arrivalWidgetContainer" style="display: flex; justify-content: center; align-items: center;"></div>
 
         <div class="button-row">
             <button id="save_fields_btn_arrival" style="background-color: #4CAF50; color: white;" title="Save fields for this Aerodrome">Save Aerodrome</button>
@@ -318,10 +329,37 @@
 
 
     <!-- =============== TAB ENROUTE =============== -->
-
     <div id="Enroute" class="tabcontent">
-    <!-- Enroute Information Label -->
-	  <label_h1>Enroute Information</label_h1>
+
+        <div class="button-row">
+            <button onclick="toggleFullscreen()">Fullscreen</button>
+            <select id="layer-select">
+                <option value="OpenStreetMap">OpenStreetMap</option>
+                <option value="OpenTopoMap">OpenTopoMap</option>
+                <option value="Carto Voyager">Carto Voyager</option>
+            </select>
+            <label>
+                <input type="checkbox" id="aviation-toggle" checked> Show Airports
+            </label>
+        </div>
+
+        <div id="map-container">
+            <div id="route-map"></div>
+            <div class="map-controls" style="position: absolute; top: 10px; left: 10px; background: white; padding: 5px; border-radius: 4px; z-index: 1000;">
+                <!--<label>
+                    <input type="checkbox" id="aviation-toggle" onchange="toggleAirportLayer()">
+                    Show Airports
+                </label>-->
+            </div>
+        </div>
+
+        <!-- Leaflet CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+        <!-- Leaflet JS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+
+
+
 
     <!-- Line: FIC Name and FIC Frequency labels -->
         <div class="button-row">
@@ -438,31 +476,6 @@
            <button id="save_fields_btn" style="background-color: #4CAF50; color: white;" title="Saving fields in flightplan">Save Flightplan</button>
        </div>
 
-
-        <!--
-        <div class="button-row">
-            <select id="DEPARTURE_COUNTRY_DEFAULT">
-                <option value="">country_select</option>
-            </select>
-            <select id="ARRIVAL_COUNTRY_DEFAULT">
-                <option value="">country_select</option>
-            </select>
-        </div>
-        -->
-
-        <!--
-        <div class="button-row">
-            <div style="display:flex; flex-direction:column; flex:1; margin-right:10px;">
-                <label for="MAX_HEADWIND_LIMIT">Max. Headwind</label>
-                <input type="text" id="MAX_HEADWIND_LIMIT" placeholder="Max Headwind Limit">
-            </div>
-            <div style="display:flex; flex-direction:column; flex:1;">
-                <label for="MAX_CROSSWIND_LIMIT">Max. Crosswind</label>
-                <input type="text" id="MAX_CROSSWIND_LIMIT" placeholder="Max Crosswind Limit">
-            </div>
-        </div>
-        -->
-
     </div>
 
     <!-- =============== TAB CONFIGURATIONS =============== -->
@@ -482,6 +495,302 @@
          <div class="disclaimer" style="margin-bottom: 20px; border: 2px solid red; border-radius: 10px; padding: 10px;">SkyWalk is provided “as is,” without any warranties, express or implied. SkyWalk is intended for educational use. The developers assume no liability for any damages arising from using this application.</div>
 
     </div>
+
+
+
+
+
+
+<script>
+    let routeMap = null;
+    let routeLine = null;
+    let routeMarkers = [];
+    let airportLayer = null;
+
+    // Define base layers
+    const baseLayers = {
+        'OpenStreetMap': L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap' }),
+        'OpenTopoMap': L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { maxZoom: 17, attribution: '&copy; OpenTopoMap' }),
+        'Carto Voyager': L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { subdomains: 'abcd', attribution: '&copy; CARTO' }),
+    };
+
+
+    // Initialize map
+    function initRouteMap() {
+        console.log('Initializing route map');
+        if (routeMap) {
+            routeMap.remove();
+            routeMap = null;
+        }
+
+        routeMap = L.map('route-map', {
+            zoomControl: true,
+            dragging: true,
+            touchZoom: true,
+            scrollWheelZoom: true,
+            layers: [baseLayers['OpenStreetMap']] // default layer
+        });
+
+        routeMap.setView([52, 5], 6);
+
+        // Handle layer selection
+        const layerSelect = document.getElementById('layer-select');
+        layerSelect.onchange = function() {
+            const selectedLayer = this.value;
+            Object.values(baseLayers).forEach(layer => routeMap.removeLayer(layer));
+            baseLayers[selectedLayer].addTo(routeMap);
+        };
+
+        // Force resize to render correctly
+        setTimeout(() => routeMap.invalidateSize(), 100);
+    }
+
+    // Update route
+    async function updateRoute() {
+        console.log('Updating route and checking for airport data');
+        const depLatLon = window.flight_plan_data?.DEPARTURE_LATLON;
+        const arrLatLon = window.flight_plan_data?.ARRIVAL_LATLON;
+        const depCountry = window.flight_plan_data?.DEPARTURE_COUNTRY;
+        const arrCountry = window.flight_plan_data?.ARRIVAL_COUNTRY;
+        const dfDep = window.AERODROME_DEPARTURE_DATA;
+        const dfArr = window.AERODROME_ARRIVAL_DATA;
+
+        // Clear existing airport layer
+        if (airportLayer) {
+            routeMap.removeLayer(airportLayer);
+            airportLayer = null;
+        }
+
+        // Reset airport data
+        airportData = null;
+
+        // Use departure data as default
+        let df = dfDep;
+        console.log('Departure data available:', df ? 'Yes' : 'No');
+
+        if (df) {
+            // Create fresh airport data
+            airportData = createAirportGeoJSON(df);
+            console.log('Created Airport Data:', airportData);
+
+            // Display airports if checkbox is checked
+            if (document.getElementById('aviation-toggle').checked) {
+                toggleAirportLayer();
+            }
+        }
+
+
+        if (!depLatLon?.[0] || !arrLatLon?.[0]) return;
+
+        if (routeLine) routeLine.remove();
+        routeMarkers.forEach(m => m.remove());
+        routeMarkers = [];
+
+        const depCoords = [depLatLon[0], depLatLon[1]];
+        const arrCoords = [arrLatLon[0], arrLatLon[1]];
+
+        routeLine = L.polyline([depCoords, arrCoords], {
+            color: '#2196F3',
+            weight: 3,
+            opacity: 0.8,
+            smoothFactor: 1
+        }).addTo(routeMap);
+
+        const depICAO = window.flight_plan_data?.DEPARTURE_ICAO_CITY || 'Departure';
+        const arrICAO = window.flight_plan_data?.ARRIVAL_ICAO_CITY || 'Arrival';
+
+        routeMarkers.push(
+            L.marker(depCoords, { draggable: false, title: depICAO })
+                .addTo(routeMap)
+                .bindPopup(depICAO, { closeButton: false })
+        );
+        routeMarkers.push(
+            L.marker(arrCoords, { draggable: false, title: arrICAO })
+                .addTo(routeMap)
+                .bindPopup(arrICAO, { closeButton: false })
+        );
+
+        routeMap.fitBounds(routeLine.getBounds(), {
+            padding: [50, 50],
+            maxZoom: 12
+        });
+    }
+
+    // Fullscreen toggle
+    function toggleFullscreen() {
+        const mapContainer = document.getElementById('map-container');
+        if (!document.fullscreenElement) {
+            mapContainer.requestFullscreen().catch(err => console.log(err));
+        } else {
+            document.exitFullscreen();
+        }
+    }
+
+    // Initialize map and route on DOM load
+    document.addEventListener('DOMContentLoaded', () => {
+        initRouteMap();
+        updateRoute();
+
+        // Handle tab clicks if present
+        document.querySelectorAll('.tablinks').forEach(tab => {
+            tab.addEventListener('click', () => {
+                setTimeout(() => {
+                    routeMap.invalidateSize();
+                    updateRoute();
+                }, 100);
+            });
+        });
+    });
+
+    // Simple example with a few major airports
+    // const airportData = {
+    //   "type": "FeatureCollection",
+    //   "features": [
+    //     { "type": "Feature", "properties": { "name": "Schiphol Airport (EHAM)" }, "geometry": { "type": "Point", "coordinates": [4.763385, 52.310539] } },
+    //     { "type": "Feature", "properties": { "name": "Amsterdam Lelystad (EHLE)" }, "geometry": { "type": "Point", "coordinates": [5.525, 52.460] } },
+    //     { "type": "Feature", "properties": { "name": "Rotterdam The Hague (EHDR)" }, "geometry": { "type": "Point", "coordinates": [4.435, 51.950] } }
+    //   ]
+    // };
+
+    // Create GeoJSON from aerodrome data
+    function createAirportGeoJSON(df) {
+        const features = [];
+
+        console.log('Creating airport GeoJSON from data:', df);
+        if (df) {
+            for (const row of df) {
+                // console.log('Processing row:', row);
+                // Convert Proxy to regular object
+                const data = {
+                    lat: row.lat?.valueOf(),
+                    lon: row.lon?.valueOf(),
+                    city_icao: row.city_icao?.valueOf(),
+                    icao: row.icao?.valueOf(),
+                    use: row.use?.valueOf(),
+                    country: row.country?.valueOf(),
+                    runways: String(row.runways?.valueOf() || '').toLowerCase(),
+                    AERODROME_CTR: row.AERODROME_CTR?.valueOf(),
+                    elevation_aerodrome: row.elevation_aerodrome?.valueOf()
+                };
+
+                // Determine runway type from runway string
+                if (data.lat && data.lon && data.city_icao) {
+                    console.log('Valid coordinates found:', data.lat, data.lon, data.city_icao, data.use);
+                        features.push({
+                            "type": "Feature",
+                            "properties": {
+                                "name": data.city_icao,
+                                "icao": data.icao,
+                                "ctr": data.AERODROME_CTR ? true : false,
+                                "elevation": data.elevation_aerodrome || 'N/A',
+                                "use": data.use || 'public',
+                                "runways": data.runways,
+                                "country": data.country,
+                            },
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [parseFloat(data.lon), parseFloat(data.lat)]
+                        }
+                    });
+                }
+            }
+        }
+
+        return {
+            "type": "FeatureCollection",
+            "features": features
+        };
+    }
+
+    // Create initial airport data
+    let airportData = null;
+
+    function toggleAirportLayer() {
+        console.log('Toggle airport layer called');
+        if (document.getElementById('aviation-toggle').checked) {
+            if (airportLayer) return; // Layer already exists
+            if (!airportData) return; // No data to display
+            console.log('Adding airport layer to map');
+            // Create a feature group to hold markers and circles
+            airportLayer = L.featureGroup().addTo(routeMap);
+
+            // Add GeoJSON features
+            L.geoJSON(airportData, {
+                pointToLayer: function(feature, latlng) {
+                    const props = feature.properties;
+                    const isMilitary = (props.use.toLowerCase() === 'military');
+                    let markerColor = '#2196F3'; // Blue for others;
+                    let circleColor = '#666666'; // Gray for others;
+                    let runwayType = props.runways.includes('asphalt') ? 'Hard' : props.runways.includes('grass') ? 'Soft' : 'Unknown';
+
+                    const popupContent = `
+                        <strong>${props.name}</strong><br>
+                        Country: ${props.country}<br>
+                        Type: ${props.use}<br>
+                        CTR: ${props.ctr || isMilitary ? 'Yes' : 'No'}<br>
+                        Elevation: ${props.elevation} ft<br>
+                        Surface: ${runwayType}
+                    `;
+
+                    // Determine marker color based on type
+
+                    if (isMilitary) {
+                        markerColor = '#ff4444'; // Red for military
+                        circleColor = '#ff4444';
+                    } else if (props.ctr || props.runways.includes('asphalt')) {
+                        markerColor = '#666666'; // Gray for CTR
+                    } else if (props.runways.includes('grass')) {
+                        markerColor = '#8BC34A'; // Green for grass
+                    } else {
+                        markerColor = '#2196F3'; // Blue for others
+                    }
+
+                    // Create custom icon with determined color
+                    const markerIcon = L.divIcon({
+                        html: `<div style="background-color: ${markerColor}; width: 100%; height: 100%; border-radius: 50%; border: 2px solid white;"></div>`,
+                        className: 'custom-marker',
+                        iconSize: [12, 12]
+                    });
+
+                    // Create marker with custom icon
+                    const marker = L.marker(latlng, {
+                        title: props.name,
+                        icon: markerIcon
+                    }).bindPopup(popupContent);
+
+                    // Add to feature group
+                    airportLayer.addLayer(marker);
+
+                    // If it's a CTR or isMilitary, add a circle with color based on use
+                    if (props.ctr || isMilitary) {
+                        const circle = L.circle(latlng, {
+                            radius: 9260, // 5NM in meters
+                            color: circleColor,
+                            weight: 1,
+                            opacity: 0.8,
+                            fillOpacity: 0.4
+                        });
+                        airportLayer.addLayer(circle);
+                    }
+                    return marker;
+                }
+            });
+        } else {
+            if (airportLayer) {
+                routeMap.removeLayer(airportLayer);
+                airportLayer = null;
+                console.log('Removed airport layer');
+            }
+        }
+    }
+
+    // Hook checkbox change
+    document.getElementById('aviation-toggle').addEventListener('change', toggleAirportLayer);
+
+
+    window.updateRoute = updateRoute;
+</script>
+
 
 
 <script>
@@ -658,49 +967,43 @@
     // Event listener for button
     document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('metar-taf-embed-departure')?.addEventListener('click', () => {
-        const name = document.getElementById('DEPARTURE_NAME').value || 'Unknown Airport';
-        const icao = document.getElementById('DEPARTURE_ICAO').value.toUpperCase() || 'unknown';
-        // Update datetime field with current time
-        const now = new Date();
-        const dateStr = String(now.getDate()).padStart(2, '0') + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + now.getFullYear() + ' ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
-        // Reset colors
-        const button = document.getElementById('metar-taf-embed-departure');
-        const dateField = document.getElementById('datetime-metar-taf-departure');
-        button.style.backgroundColor = '';
-        dateField.style.backgroundColor = '';
-        dateField.value = dateStr;
-        // Create the widget
-        createMetarWidget('departureWidgetContainer', icao, name, 'DEPARTURE');
-        });
+            const name = document.getElementById('DEPARTURE_NAME').value || 'Unknown Airport';
+            const icao = document.getElementById('DEPARTURE_ICAO').value.toUpperCase() || 'unknown';
+            // Create the widget
+            createMetarWidget('departureWidgetContainer', icao, name, 'DEPARTURE');
+            // Update datetime field with current time
+            const now = new Date();
+            const dateStr = String(now.getDate()).padStart(2, '0') + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + now.getFullYear() + ' ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+            // Reset colors
+            const button = document.getElementById('metar-taf-embed-departure');
+            const dateField = document.getElementById('datetime-metar-taf-departure');
+            button.style.backgroundColor = '';
+            dateField.style.backgroundColor = '';
+            dateField.value = dateStr;
 
         document.getElementById('metar-taf-embed-arrival')?.addEventListener('click', () => {
-        const name = document.getElementById('ARRIVAL_NAME').value || 'Unknown Airport';
-        const icao = document.getElementById('ARRIVAL_ICAO').value.toUpperCase() || 'unknown';
-        // Update datetime field with current time
-        const now = new Date();
-        const dateStr = String(now.getDate()).padStart(2, '0') + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + now.getFullYear() + ' ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
-        // Reset colors
-        const button = document.getElementById('metar-taf-embed-arrival');
-        const dateField = document.getElementById('datetime-metar-taf-arrival');
-        button.style.backgroundColor = '';
-        dateField.style.backgroundColor = '';
-        dateField.value = dateStr;
-        // Create the widget
-        createMetarWidget('arrivalWidgetContainer', icao, name, 'ARRIVAL');
-      });
+            const name = document.getElementById('ARRIVAL_NAME').value || 'Unknown Airport';
+            const icao = document.getElementById('ARRIVAL_ICAO').value.toUpperCase() || 'unknown';
+            // Create the widget
+            createMetarWidget('arrivalWidgetContainer', icao, name, 'ARRIVAL');
+            // Update datetime field with current time
+            const now = new Date();
+            const dateStr = String(now.getDate()).padStart(2, '0') + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + now.getFullYear() + ' ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+            // Reset colors
+            const button = document.getElementById('metar-taf-embed-arrival');
+            const dateField = document.getElementById('datetime-metar-taf-arrival');
+            button.style.backgroundColor = '';
+            dateField.style.backgroundColor = '';
+            dateField.value = dateStr;
+
+            });
+        });
     });
 
     </script>
 
 <script>
-    // Populate dropdowns and setup event listeners on page load
-    // window.addEventListener('DOMContentLoaded', () => {
-    // Populate dropdowns
-    // populateDropdown('DEPARTURE_COUNTRY_DEFAULT', COUNTRIES_DATA);
-    // populateDropdown('ARRIVAL_COUNTRY_DEFAULT', COUNTRIES_DATA);
 
-    // console.log('DOM Content Loaded');
-    // });
 
     document.getElementById('user_usage_type').addEventListener('change', (e) => {
         if (window.settings) {
@@ -728,33 +1031,6 @@
         }
     });
 
-    // document.getElementById('DEPARTURE_COUNTRY_DEFAULT').addEventListener('change', (e) => {
-    //     if (window.settings) {
-    //         window.settings.DEPARTURE_COUNTRY = e.target.value;
-    //         console.log('Updated DEPARTURE_COUNTRY:', e.target.value);
-    //     }
-    // });
-
-    // document.getElementById('ARRIVAL_COUNTRY_DEFAULT').addEventListener('change', (e) => {
-    //     if (window.settings) {
-    //         window.settings.ARRIVAL_COUNTRY = e.target.value;
-    //         console.log('Updated ARRIVAL_COUNTRY:', e.target.value);
-    //     }
-    // });
-
-    // document.getElementById('MAX_HEADWIND_LIMIT').addEventListener('change', (e) => {
-    //     if (window.settings) {
-    //         window.settings.MAX_HEADWIND_LIMIT = e.target.value;
-    //         console.log('Updated MAX_HEADWIND_LIMIT:', e.target.value);
-    //     }
-    // });
-
-    // document.getElementById('MAX_CROSSWIND_LIMIT').addEventListener('change', (e) => {
-    //     if (window.settings) {
-    //         window.settings.MAX_CROSSWIND_LIMIT = e.target.value;
-    //         console.log('Updated MAX_CROSSWIND_LIMIT:', e.target.value);
-    //     }
-    // });
 
 </script>
 
@@ -1163,7 +1439,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
 
     async def populate_aerodrome_fields_from_icao(fname, city_icao):
-        """Populate departure/arrival fields when ICAO city is selected."""
+        """Populate aerodrome fields when ICAO city is selected."""
         print('----> populate_aerodrome_fields_from_icao()')
         print(f"🔍 Searching for data: {city_icao}")
 
@@ -1208,6 +1484,9 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         js.window.flight_plan_data[f"{fname}_URL_WEBSITE"] = row_dict.get('url.website', '')
         js.window.flight_plan_data[f"{fname}_URL_WIKIPEDIA"] = row_dict.get('url.wikipedia', '')
         js.window.flight_plan_data[f"{fname}_LATLON"] = [row_dict.get('lat', None), row_dict.get('lon', None)]
+        # Update route map if both departure and arrival coordinates are available
+        if hasattr(js.window, 'updateRouteLine'):
+            js.window.updateRouteLine()
         js.window.flight_plan_data[f"{fname}_TIMEZONE"] = row_dict.get('tz', None)
 
         if fname == 'DEPARTURE':
@@ -1340,7 +1619,6 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         field_ids = [
             f'{fname}_COUNTRY',
             f'{fname}_ICAO_CITY',
-            f'{fname}_COUNTRY',
             f'{fname}_NAME',
             f'{fname}_ICAO',
             f'{fname}_POSITION',
@@ -1649,6 +1927,9 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         # Remove METAR widget
         remove_metar_widget('DEPARTURE')
         remove_metar_widget('ARRIVAL')
+
+        js.window.AERODROME_DEPARTURE_DATA = {}
+        js.window.AERODROME_ARRIVAL_DATA = {}
 
         print("✅ New flightplan initialized - all fields cleared")
         return current_time
