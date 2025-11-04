@@ -332,24 +332,26 @@
     <div id="Enroute" class="tabcontent">
 
         <div class="button-row">
-            <button onclick="toggleFullscreen()">Fullscreen</button>
-            <select id="layer-select">
-                <option value="OpenStreetMap">OpenStreetMap</option>
-                <option value="OpenTopoMap">OpenTopoMap</option>
-                <option value="Carto Voyager">Carto Voyager</option>
-            </select>
-            <label>
-                <input type="checkbox" id="aviation-toggle" checked> Show Airports
-            </label>
-        </div>
+                 <select id="layer-select">
+                     <option value="OpenStreetMap">OpenStreetMap</option>
+                     <option value="OpenTopoMap">OpenTopoMap</option>
+                     <!--<option value="Carto Voyager">Carto Voyager</option>-->
+                 </select>
+             </div>
+             <div class="button-row">
+                 <label>
+                     <input type="checkbox" id="aviation-toggle" checked> Show Airports
+                 </label>
+             </div>
 
         <div id="map-container">
             <div id="route-map"></div>
-            <div class="map-controls" style="position: absolute; top: 10px; left: 10px; background: white; padding: 5px; border-radius: 4px; z-index: 1000;">
-                <!--<label>
-                    <input type="checkbox" id="aviation-toggle" onchange="toggleAirportLayer()">
-                    Show Airports
-                </label>-->
+            <div class="map-controls" style="position: absolute; top: 10px; right: 10px; background: none; padding: 0; z-index: 1000;">
+                <button onclick="toggleFullscreen()" style="width: 32px; height: 32px; padding: 0; background: white; border: 2px solid rgba(0,0,0,0.2); border-radius: 4px; cursor: pointer;">
+                    <svg viewBox="0 0 24 24" style="width: 16px; height: 16px; margin: 2px;">
+                        <path d="M7,14H5v5h5v-2H7V14z M5,10h2V7h3V5H5V10z M17,17h-3v2h5v-5h-2V17z M14,5v2h3v3h2V5H14z"/>
+                    </svg>
+                </button>
             </div>
         </div>
 
@@ -511,7 +513,7 @@
     const baseLayers = {
         'OpenStreetMap': L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap' }),
         'OpenTopoMap': L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { maxZoom: 17, attribution: '&copy; OpenTopoMap' }),
-        'Carto Voyager': L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { subdomains: 'abcd', attribution: '&copy; CARTO' }),
+        // 'Carto Voyager': L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { subdomains: 'abcd', attribution: '&copy; CARTO' }),
     };
 
 
@@ -548,12 +550,18 @@
     // Update route
     async function updateRoute() {
         console.log('Updating route and checking for airport data');
+        // Clear existing route line
+        if (routeLine) {
+            routeMap.removeLayer(routeLine);
+            routeLine = null;
+        }
+        // Clear existing route markers
+        routeMarkers.forEach(marker => routeMap.removeLayer(marker));
+        routeMarkers = [];
+
         const depLatLon = window.flight_plan_data?.DEPARTURE_LATLON;
         const arrLatLon = window.flight_plan_data?.ARRIVAL_LATLON;
-        const depCountry = window.flight_plan_data?.DEPARTURE_COUNTRY;
-        const arrCountry = window.flight_plan_data?.ARRIVAL_COUNTRY;
-        const dfDep = window.AERODROME_DEPARTURE_DATA;
-        const dfArr = window.AERODROME_ARRIVAL_DATA;
+        const df = window.AERODROME_DATA;
 
         // Clear existing airport layer
         if (airportLayer) {
@@ -565,13 +573,12 @@
         airportData = null;
 
         // Use departure data as default
-        let df = dfDep;
         console.log('Departure data available:', df ? 'Yes' : 'No');
 
         if (df) {
             // Create fresh airport data
             airportData = createAirportGeoJSON(df);
-            console.log('Created Airport Data:', airportData);
+            // console.log('Created Airport Data:', airportData);
 
             // Display airports if checkbox is checked
             if (document.getElementById('aviation-toggle').checked) {
@@ -618,7 +625,7 @@
 
     // Fullscreen toggle
     function toggleFullscreen() {
-        const mapContainer = document.getElementById('map-container');
+        const mapContainer = document.getElementById('route-map');
         if (!document.fullscreenElement) {
             mapContainer.requestFullscreen().catch(err => console.log(err));
         } else {
@@ -656,7 +663,7 @@
     function createAirportGeoJSON(df) {
         const features = [];
 
-        console.log('Creating airport GeoJSON from data:', df);
+        // console.log('Creating airport GeoJSON from data:', df);
         if (df) {
             for (const row of df) {
                 // console.log('Processing row:', row);
@@ -675,7 +682,7 @@
 
                 // Determine runway type from runway string
                 if (data.lat && data.lon && data.city_icao) {
-                    console.log('Valid coordinates found:', data.lat, data.lon, data.city_icao, data.use);
+                    // console.log('Valid coordinates found:', data.lat, data.lon, data.city_icao, data.use);
                         features.push({
                             "type": "Feature",
                             "properties": {
@@ -706,7 +713,7 @@
     let airportData = null;
 
     function toggleAirportLayer() {
-        console.log('Toggle airport layer called');
+        // console.log('Toggle airport layer called');
         if (document.getElementById('aviation-toggle').checked) {
             if (airportLayer) return; // Layer already exists
             if (!airportData) return; // No data to display
@@ -724,12 +731,14 @@
                     let runwayType = props.runways.includes('asphalt') ? 'Hard' : props.runways.includes('grass') ? 'Soft' : 'Unknown';
 
                     const popupContent = `
-                        <strong>${props.name}</strong><br>
-                        Country: ${props.country}<br>
-                        Type: ${props.use}<br>
-                        CTR: ${props.ctr || isMilitary ? 'Yes' : 'No'}<br>
-                        Elevation: ${props.elevation} ft<br>
-                        Surface: ${runwayType}
+                        <b>${props.name}</b>
+                        <div style='width: 200px; padding: 10px; border: 1px solid lightgrey; border-radius: 5px; background-color: #f9f9f9;'>
+                            <b>Country:</b> ${props.country}<br>
+                            <b>Type:</b> ${props.use}<br>
+                            <b>CTR:</b> ${props.ctr || isMilitary ? 'Yes' : 'No'}<br>
+                            <b>Elevation:</b> ${props.elevation} ft<br>
+                            <b>Surface:</b> ${runwayType}
+                        </div>
                     `;
 
                     // Determine marker color based on type
@@ -1382,6 +1391,8 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             js.document.getElementById('loading-spinner').style.display = 'none'
             raise
 
+
+
     # Main loader: called from JS
     async def import_aerodrome_selected(fname, country):
         print('----> import_aerodrome_selected()')
@@ -1401,11 +1412,43 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             # print(df.head().to_string())
             # print(f"Available columns: {df.columns.tolist()}")
 
+
             # Store data in global variable
             if fname == 'DEPARTURE':
                 js.window.AERODROME_DEPARTURE_DATA = df.to_dict('records')
             elif fname == 'ARRIVAL':
                 js.window.AERODROME_ARRIVAL_DATA = df.to_dict('records')
+
+            # Combine data and store in global variable
+            has_departure = hasattr(window, "AERODROME_DEPARTURE_DATA")
+            has_arrival   = hasattr(window, "AERODROME_ARRIVAL_DATA")
+            if has_departure and not has_arrival:
+                window.AERODROME_DATA = window.AERODROME_DEPARTURE_DATA
+            elif not has_departure and has_arrival:
+                window.AERODROME_DATA = window.AERODROME_ARRIVAL_DATA
+            elif has_departure and has_arrival:
+                dep = window.AERODROME_DEPARTURE_DATA
+                arr = window.AERODROME_ARRIVAL_DATA
+
+                # Merge both dictionaries safely
+                # If they have unique keys, this works directly:
+                # window.AERODROME_DATA = {**dep, **arr}
+
+                # ✅ handle both lists and dicts automatically
+                if isinstance(dep, list) and isinstance(arr, list):
+                    window.AERODROME_DATA = dep + arr
+                    print("OPTION 1")
+                elif isinstance(dep, dict) and isinstance(arr, dict):
+                    window.AERODROME_DATA = {**dep, **arr}
+                    print("OPTION 2")
+                else:
+                    # fallback: convert to list if mixed
+                    window.AERODROME_DATA = list(dep) + list(arr)
+                    print("OPTION 3")
+
+            else:
+                window.AERODROME_DATA = {}
+
 
             # Populate DEPARTURE_ICAO_CITY dropdown with aerodrome data
             if 'city_icao' in df.columns:
@@ -1785,7 +1828,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                     js.document.getElementById(field_id).dispatchEvent(js.Event.new('change'))
 
         # Clear flight_plan_data for departure fields
-        departure_keys = [
+        keys = [
             f'{fname}_COUNTRY', f'{fname}_ICAO_CITY',
             f'{fname}_ICAO', f'{fname}_ICAO_CITY', f'{fname}_NAME',
             f'{fname}_POSITION', f'{fname}_RUNWAY', f'{fname}_ELEVATION',
@@ -1798,10 +1841,10 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             f'{fname}_ATC_TELEPHONE',
         ]
 
-        for key in departure_keys:
+        for key in keys:
             if key == f'{fname}_CTR':
                 js.window.flight_plan_data[key] = False
-            elif key == f'{fname}_LATLON':
+            elif '_LATLON' in key:
                 js.window.flight_plan_data[key] = [None, None]
             elif key in [f'{fname}_METAR', f'{fname}_WIND_ENVELOPE']:
                 js.window.flight_plan_data[key] = {}
@@ -1918,6 +1961,17 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         current_time = datetime.now().strftime("%d-%m-%Y %H:%M")
         print("🆕 Creating new flightplan...")
 
+        # Store default flight plan data
+        # js.window.flight_plan_data = await get_default_data()
+
+        # Reset flight plan data
+        js.window.flight_plan_data = {
+            'DEPARTURE_LATLON': [None, None],
+            'ARRIVAL_LATLON': [None, None],
+            'DEPARTURE_COUNTRY': '',
+            'ARRIVAL_COUNTRY': ''
+        }
+
         # Clear fields
         await clear_general_fields()
         await clear_aerodrome_fields('DEPARTURE')
@@ -1930,6 +1984,10 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
         js.window.AERODROME_DEPARTURE_DATA = {}
         js.window.AERODROME_ARRIVAL_DATA = {}
+        js.window.AERODROME_DATA = {}
+
+        # Trigger route update to clear the map
+        # await js.updateRoute()
 
         print("✅ New flightplan initialized - all fields cleared")
         return current_time
@@ -2068,7 +2126,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
 
     async def load_flightplan():
-        """Load selected flightplan from localStorage"""
+        """Load flightplan from localStorage"""
         plan_name = js.document.getElementById('plan_spinner').value
 
         # First clear all fields
@@ -2105,9 +2163,16 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             update_general_gui_fields(flight_plan_dict)
             update_aerodrome_gui_fields('DEPARTURE')
             update_aerodrome_gui_fields('ARRIVAL')
+
             # Update IMAGES
             await update_aerodrome_image('DEPARTURE')
             await update_aerodrome_image('ARRIVAL')
+
+            # Add data to cache
+            if flight_plan_dict['DEPARTURE_COUNTRY'] != '':
+                await import_aerodrome_selected('DEPARTURE', flight_plan_dict['DEPARTURE_COUNTRY'])
+            if flight_plan_dict['ARRIVAL_COUNTRY'] != '':
+                await import_aerodrome_selected('ARRIVAL', flight_plan_dict['ARRIVAL_COUNTRY'])
 
             print(f"✅ Flightplan '{plan_name}' loaded successfully")
         except Exception as e:
