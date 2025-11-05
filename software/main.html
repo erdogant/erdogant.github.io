@@ -52,7 +52,7 @@
 		<a href="https://erdogant.github.io/skywalk-docs/pages/html/index.html" target="_blank">
 		  <img id="skywalk_logo" alt="SkyWalk">
 		</a>
-		<div class="version" style="margin-bottom: 5px; ">version: 0.3.0</div>
+		<div class="version" style="margin-bottom: 5px; ">version: 0.4.0</div>
 	  </div>
 
 	  <label_h1>Flightplan</label_h1>
@@ -332,17 +332,31 @@
     <div id="Enroute" class="tabcontent">
 
         <div class="button-row">
-                 <select id="layer-select">
-                     <option value="OpenStreetMap">OpenStreetMap</option>
-                     <option value="OpenTopoMap">OpenTopoMap</option>
-                     <!--<option value="Carto Voyager">Carto Voyager</option>-->
-                 </select>
-             </div>
-             <div class="button-row">
-                 <label>
-                     <input type="checkbox" id="aviation-toggle" checked> Show Airports
-                 </label>
-             </div>
+            <select id="layer-select">
+                <option value="OpenStreetMap">OpenStreetMap</option>
+                <option value="OpenTopoMap">OpenTopoMap</option>
+                <!--<option value="Carto Voyager">Carto Voyager</option>-->
+            </select>
+        </div>
+
+        <div class="button-row">
+            <label>
+                <input type="checkbox" id="aviation-toggle" checked> Show Airports
+            </label>
+            <label>
+                <input type="checkbox" id="airspace-toggle" checked> Show Airspace
+            </label>
+        </div>
+
+        <div class="button-row">
+            <div style="display: flex; align-items: center; margin-top: 5px;">
+                <label style="margin-right: 5px;">Max Altitude (ft):</label>
+                <input type="number" id="airspace-altitude" value="1500" min="0" max="10000" step="100" style="width: 80px;">
+            </div>
+            <label>
+                <input type="checkbox" id="TMZ-toggle"> Show TMZ
+            </label>
+        </div>
 
         <div id="map-container">
             <div id="route-map"></div>
@@ -508,6 +522,10 @@
     let routeLine = null;
     let routeMarkers = [];
     let airportLayer = null;
+    let airportData = null;
+    let airspaceLayer = null;
+    let TMZLayer = null;
+
 
     // Define base layers
     const baseLayers = {
@@ -515,7 +533,6 @@
         'OpenTopoMap': L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { maxZoom: 17, attribution: '&copy; OpenTopoMap' }),
         // 'Carto Voyager': L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { subdomains: 'abcd', attribution: '&copy; CARTO' }),
     };
-
 
     // Initialize map
     function initRouteMap() {
@@ -559,9 +576,10 @@
         routeMarkers.forEach(marker => routeMap.removeLayer(marker));
         routeMarkers = [];
 
-        const depLatLon = window.flight_plan_data?.DEPARTURE_LATLON;
-        const arrLatLon = window.flight_plan_data?.ARRIVAL_LATLON;
+        const depLatLon = window.flight_plan_data?.DEPARTURE_LATLON || [null, null];
+        const arrLatLon = window.flight_plan_data?.ARRIVAL_LATLON || [null, null];
         const df = window.AERODROME_DATA;
+        console.log('Raw coordinates - Departure:', depLatLon, 'Arrival:', arrLatLon);
 
         // Clear existing airport layer
         if (airportLayer) {
@@ -709,8 +727,9 @@
         };
     }
 
-    // Create initial airport data
-    let airportData = null;
+
+
+
 
     function toggleAirportLayer() {
         // console.log('Toggle airport layer called');
@@ -748,10 +767,11 @@
                         circleColor = '#ff4444';
                     } else if (props.ctr || props.runways.includes('asphalt')) {
                         markerColor = '#666666'; // Gray for CTR
+                        circleColor = '#FF69B4';  // pink
                     } else if (props.runways.includes('grass')) {
                         markerColor = '#8BC34A'; // Green for grass
                     } else {
-                        markerColor = '#2196F3'; // Blue for others
+                        markerColor = '#2196F3'; // Blue for other
                     }
 
                     // Create custom icon with determined color
@@ -773,7 +793,7 @@
                     // If it's a CTR or isMilitary, add a circle with color based on use
                     if (props.ctr || isMilitary) {
                         const circle = L.circle(latlng, {
-                            radius: 9260, // 5NM in meters
+                            radius: 14900, // 5NM in meters
                             color: circleColor,
                             weight: 1,
                             opacity: 0.8,
@@ -794,10 +814,270 @@
     }
 
     // Hook checkbox change
-    document.getElementById('aviation-toggle').addEventListener('change', toggleAirportLayer);
+    // document.getElementById('aviation-toggle').addEventListener('change', toggleAirportLayer);
+    // window.updateRoute = updateRoute;
 
 
-    window.updateRoute = updateRoute;
+
+
+    function loadAirspaceData() {
+        // Return the airspaces data from Python (attached to window)
+        if (window.airspaces) {
+            return window.airspaces;
+        } else {
+            console.error("No airspace data available");
+            js.window.alert('No airspace data available for this region');
+            return null;
+        }
+    }
+
+    // Global variable to store all airspace layers
+    let airspaceLayerGroups = {};
+
+    async function toggleAirspaceLayer() {
+        const airspaceCheckbox = document.getElementById('airspace-toggle');
+        const TMZCheckbox = document.getElementById('TMZ-toggle');
+
+        if (!airspaceCheckbox) return;
+
+        if (!window.airspaces) {
+            console.error('No airspace data available');
+            js.window.alert('No airspace data available for this region');
+            airspaceCheckbox.checked = false;
+            if (TMZCheckbox) TMZCheckbox.checked = false;
+            return;
+        }
+
+        // Sync TMZ checkbox state with main airspace toggle
+        if (TMZCheckbox) {
+            TMZCheckbox.checked = airspaceCheckbox.checked;
+            await toggleTMZLayer(); // Update TMZ layer based on new state
+        }
+
+        // Always clear existing layers first
+        Object.values(airspaceLayerGroups).forEach(layer => {
+            if (routeMap.hasLayer(layer)) {
+                routeMap.removeLayer(layer);
+            }
+        });
+        airspaceLayerGroups = {};
+
+        if (airspaceCheckbox.checked) {
+            console.log('Adding all airspace layers');
+            // Create new layers
+            const altitudeValue = parseInt(document.getElementById('airspace-altitude').value) || 1500;
+            const layers = createAirspaceLayer(window.airspaces, routeMap, altitudeValue);
+
+            // Store and add each layer by type
+            if (layers) {
+                Object.entries(layers).forEach(([type, layer]) => {
+                    if (layer) {
+                        airspaceLayerGroups[type] = layer;
+                        layer.addTo(routeMap);
+                    }
+                });
+            }
+        } else {
+            console.log('Removed all airspace layers');
+        }
+    }
+
+    async function toggleTMZLayer() {
+        const TMZCheckbox = document.getElementById('TMZ-toggle');
+        if (!TMZCheckbox || !window.airspaces) return;
+
+        // Filter and process only TMZ areas
+        const tmzAirspaces = {};
+        Object.entries(window.airspaces).forEach(([key, space]) => {
+            if (space.area_type && space.area_type.toLowerCase().includes('tmz')) {
+                tmzAirspaces[key] = space;
+            }
+        });
+
+        // Always remove existing TMZ layer first
+        if (airspaceLayerGroups.TMZ && routeMap.hasLayer(airspaceLayerGroups.TMZ)) {
+            routeMap.removeLayer(airspaceLayerGroups.TMZ);
+            delete airspaceLayerGroups.TMZ;
+        }
+
+        if (TMZCheckbox.checked) {
+            console.log('Adding TMZ layer');
+            const altitudeValue = parseInt(document.getElementById('airspace-altitude').value) || 1500;
+            const layers = createAirspaceLayer(tmzAirspaces, routeMap, altitudeValue);
+
+            // Only add TMZ layer if it exists
+            if (layers && layers.TMZ) {
+                airspaceLayerGroups.TMZ = layers.TMZ;
+                layers.TMZ.addTo(routeMap);
+            }
+        } else {
+            console.log('Removed TMZ layer');
+        }
+    }
+
+
+    // Initialize all airspace feature groups
+    function initAirspaceLayerGroups(routeMap) {
+        const layers = {
+            CTR_CTZ: L.featureGroup().addTo(routeMap),
+            CTA_TMA: L.featureGroup().addTo(routeMap),
+            ATZ: L.featureGroup().addTo(routeMap),
+            MATZ: L.featureGroup().addTo(routeMap),
+            TMZ: L.featureGroup().addTo(routeMap),
+            TRA: L.featureGroup().addTo(routeMap),
+            prohibited: L.featureGroup().addTo(routeMap),
+            danger: L.featureGroup().addTo(routeMap),
+            restricted: L.featureGroup().addTo(routeMap),
+            parachuting: L.featureGroup().addTo(routeMap),
+            gliding: L.featureGroup().addTo(routeMap),
+            various: L.featureGroup().addTo(routeMap),
+            // NOTAM: L.featureGroup().addTo(routeMap),
+            // NOTAM_ENROUTE: L.featureGroup().addTo(routeMap),
+            // Optional runway layers
+            // hard_runway: L.featureGroup().addTo(routeMap),
+            // soft_runway: L.featureGroup().addTo(routeMap),
+            // private_runway: L.featureGroup().addTo(routeMap)
+        };
+
+        const areaTypes = {
+            CTR_CTZ: { markertype: "polygon", fill: true, fillColor: "#FF69B4", edgeColor: "#FF69B4", opacity: 0.3, weight: 1, layer: layers.CTR_CTZ },
+            CTA_TMA: { markertype: "polygon", fill: false, fillColor: null, edgeColor: "#696969", opacity: 0, weight: 1.5, layer: layers.CTA_TMA },
+            ATZ: { markertype: "polygon", fill: true, fillColor: "#FF69B4", edgeColor: "#FF69B4", opacity: 0.3, weight: 1, layer: layers.ATZ },
+            MATZ: { markertype: "circle", fill: true, fillColor: "#8B0000", edgeColor: "#8B0000", opacity: 0.3, weight: 1, layer: layers.MATZ },
+            TMZ: { markertype: "polygon", fill: true, fillColor: "#DA70D6", edgeColor: "#DA70D6", opacity: 0.1, weight: 1.3, layer: layers.TMZ },
+            TRA: { markertype: "polygon", fill: true, fillColor: "#FA8072", edgeColor: "#FA8072", opacity: 0.3, weight: 1, layer: layers.TRA },
+            prohibited: { markertype: "polygon", fill: true, fillColor: "#8B0000", edgeColor: "#8B0000", opacity: 0.3, weight: 1, layer: layers.prohibited },
+            danger: { markertype: "polygon", fill: true, fillColor: "#8B0000", edgeColor: "#8B0000", opacity: 0.3, weight: 1, layer: layers.danger },
+            restricted: { markertype: "polygon", fill: true, fillColor: "#FF9248", edgeColor: "#FF9248", opacity: 0.3, weight: 1, layer: layers.restricted },
+            parachuting: { markertype: "circle", fill: true, fillColor: "#0096FF", edgeColor: "#0096FF", opacity: 0.2, weight: 1, layer: layers.parachuting },
+            gliding: { markertype: "polygon", fill: true, fillColor: "#0096FF", edgeColor: "#0096FF", opacity: 0.2, weight: 1, layer: layers.gliding },
+            various: { markertype: "polygon", fill: true, fillColor: "#696969", edgeColor: "#696969", opacity: 0.3, weight: 1, layer: layers.various },
+            // NOTAM: { markertype: "marker", fill: false, fillColor: "#EFC238", edgeColor: "#EFC238", opacity: 0, weight: 3, layer: layers.NOTAM },
+            // NOTAM_ENROUTE: { markertype: "marker", fill: false, fillColor: "#EFC238", edgeColor: "#EFC238", opacity: 0, weight: 3, layer: layers.NOTAM_ENROUTE },
+            // hard_runway: { markertype: "circle", fill: true, fillColor: "#696969", edgeColor: "#696969", opacity: 0.5, weight: 1.1, layer: layers.hard_runway },
+            // soft_runway: { markertype: "circle", fill: true, fillColor: "#228B22", edgeColor: "#228B22", opacity: 0.5, weight: 1.1, layer: layers.soft_runway },
+            // private_runway: { markertype: "circle", fill: true, fillColor: "#ff8c00", edgeColor: "#228B22", opacity: 0.6, weight: 1.1, layer: layers.private_runway }
+        };
+
+        return { layers, areaTypes };
+    }
+
+    function createAirspaceLayer(airspaces, routeMap, maxAltitude = 1500) {
+        if (!airspaces) return null;
+
+        // Initialize all layers
+        const { layers, areaTypes } = initAirspaceLayerGroups(routeMap);
+
+        Object.values(airspaces).forEach((airspace) => {
+            if (!airspace.coordinates || airspace.coordinates.length === 0) return;
+
+            const AL = clean_altitude(airspace.altitude_lower);
+            const AH = clean_altitude(airspace.altitude_higher);
+            const type = (airspace.area_type || "").toLowerCase();
+
+            let key = "various";
+            let flagToMap = true;
+            let radius = 14900;
+
+            // Determine type and flags
+            if (type.includes("ctr") || type.includes("ctz")) { key = "CTR_CTZ"; radius = 14900; }
+            else if (type.includes("cta") || type.includes("tma")) { key = "CTA_TMA"; [flagToMap] = altitude_restriction(AL, AH, maxAltitude); }
+            else if (type.includes("atz") && !type.includes("military")) { key = "ATZ"; }
+            else if (type.includes("atz") && type.includes("military")) { key = "MATZ"; radius = 10000; }
+            else if (type.includes("tmz")) { key = "TMZ"; [flagToMap] = altitude_restriction(AL, AH, maxAltitude); }
+            else if (type.includes("prohibited")) { key = "prohibited"; }
+            else if (type.includes("danger")) { key = "danger"; [flagToMap] = altitude_restriction(AL, AH, maxAltitude); }
+            else if (type.includes("restricted") && !type.includes("notam")) { key = "restricted"; [flagToMap] = altitude_restriction(AL, AH, maxAltitude); }
+            else if (type.includes("notam")) { key = "NOTAM"; flagToMap = false; }
+            else if (type.includes("temporary reserved")) { key = "TRA"; [flagToMap] = altitude_restriction(AL, AH, maxAltitude); }
+            else if (type.includes("parachuting")) { key = "parachuting"; radius = 4000; }
+            else if (type.includes("gliding")) { key = "gliding"; }
+
+            if (!flagToMap) return;
+            if (key === "various") return;
+
+            const popupContent = `
+                <b>${airspace.name}</b>
+                <div style='width:250px; padding:10px; border:1px solid lightgrey; border-radius:5px; background-color:#f9f9f9;'>
+                    <b>${airspace.area_type_general}</b><br>
+                    <b>Altitude:</b> ${airspace.altitude_lower}${AH ? ` to ${AH} feet` : ""}<br>
+                </div>
+            `;
+
+            const coords = airspace.coordinates.map(c => [c[0], c[1]]); // flip if needed
+            const areaLayer = areaTypes[key];
+
+            let typeToMap = areaLayer.markertype;
+            if (coords.length === 1) typeToMap = "circle";
+
+            if (typeToMap === "marker" || typeToMap === "circle") {
+                coords.forEach(latlon => {
+                    if (typeToMap === "marker") {
+                        L.marker(latlon).bindPopup(popupContent).addTo(areaLayer.layer);
+                    } else {
+                        L.circle(latlon, {
+                            radius: radius,
+                            color: areaLayer.edgeColor,
+                            fillColor: areaLayer.fillColor,
+                            fillOpacity: areaLayer.opacity,
+                            weight: areaLayer.weight
+                        }).bindPopup(popupContent).addTo(areaLayer.layer);
+                    }
+                });
+            } else if (typeToMap === "polygon") {
+                L.polygon(coords, {
+                    color: areaLayer.edgeColor,
+                    fillColor: areaLayer.fillColor,
+                    fillOpacity: areaLayer.opacity,
+                    weight: areaLayer.weight,
+                    dashArray: areaLayer.dash || null
+                }).bindPopup(popupContent).addTo(areaLayer.layer);
+            }
+        });
+
+        return layers; // return all layer groups separately
+    }
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Airport checkbox
+        const airportCheckbox = document.getElementById('aviation-toggle');
+        if (airportCheckbox) {
+            airportCheckbox.addEventListener('change', toggleAirportLayer);
+        } else {
+            console.error("Airport checkbox not found in DOM!");
+        }
+
+        // Airspace checkbox and altitude input
+        const airspaceCheckbox = document.getElementById('airspace-toggle');
+        const altitudeInput = document.getElementById('airspace-altitude');
+        const TMZCheckbox = document.getElementById('TMZ-toggle');
+
+        TMZCheckbox.checked = false; // Initialize unchecked
+        airspaceCheckbox.checked = false; // Initialize unchecked
+
+        if (airspaceCheckbox) {
+            airspaceCheckbox.addEventListener('change', toggleAirspaceLayer);
+        } else {
+            console.error("Airspace checkbox not found in DOM!");
+        }
+        if (altitudeInput) {
+            altitudeInput.addEventListener('change', toggleAirspaceLayer);
+        } else {
+            console.error("Altitude input not found in DOM!");
+        }
+        if (TMZCheckbox) {
+            TMZCheckbox.addEventListener('change', toggleTMZLayer);
+        } else {
+            console.error("TMZ checkbox not found in DOM!");
+        }
+
+        // Expose updateRoute globally
+        window.updateRoute = updateRoute;
+    });
+
+
+
 </script>
 
 
@@ -915,8 +1195,8 @@
     function openAerodromeMap(fname) {
         const latlon = window.flight_plan_data[`${fname}_LATLON`];
         const icao = window.flight_plan_data[`${fname}_ICAO`]
-        if (latlon && latlon[0] && latlon[1]) {
-            const [lat, lon] = latlon;
+        if (latlon && latlon[0] != null && latlon[1] != null) {
+            const [lat, lon] = [parseFloat(latlon[0]), parseFloat(latlon[1])];
             const url = `https://www.google.com/maps?q=${lat},${lon}&z=14`;
             // const url = `https://metar-taf.com/airport/${icao}`;
             window.open(url, '_blank');
@@ -1095,7 +1375,7 @@
 
 <!-- PyScript configuration -->
 <py-config>
-  packages = ["pandas", "numpy", "jinja2"]
+  packages = ["pandas", "numpy", "jinja2", "requests"]
 </py-config>
 
 <script>
@@ -1133,6 +1413,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
     # Third party imports
     import pandas as pd
     import zipfile
+    import requests
     import ast
     import asyncio
     from jinja2 import Environment, DictLoader
@@ -1202,6 +1483,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             'key_aerodromes': "GpZzcnXiLleytOr5Y7WC@",
             'url_aerodromes': 'https://erdogant.github.io/datasets/skywalk/aerodromes/',
             'url_aerodromes_images': 'https://erdogant.github.io/datasets/skywalk/aerodromes_images/',
+            'url_airspaces': 'https://erdogant.github.io/datasets/skywalk/airspaces/',
 
             'html_templates': 'https://erdogant.github.io/datasets/skywalk/html_templates/',
         }
@@ -1399,86 +1681,106 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         print(f"🌍 Loading {fname} aerodrome data for: {country}")
         zip_bytes = None
 
-        url = js.window.settings['url_aerodromes'] + country + ".zip"
-        zip_bytes = await load_cached_zip(f"aerodrome_{country}", url)
+        try:
+            url = js.window.settings['url_aerodromes'] + country + ".zip"
+            zip_bytes = await load_cached_zip(f"aerodrome_{country}", url)
 
-        if zip_bytes:
-            PASSWORD = js.window.settings['key_aerodromes']
-            df = extract_csv_from_zip(zip_bytes, PASSWORD)
-            js.console.log(f"✅ Aerodromes loaded for {country}: {len(df)} rows.")
-            print(f"✅ Successfully loaded {len(df)} aerodromes for {country}")
+            if zip_bytes:
+                PASSWORD = js.window.settings['key_aerodromes']
+                df = extract_csv_from_zip(zip_bytes, PASSWORD)
+                js.console.log(f"✅ Aerodromes loaded for {country}: {len(df)} rows.")
+                print(f"✅ Successfully loaded {len(df)} aerodromes for {country}")
 
-            # For now, just show the first few entries
-            # print(df.head().to_string())
-            # print(f"Available columns: {df.columns.tolist()}")
+                # For now, just show the first few entries
+                # print(df.head().to_string())
+                # print(f"Available columns: {df.columns.tolist()}")
 
 
-            # Store data in global variable
-            if fname == 'DEPARTURE':
-                js.window.AERODROME_DEPARTURE_DATA = df.to_dict('records')
-            elif fname == 'ARRIVAL':
-                js.window.AERODROME_ARRIVAL_DATA = df.to_dict('records')
+                try:
+                    # Store data in global variable
+                    if fname == 'DEPARTURE':
+                        js.window.AERODROME_DEPARTURE_DATA = df.to_dict('records')
+                    elif fname == 'ARRIVAL':
+                        js.window.AERODROME_ARRIVAL_DATA = df.to_dict('records')
 
-            # Combine data and store in global variable
-            has_departure = hasattr(window, "AERODROME_DEPARTURE_DATA")
-            has_arrival   = hasattr(window, "AERODROME_ARRIVAL_DATA")
-            if has_departure and not has_arrival:
-                window.AERODROME_DATA = window.AERODROME_DEPARTURE_DATA
-            elif not has_departure and has_arrival:
-                window.AERODROME_DATA = window.AERODROME_ARRIVAL_DATA
-            elif has_departure and has_arrival:
-                dep = window.AERODROME_DEPARTURE_DATA
-                arr = window.AERODROME_ARRIVAL_DATA
+                    # Combine departure and arrival data when possible and store in global variable
+                    concat_aerodromes()
+                except AttributeError as e:
+                    error_msg = f"Error processing aerodrome data: {str(e)}"
+                    print(f"❌ {error_msg}")
+                    js.window.alert(error_msg)
+                    return
 
-                # Merge both dictionaries safely
-                # If they have unique keys, this works directly:
-                # window.AERODROME_DATA = {**dep, **arr}
+                # Populate the dropdown with aerodrome data
+                if 'city_icao' in df.columns:
+                    icao_codes = df['city_icao'].dropna().unique().tolist()
+                    print(f"📍 Found {len(icao_codes)} unique ICAO cities")
 
-                # ✅ handle both lists and dicts automatically
-                if isinstance(dep, list) and isinstance(arr, list):
-                    window.AERODROME_DATA = dep + arr
-                    print("OPTION 1")
-                elif isinstance(dep, dict) and isinstance(arr, dict):
-                    window.AERODROME_DATA = {**dep, **arr}
-                    print("OPTION 2")
+                    # Clear and populate the dropdown
+                    select = js.document.getElementById(f'{fname}_ICAO_CITY')
+                    if select:
+                        # Clear existing options except the first placeholder
+                        select.innerHTML = '<option value="">ICAO City</option>'
+
+                        # Add each ICAO city as an option
+                        for icao in sorted(icao_codes):
+                            option = js.document.createElement('option')
+                            option.value = icao
+                            option.textContent = icao
+                            select.appendChild(option)
+
+                        print(f"✅ Populated {fname}_ICAO_CITY dropdown with {len(icao_codes)} cities")
+                    else:
+                        print(f"⚠️ {fname}_ICAO_CITY dropdown not found")
                 else:
-                    # fallback: convert to list if mixed
-                    window.AERODROME_DATA = list(dep) + list(arr)
-                    print("OPTION 3")
-
-            else:
-                window.AERODROME_DATA = {}
-
-
-            # Populate DEPARTURE_ICAO_CITY dropdown with aerodrome data
-            if 'city_icao' in df.columns:
-                icao_codes = df['city_icao'].dropna().unique().tolist()
-                print(f"📍 Found {len(icao_codes)} unique ICAO cities")
-
-                # Clear and populate the dropdown
-                select = js.document.getElementById(f'{fname}_ICAO_CITY')
-                if select:
-                    # Clear existing options except the first placeholder
-                    select.innerHTML = '<option value="">ICAO City</option>'
-
-                    # Add each ICAO city as an option
-                    for icao in sorted(icao_codes):
-                        option = js.document.createElement('option')
-                        option.value = icao
-                        option.textContent = icao
-                        select.appendChild(option)
-
-                    print(f"✅ Populated {fname}_ICAO_CITY dropdown with {len(icao_codes)} cities")
-                else:
-                    print(f"⚠️ {fname}_ICAO_CITY dropdown not found")
-            else:
-                print(f"⚠️ '{fname}_city_icao' column not found in dataframe")
-                print(f"Available columns: {df.columns.tolist()}")
+                    print(f"⚠️ '{fname}_city_icao' column not found in dataframe")
+                    print(f"Available columns: {df.columns.tolist()}")
+        except Exception as e:
+            error_msg = f"No airspace data available for {country}: {str(e)}"
+            print(f"❌ {error_msg}")
+            js.window.alert(error_msg)
+            js.document.getElementById('loading-spinner').style.display = 'none'
+            return
         else:
             print("⚠️ No data available")
 
+        # Import airspace polygon data
+        js.window.airspaces = import_airspaces(country)
+        print(js.window.airspaces.keys())
+
         # Hide loading spinner when done
         js.document.getElementById('loading-spinner').style.display = 'none'
+
+
+    def concat_aerodromes():
+        # Combine departure and arrival data when possible and store in global variable
+
+        # Check whether data is available
+        has_departure = hasattr(window, "AERODROME_DEPARTURE_DATA")
+        has_arrival   = hasattr(window, "AERODROME_ARRIVAL_DATA")
+
+        # Store only what is available
+        if has_departure and not has_arrival:
+            js.window.AERODROME_DATA = js.window.AERODROME_DEPARTURE_DATA
+        elif not has_departure and has_arrival:
+            js.window.AERODROME_DATA = js.window.AERODROME_ARRIVAL_DATA
+        elif has_departure and has_arrival:
+            dep = window.AERODROME_DEPARTURE_DATA
+            arr = window.AERODROME_ARRIVAL_DATA
+
+            # handle both lists and dicts automatically
+            if isinstance(dep, list) and isinstance(arr, list):
+                window.AERODROME_DATA = dep + arr
+                print("OPTION 1")
+            elif isinstance(dep, dict) and isinstance(arr, dict):
+                window.AERODROME_DATA = {**dep, **arr}
+                print("OPTION 2")
+            else:
+                # fallback: convert to list if mixed
+                window.AERODROME_DATA = list(dep) + list(arr)
+                print("OPTION 3")
+        else:
+            window.AERODROME_DATA = {}
 
 
     async def populate_aerodrome_fields_from_icao(fname, city_icao):
@@ -1985,6 +2287,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         js.window.AERODROME_DEPARTURE_DATA = {}
         js.window.AERODROME_ARRIVAL_DATA = {}
         js.window.AERODROME_DATA = {}
+        js.window.airspaces = {}
 
         # Trigger route update to clear the map
         # await js.updateRoute()
@@ -2168,7 +2471,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             await update_aerodrome_image('DEPARTURE')
             await update_aerodrome_image('ARRIVAL')
 
-            # Add data to cache
+            # Add data to javascript global cache. This is needed for the aerodrome selection and plotting on the map
             if flight_plan_dict['DEPARTURE_COUNTRY'] != '':
                 await import_aerodrome_selected('DEPARTURE', flight_plan_dict['DEPARTURE_COUNTRY'])
             if flight_plan_dict['ARRIVAL_COUNTRY'] != '':
@@ -2262,9 +2565,6 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         This function loads cached aerodrome data for either departure or arrival from browser localStorage.
         It will clear existing fields, load the saved data into flight_plan_data, update GUI fields and images.
 
-        Args:
-            fname (str): Either 'DEPARTURE' or 'ARRIVAL' or 'ENROUTE' to indicate which aerodrome data to load
-
         Example:
             load_aerodrome_from_json('DEPARTURE')
             load_aerodrome_from_json('ARRIVAL')
@@ -2288,7 +2588,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
             print(f"✅ Loaded {len(fname_dict)} fields")
 
-            # First clear aerodrome fields
+            # Clear aerodrome fields
             await clear_aerodrome_fields(fname)
 
             # Overwrite the keys in the flight_plan_data dictionary from the loaded JSON data
@@ -2912,8 +3212,6 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             fontsizes = {'TOWER': 20, 'PILOT': 22, 'TITLE': 24}
         return fontsizes
 
-    #async def fetch_and_cache_template(url, template_key):
-
 
     async def load_template(template_name):
         """Fetch from URL, store in localStorage, and return text content."""
@@ -3037,164 +3335,384 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         return html_string
 
     # =================================================================
+    # FUNCTIONS FOR AIRSPACE PROCESSING
+    # =================================================================
 
-    async def retrieve_metar(fname):
-        # Retrieve METAR data for given fname
-        logger.info(f"func: retrieve_metar() - {fname}")
+    def read_file_from_url(url, verbose=3):
+        """Read a text file from a given URL and load it into memory.
 
-        # Get data
-        flight_plan_data = js.window.flight_plan_data
-        SETTINGS = js.window.settings
+        Parameters:
+        url (str): URL to the zip file containing the text file.
+        url = f'https://erdogant.github.io/datasets/skywalk/areas/Netherlands.zip'
 
-        # Gather METAR data and compute
-        fname_METAR = f"{fname}_METAR"
-        fname_RUNWAYS = f"{fname}_RUNWAYS"
-        fname_LATLON = f"{fname}_LATLON"
-        fname_ICAO = f"{fname}_ICAO"
+        Returns:
+        str: Content of the text file as a string.
+        """
+        if verbose>=3: print('Function: read_file_from_url()')
+        lines_in_file = []
+        if url == '': return None
 
-        # filter_on_country = flight_plan_data[f'{fname}_COUNTRY']
-        ICAO = flight_plan_data[fname_ICAO]
-        if not ICAO:
-            print("⚠️ No ICAO code provided")
-            return None
+        try:
+            # Get url
+            response = requests.get(url)
+            if response.status_code == 200 or response.status_code == 502:
+                # Open content in memory
+                zfs = zipfile.ZipFile(BytesIO(response.content))
+                # Assuming there's only one text file in the zip archive
+                with zfs.open(zfs.infolist()[0], mode='r') as file:
+                    for line in file:
+                        # Decode each line from bytes to string, strip whitespace
+                        processed_line = line.decode('utf-8').strip()
+                        # Process the line as needed (e.g., further parsing or validation)
+                        lines_in_file.append(processed_line)
 
-        # Load METAR stations data
-        zip_bytes = await load_cached_zip("metar_stations", url=SETTINGS["METAR_stations"])
-        if not zip_bytes:
-            print("❌ Failed to load METAR stations data")
-            return None
-
-        if zip_bytes:
-            df = extract_csv_from_zip(zip_bytes)
-            js.console.log(f"✅ metar_stations loaded: {len(df)} rows.")
-            print(f"✅ Successfully loaded {len(df)} aerodromes for {metar_stations}")
-        return None
-
-        if ICAO == "":
-            logger.warning(f"Set the ICAO Aerodrome first.")
-            show_popup("Select Aerodrome", "Please select an aerodrome first.")
-            return
-
-        # Retrieve runways
-        rwy_list = flight_plan_data.get(fname_RUNWAYS)
-        if rwy_list == "" or rwy_list is None or len(rwy_list) == 0:
-            _, rwy_list = self.retrieve_runways(
-                flight_plan_data[fname_ICAO], colname="icao"
-            )
-            flight_plan_data.update({fname_RUNWAYS: rwy_list})
-
-        # Retrieve only the valid METAR stations
-        # METAR_STATIONS_VALID = metar_info.filter_valid_metar_stations(load_stations=True)
-
-        # Get top n closest metar stations
-        lat, lon = flight_plan_data[fname_LATLON]
-        closest_metar_stations = metar_info.sort_on_distance_icao_to_metar_stations(
-            fname=None,
-            return_col="icao",
-            lat=lat,
-            lon=lon,
-            filter_on_country=None,
-            n=25,
-            source=source,
-            ui_type="kivy",
-        )
-        logger.info(
-            f"Retrieve closest METAR data for {ICAO} in {fname_METAR} which is {closest_metar_stations[0]}"
-        )
-
-        # Retrieve Metar observations
-        for icao in closest_metar_stations:
-            METAR_DATA = metar_info.get_metar(icao)
-            if METAR_DATA is not None:
-                METAR_ICAO = icao
-                break
+                    # Show succes message
+                    if verbose>=3: print('   > File read and processed successfully from URL.')
             else:
-                logger.info(f"{icao} was not valid. Trying another METAR station.")
-                METAR_ICAO = ""
-                METAR_DATA = {}
-                time.sleep(0.2)
+                lines_in_file = None
+        except Exception as e:
+            if verbose>=1: print(f'[Error]> Failed to read file from URL: {str(e)}')
+            lines_in_file = None
 
-        # # Add METAR data to flightplan data. The dict needs to be updated first because it is required in the runway prediction hereafter.
-        # flight_plan_data.update({
-        #     fname_METAR: METAR_DATA,
-        #     f'{self.fname}_METAR_ICAO': METAR_ICAO,
-        #     })
+        # Return
+        return lines_in_file
 
-        # Predict the runway number based on the METAR data
-        METAR_DATA["RUNWAYS"] = flight_plan_data.get(f"{self.fname}_RUNWAYS", [])
-        RUNWAY_PREDICTED = compute.expected_runway_number(
-            self.fname, data=METAR_DATA, ui_type="kivy"
-        )
-        if RUNWAY_PREDICTED == "":
-            logger.warning(f"No runway predicted. Please check the METAR data.")
-            show_popup(
-                "Runway unknown with variable (VRB) wind",
-                "Runway needs to be set manually.\nPlease check the METAR data.",
-            )
+
+    def import_airspaces(country):
+        # URL
+        url = f'https://erdogant.github.io/datasets/skywalk/airspaces/{country}.zip'
+        #url = f'{js.window.settings['url_airspaces']}{country}.zip'
+
+        # Read airspace file from URL
+        lines_in_file = read_file_from_url(url, verbose=3)
+
+        # Return if nothing is available
+        if lines_in_file is None:
+            return {}
+
+        airspaces = {}
+        current_airspace = None
+        counter = 0
+
+        for line in lines_in_file:
+            line = line.strip()
+
+            if ('Start of airspace' in line) or len(line) < 3:
+                # Skip each line until start of airsprace is found
+                if counter == 0: counter = counter + 1
+                # print(line)
+
+            elif line.startswith('*'):
+                # This is a new area so create new key
+                # line ='* Danger Area/DANGER//O/C'
+                counter += 1
+                airspaces[counter] = {'area_type': '', 'area_type_general': '', 'AC': '', 'AN': '', 'AL': '', 'AH': '', 'DP': '', 'coordinates': None}
+                airspaces[counter]['area_type'] = line.split(maxsplit=1)[1]
+                line = line[1:].split('/', maxsplit=1)
+                airspaces[counter]['area_type_general'] = line[0].strip()
+            elif line.startswith('AC'):
+                airspaces[counter]['type'] = line.split()[1]
+            elif line.startswith('AN'):
+                airspaces[counter]['name'] = line.split(maxsplit=1)[1]
+            elif line.startswith('AL'):
+                airspaces[counter]['altitude_lower'] = line.split()[1]
+            elif line.startswith('AH'):
+                airspaces[counter]['altitude_higher'] = line.split()[1]
+            elif line.startswith('DP'):
+                # Get the coordinates
+                if airspaces[counter].get('coordinates') is None:
+                    airspaces[counter]['coordinates'] = []
+                lat_lon = line.split(maxsplit=1)[1:]
+                lat_lon = extract_lat_lon(lat_lon)
+                # Remove None values from latlon
+                if lat_lon['latlon'] is not None:
+                    lat_lon = [item for item in lat_lon['latlon'] if item is not None]
+                    # Store
+                    if len(lat_lon) > 0:
+                        airspaces[counter]['coordinates'].append(lat_lon)
+
+            elif line.startswith('V'):
+                if not airspaces[counter].get('coordinates'):
+                    airspaces[counter]['coordinates'] = []
+
+                lat_lon = line.split('X=')[1:]
+                lat_lon = extract_lat_lon(lat_lon)
+
+                # Remove None values from latlon
+                if lat_lon['latlon'] is not None:
+                    lat_lon = [item for item in lat_lon['latlon'] if item is not None]
+                    # Store
+                    if len(lat_lon) > 0:
+                        airspaces[counter]['coordinates'].append(lat_lon)
+
+        # Only keep airspaces with coordinates
+        airspaces = {key: value for key, value in airspaces.items() if value['coordinates'] is not None}
+
+        # Convert the dictionary to a JSON string
+        # airspaces_json = json.dumps(airspaces, indent=4)
+        return airspaces
+
+
+    # Function to extract latitude and longitude from the string
+    def extract_lat_lon(string, method=None):
+        # string = "52° 28' 12.00\" N"
+        # string = '52:11:08 N 005:12:30 E'
+        # string = 'n52 18.84 / e4 48.18'
+        # latlon = extract_lat_lon('52:11:08 N 005:12:30 E')
+        # latlon = extract_lat_lon('n52 18.84 / e4 48.18')
+
+        if method == 4:
+            if len(string.split('/')) > 1:
+                s = string.split('/')
+                if 'n' in s[0].strip().lower() or 's' in s[0].strip().lower():
+                    lat = s[0].strip().replace(' ', ':').replace('.', ':')
+                    lat = lat[1:] + ' ' + lat[0].upper()
+                if 'e' in s[1].strip().lower() or 'w' in s[1].strip().lower():
+                    lon = s[1].strip().replace(' ', ':').replace('.', ':')
+                    lon = lon[1:] + ' ' + lon[0].upper()
+                string = lat + ' ' + lon
+
+
+        coord = {'name': None, 'latlon': None}
+
+        if string is None or string == '' or string == []:
+            return coord
+
+        if isinstance(string, list): string = string[0]
+
+        # Pattern 1: Extract the desired part of the string
+        pattern1 = r"\d+°\d+'\d+\.\d+\"[NS]\s+\d+°\d+'\d+\.\d+\"[EW]"
+        matches1 = re.findall(pattern1, string)
+
+        if matches1:
+            # Extract name
+            start_index = string.index(matches1[0])
+            # end_index = string.rindex(matches1[-1]) + len(matches1[-1])
+            coord['name'] = string[0:start_index].replace('\xa0', ' ').strip()
+            latlon = matches1
+
+            lat_decimal, lon_decimal = [], []
+            for lat_lon in latlon:
+                # Extract degrees, minutes, and seconds for latitude
+                lat_parts = re.findall(r'\d+', lat_lon.split()[0])
+                lat_deg = float(lat_parts[0])
+                lat_min = float(lat_parts[1])
+                lat_sec = float(lat_parts[2] + '.' + lat_parts[3])
+
+                # Extract degrees, minutes, and seconds for longitude
+                lon_parts = re.findall(r'\d+', lat_lon.split()[1])
+                lon_deg = float(lon_parts[0])
+                lon_min = float(lon_parts[1])
+                lon_sec = float(lon_parts[2] + '.' + lon_parts[3])
+
+                # Convert DMS to decimal degrees
+                lat_dec = dms_to_decimal(lat_deg, lat_min, lat_sec)
+                lon_dec = dms_to_decimal(lon_deg, lon_min, lon_sec)
+
+                lat_decimal.append(lat_dec)
+                lon_decimal.append(lon_dec)
+
+            coord['latlon'] = np.c_[lat_decimal, lon_decimal]
+            if coord['latlon'].shape[0] > 1 and coord['name']=='':
+                coord['name']='unknown'
+
+            # Return
+            return coord
+
+        # latlon Pattern 2
+        pattern2 = r'(\d{6}[NS])\s+(\d{7}[EW])'
+        matches2 = re.findall(pattern2, string)
+
+        if matches2:
+            lat_decimal, lon_decimal = [], []
+            for lat, lon in matches2:
+                lat_deg, lat_min, lat_sec = lat[:2], lat[2:4], lat[4:-1]
+                lon_deg, lon_min, lon_sec = lon[:3], lon[3:5], lon[5:-1]
+                lat_dec = dms_to_decimal(lat_deg, lat_min, lat_sec)
+                lon_dec = dms_to_decimal(lon_deg, lon_min, lon_sec)
+
+                if lat[-1] == 'S':
+                    lat_dec *= -1
+                if lon[-1] == 'W':
+                    lon_dec *= -1
+
+                lat_decimal.append(lat_dec)
+                lon_decimal.append(lon_dec)
+
+            start_index = string.index(matches2[0][0])
+            coord['name'] = string[0:start_index].replace('\xa0', ' ').strip()
+            coord['latlon'] = np.c_[lat_decimal, lon_decimal]
+            if coord['latlon'].shape[0] > 1 and coord['name']=='':
+                coord['name']='unknown'
+
+            # Return
+            return coord
+
+        # latlon Pattern 3
+        # string = "52° 28' 12.00\" N"
+        pattern3 = r'(\d+)° (\d+)\' (\d+\.\d+)" ([NSEW])'
+        matches3 = re.search(pattern3, string)
+
+        if matches3:
+            ldeg = float(matches3.group(1))
+            lmin = float(matches3.group(2))
+            lsec = float(matches3.group(3))
+
+            # Convert DMS to decimal degrees
+            ldec = dms_to_decimal(ldeg, lmin, lsec)
+
+            if matches3.group(4) == 'S':
+                ldec *= -1
+            if matches3.group(4) == 'W':
+                ldec *= -1
+
+            coord = {'name': string, 'latlon': ldec}
+            # Return
+            return coord
+
+        # latlon Pattern 4
+        # '52:11:08 N 005:12:30 E'
+        pattern = r'(\d+:\d+:\d+) ([NS]) (\d+:\d+:\d+) ([EW])'
+        matches = re.search(pattern, string)
+        if matches:
+            # Conert latitude to decimals
+            degrees, minutes, seconds = matches.group(1).split(':')
+            lat_decimal = dms_to_decimal(degrees, minutes, seconds, matches.group(2))
+            # Conert longitude to decimals
+            degrees, minutes, seconds = matches.group(3).split(':')
+            lon_decimal = dms_to_decimal(degrees, minutes, seconds, matches.group(4))
+            # Create coordinates
+            coord = {'name': matches.group(1) + ' ' + matches.group(2) + ' ' + matches.group(3) + ' ' + matches.group(4) , 'latlon':  [lat_decimal, lon_decimal]}
+            # Return
+            return coord
+
+
+        # latlon Pattern 5
+        # string = "5342N00629E002"
+        # string = '5255N00454E001'
+        pattern = r'(\d{2})(\d{2})([NS])(\d{3})(\d{2})([EW])\d{3}'
+        # 51.44161977603219, 3.5849333938063817
+        match = re.search(pattern, string)
+        if match:
+            # Extract degrees, minutes, and seconds for latitude and longitude
+            lat_degrees = int(match.group(1))
+            lat_minutes = int(match.group(2))
+            lat_direction = match.group(3)
+            # lat_decimal = lat_degrees + (lat_minutes/100)
+            # if lat_direction == 'S': lat_decimal *= -1
+
+            lon_degrees = int(match.group(4))
+            lon_minutes = int(match.group(5))
+            lon_direction = match.group(6)
+            # lon_decimal = lon_degrees + (lon_minutes/100)
+            # if lon_direction == 'W': lon_decimal *= -1
+
+            # Convert degrees and minutes to decimal
+            lat_decimal = dms_to_decimal(lat_degrees, lat_minutes, 0, direction=lat_direction)
+            lon_decimal = dms_to_decimal(lon_degrees, lon_minutes, 0, direction=lon_direction)
+
+            # Create dict.
+            coord = {'name': match.group(1) + ' ' + match.group(2) + ' ' + match.group(4) + ' ' + match.group(5) , 'latlon': [lat_decimal, lon_decimal]}
+
+            # Return
+            return coord
+
+
+    def dms_to_decimal(degrees, minutes, seconds, direction=None):
+        dec = float(degrees) + (float(minutes) / 60) + (float(seconds) / 3600)
+        if direction == 'S':
+            dec *= -1
+        if direction == 'W':
+            dec *= -1
+        return dec
+
+
+    def clean_altitude(altitude):
+        # print(altitude)
+        altitude = str(altitude).upper().replace("`",'').strip()
+        altitude = altitude.split('/')[-1]
+
+        if altitude is None or altitude=='' or altitude == 'NONE':
+            pass
+        elif 'AFL' in altitude:
+            # likely stands for "500 feet Above Field Level.
+            altitude = altitude.replace('AFL','')
+        elif 'ALT' in altitude:
+            altitude = altitude.replace('ALT','')
+        elif 'AGL' in altitude:
+            altitude = altitude.replace('AGL','')
+        elif 'MSL' in altitude:
+            altitude = altitude.replace('MSL','')
+        elif 'UNL' in altitude:
+            # unlimited, to the sky
+            altitude = None
+        elif 'SFC' in altitude:
+            # surface is from the floor
+            altitude = None
+        elif 'FT' in altitude:
+            altitude = altitude.replace('FT','')
+        elif altitude[0:2] == 'FL':
+            altitude = altitude.replace('FL','')
+            if altitude == '': altitude = 0
+            altitude = int(altitude) * 100
+        elif 'FO' in altitude:
+            altitude = altitude.replace('FO','')
+            if altitude == '': altitude = 0
+            altitude = int(altitude) * 100
+        elif altitude[-1] == 'M':
+            altitude = int(altitude[:-1]) * 3.28084
+        elif altitude[-1] == 'A':
+            # above ground level, it means an altitude of 500 feet above the terrain or surface beneath the aircraft.
+            altitude = int(altitude[:-1])
+        elif altitude[-1] == 'F':
+            altitude = altitude.replace('F','')
+
+        if altitude == '' or altitude is None or altitude == 'NONE':
+            altitude = None
         else:
-            # Refresh the GUI fields. Do not update all others because it will any custom user input because it is not yet stored.
-            self.RUNWAY_input.text = RUNWAY_PREDICTED
+            altitude = int(altitude)
 
-        # Display METAR data based on checkbox state (raw or decoded)
-        if self.METAR_decoded_checkbox.active:
-            self.METAR_input.text = str(METAR_DATA.get("decoded", ""))
-        else:
-            self.METAR_input.text = str(METAR_DATA.get("metar", ""))
+        return altitude
 
-        self.METAR_DATETIME.text = (
-            str(METAR_DATA.get("datetime", ""))
-            if METAR_DATA.get("datetime") is not None
-            else ""
-        )
-        self.TAF_input.text = (
-            str(METAR_DATA.get("TAF", "")) if METAR_DATA.get("TAF") is not None else ""
-        )
 
-        # Populate wind input fields with METAR data
-        if "wind" in METAR_DATA and METAR_DATA["wind"]:
-            wind_data = METAR_DATA.get("wind", {})
-            # Format wind direction as three digits with leading zeros
-            self.wind_direction_input.text = format_wind_direction(
-                wind_data.get("direction")
-            )
-            self.wind_speed_input.text = str(wind_data.get("speed") or "")
-            self.wind_gust_input.text = str(wind_data.get("gust") or "")
-            self.wind_variation_input.text = str(wind_data.get("variation") or "")
+    def altitude_restriction(AL, AH, max_altitude):
+        # If the altitude is 0. Always return True
+        if max_altitude == 0:
+            return True, None
 
-            # Compute cross/head wind
-            crosswind = compute.crosswind(
-                wind_data.get("direction"), wind_data.get("speed"), RUNWAY_PREDICTED
-            )
-            headwind = compute.headwind(
-                wind_data.get("direction"), wind_data.get("speed"), RUNWAY_PREDICTED
-            )
-            METAR_DATA["wind"]["crosswind"] = (
-                round(crosswind, 1) if crosswind is not None else ""
-            )
-            METAR_DATA["wind"]["headwind"] = (
-                round(headwind, 1) if headwind is not None else ""
-            )
-            self.CROSSWIND_input.text = str(METAR_DATA["wind"]["crosswind"] or "")
-            self.HEADWIND_input.text = str(METAR_DATA["wind"]["headwind"] or "")
+        in_airspace = False
+        loc_airspace = ''
 
-        # Update flightplan data with the predicted runway
-        flight_plan_data.update(
-            {
-                f"{self.fname}_RUNWAY": RUNWAY_PREDICTED,
-                fname_METAR: METAR_DATA,
-                f"{self.fname}_METAR_ICAO": METAR_ICAO,
-            }
-        )
+        # Set the altitude
+        if AH is None and AL is None:
+            # print("Both upper and lower limits of the airspace are not defined.")
+            loc_airspace = None
 
-        # Add METAR data to flightplan data. The dict needs to be updated first because it is required in the runway prediction hereafter.
-        # flight_plan_data.update({
-        #     fname_METAR: METAR_DATA,
-        #     f'{self.fname}_METAR_ICAO': METAR_ICAO,
-        #     })
+        if AH is not None and AL is not None:
+            if AL <= max_altitude <= AH:
+                in_airspace = True
+                loc_airspace = 'in'
+            elif max_altitude < AL:
+                loc_airspace = 'below'
+            elif max_altitude > AH:
+                loc_airspace = 'above'
+        elif AH is None and AL is not None:
+            if max_altitude >= AL:
+                loc_airspace = 'in'
+                in_airspace = True
+            else:
+                loc_airspace = 'below'
+        elif AH is not None and AL is None:
+            if max_altitude <= AH:
+                loc_airspace = 'in'
+                in_airspace = True
+            else:
+                loc_airspace = 'above'
 
-        # Compute the wind envelope
-        self.compute_wind_envelope()
-        self.compute_cloud_plot()
+        # if loc_airspace == 'in':
+        #     print('Flight is in airspace')
+        return in_airspace, loc_airspace
+
 
 
     # =================================================================
@@ -3211,8 +3729,8 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
     js.window.save_aerodrome_to_json = save_aerodrome_to_json
     js.window.load_aerodrome_from_json = load_aerodrome_from_json
     # js.window.retrieve_metar = retrieve_metar
-    js.window.update_dropdown_flightplans = create_proxy(update_dropdown_flightplans)
-    js.window.update_dropdown_enroute_FIC = create_proxy(update_dropdown_enroute_FIC)
+    # js.window.update_dropdown_flightplans = create_proxy(update_dropdown_flightplans)
+    # js.window.update_dropdown_enroute_FIC = create_proxy(update_dropdown_enroute_FIC)
     js.window.clear_cache = clear_cache
 
     # ATC
@@ -3254,6 +3772,13 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
     # FIC LIST IN CACHE
     update_dropdown_enroute_FIC()
+
+    # AIRSPACE
+    js.window.import_airspaces = import_airspaces
+    js.window.altitude_restriction = altitude_restriction
+    js.window.clean_altitude = clean_altitude
+    js.window.altitude_restriction = altitude_restriction
+
   </script>
 
 
