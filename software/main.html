@@ -522,7 +522,7 @@
         <div class="button-row">
             <div style="display: flex; align-items: center; margin-top: 5px;">
                 <label style="margin-right: 5px;">Airspaces at altitude (ft):</label>
-                <input type="number" id="airspace-altitude" value="1500" min="0" max="10000" step="150" style="width: 80px;">
+                <input type="number" id="airspace-altitude" value="1500" min="150" max="10000" step="150" style="width: 80px;">
             </div>
         </div>
 
@@ -536,10 +536,13 @@
 
         <div id="map-container" style="height: 500px;">
             <div id="route-map" style="height: 100%;"></div>
-            <div class="map-controls" style="position: absolute; top: 10px; right: 10px; background: none; padding: 0; z-index: 1000;">
-                <button onclick="toggleFullscreen()" style="width: 44px; height: 44px; padding: 0; background: white; border: 2px solid rgba(0,0,0,0.2); border-radius: 4px; cursor: pointer; touch-action: manipulation;">
-                    <svg viewBox="0 0 24 24" style="width: 24px; height: 24px; margin: 8px;">
+            <div class="map-controls" style="position: absolute; top: 10px; right: 10px; background: none; padding: 0; z-index: 2000;">
+                <button id="fullscreen-btn" onclick="toggleFullscreen()" style="width: 44px; height: 44px; padding: 0; background: white; border: 2px solid rgba(0,0,0,0.2); border-radius: 4px; cursor: pointer; touch-action: manipulation; position: fixed;">
+                    <svg class="fullscreen-enter" viewBox="0 0 24 24" style="width: 24px; height: 24px; margin: 8px;">
                         <path d="M7,14H5v5h5v-2H7V14z M5,10h2V7h3V5H5V10z M17,17h-3v2h5v-5h-2V17z M14,5v2h3v3h2V5H14z"/>
+                    </svg>
+                    <svg class="fullscreen-exit" viewBox="0 0 24 24" style="width: 24px; height: 24px; margin: 8px; display: none;">
+                        <path d="M5,16h3v3h2v-5H5V16z M8,8H5v2h5V5H8V8z M14,19h2v-3h3v-2h-5V19z M16,8V5h-2v5h5V8H16z"/>
                     </svg>
                 </button>
             </div>
@@ -646,7 +649,7 @@
         const depLatLon = window.flight_plan_data?.DEPARTURE_LATLON || [null, null];
         const arrLatLon = window.flight_plan_data?.ARRIVAL_LATLON || [null, null];
         const df = window.AERODROME_DATA;
-        console.log('Raw coordinates - Departure:', depLatLon, 'Arrival:', arrLatLon);
+        // console.log('Raw coordinates - Departure:', depLatLon, 'Arrival:', arrLatLon);
 
         // Clear existing airport layer
         if (airportLayer) {
@@ -804,8 +807,8 @@
             const marker = L.marker(waypoints[i], {
                 draggable: true,
                 icon: L.divIcon({
-                    className: 'waypoint-icon', // BLACK COLOR
-                    html: '<div style="background-color: #2196F3; width: 10px; height: 10px; border-radius: 50%; border: 1px solid white;"></div>',
+                    className: 'waypoint-icon',
+                    html: '<div style="background-color: #FFFFFF; width: 10px; height: 10px; border-radius: 50%; border: 1px solid black;"></div>',
                     iconSize: [14, 14],
                     iconAnchor: [7, 7]
                 }),
@@ -853,8 +856,11 @@
                 // Fallback for iPhone
                 mapContainer.classList.add('mobile-fullscreen');
                 document.body.classList.add('no-scroll');
+                fullscreenBtn.style.top = '10px';
+                fullscreenBtn.style.right = '10px';
             }
-            fullscreenBtn.textContent = '🡼'; // Change icon to "exit"
+            fullscreenBtn.querySelector('.fullscreen-enter').style.display = 'none';
+            fullscreenBtn.querySelector('.fullscreen-exit').style.display = 'block';
         } else {
             // Exit fullscreen
             if (document.exitFullscreen) {
@@ -868,8 +874,10 @@
             } else {
                 mapContainer.classList.remove('mobile-fullscreen');
                 document.body.classList.remove('no-scroll');
+                fullscreenBtn.style.position = 'static';
             }
-            fullscreenBtn.textContent = '⛶'; // Change back to "enter"
+            fullscreenBtn.querySelector('.fullscreen-enter').style.display = 'block';
+            fullscreenBtn.querySelector('.fullscreen-exit').style.display = 'none';
         }
 
         // Ensure map resizes properly
@@ -1002,7 +1010,7 @@
                         circleColor = '#8B0000';
                     } else if (props.ctr || props.runways.includes('asphalt')) {
                         markerColor = '#666666'; // Gray for CTR
-                        circleColor = '#FF69B4';  // pink
+                        circleColor = '#FF69B4';  // pink for CTR
                     } else if (props.runways.includes('grass')) {
                         markerColor = '#8BC34A'; // Green for grass
                     } else {
@@ -1018,12 +1026,12 @@
                     });
 
                     // Create marker with custom icon
-                            const marker = L.marker(latlng, {
-                                title: props.name,
-                                icon: markerIcon,
-                                pane: 'markerPane',  // Use marker pane to ensure markers stay on top
-                                zIndexOffset: 1000   // High z-index offset to stay above other markers
-                            }).bindPopup(popupContent);
+                    const marker = L.marker(latlng, {
+                        title: props.name,
+                        icon: markerIcon,
+                        pane: 'markerPane',  // Use marker pane to ensure markers stay on top
+                        zIndexOffset: 1000   // High z-index offset to stay above other markers
+                    }).bindPopup(popupContent);
 
                     // Add to feature group
                     airportLayer.addLayer(marker);
@@ -1034,8 +1042,8 @@
                                 radius: 14900, // 5NM in meters
                                 color: circleColor,
                                 weight: 1,
-                                opacity: 0.3,
-                                fillOpacity: 0.4,
+                                // opacity: 0.3,
+                                fillOpacity: 0.3,
                                 pane: 'markerPane'  // Use marker pane to ensure circles stay on top
                             });
                             circle.bindPopup(popupContent);
@@ -1180,24 +1188,18 @@
             // private_runway: L.featureGroup().addTo(routeMap)
         };
 
-        const areaTypes = {
+        const area_types = {
             CTR_CTZ: { markertype: "polygon", fill: true, fillColor: "#FF69B4", edgeColor: "#FF69B4", opacity: 0.3, weight: 1, layer: layers.CTR_CTZ, zIndex: 300 },
-            CTA_TMA: { markertype: "polygon", fill: true, fillColor: '#000000', edgeColor: "#696969", opacity: 0.1, weight: 1.5, layer: layers.CTA_TMA, zIndex: 300 },
+            CTA_TMA: { markertype: "polygon", fill: true, fillColor: '#000000', edgeColor: "#696969", opacity: 0.1, weight: 1.5, layer: layers.CTA_TMA, zindex: 100 },
             ATZ: { markertype: "polygon", fill: true, fillColor: "#FF69B4", edgeColor: "#FF69B4", opacity: 0.3, weight: 1, layer: layers.ATZ, zIndex: 300 },
-            MATZ: { markertype: "polygon", fill: true, fillColor: "#8B0000", edgeColor: "#8B0000", opacity: 0.3, weight: 1, layer: layers.MATZ, zIndex: 300 },
-            TMZ: { markertype: "polygon", fill: true, fillColor: "#DA70D6", edgeColor: "#DA70D6", opacity: 0.1, weight: 1.3, layer: layers.TMZ, zIndex: 300 },
-            TRA: { markertype: "polygon", fill: true, fillColor: "#FA8072", edgeColor: "#FA8072", opacity: 0.3, weight: 1, layer: layers.TRA, zIndex: 300 },
-            prohibited: { markertype: "polygon", fill: true, fillColor: "#8B0000", edgeColor: "#8B0000", opacity: 0.3, weight: 1, layer: layers.prohibited, zIndex: 300 },
-            danger: { markertype: "polygon", fill: true, fillColor: "#8B0000", edgeColor: "#8B0000", opacity: 0.3, weight: 1, layer: layers.danger, zIndex: 300 },
-            restricted: { markertype: "polygon", fill: true, fillColor: "#FF9248", edgeColor: "#FF9248", opacity: 0.3, weight: 1, layer: layers.restricted, zIndex: 300 },
-            gliding: { markertype: "polygon", fill: true, fillColor: "#90EE90", edgeColor: "#90EE90", opacity: 0.3, weight: 1, layer: layers.gliding, zIndex: 300 },
-            parachuting: { markertype: "circle", fill: true, fillColor: "#FFD700", edgeColor: "#FFD700", opacity: 0.3, weight: 1, layer: layers.parachuting, zIndex: 300 },
-            parachuting: { markertype: "circle", fill: true, fillColor: "#0096FF", edgeColor: "#0096FF", opacity: 0.2, weight: 1, layer: layers.parachuting, zindex: 400 },
-            gliding: { markertype: "polygon", fill: true, fillColor: "#0096FF", edgeColor: "#0096FF", opacity: 0.2, weight: 1, layer: layers.gliding, zindex: 400 },
-            CTA_TMA: { markertype: "polygon", fill: true, fillColor: '#000000', edgeColor: "#696969", opacity: 0.1, weight: 1.5, layer: layers.CTA_TMA, zindex: 300 },
-            MATZ: { markertype: "circle", fill: true, fillColor: "#8B0000", edgeColor: "#8B0000", opacity: 0.3, weight: 1, layer: layers.MATZ, zindex: 300 },
-            TMZ: { markertype: "polygon", fill: true, fillColor: "#DA70D6", edgeColor: "#DA70D6", opacity: 0.1, weight: 1.3, layer: layers.TMZ, zindex: 300 },
-            TRA: { markertype: "polygon", fill: true, fillColor: "#FA8072", edgeColor: "#FA8072", opacity: 0.3, weight: 1, layer: layers.TRA, zindex: 300 },
+            MATZ: { markertype: "circle", fill: true, fillColor: "#8B0000", edgeColor: "#8B0000", opacity: 0.3, weight: 1, layer: layers.MATZ, zIndex: 300 },
+            TMZ: { markertype: "polygon", fill: true, fillColor: "#DA70D6", edgeColor: "#DA70D6", opacity: 0.1, weight: 1.3, layer: layers.TMZ, zIndex: 10 },
+            TRA: { markertype: "polygon", fill: true, fillColor: "#FA8072", edgeColor: "#FA8072", opacity: 0.3, weight: 1, layer: layers.TRA, zIndex: 100 },
+            prohibited: { markertype: "polygon", fill: true, fillColor: "#8B0000", edgeColor: "#8B0000", opacity: 0.3, weight: 1, layer: layers.prohibited, zindex: 3000 },
+            danger: { markertype: "polygon", fill: true, fillColor: "#8B0000", edgeColor: "#8B0000", opacity: 0.3, weight: 1, layer: layers.danger, zindex: 50 },
+            restricted: { markertype: "polygon", fill: true, fillColor: "#FF9248", edgeColor: "#FF9248", opacity: 0.3, weight: 1, layer: layers.restricted, zindex: 3000 },
+            gliding: { markertype: "polygon", fill: true, fillColor: "#90EE90", edgeColor: "#90EE90", opacity: 0.3, weight: 1, layer: layers.gliding, zindex: 1000 },
+            parachuting: { markertype: "circle", fill: true, fillColor: "#0096FF", edgeColor: "#0096FF", opacity: 0.2, weight: 1, layer: layers.parachuting, zindex: 2500 },
             various: { markertype: "polygon", fill: true, fillColor: "#696969", edgeColor: "#696969", opacity: 0.3, weight: 1, layer: layers.various, zindex: 300 },
             // NOTAM: { markertype: "marker", fill: false, fillColor: "#EFC238", edgeColor: "#EFC238", opacity: 0, weight: 3, layer: layers.NOTAM },
             // NOTAM_ENROUTE: { markertype: "marker", fill: false, fillColor: "#EFC238", edgeColor: "#EFC238", opacity: 0, weight: 3, layer: layers.NOTAM_ENROUTE },
@@ -1206,81 +1208,136 @@
             // private_runway: { markertype: "circle", fill: true, fillColor: "#ff8c00", edgeColor: "#228B22", opacity: 0.6, weight: 1.1, layer: layers.private_runway }
         };
 
-        return { layers, areaTypes };
+        return { layers, area_types };
     }
 
     function createAirspaceLayer(airspaces, routeMap, maxAltitude = 1500) {
         if (!airspaces) return null;
 
         // Initialize all layers
-        const { layers, areaTypes } = initAirspaceLayerGroups(routeMap);
+        const { layers, area_types } = initAirspaceLayerGroups(routeMap);
+
+        // Keep track of currently highlighted layer
+        let highlightedLayer = null;
+        // Function to handle highlighting
+        function highlightAirspace(layer) {
+            // Reset previous highlight if exists
+            if (highlightedLayer) {
+                highlightedLayer.setStyle({
+                    weight: highlightedLayer.originalStyle.weight,
+                    opacity: highlightedLayer.originalStyle.opacity,
+                    fillOpacity: highlightedLayer.originalStyle.fillOpacity,
+                    color: highlightedLayer.originalStyle.color,
+                    fillColor: highlightedLayer.originalStyle.fillColor
+                });
+            }
+            // Store original style
+            layer.originalStyle = {
+                weight: layer.options.weight,
+                opacity: layer.options.opacity,
+                fillOpacity: layer.options.fillOpacity,
+                color: layer.options.color,
+                fillColor: layer.options.fillColor
+            };
+
+            // Apply highlight style
+            layer.setStyle({
+                weight: layer.originalStyle.weight * 2,
+                opacity: 0.8,
+                fillOpacity: 0.5,
+                color: '#FFFF00',  // Yellow outline for highlighted airspace
+            });
+
+            highlightedLayer = layer;
+
+            // Bring to front
+            if (layer.bringToFront) {
+                layer.bringToFront();
+            }
+        }
+
 
         Object.values(airspaces).forEach((airspace) => {
             if (!airspace.coordinates || airspace.coordinates.length === 0) return;
 
             const AL = clean_altitude(airspace.altitude_lower);
             const AH = clean_altitude(airspace.altitude_higher);
-            const type = (airspace.area_type || "").toLowerCase();
+            const area_type = (airspace.area_type || "").toLowerCase();
 
             let key = "various";
             let flagToMap = true;
             let radius = 14900;
 
             // Determine type and flags
-            if (type.includes("ctr") || type.includes("ctz")) { key = "CTR_CTZ"; radius = 14900; }
-            else if (type.includes("cta") || type.includes("tma")) { key = "CTA_TMA"; [flagToMap] = altitude_restriction(AL, AH, maxAltitude); }
-            else if (type.includes("atz") && !type.includes("military")) { key = "ATZ"; }
-            else if (type.includes("atz") && type.includes("military")) { key = "MATZ"; radius = 14900; }
-            else if (type.includes("tmz")) { key = "TMZ"; [flagToMap] = altitude_restriction(AL, AH, maxAltitude); }
-            else if (type.includes("prohibited")) { key = "prohibited"; }
-            else if (type.includes("danger")) { key = "danger"; [flagToMap] = altitude_restriction(AL, AH, maxAltitude); }
-            else if (type.includes("restricted") && !type.includes("notam")) { key = "restricted"; [flagToMap] = altitude_restriction(AL, AH, maxAltitude); }
-            else if (type.includes("notam")) { key = "NOTAM"; flagToMap = false; }
-            else if (type.includes("temporary reserved")) { key = "TRA"; [flagToMap] = altitude_restriction(AL, AH, maxAltitude); }
-            else if (type.includes("parachuting")) { key = "parachuting"; radius = 4000; }
-            else if (type.includes("gliding")) { key = "gliding"; }
+            if (area_type.includes("ctr") || area_type.includes("ctz")) { key = "CTR_CTZ"; radius = 14900; }
+            else if (area_type.includes("cta") || area_type.includes("tma")) { key = "CTA_TMA"; [flagToMap] = altitude_restriction(AL, AH, maxAltitude); }
+            else if (area_type.includes("atz") && !area_type.includes("military")) { key = "ATZ"; }
+            else if (area_type.includes("atz") && area_type.includes("military")) { key = "MATZ"; radius = 14900; }
+            else if (area_type.includes("tmz")) { key = "TMZ"; [flagToMap] = altitude_restriction(AL, AH, maxAltitude); }
+            else if (area_type.includes("prohibited")) { key = "prohibited"; }
+            else if (area_type.includes("danger")) { key = "danger"; [flagToMap] = altitude_restriction(AL, AH, maxAltitude); }
+            else if (area_type.includes("restricted") && !area_type.includes("notam")) { key = "restricted"; [flagToMap] = altitude_restriction(AL, AH, maxAltitude); }
+            else if (area_type.includes("notam")) { key = "NOTAM"; flagToMap = false; }
+            else if (area_type.includes("temporary reserved")) { key = "TRA"; [flagToMap] = altitude_restriction(AL, AH, maxAltitude); }
+            else if (area_type.includes("parachuting")) { key = "parachuting"; radius = 4000; }
+            else if (area_type.includes("gliding")) { key = "gliding"; }
+            else if (area_type.includes("laser")) { key = "laser"; flagToMap = false; radius = 2000; }
+            else if (area_type.includes("gas venting")) { key = "laser"; flagToMap = false; radius = 2000; }
+            else { key = "various"; [flagToMap] = altitude_restriction(AL, AH, maxAltitude); radius = 2000;}
 
             if (!flagToMap) return;
-            if (key === "various") return;
+            // if (key === "various") return;
 
             const popupContent = `
-                <b>${airspace.name}</b>
-                <div style='width:250px; padding:10px; border:1px solid lightgrey; border-radius:5px; background-color:#f9f9f9;'>
-                    <b>${airspace.area_type_general}</b><br>
-                    <b>Altitude:</b> ${airspace.altitude_lower}${AH ? ` to ${AH} feet` : ""}<br>
+                <div style="font-size: 0.9em;">
+                    <b>${airspace.name}</b>
+                    <div style='width:250px; padding:10px; border:1px solid lightgrey; border-radius:5px; background-color:#f9f9f9;'>
+                        <b>${airspace.area_type_general}</b><br>
+                        <b>Altitude:</b> ${airspace.altitude_lower}${AH ? ` to ${AH} feet` : ""}<br>
+                    </div>
                 </div>
             `;
 
-            const coords = airspace.coordinates.map(c => [c[0], c[1]]); // flip if needed
-            const areaLayer = areaTypes[key];
-
+            const coords = airspace.coordinates.map(c => [c[0], c[1]]);
+            const areaLayer = area_types[key];
             let typeToMap = areaLayer.markertype;
-            if (coords.length === 1) typeToMap = "circle";
+            if (coords.length === 1 && key !== 'ATZ') { typeToMap = "circle"; }
+            let layer;
 
             if (typeToMap === "marker" || typeToMap === "circle") {
                 coords.forEach(latlon => {
                     if (typeToMap === "marker") {
-                        L.marker(latlon).bindPopup(popupContent).addTo(areaLayer.layer);
+                        layer = L.marker(latlon);
                     } else {
-                        L.circle(latlon, {
+                        layer = L.circle(latlon, {
                             radius: radius,
                             color: areaLayer.edgeColor,
                             fillColor: areaLayer.fillColor,
                             fillOpacity: areaLayer.opacity,
                             weight: areaLayer.weight,
                             zIndex: areaLayer.zindex || 400
-                        }).bindPopup(popupContent).addTo(areaLayer.layer);
+                        });
                     }
+                    // Add click handler
+                    layer.on('click', function(e) {
+                        highlightAirspace(this);
+                    });
+                    layer.bindPopup(popupContent).addTo(areaLayer.layer);
                 });
             } else if (typeToMap === "polygon") {
-                L.polygon(coords, {
+                layer = L.polygon(coords, {
                     color: areaLayer.edgeColor,
                     fillColor: areaLayer.fillColor,
                     fillOpacity: areaLayer.opacity,
                     weight: areaLayer.weight,
                     dashArray: areaLayer.dash || null,
                     zIndex: areaLayer.zindex || 300
-                }).bindPopup(popupContent).addTo(areaLayer.layer);
+                });
+                // Add click handler
+                layer.on('click', function(e) {
+                    highlightAirspace(this);
+                });
+                layer.bindPopup(popupContent).addTo(areaLayer.layer);
             }
         });
 
@@ -3718,13 +3775,49 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         airspaces = {key: value for key, value in airspaces.items() if value['coordinates'] is not None}
 
         # Sort airspaces by number of latlon coordinates
-        airspaces = dict(sorted(airspaces.items(), key=lambda x: len(x[1]['coordinates']), reverse=True))
+        # airspaces = dict(sorted(airspaces.items(), key=lambda x: len(x[1]['coordinates']), reverse=True))
 
-        # Sort airspaces by surface area
-        # airspaces = sort_airspaces_by_surface(airspaces)
+        # Combine multiple airspace entries that contain the given keyword in their name
+        # if country == 'Netherlands':
+        #    airspaces = combine_airspace_by_keyword(airspaces, 'schiphol ctr')
 
         # Convert the dictionary to a JSON string
         # airspaces_json = json.dumps(airspaces, indent=4)
+        return airspaces
+
+
+    def combine_airspace_by_keyword(airspaces, keyword):
+        """Combine multiple airspace entries that contain the given keyword in their name.
+
+        Args:
+            airspaces (dict): Dictionary of airspace data
+            keyword (str): Keyword to search for in airspace names (case insensitive)
+
+        Returns:
+            dict: Updated airspaces dictionary with combined entries
+        """
+        matching_keys = []
+        combined_coords = []
+
+        # Find all keys containing the keyword
+        for key, value in airspaces.items():
+            if 'name' in value and keyword.lower() in value['name'].lower():
+                matching_keys.append(key)
+                if value.get('coordinates'):
+                    combined_coords.extend(value['coordinates'])
+
+        # If we found multiple matching entries, combine them
+        if len(matching_keys) > 1:
+            # Keep the first key and update its coordinates
+            main_key = matching_keys[0]
+            airspaces[main_key]['coordinates'] = combined_coords
+
+            # Remove other matching entries
+            for key in matching_keys[1:]:
+                airspaces.pop(key, None)
+
+            print(f"✅ Combined {len(matching_keys)} entries containing '{keyword}' into single entry")
+
         return airspaces
 
 
