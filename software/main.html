@@ -536,8 +536,8 @@
 
         <div id="map-container" style="height: 500px;">
             <div id="route-map" style="height: 100%;"></div>
-            <div class="map-controls" style="position: absolute; top: 10px; right: 10px; background: none; padding: 0; z-index: 2000;">
-                <button id="fullscreen-btn" onclick="toggleFullscreen()" style="width: 44px; height: 44px; padding: 0; background: white; border: 2px solid rgba(0,0,0,0.2); border-radius: 4px; cursor: pointer; touch-action: manipulation; position: fixed;">
+            <div class="map-controls" style="position: absolute; top: 10px; right: 10px; background: none; padding: 0; z-index: 1000;">
+                <button id="fullscreen-btn" onclick="toggleFullscreen()" style="width: 44px; height: 44px; padding: 0; background: white; border: 2px solid rgba(0,0,0,0.2); border-radius: 4px; cursor: pointer; touch-action: manipulation;">
                     <svg class="fullscreen-enter" viewBox="0 0 24 24" style="width: 24px; height: 24px; margin: 8px;">
                         <path d="M7,14H5v5h5v-2H7V14z M5,10h2V7h3V5H5V10z M17,17h-3v2h5v-5h-2V17z M14,5v2h3v3h2V5H14z"/>
                     </svg>
@@ -832,8 +832,21 @@
     }
 
     function toggleFullscreen() {
-        const mapContainer = document.getElementById('route-map');
+        const mapContainer = document.getElementById('map-container');
         const fullscreenBtn = document.getElementById('fullscreen-btn');
+
+        if (!mapContainer || !fullscreenBtn) {
+            console.error('Required elements not found for fullscreen toggle');
+            return;
+        }
+
+        const enterIcon = fullscreenBtn.querySelector('.fullscreen-enter');
+        const exitIcon = fullscreenBtn.querySelector('.fullscreen-exit');
+
+        if (!enterIcon || !exitIcon) {
+            console.error('Fullscreen icons not found');
+            return;
+        }
 
         const isFullscreen =
             document.fullscreenElement ||
@@ -856,11 +869,11 @@
                 // Fallback for iPhone
                 mapContainer.classList.add('mobile-fullscreen');
                 document.body.classList.add('no-scroll');
-                fullscreenBtn.style.top = '10px';
-                fullscreenBtn.style.right = '10px';
             }
-            fullscreenBtn.querySelector('.fullscreen-enter').style.display = 'none';
-            fullscreenBtn.querySelector('.fullscreen-exit').style.display = 'block';
+            enterIcon.style.display = 'none';
+            exitIcon.style.display = 'inline';
+            fullscreenBtn.style.position = 'fixed';
+            fullscreenBtn.style.zIndex = '2000';
         } else {
             // Exit fullscreen
             if (document.exitFullscreen) {
@@ -874,10 +887,11 @@
             } else {
                 mapContainer.classList.remove('mobile-fullscreen');
                 document.body.classList.remove('no-scroll');
-                fullscreenBtn.style.position = 'static';
             }
-            fullscreenBtn.querySelector('.fullscreen-enter').style.display = 'block';
-            fullscreenBtn.querySelector('.fullscreen-exit').style.display = 'none';
+            enterIcon.style.display = 'inline';
+            exitIcon.style.display = 'none';
+            fullscreenBtn.style.position = 'absolute';
+            fullscreenBtn.style.zIndex = '1000';
         }
 
         // Ensure map resizes properly
@@ -886,11 +900,38 @@
         }, 300);
     }
 
-    // Restore button icon when exiting fullscreen externally
-    document.addEventListener('fullscreenchange', () => {
+    // Handle fullscreen changes from any source
+    function handleFullscreenChange() {
         const fullscreenBtn = document.getElementById('fullscreen-btn');
-        if (!document.fullscreenElement) fullscreenBtn.textContent = '⛶';
-    });
+        if (!fullscreenBtn) return;
+
+        const enterIcon = fullscreenBtn.querySelector('.fullscreen-enter');
+        const exitIcon = fullscreenBtn.querySelector('.fullscreen-exit');
+        if (!enterIcon || !exitIcon) return;
+
+        const isFullscreen = document.fullscreenElement ||
+                           document.webkitFullscreenElement ||
+                           document.mozFullScreenElement ||
+                           document.msFullscreenElement;
+
+        if (!isFullscreen) {
+            enterIcon.style.display = 'inline';
+            exitIcon.style.display = 'none';
+            fullscreenBtn.style.position = 'absolute';
+            fullscreenBtn.style.zIndex = '1000';
+        } else {
+            enterIcon.style.display = 'none';
+            exitIcon.style.display = 'inline';
+            fullscreenBtn.style.position = 'fixed';
+            fullscreenBtn.style.zIndex = '2000';
+        }
+    }
+
+    // Listen for fullscreen changes
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
 
 
     // Initialize map and route on DOM load
