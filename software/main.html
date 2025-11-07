@@ -37,6 +37,7 @@
       <button class="tablinks" data-tab="Departure">🛫 Departure</button>
       <button class="tablinks" data-tab="Arrival">🛬 Arrival</button>
       <button class="tablinks" data-tab="Enroute">✈️ Enroute</button>
+      <button class="tablinks" data-tab="MAP">🗺️ Map</button>
       <button class="tablinks" data-tab="ATC">📢 ATC</button>
       <button class="tablinks" data-tab="Config">⚙️</button>
     </div>
@@ -330,12 +331,13 @@
 
     <!-- =============== TAB ENROUTE =============== -->
     <div id="Enroute" class="tabcontent">
+        <label_h1>Enroute Information</label_h1>
 
+<!--
         <div class="button-row">
             <select id="layer-select">
                 <option value="OpenStreetMap">OpenStreetMap</option>
                 <option value="OpenTopoMap">OpenTopoMap</option>
-                <!--<option value="Carto Voyager">Carto Voyager</option>-->
             </select>
         </div>
 
@@ -371,12 +373,9 @@
             </div>
         </div>
 
-        <!-- Leaflet CSS -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
-        <!-- Leaflet JS -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
-
-
+-->
 
 
     <!-- Line: FIC Name and FIC Frequency labels -->
@@ -493,6 +492,60 @@
        <div class="button-row">
            <button id="save_fields_btn" style="background-color: #4CAF50; color: white;" title="Saving fields in flightplan">Save Flightplan</button>
        </div>
+
+    </div>
+
+
+
+
+    <!-- =============== TAB MAP =============== -->
+    <div id="MAP" class="tabcontent">
+        <label_h1>MAP</label_h1>
+
+        <div class="button-row">
+            <select id="layer-select">
+                <option value="OpenStreetMap">OpenStreetMap</option>
+                <option value="OpenTopoMap">OpenTopoMap</option>
+                <!--<option value="Carto Voyager">Carto Voyager</option>-->
+            </select>
+        </div>
+
+        <div class="button-row">
+            <label>
+                <input type="checkbox" id="aviation-toggle" checked> Show Airports
+            </label>
+            <label>
+                <input type="checkbox" id="airspace-toggle" checked> Show Airspace
+            </label>
+        </div>
+
+        <div class="button-row">
+            <div style="display: flex; align-items: center; margin-top: 5px;">
+                <label style="margin-right: 5px;">Max Altitude (ft):</label>
+                <input type="number" id="airspace-altitude" value="1500" min="0" max="10000" step="150" style="width: 80px;">
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <label>
+                    <input type="checkbox" id="TMZ-toggle">TMZ
+                </label>
+            </div>
+        </div>
+
+        <div id="map-container" style="height: 500px;">
+            <div id="route-map" style="height: 100%;"></div>
+            <div class="map-controls" style="position: absolute; top: 10px; right: 10px; background: none; padding: 0; z-index: 1000;">
+                <button onclick="toggleFullscreen()" style="width: 44px; height: 44px; padding: 0; background: white; border: 2px solid rgba(0,0,0,0.2); border-radius: 4px; cursor: pointer; touch-action: manipulation;">
+                    <svg viewBox="0 0 24 24" style="width: 24px; height: 24px; margin: 8px;">
+                        <path d="M7,14H5v5h5v-2H7V14z M5,10h2V7h3V5H5V10z M17,17h-3v2h5v-5h-2V17z M14,5v2h3v3h2V5H14z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Leaflet CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+
 
     </div>
 
@@ -765,29 +818,32 @@
         }
     }
 
-    // Fullscreen toggle with cross-browser support
     function toggleFullscreen() {
         const mapContainer = document.getElementById('route-map');
-
-        // Check if fullscreen is active
-        const isFullscreen = document.fullscreenElement ||
+        const isFullscreen =
+            document.fullscreenElement ||
             document.webkitFullscreenElement ||
             document.mozFullScreenElement ||
-            document.msFullscreenElement;
+            document.msFullscreenElement ||
+            mapContainer.classList.contains('mobile-fullscreen');
 
         if (!isFullscreen) {
-            // Request fullscreen with cross-browser support
+            // Try real fullscreen API first
             if (mapContainer.requestFullscreen) {
-                mapContainer.requestFullscreen().catch(err => console.log(err));
+                mapContainer.requestFullscreen().catch(() => {});
             } else if (mapContainer.webkitRequestFullscreen) {
-                mapContainer.webkitRequestFullscreen().catch(err => console.log(err));
+                mapContainer.webkitRequestFullscreen();
             } else if (mapContainer.mozRequestFullScreen) {
-                mapContainer.mozRequestFullScreen().catch(err => console.log(err));
+                mapContainer.mozRequestFullScreen();
             } else if (mapContainer.msRequestFullscreen) {
-                mapContainer.msRequestFullscreen().catch(err => console.log(err));
+                mapContainer.msRequestFullscreen();
+            } else {
+                // Fallback for iPhone/iPad
+                mapContainer.classList.add('mobile-fullscreen');
+                document.body.classList.add('no-scroll');
             }
         } else {
-            // Exit fullscreen with cross-browser support
+            // Exit fullscreen
             if (document.exitFullscreen) {
                 document.exitFullscreen();
             } else if (document.webkitExitFullscreen) {
@@ -796,14 +852,19 @@
                 document.mozCancelFullScreen();
             } else if (document.msExitFullscreen) {
                 document.msExitFullscreen();
+            } else {
+                // Fallback for iPhone/iPad
+                mapContainer.classList.remove('mobile-fullscreen');
+                document.body.classList.remove('no-scroll');
             }
         }
 
-        // Force map resize after small delay to ensure proper rendering
+        // Force map resize after toggle (important for Leaflet)
         setTimeout(() => {
-            routeMap.invalidateSize();
-        }, 200);
+            if (window.routeMap) window.routeMap.invalidateSize();
+        }, 300);
     }
+
 
     // Initialize map and route on DOM load
     document.addEventListener('DOMContentLoaded', () => {
