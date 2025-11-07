@@ -330,7 +330,7 @@
 
 
     <!-- =============== TAB ENROUTE =============== -->
-    <div id="Enroute" class="tabcontent" style="overscroll-behavior-y: contain;">
+    <div id="Enroute" class="tabcontent">
         <label_h1>Enroute Information</label_h1>
 
 <!--
@@ -521,9 +521,12 @@
 
         <div class="button-row">
             <div style="display: flex; align-items: center; margin-top: 5px;">
-                <label style="margin-right: 5px;">Max Altitude (ft):</label>
+                <label style="margin-right: 5px;">Airspaces at altitude (ft):</label>
                 <input type="number" id="airspace-altitude" value="1500" min="0" max="10000" step="150" style="width: 80px;">
             </div>
+        </div>
+
+        <div class="button-row">
             <div style="display: flex; gap: 10px;">
                 <label>
                     <input type="checkbox" id="TMZ-toggle">TMZ
@@ -541,6 +544,13 @@
                 </button>
             </div>
         </div>
+
+        <!--<div id="map-container">
+            <div id="route-map"></div>
+            <button id="fullscreen-btn" onclick="toggleFullscreen()" title="Toggle fullscreen">
+                ⛶
+            </button>
+        </div>-->
 
         <!-- Leaflet CSS -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
@@ -820,6 +830,8 @@
 
     function toggleFullscreen() {
         const mapContainer = document.getElementById('route-map');
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+
         const isFullscreen =
             document.fullscreenElement ||
             document.webkitFullscreenElement ||
@@ -828,7 +840,7 @@
             mapContainer.classList.contains('mobile-fullscreen');
 
         if (!isFullscreen) {
-            // Try real fullscreen API first
+            // Enter fullscreen
             if (mapContainer.requestFullscreen) {
                 mapContainer.requestFullscreen().catch(() => {});
             } else if (mapContainer.webkitRequestFullscreen) {
@@ -838,10 +850,11 @@
             } else if (mapContainer.msRequestFullscreen) {
                 mapContainer.msRequestFullscreen();
             } else {
-                // Fallback for iPhone/iPad
+                // Fallback for iPhone
                 mapContainer.classList.add('mobile-fullscreen');
                 document.body.classList.add('no-scroll');
             }
+            fullscreenBtn.textContent = '🡼'; // Change icon to "exit"
         } else {
             // Exit fullscreen
             if (document.exitFullscreen) {
@@ -853,17 +866,23 @@
             } else if (document.msExitFullscreen) {
                 document.msExitFullscreen();
             } else {
-                // Fallback for iPhone/iPad
                 mapContainer.classList.remove('mobile-fullscreen');
                 document.body.classList.remove('no-scroll');
             }
+            fullscreenBtn.textContent = '⛶'; // Change back to "enter"
         }
 
-        // Force map resize after toggle (important for Leaflet)
+        // Ensure map resizes properly
         setTimeout(() => {
             if (window.routeMap) window.routeMap.invalidateSize();
         }, 300);
     }
+
+    // Restore button icon when exiting fullscreen externally
+    document.addEventListener('fullscreenchange', () => {
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        if (!document.fullscreenElement) fullscreenBtn.textContent = '⛶';
+    });
 
 
     // Initialize map and route on DOM load
@@ -1303,33 +1322,7 @@
         }
         // Expose updateRoute globally
         window.updateRoute = updateRoute;
-
-        // Add pull-to-refresh warning for Enroute tab
-        let touchStartY = 0;
-        const enrouteTab = document.getElementById('Enroute');
-
-        enrouteTab.addEventListener('touchstart', function(e) {
-            touchStartY = e.touches[0].clientY;
-        }, { passive: false });
-
-        enrouteTab.addEventListener('touchmove', function(e) {
-            const touchY = e.touches[0].clientY;
-            const scrollTop = enrouteTab.scrollTop;
-
-            // If we're at the top of the tab and trying to pull down
-            if (scrollTop <= 0 && touchY > touchStartY) {
-                if (touchY - touchStartY > 100) {  // If pulled more than 100px
-                    if (confirm('Refreshing will clear your map data. Continue?')) {
-                        return true;
-                    } else {
-                        e.preventDefault();
-                        return false;
-                    }
-                }
-            }
-        }, { passive: false });
     });
-
 
 
 
@@ -4324,6 +4317,14 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
       try {
         // Check if PyScript is ready
         if (!pyscriptReady) return alert("Please wait, PyScript is still loading...");
+
+        // Uncheck the airspace toggle
+        const airspaceToggle = document.getElementById('airspace-toggle');
+        if (airspaceToggle) {
+          airspaceToggle.checked = false;
+          // Trigger the change event to ensure the map updates
+          airspaceToggle.dispatchEvent(new Event('change'));
+        }
 
         // Clear all input fields and departure fields
         await clear_general_fields();

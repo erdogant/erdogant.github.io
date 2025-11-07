@@ -376,14 +376,15 @@ input[type="text"]:hover {
 
 /* MAP container */
 #map-container {
+    position: relative;
     height: 300px;
     width: 100%;
     max-width: 800px;
     margin: 20px auto;
     border: 1px solid #ccc;
     border-radius: 4px;
-    position: relative;
 }
+
 #route-map {
     height: 100%;
     width: 100%;
@@ -442,4 +443,34 @@ input[type="text"]:hover {
     .map-controls button {
         padding: 8px 12px;
     }
+}
+
+#fullscreen-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10000; /* stays above Leaflet controls */
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s ease-in-out;
+}
+#fullscreen-btn:hover {
+    background-color: #f0f0f0;
+}
+.mobile-fullscreen {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 9999;
+    background: white;
+}
+body.no-scroll {
+    overflow: hidden;
+    touch-action: none;
 }
