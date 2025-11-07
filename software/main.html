@@ -330,7 +330,7 @@
 
 
     <!-- =============== TAB ENROUTE =============== -->
-    <div id="Enroute" class="tabcontent">
+    <div id="Enroute" class="tabcontent" style="overscroll-behavior-y: contain;">
         <label_h1>Enroute Information</label_h1>
 
 <!--
@@ -1303,7 +1303,33 @@
         }
         // Expose updateRoute globally
         window.updateRoute = updateRoute;
+
+        // Add pull-to-refresh warning for Enroute tab
+        let touchStartY = 0;
+        const enrouteTab = document.getElementById('Enroute');
+
+        enrouteTab.addEventListener('touchstart', function(e) {
+            touchStartY = e.touches[0].clientY;
+        }, { passive: false });
+
+        enrouteTab.addEventListener('touchmove', function(e) {
+            const touchY = e.touches[0].clientY;
+            const scrollTop = enrouteTab.scrollTop;
+
+            // If we're at the top of the tab and trying to pull down
+            if (scrollTop <= 0 && touchY > touchStartY) {
+                if (touchY - touchStartY > 100) {  // If pulled more than 100px
+                    if (confirm('Refreshing will clear your map data. Continue?')) {
+                        return true;
+                    } else {
+                        e.preventDefault();
+                        return false;
+                    }
+                }
+            }
+        }, { passive: false });
     });
+
 
 
 
