@@ -33,7 +33,7 @@
 
     <!-- Tab links -->
     <div class="tab">
-      <button class="tablinks active" data-tab="General">Start</button>
+        <button class="tablinks active" data-tab="General">▶️ Start</button>
       <button class="tablinks" data-tab="Departure">🛫 Departure</button>
       <button class="tablinks" data-tab="Arrival">🛬 Arrival</button>
       <button class="tablinks" data-tab="Enroute">✈️ Enroute</button>
@@ -41,8 +41,6 @@
       <button class="tablinks" data-tab="ATC">📢 ATC</button>
       <button class="tablinks" data-tab="Config">⚙️</button>
     </div>
-
-    <!-- Tab contents -->
 
 
     <!-- =============== TAB GENERAL =============== -->
@@ -333,50 +331,6 @@
     <div id="Enroute" class="tabcontent">
         <label_h1>Enroute Information</label_h1>
 
-<!--
-        <div class="button-row">
-            <select id="layer-select">
-                <option value="OpenStreetMap">OpenStreetMap</option>
-                <option value="OpenTopoMap">OpenTopoMap</option>
-            </select>
-        </div>
-
-        <div class="button-row">
-            <label>
-                <input type="checkbox" id="aviation-toggle" checked> Show Airports
-            </label>
-            <label>
-                <input type="checkbox" id="airspace-toggle" checked> Show Airspace
-            </label>
-        </div>
-
-        <div class="button-row">
-            <div style="display: flex; align-items: center; margin-top: 5px;">
-                <label style="margin-right: 5px;">Max Altitude (ft):</label>
-                <input type="number" id="airspace-altitude" value="1500" min="0" max="10000" step="100" style="width: 80px;">
-            </div>
-            <div style="display: flex; gap: 10px;">
-                <label>
-                    <input type="checkbox" id="TMZ-toggle">TMZ
-                </label>
-            </div>
-        </div>
-
-        <div id="map-container">
-            <div id="route-map"></div>
-            <div class="map-controls" style="position: absolute; top: 10px; right: 10px; background: none; padding: 0; z-index: 1000;">
-                <button onclick="toggleFullscreen()" style="width: 44px; height: 44px; padding: 0; background: white; border: 2px solid rgba(0,0,0,0.2); border-radius: 4px; cursor: pointer; touch-action: manipulation;">
-                    <svg viewBox="0 0 24 24" style="width: 24px; height: 24px; margin: 8px;">
-                        <path d="M7,14H5v5h5v-2H7V14z M5,10h2V7h3V5H5V10z M17,17h-3v2h5v-5h-2V17z M14,5v2h3v3h2V5H14z"/>
-                    </svg>
-                </button>
-            </div>
-        </div>
-
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
--->
-
 
     <!-- Line: FIC Name and FIC Frequency labels -->
         <div class="button-row">
@@ -531,6 +485,15 @@
                 <label>
                     <input type="checkbox" id="TMZ-toggle">TMZ
                 </label>
+                <label>
+                    <input type="checkbox" id="CTA_TMA-toggle">CTA/TMA
+                </label>
+                <label>
+                    <input type="checkbox" id="danger-toggle">Danger
+                </label>
+                <label>
+                    <input type="checkbox" id="prohibited-toggle">Prohibited
+                </label>
             </div>
         </div>
 
@@ -589,7 +552,7 @@
     let routeMap = null;
     let routeLine = null;
     let routeMarkers = [];
-    let waypoints = [];
+    // let waypoints = [];
     let waypointMarkers = [];
     let airportLayer = null;
     let airportData = null;
@@ -682,17 +645,40 @@
 
         const depCoords = [depLatLon[0], depLatLon[1]];
         const arrCoords = [arrLatLon[0], arrLatLon[1]];
+        const weight_line = 8;
 
-        // Create initial waypoints array including departure and arrival
-        waypoints = [depCoords, arrCoords];
+        // Create or update initial waypoints array including departure and arrival while preserving user-added waypoints
+        if (!Array.isArray(window.waypoints) || window.waypoints.length < 2) {
+            // No existing waypoints (first load) — initialize with departure and arrival
+            window.waypoints = [depCoords, arrCoords];
+        } else {
+            // Preserve existing intermediate waypoints added by the user.
+            // Ensure the first and last points always match current departure and arrival.
+            const eps = 1e-6;
+            function coordsEqual(a, b) {
+                return Math.abs(a[0] - b[0]) < eps && Math.abs(a[1] - b[1]) < eps;
+            }
+            // Update departure (first) point if it changed
+            if (!coordsEqual(window.waypoints[0], depCoords)) {
+                window.waypoints[0] = depCoords;
+            }
+            // Update arrival (last) point if it changed
+            if (!coordsEqual(window.waypoints[window.waypoints.length - 1], arrCoords)) {
+                window.waypoints[window.waypoints.length - 1] = arrCoords;
+            }
+            // If somehow waypoints were reduced to <2, re-initialize
+            if (window.waypoints.length < 2) {
+                window.waypoints = [depCoords, arrCoords];
+            }
+        }
 
         // Create the route line with waypoints
-        routeLine = L.polyline(waypoints, {
-            color: '#2196F3',
-            weight: 3,
-            opacity: 0.8,
+        routeLine = L.polyline(window.waypoints, {
+            color: '#8A00C4',
+            weight: weight_line,
+            opacity: 0.6,
             smoothFactor: 1,
-            zIndex: 2000,  // Highest z-index to stay above everything
+            zIndex: 3000,  // Highest z-index to stay above everything
             pane: 'markerPane',  // Use marker pane to ensure line stays on top
             interactive: true    // Make line clickable for adding waypoints
         }).addTo(routeMap);
@@ -703,22 +689,22 @@
         // Add click handler to the line to create new waypoints
         routeLine.on('click', function(e) {
             // Highlight the line when clicked
-            routeLine.setStyle({weight: 4, opacity: 1});
-            setTimeout(() => routeLine.setStyle({weight: 3, opacity: 0.8}), 200);
+            routeLine.setStyle({weight: 5, opacity: 1});
+            setTimeout(() => routeLine.setStyle({weight: weight_line, opacity: 0.8}), 200);
             const newPoint = [e.latlng.lat, e.latlng.lng];
             // Find the closest segment and insert the new point
             let minDist = Infinity;
             let insertIndex = 1;
 
-            for (let i = 0; i < waypoints.length - 1; i++) {
-                const dist = pointToSegmentDistance(newPoint, waypoints[i], waypoints[i + 1]);
+            for (let i = 0; i < window.waypoints.length - 1; i++) {
+                const dist = pointToSegmentDistance(newPoint, window.waypoints[i], window.waypoints[i + 1]);
                 if (dist < minDist) {
                     minDist = dist;
                     insertIndex = i + 1;
                 }
             }
 
-            waypoints.splice(insertIndex, 0, newPoint);
+            window.waypoints.splice(insertIndex, 0, newPoint);
             updateWaypoints();
         });
 
@@ -800,30 +786,30 @@
         waypointMarkers = [];
 
         // Update route line
-        routeLine.setLatLngs(waypoints);
+        routeLine.setLatLngs(window.waypoints);
 
         // Create new waypoint markers (skip first and last points which are airports)
-        for (let i = 1; i < waypoints.length - 1; i++) {
-            const marker = L.marker(waypoints[i], {
+        for (let i = 1; i < window.waypoints.length - 1; i++) {
+            const marker = L.marker(window.waypoints[i], {
                 draggable: true,
                 icon: L.divIcon({
                     className: 'waypoint-icon',
-                    html: '<div style="background-color: #FFFFFF; width: 10px; height: 10px; border-radius: 50%; border: 1px solid black;"></div>',
-                    iconSize: [14, 14],
-                    iconAnchor: [7, 7]
+                    html: '<div style="background-color: #FFFFFF; width: 13px; height: 13px; border-radius: 50%; border: 1px solid black;"></div>',
+                    iconSize: [16, 16],
+                    iconAnchor: [8, 8]
                 }),
-                zIndexOffset: 2000
+                zIndexOffset: 3000
             }).addTo(routeMap);
 
             // Add drag and hover handlers
             marker.on('drag', function(e) {
-                waypoints[i] = [e.latlng.lat, e.latlng.lng];
-                routeLine.setLatLngs(waypoints);
+                window.waypoints[i] = [e.latlng.lat, e.latlng.lng];
+                routeLine.setLatLngs(window.waypoints);
             });
 
             marker.on('contextmenu', function() {
                 // Remove waypoint on right click
-                waypoints.splice(i, 1);
+                window.waypoints.splice(i, 1);
                 updateWaypoints();
             });
 
@@ -1139,9 +1125,8 @@
         // Sync TMZ checkbox state with main airspace toggle
         if (TMZCheckbox) {
             TMZCheckbox.checked = airspaceCheckbox.checked;
-            await toggleTMZLayer(); // Update TMZ layer based on new state
+            toggleTMZLayer(); // Update TMZ layer based on new state
         }
-
 
         // Always clear existing layers first
         Object.values(airspaceLayerGroups).forEach(layer => {
@@ -1169,9 +1154,112 @@
         } else {
             console.log('Removed all airspace layers');
         }
+
+        // Sync other checkboxes with main airspace toggle
+        const CTACheckbox = document.getElementById('CTA_TMA-toggle');
+        if (CTACheckbox) {
+            CTACheckbox.checked = airspaceCheckbox.checked;
+        }
+
+        const dangerCheckbox = document.getElementById('danger-toggle');
+        if (dangerCheckbox) {
+            dangerCheckbox.checked = airspaceCheckbox.checked;
+        }
+
+        const prohibitedCheckbox = document.getElementById('prohibited-toggle');
+        if (prohibitedCheckbox) {
+            prohibitedCheckbox.checked = airspaceCheckbox.checked;
+        }
     }
 
 
+
+    async function toggleCTATMALayer() {
+        const checkbox = document.getElementById('CTA_TMA-toggle');
+        if (!checkbox || !window.airspaces) return;
+
+        const filtered = {};
+        Object.entries(window.airspaces).forEach(([key, space]) => {
+            const at = (space.area_type || '').toLowerCase();
+            if (at.includes('cta') || at.includes('tma')) {
+                filtered[key] = space;
+            }
+        });
+
+        if (airspaceLayerGroups.CTA_TMA && routeMap.hasLayer(airspaceLayerGroups.CTA_TMA)) {
+            routeMap.removeLayer(airspaceLayerGroups.CTA_TMA);
+            delete airspaceLayerGroups.CTA_TMA;
+        }
+
+        if (checkbox.checked) {
+            const altitudeValue = parseInt(document.getElementById('airspace-altitude').value) || 1500;
+            const layers = createAirspaceLayer(filtered, routeMap, altitudeValue);
+            if (layers && layers.CTA_TMA) {
+                airspaceLayerGroups.CTA_TMA = layers.CTA_TMA;
+                layers.CTA_TMA.addTo(routeMap);
+            }
+        } else {
+            console.log('Removed CTA/TMA layer');
+        }
+    }
+
+    async function toggleDangerLayer() {
+        const checkbox = document.getElementById('danger-toggle');
+        if (!checkbox || !window.airspaces) return;
+
+        const filtered = {};
+        Object.entries(window.airspaces).forEach(([key, space]) => {
+            const at = (space.area_type || '').toLowerCase();
+            if (at.includes('danger')) {
+                filtered[key] = space;
+            }
+        });
+
+        if (airspaceLayerGroups.danger && routeMap.hasLayer(airspaceLayerGroups.danger)) {
+            routeMap.removeLayer(airspaceLayerGroups.danger);
+            delete airspaceLayerGroups.danger;
+        }
+
+        if (checkbox.checked) {
+            const altitudeValue = parseInt(document.getElementById('airspace-altitude').value) || 1500;
+            const layers = createAirspaceLayer(filtered, routeMap, altitudeValue);
+            if (layers && layers.danger) {
+                airspaceLayerGroups.danger = layers.danger;
+                layers.danger.addTo(routeMap);
+            }
+        } else {
+            console.log('Removed danger layer');
+        }
+    }
+
+    async function toggleProhibitedLayer() {
+        const checkbox = document.getElementById('prohibited-toggle');
+        if (!checkbox || !window.airspaces) return;
+
+        const filtered = {};
+        Object.entries(window.airspaces).forEach(([key, space]) => {
+            const at = (space.area_type || '').toLowerCase();
+            if (at.includes('prohibited')) {
+                filtered[key] = space;
+            }
+        });
+
+        if (airspaceLayerGroups.prohibited && routeMap.hasLayer(airspaceLayerGroups.prohibited)) {
+            routeMap.removeLayer(airspaceLayerGroups.prohibited);
+            delete airspaceLayerGroups.prohibited;
+        }
+
+        if (checkbox.checked) {
+            const altitudeValue = parseInt(document.getElementById('airspace-altitude').value) || 1500;
+            const layers = createAirspaceLayer(filtered, routeMap, altitudeValue);
+            if (layers && layers.prohibited) {
+                airspaceLayerGroups.prohibited = layers.prohibited;
+                layers.prohibited.addTo(routeMap);
+            }
+        } else {
+            console.log('Removed prohibited layer');
+        }
+    }
 
     async function toggleTMZLayer() {
         const TMZCheckbox = document.getElementById('TMZ-toggle');
@@ -1239,7 +1327,7 @@
             prohibited: { markertype: "polygon", fill: true, fillColor: "#8B0000", edgeColor: "#8B0000", opacity: 0.3, weight: 1, layer: layers.prohibited, zindex: 3000 },
             danger: { markertype: "polygon", fill: true, fillColor: "#8B0000", edgeColor: "#8B0000", opacity: 0.3, weight: 1, layer: layers.danger, zindex: 50 },
             restricted: { markertype: "polygon", fill: true, fillColor: "#FF9248", edgeColor: "#FF9248", opacity: 0.3, weight: 1, layer: layers.restricted, zindex: 3000 },
-            gliding: { markertype: "polygon", fill: true, fillColor: "#90EE90", edgeColor: "#90EE90", opacity: 0.3, weight: 1, layer: layers.gliding, zindex: 1000 },
+            gliding: { markertype: "polygon", fill: true, fillColor: "#06402B", edgeColor: "#06402B", opacity: 0.3, weight: 1, layer: layers.gliding, zindex: 1000 },
             parachuting: { markertype: "circle", fill: true, fillColor: "#0096FF", edgeColor: "#0096FF", opacity: 0.2, weight: 1, layer: layers.parachuting, zindex: 2500 },
             various: { markertype: "polygon", fill: true, fillColor: "#696969", edgeColor: "#696969", opacity: 0.3, weight: 1, layer: layers.various, zindex: 300 },
             // NOTAM: { markertype: "marker", fill: false, fillColor: "#EFC238", edgeColor: "#EFC238", opacity: 0, weight: 3, layer: layers.NOTAM },
@@ -1254,12 +1342,11 @@
 
     function createAirspaceLayer(airspaces, routeMap, maxAltitude = 1500) {
         if (!airspaces) return null;
-
         // Initialize all layers
         const { layers, area_types } = initAirspaceLayerGroups(routeMap);
-
         // Keep track of currently highlighted layer
         let highlightedLayer = null;
+
         // Function to handle highlighting
         function highlightAirspace(layer) {
             // Reset previous highlight if exists
@@ -1272,6 +1359,7 @@
                     fillColor: highlightedLayer.originalStyle.fillColor
                 });
             }
+
             // Store original style
             layer.originalStyle = {
                 weight: layer.options.weight,
@@ -1385,6 +1473,12 @@
         return layers; // return all layer groups separately
     }
 
+    document.addEventListener('DOMContentLoaded', () => {
+        const airspaceCheckbox = document.getElementById('airspace-toggle');
+        if (airspaceCheckbox) {
+            airspaceCheckbox.addEventListener('change', toggleAirspaceLayer);
+        }
+    });
 
     document.addEventListener('DOMContentLoaded', () => {
         // Airport checkbox
@@ -1395,29 +1489,58 @@
             console.error("Airport checkbox not found in DOM!");
         }
 
-        // Airspace checkbox and altitude input
-        const airspaceCheckbox = document.getElementById('airspace-toggle');
+
+        // Altitude input
         const altitudeInput = document.getElementById('airspace-altitude');
+        if (altitudeInput) altitudeInput.addEventListener('change', toggleAirspaceLayer);
+
+        // Airspace checkbox
+        const airspaceCheckbox = document.getElementById('airspace-toggle');
+        if (airspaceCheckbox) airspaceCheckbox.checked = false;
+        if (airspaceCheckbox) airspaceCheckbox.addEventListener('change', toggleAirspaceLayer);
+
+        // TMZ CHECKBOX
         const TMZCheckbox = document.getElementById('TMZ-toggle');
+        if (TMZCheckbox) TMZCheckbox.checked = false;
 
-        TMZCheckbox.checked = false; // Initialize unchecked
-        airspaceCheckbox.checked = false; // Initialize unchecked
+        // CTA CHECKBOX
+        const CTACheckbox = document.getElementById('CTA_TMA-toggle');
+        if (CTACheckbox) CTACheckbox.checked = false;
 
-        if (airspaceCheckbox) {
-            airspaceCheckbox.addEventListener('change', toggleAirspaceLayer);
-        } else {
-            console.error("Airspace checkbox not found in DOM!");
-        }
-        if (altitudeInput) {
-            altitudeInput.addEventListener('change', toggleAirspaceLayer);
-        } else {
-            console.error("Altitude input not found in DOM!");
+        // DANGER CHECKBOX
+        const dangerCheckbox = document.getElementById('danger-toggle');
+        if (dangerCheckbox) dangerCheckbox.checked = false;
+
+        // PROHIBITED CHECKBOX
+        const prohibitedCheckbox = document.getElementById('prohibited-toggle');
+        if (prohibitedCheckbox) prohibitedCheckbox.checked = false;
+
+
+        if (TMZCheckbox) {
+            TMZCheckbox.checked = airspaceCheckbox.checked;
+            toggleTMZLayer();
         }
         if (TMZCheckbox) {
             TMZCheckbox.addEventListener('change', toggleTMZLayer);
-        } else {
-            console.error("TMZ checkbox not found in DOM!");
         }
+        if (CTACheckbox) {
+            CTACheckbox.checked = airspaceCheckbox.checked;
+            toggleCTATMALayer();
+        }
+        if (CTACheckbox) CTACheckbox.addEventListener('change', toggleCTATMALayer);
+
+        if (dangerCheckbox) {
+            dangerCheckbox.checked = airspaceCheckbox.checked;
+            toggleDangerLayer();
+        }
+        if (dangerCheckbox) dangerCheckbox.addEventListener('change', toggleDangerLayer);
+
+        if (prohibitedCheckbox) {
+            prohibitedCheckbox.checked = airspaceCheckbox.checked;
+            toggleProhibitedLayer();
+        }
+        if (prohibitedCheckbox) prohibitedCheckbox.addEventListener('change', toggleProhibitedLayer);
+
         // Expose updateRoute globally
         window.updateRoute = updateRoute;
     });
@@ -2655,6 +2778,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         js.window.AERODROME_ARRIVAL_DATA = {}
         js.window.AERODROME_DATA = {}
         js.window.airspaces = {}
+        js.window.waypoints = []
 
         # Trigger route update to clear the map
         # await js.updateRoute()
@@ -2822,12 +2946,18 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
         # Parse JSON
         try:
+            # Loada json data file
             flight_plan_dict = json.loads(json_data)
             print(f"✅ Loaded {len(flight_plan_dict)} fields")
+
+            # Initialize empty waypoints array
+            js.window.waypoints = []
 
             # Fill the flight_plan_data dictionary from the loaded JSON data
             for key, value in flight_plan_dict.items():
                 js.window.flight_plan_data[key] = value
+
+            # js.window.waypoints = window.flight_plan_data['WAYPOINTS']
 
             # Update GUI FIELDS
             update_general_gui_fields(flight_plan_dict)
@@ -2878,6 +3008,9 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         js.window.flight_plan_data["DEPARTURE_POSITION"] = js.document.getElementById('DEPARTURE_POSITION').value;
         js.window.flight_plan_data["ARRIVAL_ROUTE_NAME"] = js.document.getElementById('ARRIVAL_ROUTE_NAME').value;
         js.window.flight_plan_data["ARRIVAL_POSITION"] = js.document.getElementById('ARRIVAL_POSITION').value;
+
+        # Save waypoints
+        # js.window.flight_plan_data['WAYPOINTS'] = js.window.waypoints
 
         # Get flightplan name
         flightplan_name = js.window.flight_plan_data.get("FLIGHTPLAN", "")

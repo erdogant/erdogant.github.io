@@ -61,9 +61,18 @@ body {
 @media (min-width: 768px) {
     html,
     body {
-        padding: 20px;
+        padding: 0 20px;
+        margin: 0 auto;
         align-items: center;
         background-color: #f0f2f6;
+        max-width: 768px; /* Maximum width similar to iPad Pro landscape */
+    }
+
+    /* Styles for smaller screens */
+    @media (max-width: 768px) {
+        body {
+            max-width: 768px; /* Width similar to iPad */
+        }
     }
 
     #app {
