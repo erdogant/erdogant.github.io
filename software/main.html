@@ -37,14 +37,21 @@
         <button class="tablinks" data-tab="Departure">🛫 Departure</button>
         <button class="tablinks" data-tab="Arrival">🛬 Arrival</button>
         <button class="tablinks" data-tab="Enroute">✈️ Enroute</button>
-        <button class="tablinks" data-tab="MAP">🗺️ Map</button>
         <button class="tablinks" data-tab="ATC">📢 ATC</button>
-        <button class="tablinks" data-tab="Config">⚙️</button>
+        <button class="tablinks" data-tab="Menu">☰ More</button>
     </div>
 
 
     <!-- =============== TAB GENERAL =============== -->
-	<div id="General" class="tabcontent" style="display:block;">
+	<div id="Menu" class="tabcontent">
+        <button class="tablinks" data-tab="MAP">🗺️ Map</button>
+        <button class="tablinks" data-tab="Config">⚙️ Config</button>
+	</div>
+
+
+    <!-- =============== TAB GENERAL =============== -->
+	<!--<div id="General" class="tabcontent" style="display:block;">-->
+	<div id="General" class="tabcontent">
 
 	<!-- Logo -->
 	  <div class="logo-container">
@@ -193,15 +200,6 @@
 		<input type="text" id="DEPARTURE_ATC_TELEPHONE" placeholder="Telephone">
 	  </div>
 
-	  <!-- Departure Image -->
-	  <!--<div class="logo-container" style="margin-top: 20px;">
-		<img id="DEPARTURE_image_cache" alt="Departure Aerodrome" style="max-width: 100%; height: auto; border-radius: 10px; cursor: pointer;" onclick="openAerodromeMap('DEPARTURE')">
-	  </div>-->
-
-	  <!--<div class="button-row">
-		<button id="retrieve_metar_btn">Update METAR/ TAF</button>
-	  </div>-->
-
    <label_h1>METAR</label_h1>
 
     <div class="button-row">
@@ -298,21 +296,9 @@
             <input type="text" id="ARRIVAL_ATC_TELEPHONE" placeholder="Telephone">
         </div>
 
-        <!-- ARRIVAL Image -->
-      	  <!--<div class="logo-container" style="margin-top: 20px;">
-      		<img id="ARRIVAL_image_cache" alt="Arrival Aerodrome" style="max-width: 100%; height: auto; border-radius: 10px; cursor: pointer;" onclick="openAerodromeMap('ARRIVAL')">
-      	  </div>-->
 
-         <label_h1>METAR</label_h1>
-        <!--<div class="button-row">
-            <button id="retrieve_metar_btn">Update METAR/ TAF</button>
-        </div>-->
-        <!--<div class="button-row">
-            <button id="metar-taf-embed-arrival">Refresh METAR-TAF</button>
-        </div>
-        <div class="button-row">
-            <input type="text" id="datetime-metar-taf-arrival" placeholder="Date and Time">
-        </div>-->
+        <label_h1>METAR</label_h1>
+
         <div class="button-row">
             <button id="metar-taf-embed-arrival" style="transition: background-color 0.3s; z-index: 1">Load METAR</button>
             <input type="text" id="datetime-metar-taf-arrival" placeholder="Date and Time" style="transition: background-color 0.3s">
@@ -454,7 +440,7 @@
 
     <!-- =============== TAB MAP =============== -->
     <div id="MAP" class="tabcontent">
-        <label_h1>MAP</label_h1>
+        <!--<label_h1>MAP</label_h1>-->
 
         <div class="button-row">
             <select id="layer-select">
@@ -511,12 +497,6 @@
             </div>
         </div>
 
-        <!--<div id="map-container">
-            <div id="route-map"></div>
-            <button id="fullscreen-btn" onclick="toggleFullscreen()" title="Toggle fullscreen">
-                ⛶
-            </button>
-        </div>-->
 
         <!-- Leaflet CSS -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
@@ -1626,7 +1606,7 @@
       /* Check datetime of METAR data and update UI colors.
        *
        * This function checks the datetime of displayed METAR data and updates the UI to indicate staleness.
-       * If METAR data is older than 15 minutes:
+       * If METAR data is older than 10 minutes:
        * - Sets elements' background to light red
        * Used to visually alert user that METAR data should be refreshed.
        */
@@ -1647,7 +1627,7 @@
 
             const now = new Date();
             const diff = now - metarTime;
-            const isOld = diff > 15 * 60 * 1000; // 15 minutes in milliseconds
+            const isOld = diff > 10 * 60 * 1000; // 10 minutes in milliseconds
 
             dateField.style.backgroundColor = isOld ? '#ffebee' : '';
             button.style.backgroundColor = isOld ? '#ffebee' : '';
@@ -1738,6 +1718,7 @@
             button.style.backgroundColor = '';
             dateField.style.backgroundColor = '';
             dateField.value = dateStr;
+        });
 
         document.getElementById('metar-taf-embed-arrival')?.addEventListener('click', () => {
             const name = document.getElementById('ARRIVAL_NAME').value || 'Unknown Airport';
@@ -1754,7 +1735,10 @@
             dateField.style.backgroundColor = '';
             dateField.value = dateStr;
 
-            });
+            // Fetch metar data using the async fetchMetar and populate ARRIVAL_METAR
+            // const arrivalMETAR = await fetchMetar(icao, true, false);
+            // console.log('arrivalMETAR:', arrivalMETAR);
+
         });
     });
 
@@ -1978,8 +1962,10 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             'DEPARTURE_NAME': '',               # Aerodrome name
             'DEPARTURE_POSITION': '',           # Position at apron
             'DEPARTURE_RUNWAY': '',             # The user selected Runway
-            'DEPARTURE_ELEVATION': '',          # The Runway ELEVATION
             'DEPARTURE_RUNWAYS': '',            # All available Runways
+            'DEPARTURE_RUNWAY_LENGTH': '',      # The length of the Runway
+            'DEPARTURE_RUNWAY_SURFACE': '',     # The surface of the Runway
+            'DEPARTURE_ELEVATION': '',          # The Runway ELEVATION
             'DEPARTURE_ROUTE_NAME': '',         # Departure route name
             'DEPARTURE_ROUTE_ALTITUDE': '',     # Departure route altitude
             'DEPARTURE_CIRCUIT_ALTITUDE': '',   # Departure circuit altitude
@@ -1989,7 +1975,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             'DEPARTURE_URL_WEBSITE': None,      # Website of the Aerodrome
             'DEPARTURE_URL_WIKIPEDIA': None,    # Website of the Aerodrome
             'DEPARTURE_LATLON': [None, None],   # Latlon
-            'DEPARTURE_METAR_ICAO': '',         # METAR
+            'DEPARTURE_METAR_ICAO': '',         # METAR for the specific ICAO
             'DEPARTURE_METAR': {},              # METAR
             'DEPARTURE_WIND_ENVELOPE': {},      # WIND ENVELOPE
             'DEPARTURE_CLOUD': [],              # CLOUD DATA
@@ -2008,8 +1994,10 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             'ARRIVAL_NAME': '',                   # Aerodrome name
             'ARRIVAL_POSITION': '',               # Position at apron
             'ARRIVAL_RUNWAY': '',                 # The user selected Runway
-            'ARRIVAL_ELEVATION': '',              # The Runway ELEVATION
             'ARRIVAL_RUNWAYS': '',                # All available Runways
+            'ARRIVAL_RUNWAY_LENGTH': '',          # The length of the Runway
+            'ARRIVAL_RUNWAY_SURFACE': '',         # The surface of the Runway
+            'ARRIVAL_ELEVATION': '',              # The Runway ELEVATION
             'ARRIVAL_ROUTE_NAME': '',             # Arrival route name
             'ARRIVAL_ROUTE_ALTITUDE': '',         # Arrival route altitude
             'ARRIVAL_CIRCUIT_ALTITUDE': '',       # Arrival circuit altitude
@@ -2305,9 +2293,12 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         js.window.flight_plan_data[f"{fname}_ICAO"] = row_dict['icao']
         js.window.flight_plan_data[f"{fname}_ICAO_CITY"] = city_icao
         js.window.flight_plan_data[f"{fname}_RUNWAYS"] = rwy_ids
-        js.window.flight_plan_data[f"{fname}_RUNWAY"] = normalize_freq(rwy_ids)
+        js.window.flight_plan_data[f"{fname}_RUNWAY"] = clean_string(rwy_ids)
         js.window.flight_plan_data[f"{fname}_NAME"] = row_dict['name']
         js.window.flight_plan_data[f"{fname}_ELEVATION"] = str(row_dict['elevation_aerodrome'])
+        js.window.flight_plan_data[f"{fname}_METAR"] = {}
+        js.window.flight_plan_data[f"{fname}_METAR_ICAO"] = ''
+        js.window.flight_plan_data[f"{fname}_WIND_ENVELOPE"] = {}
 
         ctr_value = 'CTR' if CTR_BOOL else ''
         js.window.flight_plan_data[f"{fname}_CTR"] = ctr_value
@@ -2319,6 +2310,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         js.window.flight_plan_data[f"{fname}_URL_WEBSITE"] = row_dict.get('url.website', '')
         js.window.flight_plan_data[f"{fname}_URL_WIKIPEDIA"] = row_dict.get('url.wikipedia', '')
         js.window.flight_plan_data[f"{fname}_LATLON"] = [row_dict.get('lat', None), row_dict.get('lon', None)]
+
         # Update route map if both departure and arrival coordinates are available
         if hasattr(js.window, 'updateRouteLine'):
             js.window.updateRouteLine()
@@ -2326,7 +2318,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
         if fname == 'DEPARTURE':
             # Handle FREQ_TOWER_RADIO
-            js.window.flight_plan_data["DEPARTURE_ATC_TOWER"] = normalize_freq(FREQ_TOWER_RADIO)
+            js.window.flight_plan_data["DEPARTURE_ATC_TOWER"] = clean_string(FREQ_TOWER_RADIO)
 
             # MAPPING OF THE FREQUENCIES
             field_mapping = {
@@ -2343,17 +2335,9 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             # FILL THE FREQUENCIES
             for key, colname in field_mapping.items():
               freq_raw = row_dict[colname]
-              freq_clean = normalize_freq(freq_raw)
+              freq_clean = clean_string(freq_raw)
               js.window.flight_plan_data[key] = freq_clean
               print(f"  {key}: {js.window.flight_plan_data[key]}")
-
-        # Update all GUI fields and images
-        # if fname == 'DEPARTURE':
-        #       update_aerodrome_gui_fields('DEPARTURE')
-        #       await update_aerodrome_image('DEPARTURE')
-        # elif fname == 'ARRIVAL':
-        #       update_aerodrome_gui_fields('ARRIVAL')
-        #       await update_aerodrome_image('ARRIVAL')
 
         # Update GUI fields for aerodrome
         update_aerodrome_gui_fields(fname)
@@ -2362,7 +2346,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         # Remove METAR widget
         remove_metar_widget(fname)
 
-    def normalize_freq(value):
+    def clean_string(value):
         # Convert to string and strip brackets/quotes
         freq_str = str(value).strip().strip('[]').replace("'", "").replace('"', '')
         # Split, clean, and filter empty items
@@ -2630,7 +2614,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             f'{fname}_METAR_ICAO', f'{fname}_METAR', f'{fname}_WIND_ENVELOPE',
             f'{fname}_CLOUD', f'{fname}_TIMEZONE', f'{fname}_ATC_TOWER',
             f'{fname}_ATC_ATIS_FREQ', f'{fname}_ATC_GROUND', f'{fname}_ATC_APPROACH',
-            f'{fname}_ATC_TELEPHONE',
+            f'{fname}_ATC_TELEPHONE', f'{fname}_RUNWAY_LENGTH', f'{fname}_RUNWAY_SURFACE',
         ]
 
         for key in keys:
@@ -2638,7 +2622,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                 js.window.flight_plan_data[key] = False
             elif '_LATLON' in key:
                 js.window.flight_plan_data[key] = [None, None]
-            elif key in [f'{fname}_METAR', f'{fname}_WIND_ENVELOPE']:
+            elif key in [f'{fname}_METAR', f'{fname}_METAR_ICAO', f'{fname}_WIND_ENVELOPE']:
                 js.window.flight_plan_data[key] = {}
             elif key in [f'{fname}_CLOUD', f'{fname}_RUNWAYS']:
                 js.window.flight_plan_data[key] = []
@@ -2745,6 +2729,96 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
         # Return
         return runways
+
+    def expected_runway_number(fname):
+        """Compute the expected runway based on wind information for a given aerodrome.
+
+        Parameters
+        ----------
+        fname : str
+            The filename or identifier for the aerodrome data.
+
+        Returns
+        -------
+        str
+            The expected runway based on wind direction and speed. Returns an empty
+            string if the necessary data is not available.
+
+        Example
+        -------
+        >>> METAR = { 'wind': {'direction': '270', 'speed': '15'} }
+        >>> expected_runway_number('DEPARTURE')
+        >>> '09'
+
+        """
+        print(f'func: expected_runway_number({ui_type}) > {data}')
+        fname_METAR = f'{fname}_METAR'
+
+        # Initialize with no runway to expect
+        data = js.window.flight_plan_data[fname_METAR]
+        expect_runway = ''
+
+        wind_direction = data.get('wind', {}).get('direction', '')
+        wind_strength = data.get('wind', {}).get('speed', '')
+        # Get all listed runways for this ICAO
+        runways = data.get('RUNWAYS', [])
+
+        # Compute the expected runway
+        if (len(runways) > 0) and (wind_direction is not None) and is_numeric(wind_direction):
+            results = list(map(lambda x: runway_headwind(wind_direction, wind_strength, x), runways))
+            if np.any(results):
+                expect_runway = runways[np.where(results)[0][0]]
+        else:
+            print(f'func: compute.expected_runway_number() > No wind direction {wind_direction} or or wind_strength {wind_strength} or runways {runways} found')
+
+        # Return
+        return expect_runway
+
+    def fetch_metar(ICAO, splitlines=True, decoded=False):
+        """Fetch METAR Data from tgftp.
+
+        Examples
+        --------
+        # Parse RAW into readable
+        # metar_decoded = Metardecode.Metar(metar_data[1])
+        # Structure
+        # d_METAR = create_metar_dict(obs)
+
+        References
+        ----------
+        * National Oceanic and Atmospheric Administration
+        * https://tgftp.nws.noaa.gov/data/observations/metar/stations/{ICAO}.TXT
+        * https://tgftp.nws.noaa.gov/data/observations/metar/decoded/{ICAO}.TXT
+
+        """
+        # Default
+        metar_data = None
+        # Fetch data from the URL
+        url = make_metar_url(str(ICAO), decoded=decoded)
+
+        try:
+            # Fetch data from url
+            response = requests.get(url, timeout=5)
+            # Continue
+            if response.status_code == 200:
+                # Parse data
+                metar_data = response.text
+                # Extract relevant information
+                if splitlines:
+                    metar_data = metar_data.split('\n')
+        except:
+            metar_data = None
+
+        # Set to None
+        if metar_data==[]: metar_data = None
+        # Return
+        return metar_data
+
+    def make_metar_url(ICAO, decoded=False):
+        if decoded:
+            return "https://tgftp.nws.noaa.gov/data/observations/metar/decoded/" + ICAO.strip().upper() + ".TXT"
+        else:
+            return "https://tgftp.nws.noaa.gov/data/observations/metar/stations/" + ICAO.strip().upper() + ".TXT"
 
 
     async def create_new_flightplan():
@@ -3156,24 +3230,6 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         else:
             print(f'{fname} not valid to save to JSON')
             return
-
-        # if fname == 'DEPARTURE':
-        #     # Create cache key
-        #     cache_key = fname + '_' + flight_data[f"{fname}_ICAO"]
-        #     enroute_fields = {
-        #         'FIC_NAME': js.document.getElementById('FIC_NAME').value,
-        #         'FIC_FREQUENCY': js.document.getElementById('FIC_FREQUENCY').value,
-        #         'FIC_NAME2': js.document.getElementById('FIC_NAME2').value,
-        #         'FIC_FREQUENCY2': js.document.getElementById('FIC_FREQUENCY2').value,
-        #         'OVERHEAD': js.document.getElementById('OVERHEAD').value,
-        #         'OVERHEAD2': js.document.getElementById('OVERHEAD2').value,
-        #         'SQUAWK': js.document.getElementById('SQUAWK').value,
-        #         'SQUAWK2': js.document.getElementById('SQUAWK2').value
-        #     }
-        #     # Only store non-empty values
-        #     for key, value in enroute_fields.items():
-        #         if value and str(value) not in ('nan', 'None', ''):
-        #             dict_fname[key] = value
 
         # Save to cache
         print(f'----> AERODROME SAVED: {cache_key}')
@@ -4270,9 +4326,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
     js.window.save_enroute_to_json = save_enroute_to_json
     js.window.save_aerodrome_to_json = save_aerodrome_to_json
     js.window.load_aerodrome_from_json = load_aerodrome_from_json
-    # js.window.retrieve_metar = retrieve_metar
-    # js.window.update_dropdown_flightplans = create_proxy(update_dropdown_flightplans)
-    # js.window.update_dropdown_enroute_FIC = create_proxy(update_dropdown_enroute_FIC)
+    # js.window.fetch_metar = fetch_metar
     js.window.clear_cache = clear_cache
 
     # ATC
