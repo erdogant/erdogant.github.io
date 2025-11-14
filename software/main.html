@@ -34,19 +34,19 @@
     <!-- Tab links -->
     <div class="tab">
         <button class="tablinks active" data-tab="General">▶️ Start</button>
-      <button class="tablinks" data-tab="Departure">🛫 Departure</button>
-      <button class="tablinks" data-tab="Arrival">🛬 Arrival</button>
-      <button class="tablinks" data-tab="Enroute">✈️ Enroute</button>
-      <button class="tablinks" data-tab="MAP">🗺️ Map</button>
-      <button class="tablinks" data-tab="ATC">📢 ATC</button>
-      <button class="tablinks" data-tab="Config">⚙️</button>
+        <button class="tablinks" data-tab="Departure">🛫 Departure</button>
+        <button class="tablinks" data-tab="Arrival">🛬 Arrival</button>
+        <button class="tablinks" data-tab="Enroute">✈️ Enroute</button>
+        <button class="tablinks" data-tab="MAP">🗺️ Map</button>
+        <button class="tablinks" data-tab="ATC">📢 ATC</button>
+        <button class="tablinks" data-tab="Config">⚙️</button>
     </div>
 
 
     <!-- =============== TAB GENERAL =============== -->
-
 	<div id="General" class="tabcontent" style="display:block;">
-	  <!-- Logo -->
+
+	<!-- Logo -->
 	  <div class="logo-container">
 		<a href="https://erdogant.github.io/skywalk-docs/pages/html/index.html" target="_blank">
 		  <img id="skywalk_logo" alt="SkyWalk">
@@ -2946,7 +2946,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
         # Parse JSON
         try:
-            # Loada json data file
+            # Load json data file
             flight_plan_dict = json.loads(json_data)
             print(f"✅ Loaded {len(flight_plan_dict)} fields")
 
@@ -3726,7 +3726,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             print("✅ Loaded from cache")
             return cached
 
-            # 2. Fetch template using JS fetch
+        # 2. Fetch template using JS fetch
         print(f"🌐 Fetching from URL: {url}")
 
         try:
@@ -3745,7 +3745,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
 
     async def personalize_content(content, template_name):
-        # Load template content (async)
+        # Load template
         template_content = await load_template(template_name)
 
         # Use DictLoader to store template
