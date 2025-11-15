@@ -393,6 +393,7 @@ input[type="text"]:hover {
 /* MAP container */
 #map-container {
     position: relative;
+    margin-top: 56px; /* height of .tab */
     height: 300px;
     width: 100%;
     max-width: 800px;
@@ -560,4 +561,26 @@ body.no-scroll {
 
 .dropdown-content button:hover {
     background-color: #f1f1f1;
+}
+
+/* Fullscreen enter/exit icon styling */
+#fullscreen-btn svg {
+    width: 24px;
+    height: 24px;
+    margin: 8px;
+    fill: #333;
+    transition: opacity 0.2s ease-in-out;
+}
+
+/* Hide exit icon initially */
+#fullscreen-btn .fullscreen-exit {
+    display: none;
+}
+
+/* When fullscreen mode is active */
+body.mobile-fullscreen #fullscreen-btn .fullscreen-enter {
+    display: none !important;
+}
+body.mobile-fullscreen #fullscreen-btn .fullscreen-exit {
+    display: block !important;
 }
