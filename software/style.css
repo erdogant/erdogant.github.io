@@ -50,7 +50,7 @@ body {
     padding-top: env(safe-area-inset-top);
     /* Add extra padding-bottom to account for the bottom ad and safe area.
        Adjust 80px if your ad is larger/smaller. */
-    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 80px);
+    padding-bottom: 0;
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
     display: flex;
@@ -535,9 +535,7 @@ body.no-scroll {
     left: 0;
     right: 0;
     bottom: 0;
-    height: 64px; /* set your ad height */
+    height: 0px;
     padding: 8px;
     z-index: 10001;
-    /*background: white;*/
-    /*border-top: 1px solid #eee;*/
 }
