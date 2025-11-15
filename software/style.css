@@ -409,7 +409,7 @@ body.mobile-fullscreen #map-container {
     top: 0;
     left: 0;
     width: 100vw;
-    height: calc(100dvh - 56px); /* fill remaining screen */
+    height: calc(100dvh); /* fill remaining screen */
     z-index: 9999;
     background: white;
 }
