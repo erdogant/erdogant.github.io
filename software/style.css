@@ -84,8 +84,10 @@ body {
     }
 
     .tab {
+        position: relative; /* instead of sticky */
         border-radius: 10px 10px 0 0;
         top: 0;
+        z-index: 100; /* lower than map fullscreen z-index */
     }
 }
 
@@ -393,10 +395,10 @@ input[type="text"]:hover {
 /* MAP container */
 #map-container {
     position: relative;
-    margin-top: 56px; /* height of .tab */
+    /*margin-top: 56px;*/
     height: 300px;
     width: 100%;
-    max-width: 800px;
+    /*max-width: 800px;*/
     margin: 20px auto;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -412,6 +414,14 @@ input[type="text"]:hover {
     z-index: 9999;
     background: white;
 }*/
+body.mobile-fullscreen #map-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100dvh;
+    z-index: 9999;
+}
 
 #route-map {
     height: 100%;
