@@ -54,7 +54,8 @@ body {
     display: flex;
     flex-direction: column;
     overflow-x: hidden;
-    overflow-y: auto;
+    /* Prevent the whole app from scrolling; the .tabcontent child will scroll instead */
+    overflow-y: hidden;
 }
 
 /* Media query for larger screens */
@@ -236,7 +237,7 @@ input[type="text"]:hover {
     border-radius: 10px;
     overflow: hidden;
     /* Reserve space to prevent collapse before image loads */
-    min-height: 80px;
+    min-height: 100px;
 }
 
 .logo-container img {
