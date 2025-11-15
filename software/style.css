@@ -235,8 +235,9 @@ input[type="text"]:hover {
 /* Logo wrapper container */
 .logo-container {
     text-align: center;
-    margin: 5px;
-    margin-bottom: 5px; /* increased spacing below logo */
+    margin: 10px;
+    /* increased spacing below logo */
+    /*margin-bottom: 5px;*/
     border-radius: 5px;
     /* allow overflow so the image never gets cropped by parent sizing changes */
     overflow: visible;
