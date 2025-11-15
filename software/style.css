@@ -233,10 +233,9 @@ input[type="text"]:hover {
 /* Logo wrapper container */
 .logo-container {
     text-align: center;
-    margin: 10px;
-    border-radius: 10px;
+    margin: 20px;
+    border-radius: 20px;
     overflow: hidden;
-    /* Reserve space to prevent collapse before image loads */
     min-height: 80px;
 }
 
