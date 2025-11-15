@@ -402,7 +402,7 @@ input[type="text"]:hover {
     border-radius: 4px;
 }
 
-body.mobile-fullscreen #map-container {
+/*body.mobile-fullscreen #map-container {
     position: fixed;
     margin-top: 0 !important;
     top: 0;
@@ -411,7 +411,7 @@ body.mobile-fullscreen #map-container {
     height: 100dvh;
     z-index: 9999;
     background: white;
-}
+}*/
 
 #route-map {
     height: 100%;
