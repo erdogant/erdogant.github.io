@@ -236,6 +236,7 @@ input[type="text"]:hover {
 .logo-container {
     text-align: center;
     margin: 5px;
+    margin-bottom: 5px; /* increased spacing below logo */
     border-radius: 5px;
     /* allow overflow so the image never gets cropped by parent sizing changes */
     overflow: visible;
