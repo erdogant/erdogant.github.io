@@ -104,12 +104,12 @@ h1 {
     color: #2a3f54;
     position: sticky;
     top: env(safe-area-inset-top);
-    z-index: 1000;
     overflow: hidden;
     padding: 0 1px;
     height: 56px !important;
     min-height: 56px;
     flex-shrink: 0;
+    z-index: 1000; /* lower than map */
 }
 
 /* Tab buttons */
@@ -404,23 +404,14 @@ input[type="text"]:hover {
     border-radius: 4px;
 }
 
-/*body.mobile-fullscreen #map-container {
-    position: fixed;
-    margin-top: 0 !important;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100dvh;
-    z-index: 9999;
-    background: white;
-}*/
 body.mobile-fullscreen #map-container {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100dvh;
-    z-index: 9999;
+    z-index: 10001; /* above tab */
+    background: white;
 }
 
 #route-map {
