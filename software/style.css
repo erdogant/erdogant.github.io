@@ -406,11 +406,11 @@ input[type="text"]:hover {
 
 body.mobile-fullscreen #map-container {
     position: fixed;
-    top: 0;
+    top: 56px; /* same as tab height */
     left: 0;
     width: 100vw;
-    height: 100dvh;
-    z-index: 10001; /* above tab */
+    height: calc(100dvh - 56px); /* fill remaining screen */
+    z-index: 9999;
     background: white;
 }
 
