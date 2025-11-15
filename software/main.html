@@ -59,7 +59,7 @@
 		<a href="https://erdogant.github.io/skywalk-docs/pages/html/index.html" target="_blank">
 		  <img id="skywalk_logo" alt="SkyWalk">
 		</a>
-		<div class="version" style="margin-bottom: 5px; ">version: 0.4.2</div>
+		<div class="version" style="margin-bottom: 5px; ">version: 0.4.3</div>
 	  </div>
 
 
@@ -805,6 +805,13 @@
         }
     }
 
+    function setMobileFullscreenHeight() {
+        const mapContainer = document.getElementById('map-container');
+        if (!mapContainer) return;
+        const vh = window.innerHeight; // actual visible viewport height
+        mapContainer.style.height = vh + 'px';
+    }
+
     function toggleFullscreen() {
         const mapContainer = document.getElementById('map-container');
         const fullscreenBtn = document.getElementById('fullscreen-btn');
@@ -840,9 +847,11 @@
             } else if (mapContainer.msRequestFullscreen) {
                 mapContainer.msRequestFullscreen();
             } else {
-                // Fallback for iPhone
+                // Fallback for iPhone / mobile fullscreen
                 mapContainer.classList.add('mobile-fullscreen');
                 document.body.classList.add('no-scroll');
+                // sets the map height to real viewport height
+                setMobileFullscreenHeight();
             }
             enterIcon.style.display = 'none';
             exitIcon.style.display = 'inline';
@@ -872,6 +881,13 @@
         setTimeout(() => {
             if (window.routeMap) window.routeMap.invalidateSize();
         }, 300);
+    }
+
+    function setMobileFullscreenHeight() {
+        const mapContainer = document.getElementById('map-container');
+        if (!mapContainer) return;
+        const vh = window.innerHeight; // actual visible viewport
+        mapContainer.style.height = vh + 'px';
     }
 
     // Handle fullscreen changes from any source
@@ -907,7 +923,19 @@
     document.addEventListener('mozfullscreenchange', handleFullscreenChange);
     document.addEventListener('MSFullscreenChange', handleFullscreenChange);
 
+    window.addEventListener('resize', () => {
+        const mapContainer = document.getElementById('map-container');
+        if (mapContainer && mapContainer.classList.contains('mobile-fullscreen')) {
+            setMobileFullscreenHeight();
+        }
+    });
 
+    window.addEventListener('orientationchange', () => {
+        const mapContainer = document.getElementById('map-container');
+        if (mapContainer && mapContainer.classList.contains('mobile-fullscreen')) {
+            setMobileFullscreenHeight();
+        }
+    });
     // Initialize map and route on DOM load
     // document.addEventListener('DOMContentLoaded', () => {
     //     initRouteMap();

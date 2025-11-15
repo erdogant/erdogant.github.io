@@ -406,10 +406,10 @@ input[type="text"]:hover {
 
 body.mobile-fullscreen #map-container {
     position: fixed;
-    top: 56px; /* same as tab height */
+    top: 0;
     left: 0;
     width: 100vw;
-    height: calc(100dvh - 56px); /* fill remaining screen */
+    /* Remove 100dvh, we will calculate height in JS */
     z-index: 9999;
     background: white;
 }
@@ -506,19 +506,9 @@ body:not(.mobile-fullscreen) #fullscreen-btn {
 #fullscreen-btn:hover {
     background-color: #f0f0f0;
 }
-/*.mobile-fullscreen {
-    position: fixed !important;
-    top: 0;
-    left: 0;
-    width: 100vw !important;
-    height: 100dvh !important;
-    z-index: 9999;
-    background: white;
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
-}*/
+
 /* FULLSCREEN MODE FIXED OVERLAY */
-.mobile-fullscreen {
+/*.mobile-fullscreen {
     position: fixed !important;
     top: 0;
     left: 0;
@@ -528,13 +518,23 @@ body:not(.mobile-fullscreen) #fullscreen-btn {
     width: 100vw !important;
     height: 100vh !important;
 
-    /* iPhone notch safe-area */
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
 
     overflow: hidden !important;
     z-index: 9990;
     background: #000; /* Prevent white bars */
+}*/
+.mobile-fullscreen {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    width: 100vw !important;
+    height: 100dvh !important;
+    z-index: 9999;
+    background: white;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
 }
 
 body.no-scroll {
