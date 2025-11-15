@@ -41,26 +41,11 @@ body {
     height: 100dvh;
 }
 
-/*#app {
-    width: 100%;
-    max-width: 100%;
-    min-height: 100%;
-    background-color: white;
-    padding: 0;
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: 0;
-    padding-left: env(safe-area-inset-left);
-    padding-right: env(safe-area-inset-right);
-    display: flex;
-    flex-direction: column;
-    overflow-x: hidden;
-    overflow-y: visible;
-}*/
 #app {
     width: 100%;
     max-width: 100%;
     min-height: 100%;
-    background-color: white;
+    background-color: white; /* Background color for the app */
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
     padding-left: env(safe-area-inset-left);
@@ -486,11 +471,11 @@ body.mobile-fullscreen #map-container {
     }
 }
 
-#fullscreen-btn {
+/*#fullscreen-btn {
     position: absolute;
     top: 10px;
     right: 10px;
-    z-index: 10000; /* stays above Leaflet controls */
+    z-index: 10000;
     background-color: rgba(255, 255, 255, 0.9);
     border: 1px solid #ccc;
     border-radius: 6px;
@@ -498,11 +483,27 @@ body.mobile-fullscreen #map-container {
     cursor: pointer;
     font-size: 16px;
     transition: all 0.2s ease-in-out;
+}*/
+/* Ensure fullscreen button ALWAYS stays visible above the map */
+#fullscreen-btn {
+    position: fixed !important;
+    top: env(safe-area-inset-top, 10px);
+    right: 10px;
+    z-index: 99999 !important;
+    pointer-events: auto;
 }
+
+/* When leaving fullscreen, restore normal placement */
+body:not(.mobile-fullscreen) #fullscreen-btn {
+    position: absolute !important;
+    top: 10px;
+    right: 10px;
+}
+
 #fullscreen-btn:hover {
     background-color: #f0f0f0;
 }
-.mobile-fullscreen {
+/*.mobile-fullscreen {
     position: fixed !important;
     top: 0;
     left: 0;
@@ -512,7 +513,27 @@ body.mobile-fullscreen #map-container {
     background: white;
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
+}*/
+/* FULLSCREEN MODE FIXED OVERLAY */
+.mobile-fullscreen {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    width: 100vw !important;
+    height: 100vh !important;
+
+    /* iPhone notch safe-area */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+
+    overflow: hidden !important;
+    z-index: 9990;
+    background: #000; /* Prevent white bars */
 }
+
 body.no-scroll {
     overflow: hidden;
     touch-action: none;
@@ -539,13 +560,3 @@ body.no-scroll {
 .dropdown-content button:hover {
     background-color: #f1f1f1;
 }
-
-/*.bottom-ad {
-    position: block;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 0px;
-    padding: 8px;
-    z-index: 10001;
-}*/
