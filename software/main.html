@@ -59,7 +59,7 @@
 		<a href="https://erdogant.github.io/skywalk-docs/pages/html/index.html" target="_blank">
 		  <img id="skywalk_logo" alt="SkyWalk">
 		</a>
-		<div class="version" style="margin-bottom: 5px; ">version: 0.4.0</div>
+		<div class="version" style="margin-bottom: 5px; ">version: 0.4.1</div>
 	  </div>
 
 
@@ -165,7 +165,7 @@
 	  <!-- Line 5: POSITION, RUNWAY, ELEVATION inputs -->
 	  <div class="button-row">
 		<input type="text" id="DEPARTURE_POSITION" placeholder="Position (At the Apron)", class="UPPERCASE_input">
-		<select id="DEPARTURE_CTR" onchange="updateMissingFields()">
+		<select id="DEPARTURE_CTR" onchange="highlightMissingFields()">
 		  <option value=""></option>
 		  <option value="CTR">CTR</option>
 		</select>
@@ -262,7 +262,7 @@
         <!-- Line 5: POSITION, RUNWAY, ELEVATION inputs -->
         <div class="button-row">
             <input type="text" id="ARRIVAL_POSITION" placeholder="Position (At the Apron)", class="UPPERCASE_input">
-            <select id="ARRIVAL_CTR" onchange="updateMissingFields()">
+            <select id="ARRIVAL_CTR" onchange="highlightMissingFields()">
                 <option value=""></option>
                 <option value="CTR">CTR</option>
             </select>
@@ -506,6 +506,10 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 
+        <label_h1>Warning</label_h1>
+         <div class="warning" style="margin-bottom: 20px; border: 2px solid orange; border-radius: 10px; padding: 10px;">The airspace projections on the map are based on data that can be outdated or inaccurate. Do not navigate using the map but only use it for educational purposes.</div>
+
+
 
     </div>
 
@@ -662,7 +666,7 @@
             weight: weight_line,
             opacity: 0.6,
             smoothFactor: 1,
-            zIndex: 3000,  // Highest z-index to stay above everything
+            zIndex: 6000,  // Highest z-index to stay above everything
             pane: 'markerPane',  // Use marker pane to ensure line stays on top
             interactive: true    // Make line clickable for adding waypoints
         }).addTo(routeMap);
@@ -699,7 +703,7 @@
             L.marker(depCoords, {
                 draggable: false,
                 title: depICAO,
-                zIndexOffset: 2000 // Ensure departure marker stays on top
+                zIndexOffset: 7000 // Ensure departure marker stays on top
             })
                 .addTo(routeMap)
                 .bindPopup(depICAO, { closeButton: false })
@@ -708,7 +712,7 @@
             L.marker(arrCoords, {
                 draggable: false,
                 title: arrICAO,
-                zIndexOffset: 2000 // Ensure arrival marker stays on top
+                zIndexOffset: 7000 // Ensure arrival marker stays on top
             })
                 .addTo(routeMap)
                 .bindPopup(arrICAO, { closeButton: false })
@@ -905,20 +909,21 @@
 
 
     // Initialize map and route on DOM load
-    document.addEventListener('DOMContentLoaded', () => {
-        initRouteMap();
-        updateRoute();
+    // document.addEventListener('DOMContentLoaded', () => {
+    //     initRouteMap();
+    //     updateRoute();
 
-        // Handle tab clicks if present
-        document.querySelectorAll('.tablinks').forEach(tab => {
-            tab.addEventListener('click', () => {
-                setTimeout(() => {
-                    routeMap.invalidateSize();
-                    updateRoute();
-                }, 100);
-            });
-        });
-    });
+    //     // Handle tab clicks if present
+    //     document.querySelectorAll('.tablinks').forEach(tab => {
+    //         tab.addEventListener('click', () => {
+    //             console.log('Tab clicked');
+    //             setTimeout(() => {
+    //                 routeMap.invalidateSize();
+    //                 updateRoute();
+    //             }, 100);
+    //         });
+    //     });
+    // });
 
     // Simple example with a few major airports
     // const airportData = {
@@ -939,6 +944,7 @@
             for (const row of df) {
                 // console.log('Processing row:', row);
                 // Convert Proxy to regular object
+                //
                 const data = {
                     lat: row.lat?.valueOf(),
                     lon: row.lon?.valueOf(),
@@ -950,6 +956,7 @@
                     AERODROME_CTR: row.AERODROME_CTR?.valueOf(),
                     elevation_aerodrome: row.elevation_aerodrome?.valueOf()
                 };
+
 
                 // Determine runway type from runway string
                 if (data.lat && data.lon && data.city_icao) {
@@ -963,6 +970,7 @@
                                 "elevation": data.elevation_aerodrome || 'N/A',
                                 "use": data.use || 'public',
                                 "runways": data.runways,
+                                "runway_number": data.runway_number,
                                 "country": data.country,
                             },
                         "geometry": {
@@ -982,13 +990,94 @@
 
 
 
+    // function extractRunwayNumbers(runwaysString) {
+    //     if (typeof runwaysString !== "string") return [];
 
+    //     // 1. Find the `'number': [...]` part
+    //     const match = runwaysString.match(/'number'\s*:\s*\[([^\]]*)\]/);
+
+    //     if (!match) return [];
+
+    //     // 2. Extract the inside of the brackets
+    //     const inside = match[1];
+
+    //     // 3. Split values between quotes
+    //     const numbers = inside.match(/'([^']+)'/g);
+
+    //     if (!numbers) return [45, 315];
+
+    //     // 4. Strip quotes + convert to integers
+    //     return numbers
+    //         .map(n => n.replace(/'/g, "").trim())
+    //         .map(n => parseInt(n, 10));  // Remove invalid values
+    // }
+
+    function extractRunwayNumbers(runwaysString) {
+        if (typeof runwaysString !== "string") return [];
+
+        // Extract ALL occurrences of number: [...]
+        // Supports 'number' or "number"
+        const matches = runwaysString.match(/["']number["']\s*:\s*\[([^\]]*)\]/g);
+
+        if (!matches) return [];
+
+        let allNumbers = [];
+
+        for (const item of matches) {
+
+            // Extract inside brackets of this specific occurrence
+            const inside = item.match(/\[([^\]]*)\]/);
+            if (!inside) continue;
+
+            // Extract all quoted elements inside the brackets
+            const nums = inside[1].match(/["']([^"']+)["']/g);
+            if (!nums) continue;
+
+            // Clean + convert to integer
+            nums.forEach(n => {
+                const clean = n.replace(/['"]/g, "").trim();
+                const val = parseInt(clean, 10);
+                if (!isNaN(val)) allNumbers.push(val);
+            });
+        }
+
+        // Fallback only if *no valid runway numbers* found
+        if (allNumbers.length === 0) return [45, 315];
+
+        return allNumbers;
+    }
+
+    function selectRunwayIndices(runwayNumbers) {
+        if (runwayNumbers.length >= 6) return [0, 3, 5];
+        if (runwayNumbers.length >= 4) return [0, 3];
+        if (runwayNumbers.length >= 2) return [0];
+        return []; // not enough info
+    }
+
+    function buildRunwayRects(runwayNumbers, runwayColor) {
+        const idx = selectRunwayIndices(runwayNumbers);
+        if (idx.length === 0) return ""; // nothing to draw
+
+        return idx
+            .map(i => {
+                const heading = runwayNumbers[i] * 10; // convert to degrees
+                return `
+                    <rect x="14" y="4" width="4" height="24"
+                          fill="${runwayColor}"
+                          stroke="#333" stroke-width="1"
+                          fill-opacity="0.8" stroke-opacity="0.8"
+                          transform="rotate(${heading} 16 16)" />
+                `;
+            })
+            .join("\n");
+    }
 
     function toggleAirportLayer() {
         // console.log('Toggle airport layer called');
         if (document.getElementById('aviation-toggle').checked) {
             if (airportLayer) return; // Layer already exists
             if (!airportData) return; // No data to display
+
             console.log('Adding airport layer to map');
             // Create a feature group to hold markers and circles with high z-index
             airportLayer = L.featureGroup({
@@ -999,10 +1088,12 @@
             L.geoJSON(airportData, {
                 pointToLayer: function(feature, latlng) {
                     const props = feature.properties;
-                    const isMilitary = (props.use.toLowerCase() === 'military');
-                    let markerColor = '#2196F3'; // Blue for others;
-                    let circleColor = '#666666'; // Gray for others;
+                    const isMilitary = props.use.toLowerCase() === 'military';
+                    let runwayColor = '#2196F3'; // Blue for others;
+                    let circleColor = '#FFFFFF'; // White for others;
                     let runwayType = props.runways.includes('asphalt') ? 'Hard' : props.runways.includes('grass') ? 'Soft' : 'Unknown';
+                    let runwayNumbers = extractRunwayNumbers(props.runways)
+
 
                     const popupContent = `
                         <b>${props.name}</b>
@@ -1010,45 +1101,73 @@
                             <b>Country:</b> ${props.country}<br>
                             <b>Type:</b> ${props.use}<br>
                             <b>CTR:</b> ${props.ctr || isMilitary ? 'Yes' : 'No'}<br>
-                            <b>Elevation:</b> ${props.elevation} ft<br>
-                            <b>Surface:</b> ${runwayType}
+                            <b>Runway Elevation:</b> ${props.elevation} ft<br>
+                            <b>Runway Surface:</b> ${runwayType}
                         </div>
                     `;
 
-                    // Determine marker color based on type
                     if (isMilitary) {
-                        markerColor = '#8B0000'; // Red for military
-                        circleColor = '#8B0000';
+                        circleColor = '#8B0000'; // Red for military
                     } else if (props.ctr || props.runways.includes('asphalt')) {
-                        markerColor = '#666666'; // Gray for CTR
-                        circleColor = '#FF69B4';  // pink for CTR
-                    } else if (props.runways.includes('grass')) {
-                        markerColor = '#8BC34A'; // Green for grass
+                        circleColor = '#FF69B4';  // Gray for CTR
                     } else {
-                        markerColor = '#2196F3'; // Blue for other
+                        circleColor = '#FFFFFF'; // Blue for other
                     }
 
-                    // Create custom icon with determined color
-                    const markerIcon = L.divIcon({
-                        html: `<div style="background-color: ${markerColor}; width: 100%; height: 100%; border-radius: 50%; border: 2px solid white;"></div>`,
-                        // html: `<div style="background-color: ${markerColor}; border: 2px solid ${circleColor}; z-index: 600;"></div>`,
-                        className: 'custom-marker',
-                        iconSize: [12, 12]
+                    if (runwayType === 'Hard') {
+                        runwayColor = '#666666'; //Gray for hard/asphalt
+                    } else if (runwayType === 'Soft') {
+                        runwayColor = '#8BC34A'; //Green for soft/grass
+                    } else {
+                        runwayColor = '#2196F3'; //Blue for other
+                    }
+
+                    // const airstripIcon = L.divIcon({
+                    //   className: 'airstrip-marker-icon',
+                    //   html: `
+                    //     <svg width="32" height="32" viewBox="0 0 32 32">
+                    //       <circle cx="16" cy="16" r="8" fill="${circleColor}" stroke="#333" stroke-width="1.5" fill-opacity="0.6" stroke-opacity="0.8"/>
+                    //       <rect x="14" y="4" width="4" height="24" fill="${runwayColor}" stroke="#333" stroke-width="1" fill-opacity="0.8" stroke-opacity="0.8"
+                    //         transform="rotate(${runwayNumbers[0]*10} 16 16)" />
+                    //     </svg>
+                    //   `,
+                    //   iconSize: [32, 32],
+                    //   iconAnchor: [16, 16]
+                    // });
+
+                    const runwayRects = buildRunwayRects(runwayNumbers, runwayColor);
+
+                    const airstripIcon = L.divIcon({
+                        className: 'airstrip-marker-icon',
+                        html: `
+                            <svg width="32" height="32" viewBox="0 0 32 32">
+                                <circle cx="16" cy="16" r="8"
+                                        fill="${circleColor}"
+                                        stroke="#333"
+                                        stroke-width="1.5"
+                                        fill-opacity="0.6"
+                                        stroke-opacity="0.8"/>
+                                ${runwayRects}
+                            </svg>
+                        `,
+                        iconSize: [32, 32],
+                        iconAnchor: [16, 16]
                     });
+
 
                     // Create marker with custom icon
                     const marker = L.marker(latlng, {
                         title: props.name,
-                        icon: markerIcon,
+                        icon: airstripIcon, //markerIcon,
                         pane: 'markerPane',  // Use marker pane to ensure markers stay on top
-                        zIndexOffset: 1000   // High z-index offset to stay above other markers
+                        zIndexOffset: 4000   // High z-index offset to stay above other markers
                     }).bindPopup(popupContent);
 
                     // Add to feature group
                     airportLayer.addLayer(marker);
 
                     // If it's a CTR or isMilitary, add a circle with color based on use
-                    if (props.ctr && !isMilitary) {
+                    if (props.ctr || isMilitary) {
                             const circle = L.circle(latlng, {
                                 radius: 14900, // 5NM in meters
                                 color: circleColor,
@@ -1071,12 +1190,6 @@
             }
         }
     }
-
-    // Hook checkbox change
-    // window.updateRoute = updateRoute;
-
-
-
 
     function loadAirspaceData() {
         // Return the airspaces data from Python (attached to window)
@@ -1387,13 +1500,13 @@
             else if (area_type.includes("atz") && !area_type.includes("military")) { key = "ATZ"; }
             else if (area_type.includes("atz") && area_type.includes("military")) { key = "MATZ"; radius = 14900; }
             else if (area_type.includes("tmz")) { key = "TMZ"; [flagToMap] = altitude_restriction(AL, AH, maxAltitude); }
-            else if (area_type.includes("prohibited")) { key = "prohibited"; }
-            else if (area_type.includes("danger")) { key = "danger"; [flagToMap] = altitude_restriction(AL, AH, maxAltitude); }
+            else if (area_type.includes("prohibited")) { key = "prohibited"; radius = 5000 }
+            else if (area_type.includes("danger")) { key = "danger"; [flagToMap] = altitude_restriction(AL, AH, maxAltitude); radius = 2000}
             else if (area_type.includes("restricted") && !area_type.includes("notam")) { key = "restricted"; [flagToMap] = altitude_restriction(AL, AH, maxAltitude); }
             else if (area_type.includes("notam")) { key = "NOTAM"; flagToMap = false; }
             else if (area_type.includes("temporary reserved")) { key = "TRA"; [flagToMap] = altitude_restriction(AL, AH, maxAltitude); }
             else if (area_type.includes("parachuting")) { key = "parachuting"; radius = 4000; }
-            else if (area_type.includes("gliding")) { key = "gliding"; }
+            else if (area_type.includes("gliding")) { key = "gliding"; radius = 6000;}
             else if (area_type.includes("laser")) { key = "laser"; flagToMap = false; radius = 2000; }
             else if (area_type.includes("gas venting")) { key = "laser"; flagToMap = false; radius = 2000; }
             else { key = "various"; [flagToMap] = altitude_restriction(AL, AH, maxAltitude); radius = 2000;}
@@ -1830,7 +1943,11 @@
   });
 </script>
 
+
+<!--============================================-->
 <!-- PyScript configuration -->
+<!--============================================-->
+
 <py-config>
   packages = ["pandas", "numpy", "jinja2", "requests"]
 </py-config>
@@ -2316,8 +2433,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         js.window.flight_plan_data[f"{fname}_LATLON"] = [row_dict.get('lat', None), row_dict.get('lon', None)]
 
         # Update route map if both departure and arrival coordinates are available
-        if hasattr(js.window, 'updateRouteLine'):
-            js.window.updateRouteLine()
+        # if hasattr(js.window, 'updateRouteLine'): js.window.updateRouteLine()
         js.window.flight_plan_data[f"{fname}_TIMEZONE"] = row_dict.get('tz', None)
 
         if fname == 'DEPARTURE':
@@ -2858,9 +2974,6 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         js.window.airspaces = {}
         js.window.waypoints = []
 
-        # Trigger route update to clear the map
-        # await js.updateRoute()
-
         print("✅ New flightplan initialized - all fields cleared")
         return current_time
 
@@ -2988,7 +3101,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             # Update GUI FIELDS
             update_enroute_gui_fields(enroute_dict)
             # Update missing fields colors
-            js.window.updateMissingFields()
+            js.window.highlightMissingFields()
 
 
             print(f"✅ Flightplan '{user_selection}' loaded successfully")
@@ -3180,7 +3293,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             await update_aerodrome_image(fname)
 
             # Update missing fields colors
-            js.window.updateMissingFields()
+            js.window.highlightMissingFields()
 
             # Remove METAR widget
             remove_metar_widget(fname)
@@ -4388,8 +4501,8 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
     const tabContents = document.querySelectorAll(".tabcontent");
 
     // Function to check for missing fields and update highlighting
-    function updateMissingFields() {
-        console.log("---> updateMissingFields()");
+    function highlightMissingFields() {
+        console.log("---> highlightMissingFields()");
         const inputs = [
           CALLSIGN,
           AIRCRAFT_TYPE,
@@ -4494,9 +4607,17 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         btn.classList.add("active");
         document.getElementById(btn.getAttribute("data-tab")).style.display = "block";
 
-        // Update INFO fields and check missing fields after tab switch
+        // REPLACE INFORMATION with "INFO" in the ENROUTE TAB.
         updateEnrouteFields();
-        updateMissingFields();
+        // CHECK MISSING FIELDS AFTER TAB SWITCH AND HIGHLIGHT
+        highlightMissingFields();
+
+        // WHEN THE TAB MAP IS CLICKED
+        if (targetTab === "MAP") {
+          if (typeof initRouteMap === "function") initRouteMap();
+          if (typeof updateRoute === "function") updateRoute();
+        }
+
       });
     });
 
@@ -4541,14 +4662,14 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
     document.querySelectorAll('.REPLACE_INFO').forEach(input => {
         input.addEventListener('input', () => {
             input.value = input.value.toUpperCase().replace(/INFORMATION/g, 'INFO');
-            updateMissingFields();
+            highlightMissingFields();
         });
     });
 
 
     // Initial calls to handle any existing values
     updateEnrouteFields();
-    updateMissingFields();
+    highlightMissingFields();
 
     // Wait for PyScript to be ready
     let pyscriptReady = false;
@@ -4663,7 +4784,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         document.getElementById('fic_spinner').value = "";
         document.getElementById('fic_spinner2').value = "";
         // Update missing fields
-        updateMissingFields();
+        highlightMissingFields();
         // Show success message to user
         alert("✅ New flightplan created successfully!\n\nAll fields have been cleared and reset to default values.");
 
@@ -4680,7 +4801,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
           await window.load_flightplan();
           console.log("✅ Flightplan loaded successfully");
           // Update missing fields after loading
-          updateMissingFields();
+          highlightMissingFields();
         } catch (error) {
           console.error("Error loading flightplan:", error);
           alert("Error loading flightplan: " + error);
@@ -4991,7 +5112,7 @@ const COUNTRIES_DATA = [
                 // Call PyScript function to populate fields
                 await window.populate_aerodrome_fields_from_icao(fname, city_icao);
                 // Update missing fields
-                updateMissingFields();
+                highlightMissingFields();
             }
         });
 
