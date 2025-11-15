@@ -409,7 +409,7 @@ body.mobile-fullscreen #map-container {
     top: 0;
     left: 0;
     width: 100vw;
-    /* Remove 100dvh, we will calculate height in JS */
+    height: calc(100dvh - 56px); /* fill remaining screen */
     z-index: 9999;
     background: white;
 }
