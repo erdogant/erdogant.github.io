@@ -235,15 +235,14 @@ input[type="text"]:hover {
     margin: 10px;
     border-radius: 10px;
     overflow: hidden;
+    /* Reserve space to prevent collapse before image loads */
+    min-height: 80px;
 }
 
 .logo-container img {
-    display: block;
-    width: 100%;
     max-width: 100%;
     height: auto;
-    /* Adjust to your logo's actual aspect ratio to prevent layout shifts */
-    aspect-ratio: 3 / 1;
+    display: block;
     margin: 0 auto;
     cursor: pointer;
     transition: transform 0.2s;
