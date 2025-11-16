@@ -206,12 +206,16 @@
    <label_h1>METAR</label_h1>
 
     <div class="button-row">
-        <button id="metar-taf-embed-departure" style="transition: background-color 0.3s; z-index: 1">Load METAR</button>
-        <input type="text" id="datetime-metar-taf-departure" placeholder="Date and Time for METAR" style="transition: background-color 0.3s">
+        <button id="metar-widget-btn-departure" onclick="window.retrieve_metar_and_widget('DEPARTURE')" style="transition: background-color 0.3s; z-index: 1">Load METAR</button>
+        <input type="text" id="datetime-metar-taf-departure" placeholder="Date and Time for METAR" style="transition: background-color 0.3s" readonly title="The UTC date/time for the retrieved METAR data.">
+    </div>
+    <div class="button-row">
+        <textarea id="metar-field-departure" placeholder="METAR Information" style="transition: background-color 0.3s; width: 100%; min-height: 80px; max-height: 120px; resize: vertical; padding: 8px; box-sizing: border-box;" title="METAR information for the departure aerodrome is shown here after automatically retrieved." aria-label="METAR Information"></textarea>
     </div>
 
     <div id="departureWidgetContainer" style="display: flex; justify-content: center; align-items: center;"></div>
 
+    <label_h1>Save Departure Information</label_h1>
 
     <div class="button-row">
         <button id="save_fields_btn_departure" style="background-color: #4CAF50; color: white;" title="Save fields for this Aerodrome">Save Aerodrome</button>
@@ -303,11 +307,16 @@
         <label_h1>METAR</label_h1>
 
         <div class="button-row">
-            <button id="metar-taf-embed-arrival" style="transition: background-color 0.3s; z-index: 1">Load METAR</button>
-            <input type="text" id="datetime-metar-taf-arrival" placeholder="Date and Time" style="transition: background-color 0.3s">
+            <button id="metar-widget-btn-arrival" onclick="window.retrieve_metar_and_widget('ARRIVAL')" style="transition: background-color 0.3s; z-index: 1">Load METAR</button>
+            <input type="text" id="datetime-metar-taf-arrival" placeholder="Date and Time" style="transition: background-color 0.3s" readonly title="The UTC date/time for the retrieved METAR data.">
+        </div>
+        <div class="button-row">
+            <textarea id="metar-field-arrival" placeholder="METAR Information" style="transition: background-color 0.3s; width: 100%; min-height: 80px; max-height: 120px; resize: vertical; padding: 8px; box-sizing: border-box;" title="METAR information for the arrival aerodrome is shown here after automatically retrieved." aria-label="METAR Information"></textarea>
         </div>
 
         <div id="arrivalWidgetContainer" style="display: flex; justify-content: center; align-items: center;"></div>
+
+        <label_h1>Save Arrival Information</label_h1>
 
         <div class="button-row">
             <button id="save_fields_btn_arrival" style="background-color: #4CAF50; color: white;" title="Save fields for this Aerodrome">Save Aerodrome</button>
@@ -1648,24 +1657,13 @@
 </script>
 
 
-
 <script>
+    // Set datetime field in the GENERAL TAB
     document.getElementById('set_datetime_btn').addEventListener('click', () => {
-      /*Update datetime field to current time.
-      Updates the datetime input field with the current date and time in format DD-MM-YYYY HH:MM.
-      The button click handler sets the input value to the current timestamp when clicked.
-      */
-	const now = new Date();
-	const day = String(now.getDate()).padStart(2, '0');
-	const month = String(now.getMonth() + 1).padStart(2, '0');
-	const year = now.getFullYear();
-	const hours = String(now.getHours()).padStart(2, '0');
-	const minutes = String(now.getMinutes()).padStart(2, '0');
-	document.getElementById('DATETIME').value = `${day}-${month}-${year} ${hours}:${minutes}`;
-	});
-</script>
+      /* Update datetime field to current time. */
+      document.getElementById('DATETIME').value = nowtime(utc=false)
+    });
 
-<script>
 
     // Add save button functionality
     document.getElementById('save_fields_btn')?.addEventListener('click', () => {
@@ -1720,6 +1718,24 @@
       }
     });
 
+    function openAerodromeMap(fname) {
+        const latlon = window.flight_plan_data[`${fname}_LATLON`];
+        const icao = window.flight_plan_data[`${fname}_ICAO`]
+        if (latlon && latlon[0] != null && latlon[1] != null) {
+            const [lat, lon] = [parseFloat(latlon[0]), parseFloat(latlon[1])];
+            const url = `https://www.google.com/maps?q=${lat},${lon}&z=14`;
+            // const url = `https://metar-taf.com/airport/${icao}`;
+            window.open(url, '_blank');
+        } else {
+            console.log(`No coordinates available for ${fname} aerodrome`);
+        }
+    }
+
+</script>
+
+<script>
+    /* THIS PART CONTAINS THE METAR FUNCTIONS */
+
     function checkMetarAge() {
       /* Check datetime of METAR data and update UI colors.
        *
@@ -1730,7 +1746,8 @@
        */
         function updateColors(prefix) {
             const dateField = document.getElementById(`datetime-metar-taf-${prefix}`);
-            const button = document.getElementById(`metar-taf-embed-${prefix}`);
+            const button = document.getElementById(`metar-widget-btn-${prefix}`);
+            const metarField = document.getElementById(`metar-field-${prefix}`);
             if (!dateField?.value) return;
 
             // Parse the date parts
@@ -1743,33 +1760,17 @@
             metarTime.setFullYear(parseInt(year), parseInt(month) - 1, parseInt(day));
             metarTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
 
-            const now = new Date();
+            const now = nowtime(utc=true);
             const diff = now - metarTime;
             const isOld = diff > 10 * 60 * 1000; // 10 minutes in milliseconds
 
             dateField.style.backgroundColor = isOld ? '#ffebee' : '';
             button.style.backgroundColor = isOld ? '#ffebee' : '';
+            metarField.style.backgroundColor = isOld ? '#ffebee' : '';
         }
 
         updateColors('departure');
         updateColors('arrival');
-    }
-
-    // Initial check and start interval
-    checkMetarAge();
-    setInterval(checkMetarAge, 60000); // Check every minute
-
-    function openAerodromeMap(fname) {
-        const latlon = window.flight_plan_data[`${fname}_LATLON`];
-        const icao = window.flight_plan_data[`${fname}_ICAO`]
-        if (latlon && latlon[0] != null && latlon[1] != null) {
-            const [lat, lon] = [parseFloat(latlon[0]), parseFloat(latlon[1])];
-            const url = `https://www.google.com/maps?q=${lat},${lon}&z=14`;
-            // const url = `https://metar-taf.com/airport/${icao}`;
-            window.open(url, '_blank');
-        } else {
-            console.log(`No coordinates available for ${fname} aerodrome`);
-        }
     }
 
     function createMetarWidget(containerId, icao, name, uniqueSuffix) {
@@ -1788,7 +1789,7 @@
         console.log(`🛫 Creating METAR widget for ${icao}`);
         if (icao === 'unknown') {
             window.alert("Please fill in ICAO field first before loading METAR data");
-            return;
+            return false;
         }
 
         // Clear previous widget (if any)
@@ -1818,49 +1819,255 @@
 
         // Append script to container
         container.appendChild(script);
+
+        return true;
+    }
+
+
+    function nowtime(utc = false) {
+        // Return current date/time as "DD-MM-YYYY HH:MM"
+        // Coerce utc to boolean to be robust against truthy/falsy inputs
+        const now = new Date();
+        const pad = (n) => String(n).padStart(2, '0');
+
+        if (utc) {
+            const day = pad(now.getUTCDate());
+            const month = pad(now.getUTCMonth() + 1);
+            const year = now.getUTCFullYear();
+            const hours = pad(now.getUTCHours());
+            const minutes = pad(now.getUTCMinutes());
+            return `${day}-${month}-${year} ${hours}:${minutes}`;
+        } else {
+            const day = pad(now.getDate());
+            const month = pad(now.getMonth() + 1);
+            const year = now.getFullYear();
+            const hours = pad(now.getHours());
+            const minutes = pad(now.getMinutes());
+            return `${day}-${month}-${year} ${hours}:${minutes}`;
+        }
+    }
+
+
+    function formatDateDMY(datetimeString) {
+        // Expecting: "16/11/2025 11:18"
+
+        // Not in expected DD/MM/YYYY format — bail out early
+        if (typeof datetimeString !== 'string' || datetimeString.indexOf('/') === -1) {
+            return datetimeString;
+        }
+        const [datePart, timePart] = datetimeString.split(" ");
+        const [day, month, year] = datePart.split("/");
+
+        // console.log("datePart:", datePart);
+        // console.log("timePart:", timePart);
+        // console.log("day:", day);
+        // console.log("month:", month);
+        // console.log("year:", year);
+
+        // Pad day/month if needed and validate
+        const dd = day.padStart(2, "0");
+        const mm = month.padStart(2, "0");
+        const yyyy = year;
+
+        return `${dd}-${mm}-${yyyy} ${timePart}`;
+    }
+
+    async function fetch_metar(icao, splitlines = true, decoded = false) {
+        const url = decoded
+            ? `https://tgftp.nws.noaa.gov/data/observations/metar/decoded/${icao}.TXT`
+            : `https://tgftp.nws.noaa.gov/data/observations/metar/stations/${icao}.TXT`;
+
+        const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+
+        try {
+            const response = await fetch(proxy);
+            const json = await response.json();
+
+            if (!json.contents) return null, null;
+
+            // Split the contents into date / metar info
+            metar_data = splitlines ? json.contents.split("\n") : json.contents;
+
+            // console.log(metar_data);
+            if (metar_data) {
+                metar_info = metar_data[1];
+                metar_date = metar_data[0];
+            }
+            if (metar_date !== '') {
+                metar_date = formatDateDMY(metar_date);
+            }
+
+            // console.log(metar_info);
+            // console.log(metar_date);
+            return [metar_info, metar_date];
+
+        } catch (err) {
+            return null, null;
+        }
     }
 
     // Event listener for button
-    document.addEventListener('DOMContentLoaded', () => {
-        document.getElementById('metar-taf-embed-departure')?.addEventListener('click', () => {
-            const name = document.getElementById('DEPARTURE_NAME').value || 'Unknown Airport';
-            const icao = document.getElementById('DEPARTURE_ICAO').value.toUpperCase() || 'unknown';
-            // Create the widget
-            createMetarWidget('departureWidgetContainer', icao, name, 'DEPARTURE');
-            // Update datetime field with current time
-            const now = new Date();
-            const dateStr = String(now.getDate()).padStart(2, '0') + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + now.getFullYear() + ' ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
-            // Reset colors
-            const button = document.getElementById('metar-taf-embed-departure');
-            const dateField = document.getElementById('datetime-metar-taf-departure');
-            button.style.backgroundColor = '';
-            dateField.style.backgroundColor = '';
-            dateField.value = dateStr;
-        });
+    // document.addEventListener('DOMContentLoaded', () => {
+    //     document.getElementById('metar-widget-btn-departure')?.addEventListener('click', async () => {
+    //         const name = document.getElementById('DEPARTURE_NAME').value || '';
+    //         const icao = document.getElementById('DEPARTURE_ICAO').value.toUpperCase() || '';
+    //         let metar_info = '';
+    //         let metar_date = nowtime(utc=true)
 
-        document.getElementById('metar-taf-embed-arrival')?.addEventListener('click', () => {
-            const name = document.getElementById('ARRIVAL_NAME').value || 'Unknown Airport';
-            const icao = document.getElementById('ARRIVAL_ICAO').value.toUpperCase() || 'unknown';
-            // Create the widget
-            createMetarWidget('arrivalWidgetContainer', icao, name, 'ARRIVAL');
-            // Update datetime field with current time
-            const now = new Date();
-            const dateStr = String(now.getDate()).padStart(2, '0') + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + now.getFullYear() + ' ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
-            // Reset colors
-            const button = document.getElementById('metar-taf-embed-arrival');
-            const dateField = document.getElementById('datetime-metar-taf-arrival');
-            button.style.backgroundColor = '';
-            dateField.style.backgroundColor = '';
-            dateField.value = dateStr;
+    //         try {
+    //             // Fetch METAR data from url
+    //             metar_data = await fetch_metar(icao, true, false);
+    //             console.log(metar_data);
 
-            // Fetch metar data using the async fetchMetar and populate ARRIVAL_METAR
-            // const arrivalMETAR = await fetchMetar(icao, true, false);
-            // console.log('arrivalMETAR:', arrivalMETAR);
+    //             if (metar_data) {
+    //               metar_info = metar_data[1]
+    //               metar_date = metar_data[0]
+    //             }
+    //             // Set the original METAR datetime
+    //             if (metar_date !== '') {
+    //                 metar_date = formatDateDMY(metar_date)
+    //                 // console.log("METAR datetime:", metar_date);
+    //             }
 
-        });
-    });
+    //         } catch (error) {
+    //             console.log("Error retrieving METAR data: " + error);
+    //         }
 
-    </script>
+    //         // Create the widget
+    //         var metarWidgetResult = createMetarWidget('departureWidgetContainer', icao, name, 'DEPARTURE');
+    //         // If createMetarWidget indicates no result or an issue, return early
+    //         if (!metarWidgetResult) {
+    //             console.log("METAR widget not created, returning early.");
+    //             return;
+    //         }
+
+    //         // Reset colors for the DEPARTURE GUI
+    //         const button = document.getElementById('metar-widget-btn-departure');
+    //         const dateField = document.getElementById('datetime-metar-taf-departure');
+    //         button.style.backgroundColor = '';
+    //         dateField.style.backgroundColor = '';
+    //         // Update datetime field with current time
+    //         dateField.value = metar_date;
+
+    //     });
+
+    //     document.getElementById('metar-widget-btn-arrival')?.addEventListener('click', async () => {
+    //         const name = document.getElementById('ARRIVAL_NAME').value || '';
+    //         const icao = document.getElementById('ARRIVAL_ICAO').value.toUpperCase() || '';
+
+    //         let metar_info = '';
+    //         let metar_date = nowtime(utc=true)
+
+    //         try {
+    //             // Fetch METAR data from url
+    //             metar_data = await fetch_metar(icao, true, false);
+
+    //             if (metar_data) {
+    //               metar_info = metar_data[1]
+    //               metar_date = metar_data[0]
+    //             }
+    //             // Set the original METAR datetime
+    //             if (metar_date !== '') {
+    //                 metar_date = formatDateDMY(metar_date)
+    //                 // console.log("METAR datetime:", metar_date);
+    //             }
+
+    //         } catch (error) {
+    //             console.log("Error retrieving METAR data: " + error);
+    //         }
+
+    //         // Create the widget
+    //         var metarWidgetResult = createMetarWidget('arrivalWidgetContainer', icao, name, 'ARRIVAL');
+    //         // If createMetarWidget indicates no result or an issue, return early
+    //         if (!metarWidgetResult) {
+    //             console.log("METAR widget not created, returning early.");
+    //             return;
+    //         }
+
+    //         // Reset colors for the ARRIVAL GUI
+    //         const button = document.getElementById('metar-widget-btn-arrival');
+    //         const dateField = document.getElementById('datetime-metar-taf-arrival');
+    //         button.style.backgroundColor = '';
+    //         dateField.style.backgroundColor = '';
+    //         // Update datetime field with current time
+    //         dateField.value = metar_date;
+
+    //     });
+    // });
+
+    async function retrieve_metar_and_widget(prefix) {
+        console.log('Retrieving METAR and widget for prefix:', prefix);
+
+        // Get the values from the input fields
+        const name = document.getElementById(prefix.trim().toUpperCase() + '_NAME').value || '';
+        const icao = document.getElementById(prefix.trim().toUpperCase() + '_ICAO').value || '';
+        // Get the button element that we can fill with METAR data
+        const button = document.getElementById('metar-widget-btn-' + prefix.toLowerCase());
+        const dateField = document.getElementById('datetime-metar-taf-' + prefix.toLowerCase());
+        const metarField = document.getElementById('metar-field-' + prefix.toLowerCase());
+        let metar_icao = '';
+        let datetimeStr = nowtime(true); // UTC
+
+        // If ICAO is empty or not provided, notify the user and return early
+        if (!icao) {
+            alert("Please fill in ICAO field first before loading METAR data");
+            return;
+        }
+
+        metarField.value = 'Be patient, fetching METAR data...';
+
+        // Disable button with visual feedback
+        button.disabled = true;
+        button.setAttribute('aria-disabled', 'true');
+        button.style.opacity = '0.6';
+        button.style.cursor = 'Be patient, fetching METAR data...';
+
+
+        // console.log('Name:', name);
+        // console.log('ICAO:', icao);
+
+        // Create the widget
+        const metarWidgetResult = createMetarWidget(prefix.toLowerCase() + 'WidgetContainer', icao, name, prefix.toUpperCase());
+
+        // Fetch METAR data from URL
+        try {
+            metar = await fetch_metar(icao, true, false);
+            metar_icao = metar[0];
+            datetimeStr = metar[1];
+        } catch (error) {
+            console.log(`Error retrieving METAR data for ${prefix}:`, error);
+        }
+
+        if (!metarWidgetResult) {
+            console.log(`METAR widget for ${prefix} not created, returning early.`);
+            return;
+        }
+
+        // Reset GUI colors
+        button.style.backgroundColor = '';
+        dateField.style.backgroundColor = '';
+        metarField.style.backgroundColor = '';
+        // Update datetime field
+        dateField.value = datetimeStr;
+        metarField.value = metar_icao;
+        window.flight_plan_data[`${prefix}_METAR_ICAO`] = metar_icao;
+
+        // Enable
+        button.disabled = false;
+        button.style.cursor = 'pointer';
+        button.setAttribute('aria-disabled', 'false');
+        button.style.opacity = '1';
+
+        console.log(`METAR data for ${prefix} retrieved successfully: ${metar_icao} and ${datetimeStr}`);
+
+
+    }
+
+    // Initial check and start interval and Check every minute
+    checkMetarAge();
+    setInterval(checkMetarAge, 60000);
+
+  </script>
 
 <script>
 
@@ -2634,29 +2841,6 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         js.document.getElementById('OVERHEAD2').value = ''
         js.document.getElementById('SQUAWK2').value = ''
 
-        # field_ids = [
-        #     'FIC_NAME',
-        #     'FIC_FREQUENCY',
-        #     'FIC_NAME2',
-        #     'FIC_FREQUENCY2'
-        #     'SQUAWK',
-        #     'OVERHEAD',
-        #     'SQUAWK2',
-        #     'OVERHEAD2',
-        # ]
-
-        # # Clear GUI fields
-        # for field_id in field_ids:
-        #     element = js.document.getElementById(field_id)
-        #     if element:
-        #         print(f"  Clearing {field_id}")
-        #         element.value = ''
-        #         # Ensure the value is actually cleared
-        #         if element.value:
-        #             print(f"⚠️ Warning: Failed to clear {field_id}")
-        #             # Try forcing the clear
-        #             js.eval(f'document.getElementById("{field_id}").value = ""')
-
         # Clear enroute fields
         enroute_keys = [
             'FIC_NAME', 'FIC_FREQUENCY', 'FIC_NAME2', 'FIC_FREQUENCY2',
@@ -2674,16 +2858,28 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         # Clear the METAR container
         widget_id = f"{fname.lower()}WidgetContainer"
         widget = js.document.getElementById(widget_id)
+
+        # Clear the container instead of removing it
         if widget:
-            widget.innerHTML = ''  # Clear the container instead of removing it
+            widget.innerHTML = ''
             print(f"🧹 Cleared METAR widget for {fname}")
 
         # Clear the datetime field
         datetime_field = js.document.getElementById(f'datetime-metar-taf-{fname.lower()}')
         datetime_field.value = ''
-        js.window.flight_plan_data['METAR_DATETIME'] = ''
-        print(f"🧹 Cleared METAR datetime for {fname}")
+        datetime_field.style.backgroundColor = '';
+        # Clear button to normal
+        button = js.document.getElementById(f'metar-widget-btn-{fname.lower()}')
+        button.style.backgroundColor = '';
+        # Clear the METAR field
+        metarField = js.document.getElementById(f'metar-field-{fname.lower()}')
+        metarField.value = ''
+        metarField.style.backgroundColor = '';
 
+        # Clear datetime
+        js.window.flight_plan_data[f'{fname.upper()}_METAR'] = ''
+        js.window.flight_plan_data[f'{fname.upper()}_METAR_ICAO'] = ''
+        print(f"🧹 Cleared METAR datetime for {fname}")
 
 
 
@@ -2895,51 +3091,6 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         # Return
         return expect_runway
 
-    def fetch_metar(ICAO, splitlines=True, decoded=False):
-        """Fetch METAR Data from tgftp.
-
-        Examples
-        --------
-        # Parse RAW into readable
-        # metar_decoded = Metardecode.Metar(metar_data[1])
-        # Structure
-        # d_METAR = create_metar_dict(obs)
-
-        References
-        ----------
-        * National Oceanic and Atmospheric Administration
-        * https://tgftp.nws.noaa.gov/data/observations/metar/stations/{ICAO}.TXT
-        * https://tgftp.nws.noaa.gov/data/observations/metar/decoded/{ICAO}.TXT
-
-        """
-        # Default
-        metar_data = None
-        # Fetch data from the URL
-        url = make_metar_url(str(ICAO), decoded=decoded)
-
-        try:
-            # Fetch data from url
-            response = requests.get(url, timeout=5)
-            # Continue
-            if response.status_code == 200:
-                # Parse data
-                metar_data = response.text
-                # Extract relevant information
-                if splitlines:
-                    metar_data = metar_data.split('\n')
-        except:
-            metar_data = None
-
-        # Set to None
-        if metar_data==[]: metar_data = None
-        # Return
-        return metar_data
-
-    def make_metar_url(ICAO, decoded=False):
-        if decoded:
-            return "https://tgftp.nws.noaa.gov/data/observations/metar/decoded/" + ICAO.strip().upper() + ".TXT"
-        else:
-            return "https://tgftp.nws.noaa.gov/data/observations/metar/stations/" + ICAO.strip().upper() + ".TXT"
 
 
     async def create_new_flightplan():
@@ -4444,7 +4595,6 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
     js.window.save_enroute_to_json = save_enroute_to_json
     js.window.save_aerodrome_to_json = save_aerodrome_to_json
     js.window.load_aerodrome_from_json = load_aerodrome_from_json
-    # js.window.fetch_metar = fetch_metar
     js.window.clear_cache = clear_cache
 
     # ATC
