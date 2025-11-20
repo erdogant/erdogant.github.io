@@ -404,14 +404,20 @@ input[type="text"]:hover {
     border-radius: 4px;
 }
 
-body.mobile-fullscreen #map-container {
-    position: fixed;
+.mobile-fullscreen {
+    position: fixed !important;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: calc(100dvh); /* fill remaining screen */
-    z-index: 9999;
-    background: white;
+    right: 0;
+    bottom: 0;
+    width: 100vw !important;
+    height: 100vh !important;
+    /* iPhone notch safe-area */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    overflow: hidden !important;
+    z-index: 9990;
+    background: #000; /* Prevent white bars */
 }
 
 #route-map {
@@ -574,4 +580,10 @@ body.mobile-fullscreen #fullscreen-btn .fullscreen-enter {
 }
 body.mobile-fullscreen #fullscreen-btn .fullscreen-exit {
     display: block !important;
+}
+
+body.mobile-fullscreen #bottom-container,
+body.mobile-fullscreen #bottom-buttons,
+body.mobile-fullscreen .output-box {
+    display: none !important;
 }

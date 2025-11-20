@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<!--/**
-    * This is the JavaScript widget used by SkyWalk.
-    *
-    * @copyright Copyright (c) 2025 Erdogan Taskesen
-    * @license
-    * @author Erdogan Taskesen <erdogant@gmail.com>
-    */
+    <!--
+        This is the JavaScript widget for SkyWalk.
+        @copyright Copyright (c) 2025 Erdogan Taskesen
+        @license
+        @author Erdogan Taskesen <erdogant@gmail.com>
     -->
+
 <head>
   <meta charset="UTF-8">
     <!--RUN FULL SCREEN-->
@@ -180,8 +179,8 @@
 	  </div>
 
 	  <div class="button-row">
-			<input type="text" id="DEPARTURE_RUNWAY" placeholder="Runway Number" title="Runway number is automatically predicted when retrieving METAR data" aria-label="Runway number is automatically predicted when retrieving METAR data">
-		<input type="text" id="DEPARTURE_ELEVATION" placeholder="Field Elevation (ft)">
+		<input type="text" id="DEPARTURE_RUNWAY" placeholder="Runway Number" title="Runway number is automatically predicted when retrieving METAR data" aria-label="Runway number is automatically predicted when retrieving METAR data">
+		<input type="text" id="DEPARTURE_ELEVATION" placeholder="Field Elevation (ft)" title="Departure aerodrome elevation in feet (ft)." aria-label="Departure field elevation in feet">
 	  </div>
 
 	  <!-- Line 6: ROUTE_NAME, ROUTE_ALTITUDE, CIRCUIT_ALTITUDE inputs -->
@@ -281,7 +280,7 @@
 
         <div class="button-row">
             <input type="text" id="ARRIVAL_RUNWAY" placeholder="Runway Number">
-            <input type="text" id="ARRIVAL_ELEVATION" placeholder="Field Elevation (ft)">
+            <input type="text" id="ARRIVAL_ELEVATION" placeholder="Field Elevation (ft)" title="Arrival aerodrome elevation in feet (ft)." aria-label="Arrival field elevation in feet">
         </div>
 
         <!-- Line 6: ROUTE_NAME, ROUTE_ALTITUDE, CIRCUIT_ALTITUDE inputs -->
@@ -2099,7 +2098,6 @@
           }
     }
 
-    // window.retrieve_metar_and_widget = async function(prefix) {
     async function retrieve_metar_and_widget(prefix) {
         console.log('Retrieving METAR and widget for prefix:', prefix);
 
@@ -2134,8 +2132,15 @@
 
         // Fetch METAR data from URL
         try {
-            metar = await fetch_metar(icao, true, false);
+            closest_icao_metar_station = get_top_metar_stations(prefix, n=5)
+            console.log('Closest METAR station:')
+            console.log(closest_icao_metar_station[0]);
+
+            // Fetch the METAR data for the closest station
+            metar = await fetch_metar(closest_icao_metar_station[0], true, false);
             // console.log('Fetched METAR:', metar);
+
+            // Store data
             metar_icao = metar[0];
             datetimeStr = metar[1];
         } catch (error) {
@@ -2582,8 +2587,8 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
 
     # Main loader: called from JS
-    async def import_aerodrome_selected(fname, country):
-        print('----> import_aerodrome_selected()')
+    async def import_country_selected(fname, country):
+        print('----> import_country_selected()')
         print(f"🌍 Loading {fname} aerodrome data for: {country}")
         zip_bytes = None
 
@@ -2601,7 +2606,6 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                 # print(df.head().to_string())
                 # print(f"Available columns: {df.columns.tolist()}")
 
-
                 try:
                     # Store data in global variable
                     if fname == 'DEPARTURE':
@@ -2610,7 +2614,8 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                         js.window.AERODROME_ARRIVAL_DATA = df.to_dict('records')
 
                     # Combine departure and arrival data when possible and store in global variable
-                    concat_aerodromes()
+                    concat_country_aerodromes()
+
                 except AttributeError as e:
                     error_msg = f"Error processing aerodrome data: {str(e)}"
                     print(f"❌ {error_msg}")
@@ -2647,14 +2652,136 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             js.window.alert(error_msg)
             js.document.getElementById('loading-spinner').style.display = 'none'
             return
-        else:
-            print("⚠️ No data available")
 
         # Concat airspaces
         concat_airspaces(country)
 
         # Hide loading spinner when done
         js.document.getElementById('loading-spinner').style.display = 'none'
+
+
+    def get_top_metar_stations(fname, n=5, return_df=False):
+        # Retrieve all metar stations for the country
+        print(f'>func: get_top_metar_stations({fname}, {n})')
+
+        icao = js.window.flight_plan_data[f'{fname}_ICAO']
+        lat = js.window.flight_plan_data[f'{fname}_LATLON'][0]
+        lon = js.window.flight_plan_data[f'{fname}_LATLON'][1]
+
+        print(f'icao: {icao}, lat: {lat}, lon: {lon}')
+
+        # Import METAR data
+        df_stations = get_metar_stations(todf=True)
+        # Default is all metar stations
+        closest_metar_stations = df_stations['icao'].values
+
+        # If icao is in df_stations, then return
+        if icao in df_stations['icao'].values:
+            print(f'Found {icao} in METAR stations')
+            return [icao]
+
+        # Return all or selection
+        if (lat is not None) and (lon is not None):
+            # Compute haversine distance
+            df_stations['distance_to_target'] = haversine_distances(lat, lon, df_stations['lat'].values, df_stations['lon'].values)
+            # df_stations['distance_to_target'] = df_stations.apply(lambda row: compute.haversine(row['lat'], row['lon'], lat, lon), axis=1)
+            # Sort on closest METAR stations
+            df_stations.sort_values(by='distance_to_target', inplace=True)
+            # Make a combined name
+            closest_metar_stations = df_stations['icao'].values
+            # print(df_stations)
+        else:
+            df_stations['distance_to_target'] = None
+
+        # Filter on top distance metar stations
+        if n is not None and n > 0:
+            closest_metar_stations = closest_metar_stations[0:int(n)]
+
+        print(df_stations)
+        print(closest_metar_stations)
+
+        # Return
+        if return_df:
+            return df_stations
+        else:
+            return closest_metar_stations
+
+
+    def get_metar_stations(fname=None, todf=True):
+        if fname == 'DEPARTURE':
+            AERODROME_DATA = window.AERODROME_DEPARTURE_DATA.copy()
+        elif fname == 'ARRIVAL':
+            AERODROME_DATA = window.AERODROME_ARRIVAL_DATA.copy()
+        else:
+            AERODROME_DATA = window.AERODROME_DATA.copy()
+
+        if todf:
+            icao_with_metar = [
+                {"icao": item["icao"], "lat": item["lat"], "lon": item["lon"], "country": item["country"]}
+                for item in AERODROME_DATA
+                if item.get("metar_station") is True
+            ]
+            icao_with_metar = pd.DataFrame(icao_with_metar)
+        else:
+            icao_with_metar = {
+                item["icao"]: {"lat": item["lat"], "lon": item["lon"], "country": item["country"]}
+                for item in AERODROME_DATA
+                if item.get("metar_station") is True
+            }
+
+        # Return
+        return icao_with_metar
+
+
+    def haversine_distances(lat1, lon1, lats, lons):
+        distances = np.array(list(map(lambda x, y: haversine(lat1, lon1, x, y), lats, lons)))
+        return distances
+
+
+    def haversine(lat1, lon1, lat2, lon2):
+        """
+        Calculate the Haversine distance between two sets of latitude and longitude coordinates.
+
+        Parameters
+        ----------
+        lat1 : float
+            Latitude of the first point in degrees.
+        lon1 : float
+            Longitude of the first point in degrees.
+        lat2 : float
+            Latitude of the second point in degrees.
+        lon2 : float
+            Longitude of the second point in degrees.
+
+        Returns
+        -------
+        float
+            The Haversine distance between the two points in kilometers.
+
+        Example
+        -------
+        >>> haversine(37.7749, -122.4194, 34.0522, -118.2437)
+        >>> 616.7752155325443
+
+        """
+        # if (lat1 is None) or (lon1 is None) or (lat2 is None) or (lon2 is None):
+        #     print(lat1)
+        #     return None
+
+        R = 6371  # Radius of the Earth in kilometers
+
+        # Convert latitude and longitude from degrees to radians
+        lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
+
+        # Haversine formula
+        dlat = lat2 - lat1
+        dlon = lon2 - lon1
+        a = math.sin(dlat / 2) ** 2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2) ** 2
+        c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+        # Distance in kilometers
+        distance = R * c
+        return distance
 
 
     def concat_airspaces(country):
@@ -2678,7 +2805,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         # print(js.window.airspaces.keys())
 
 
-    def concat_aerodromes():
+    def concat_country_aerodromes():
         # Combine departure and arrival data when possible and store in global variable
 
         # Check whether data is available
@@ -3192,7 +3319,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         wind_strength = wind_dict.get('speed', '')
         # Get all listed runways for this ICAO
 
-        # Compute the expected runway
+        # Compute the expected runway number
         if (len(runways) > 0) and (wind_direction is not None) and is_numeric(wind_direction):
             results = list(map(lambda x: runway_headwind(wind_direction, wind_strength, x), runways))
             if np.any(results):
@@ -3663,9 +3790,9 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
             # Add data to javascript global cache. This is needed for the aerodrome selection and plotting on the map
             if flight_plan_dict['DEPARTURE_COUNTRY'] != '':
-                await import_aerodrome_selected('DEPARTURE', flight_plan_dict['DEPARTURE_COUNTRY'])
+                await import_country_selected('DEPARTURE', flight_plan_dict['DEPARTURE_COUNTRY'])
             if flight_plan_dict['ARRIVAL_COUNTRY'] != '':
-                await import_aerodrome_selected('ARRIVAL', flight_plan_dict['ARRIVAL_COUNTRY'])
+                await import_country_selected('ARRIVAL', flight_plan_dict['ARRIVAL_COUNTRY'])
 
             print(f"✅ Flightplan '{plan_name}' loaded successfully")
         except Exception as e:
@@ -4521,8 +4648,9 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         Returns:
         str: Content of the text file as a string.
         """
-        if verbose>=3: print('Function: read_file_from_url()')
+        if verbose>=3: print('>Function: read_file_from_url()')
         lines_in_file = []
+
         if url == '': return None
 
         try:
@@ -4540,7 +4668,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                         lines_in_file.append(processed_line)
 
                     # Show succes message
-                    if verbose>=3: print('   > File read and processed successfully from URL.')
+                    logger.info(f'   > File read and processed successfully from URL.')
             else:
                 lines_in_file = None
         except Exception as e:
@@ -4944,6 +5072,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
     js.window.save_aerodrome_to_json = save_aerodrome_to_json
     js.window.load_aerodrome_from_json = load_aerodrome_from_json
     js.window.clear_cache = clear_cache
+    js.window.get_top_metar_stations = get_top_metar_stations
 
     # ATC
     js.window.create_summary_atc = create_proxy(create_summary_atc)
@@ -4951,9 +5080,9 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
     js.window.create_arrival_atc = create_proxy(create_arrival_atc)
     js.window.create_enroute_atc = create_proxy(create_enroute_atc)
 
-    # HELPERS FOR ATC
+    # HELPERS
     js.window.create_callsign_short = create_proxy(create_callsign_short)
-    js.window.import_aerodrome_selected = create_proxy(import_aerodrome_selected)
+    js.window.import_country_selected = create_proxy(import_country_selected)
     js.window.generate_summary_html = create_proxy(generate_summary_html)
     js.window.set_fontsizes = create_proxy(set_fontsizes)
 
@@ -4966,14 +5095,13 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
     js.window.update_general_gui_fields = update_general_gui_fields
     js.window.update_enroute_gui_fields = update_enroute_gui_fields
     js.window.update_aerodrome_image = update_aerodrome_image
+
     # CLEAR FIELDS
     js.window.clear_aerodrome_fields = clear_aerodrome_fields
     js.window.clear_aerodrome_image = clear_aerodrome_image
+    js.window.clear_enroute_fields = clear_enroute_fields
 
     js.window.cache_and_display_image = cache_and_display_image
-
-    # ENROUTE TAB
-    js.window.clear_enroute_fields = clear_enroute_fields
 
     # DATA FUNCTIONS
     js.window.get_default_data = get_default_data
@@ -5225,7 +5353,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
     // INITIALIZATOIN WHEN PYSCRIPT IS READY
     function checkPyScriptReady() {
       /**
-       * Checks if PyScript is ready by testing if key functions are available.
+       * Checks if PyScript is finished loading by testing if key functions are available.
        * Also initializes default flight plan data and settings if PyScript is ready.
        *
        * Key initializations:
@@ -5264,7 +5392,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
     new_plan_btn.onclick = async () => {
       try {
         // Check if PyScript is ready
-        if (!pyscriptReady) return alert("Please wait, PyScript is still loading...");
+        if (!pyscriptReady) return alert("Please wait, SkyWalk is initializing..");
 
         // Uncheck the airspace toggle
         const airspaceToggle = document.getElementById('airspace-toggle');
@@ -5543,12 +5671,14 @@ const COUNTRIES_DATA = [
   'Spain', 'Sweden', 'Switzerland', 'Turkey',
   'United Kingdom',
 
+  // Other
+  'Maldives',
+
   // Americas (North, Central, South, Caribbean)
-  'Brazil', 'Canada', 'Curacao', 'United States',
+  'Canada', 'Curacao', 'United States',
 
   // Oceania
-  'Australia', 'Fiji', 'Nauru',
-  'New Zealand', 'Palau', 'Papua New Guinea',
+  'Australia', 'New Zealand',
 ];
 
   function populateDropdown(selectId, dataArray) {
@@ -5577,7 +5707,7 @@ const COUNTRIES_DATA = [
         // Download the aerodrome data when the country changes
         document.getElementById(`${fname}_COUNTRY`).addEventListener("change", async function() {
             const country = this.value;
-            if (country && window.import_aerodrome_selected) {
+            if (country && window.import_country_selected) {
                 const spinner = document.getElementById('loading-spinner');
                 const spinnerText = spinner.querySelector('.spinner-text');
                 spinnerText.textContent = `Loading aerodrome data for ${country}...`;
@@ -5585,7 +5715,7 @@ const COUNTRIES_DATA = [
                 document.body.style.cursor = 'wait';
                 document.body.style.overflow = 'hidden';  // Prevent scrolling while loading
                 try {
-                    await window.import_aerodrome_selected(fname, country);
+                    await window.import_country_selected(fname, country);
                 } catch (error) {
                     console.error("Error importing aerodrome data:", error);
                     alert("Error loading aerodrome data. Please try again.");
