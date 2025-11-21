@@ -65,7 +65,7 @@
 		<a href="https://erdogant.github.io/skywalk-docs/pages/html/index.html" target="_blank">
 		  <img id="skywalk_logo" alt="SkyWalk">
 		</a>
-		<div class="version" style="margin-bottom: 5px; ">version: 0.4.3</div>
+		<div class="version" style="margin-bottom: 5px; ">version: 0.4.4</div>
 	  </div>
 
 
@@ -73,13 +73,13 @@
 	    <label_h1 style="margin: 0; text-align: center;">Flightplan</label_h1>
 	</div>
 
-	  <div class="button-row">
-			<button id="new_plan_btn">New Flightplan</button>
+	<div class="button-row">
+	    <button id="new_plan_btn">New Flightplan</button>
 		<select id="plan_spinner" onchange="this.value && window.load_flightplan()">
-		  <option value="">Load Flightplan</option>
+		    <option value="">Load Flightplan</option>
 		</select>
 		<button id="delete_btn" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">🗑️</button>
-	  </div>
+	</div>
 
 	  <!-- Flightplan Name row -->
 	  <div class="button-row">
@@ -210,11 +210,23 @@
 		<input type="text" id="DEPARTURE_ATC_TELEPHONE" placeholder="Telephone">
 	  </div>
 
-   <label_h1>METAR</label_h1>
+   <!--<label_h1>Save Departure Information</label_h1>-->
 
-    <div class="button-row">
-        <button id="metar-widget-btn-departure" onclick="window.retrieve_metar_and_widget('DEPARTURE')" style="transition: background-color 0.3s; z-index: 1">Load METAR</button>
+   <div class="button-row">
+        <button id="save_fields_btn_departure" style="background-color: #4CAF50; color: white;" title="Save custom fields for this aerodrome">Save Aerodrome Information</button>
     </div>
+
+
+    <hr>
+   <label_h1>METAR Information</label_h1>
+
+   <div class="button-row">
+        <button id="metar-widget-btn-departure" onclick="window.retrieve_metar_and_widget('DEPARTURE')" style="transition: background-color 0.3s; z-index: 1">Load METAR Information</button>
+        <!--<label style="display:flex; align-items:center; gap:6px; margin-left:6px; color:#666; font-size:12px;">
+            <input type="checkbox" id="metar-decoded-departure" title="Show decoded METAR (human-readable)" style="width:16px; height:16px; margin:0;"/>
+            <span>Decoded</span>
+        </label>-->
+   </div>
 
     <div style="display: flex; gap: 5px; margin-top: 2px;">
         <input type="text" id="metar-text-departure" readonly
@@ -237,18 +249,30 @@
         <textarea id="metar-field-departure" placeholder="METAR Information" style="transition: background-color 0.3s; width: 100%; min-height: 80px; max-height: 120px; resize: vertical; padding: 8px; box-sizing: border-box;" title="METAR information for the departure aerodrome is shown here after automatically retrieved." aria-label="METAR Information"></textarea>
     </div>
 
-
-
-
     <div id="departureWidgetContainer" style="display: flex; justify-content: center; align-items: center;"></div>
 
-    <label_h1>Save Departure Information</label_h1>
+    <hr>
+    <label_h1>Airport Weather</label_h1>
 
-    <div class="button-row">
-        <button id="save_fields_btn_departure" style="background-color: #4CAF50; color: white;" title="Save fields for this Aerodrome">Save Aerodrome</button>
+    <!-- Simple iframe for airportweather -->
+    <div class="button-row" style="overflow: hidden;">
+        <div id="departure-airportweather-container" style="width:100%; height:2400px; overflow:hidden; position:relative; display:none;">
+            <iframe
+            id="departure-airportweather-iframe"
+            src=""
+            width="100%"
+            height="6000"
+            frameborder="0"
+            style="border:0; min-height:1000px; overflow:hidden; margin-top:-200px; display:block;"
+            title="AirportWeather"
+            allowfullscreen
+            scrolling="no"
+            ></iframe>
+        </div>
     </div>
 
-    </div>
+
+</div>
 
 
     <!-- ============================================= -->
@@ -330,12 +354,17 @@
             <input type="text" id="ARRIVAL_ATC_TELEPHONE" placeholder="Telephone">
         </div>
 
-
-        <label_h1>METAR</label_h1>
+        <!--<label_h1>Save Arrival Information</label_h1>-->
 
         <div class="button-row">
-            <button id="metar-widget-btn-arrival" onclick="window.retrieve_metar_and_widget('ARRIVAL')" style="transition: background-color 0.3s; z-index: 1">Load METAR</button>
-            <!--<input type="text" id="datetime-metar-taf-arrival" placeholder="Date and Time" style="transition: background-color 0.3s" readonly title="The UTC date/time for the retrieved METAR data.">-->
+            <button id="save_fields_btn_arrival" style="background-color: #4CAF50; color: white;" title="Save custom fields for this Aerodrome">Save Aerodrome Information</button>
+        </div>
+
+
+        <label_h1>METAR Information</label_h1>
+
+        <div class="button-row">
+            <button id="metar-widget-btn-arrival" onclick="window.retrieve_metar_and_widget('ARRIVAL')" style="transition: background-color 0.3s; z-index: 1">Load METAR Information</button>
         </div>
         <div style="display: flex; gap: 5px; margin-top: 2px;">
             <input type="text" id="metar-text-arrival" readonly
@@ -359,13 +388,27 @@
 
         <div id="arrivalWidgetContainer" style="display: flex; justify-content: center; align-items: center;"></div>
 
-        <label_h1>Save Arrival Information</label_h1>
 
-        <div class="button-row">
-            <button id="save_fields_btn_arrival" style="background-color: #4CAF50; color: white;" title="Save fields for this Aerodrome">Save Aerodrome</button>
+
+        <!-- Simple iframe for airportweather -->
+        <div class="button-row" style="overflow: hidden;">
+            <div id="arrival-airportweather-container" style="width:100%; height:2400px; overflow:hidden; position:relative; display:none;">
+                <iframe
+                id="arrival-airportweather-iframe"
+                src=""
+                width="100%"
+                height="6000"
+                frameborder="0"
+                style="border:0; min-height:1000px; overflow:hidden; margin-top:-200px; display:block;"
+                title="AirportWeather"
+                allowfullscreen
+                scrolling="no"
+                ></iframe>
+            </div>
         </div>
 
-    </div>
+
+</div>
 
 
     <!-- =============== TAB ENROUTE =============== -->
@@ -1178,21 +1221,7 @@
                         runwayColor = '#2196F3'; //Blue for other
                     }
 
-                    // const airstripIcon = L.divIcon({
-                    //   className: 'airstrip-marker-icon',
-                    //   html: `
-                    //     <svg width="32" height="32" viewBox="0 0 32 32">
-                    //       <circle cx="16" cy="16" r="8" fill="${circleColor}" stroke="#333" stroke-width="1.5" fill-opacity="0.6" stroke-opacity="0.8"/>
-                    //       <rect x="14" y="4" width="4" height="24" fill="${runwayColor}" stroke="#333" stroke-width="1" fill-opacity="0.8" stroke-opacity="0.8"
-                    //         transform="rotate(${runwayNumbers[0]*10} 16 16)" />
-                    //     </svg>
-                    //   `,
-                    //   iconSize: [32, 32],
-                    //   iconAnchor: [16, 16]
-                    // });
-
                     const runwayRects = buildRunwayRects(runwayNumbers, runwayColor);
-
                     const airstripIcon = L.divIcon({
                         className: 'airstrip-marker-icon',
                         html: `
@@ -1201,7 +1230,7 @@
                                         fill="${circleColor}"
                                         stroke="#333"
                                         stroke-width="1.5"
-                                        fill-opacity="0.6"
+                                        fill-opacity="0.9"
                                         stroke-opacity="0.8"/>
                                 ${runwayRects}
                             </svg>
@@ -1918,13 +1947,21 @@
         return `${dd}-${mm}-${yyyy} ${timePart}`;
     }
 
-    async function fetch_metar(metar_stations, splitlines = true, decoded = false) {
+    async function fetch_metar(metar_stations, splitlines = true, decoded = false, prefix = '') {
+        console.log(`>Func: fetch_metar(${metar_stations})`);
 
         // Make a function that runs over the list of metar_stations
         const stations = Array.isArray(metar_stations) ? metar_stations : [metar_stations];
+        // const metarField = document.getElementById('metar-field-' + prefix.toLowerCase());
+
 
         for (const icao of stations) {
-            console.log(`Func: fetch_metar(${icao})`);
+            console.log(`  >Working on fetching report of ${icao}`);
+            // if (metarField) {
+            //     metarField.value = 'Attempting to fetch the report of METAR station: ' + icao;
+            // } else {
+            //     // optional debug: console.log('metarField not found for prefix:', prefix);
+            // }
 
             const url = decoded
                 ? `https://tgftp.nws.noaa.gov/data/observations/metar/decoded/${icao}.TXT`
@@ -1942,7 +1979,7 @@
                 metar_data = splitlines ? json.contents.split("\n") : json.contents;
                 console.log(metar_data);
 
-                if (metar_data) {
+                if (metar_data)  {
                     metar_info = metar_data[1];
                     metar_date = metar_data[0];
                 }
@@ -1962,7 +1999,7 @@
 
             } catch (err) {
                 // return null, null;
-                console.log(`Fetching METAR station report Failed`);
+                console.log(`  >Could not fetch the report of ${icao}`);
             }
         }
         // Return when empty and nothing found
@@ -2133,19 +2170,32 @@
      */
 
     async function setMetarButton(prefix, enable=true) {
+          const metarField = document.getElementById('metar-field-' + prefix.toLowerCase());
           const button = document.getElementById('metar-widget-btn-' + prefix.toLowerCase());
+          const dateField = document.getElementById('datetime-metar-taf-' + prefix.toLowerCase());
+          const metarText = document.getElementById('metar-text-' + prefix.toLowerCase());
+
           if (enable) {
             button.disabled = false;
             button.style.cursor = 'pointer';
             button.setAttribute('aria-disabled', 'false');
             button.style.opacity = '1';
             button.style.backgroundColor = '';
+            metarField.style.backgroundColor = '';
+            dateField.style.backgroundColor = '';
+            metarText.style.backgroundColor = '';
           } else {
             button.disabled = true;
             button.setAttribute('aria-disabled', 'true');
             button.style.opacity = '0.6';
             button.style.cursor = 'Be patient, fetching METAR data...';
+            metarText.value = ' ';
+            metarField.value = 'Be patient, fetching METAR data...';
+
             button.style.backgroundColor = '#ffebee'; // Change background color to light red
+            metarField.style.backgroundColor = '#ffebee';
+            dateField.style.backgroundColor = '#ffebee';
+            metarText.style.backgroundColor = '#ffebee';
           }
     }
 
@@ -2162,6 +2212,8 @@
         const metarField = document.getElementById('metar-field-' + prefix.toLowerCase());
         const metarText = document.getElementById('metar-text-' + prefix.toLowerCase());
         const runwayField = document.getElementById(prefix + '_RUNWAY');
+        // const decodedCheckbox = document.getElementById('metar-decoded-' + prefix.toLowerCase());
+        // const decoded = decodedCheckbox ? decodedCheckbox.checked : false;
 
         // Set default values
         let metar_icao = '';
@@ -2180,8 +2232,6 @@
 
         // Update button: Disable
         setMetarButton(prefix, enable=false);
-        metarField.value = 'Be patient, fetching METAR data...';
-        metarText.value = ' ';
 
         // Create the widget
         const metarWidgetResult = createMetarWidget(prefix.toLowerCase() + 'WidgetContainer', icao, name, prefix.toUpperCase());
@@ -2192,17 +2242,17 @@
             console.log('Closest METAR stations:')
             console.log(icao_stations);
 
-            // Fetch the METAR data for the closest station
-            metar = await fetch_metar(icao_stations, true, false);
+            // Fetch the METAR data for the closest station (pass decoded flag)
+            metar = await fetch_metar(icao_stations, true, false, prefix);
             // console.log('Fetched METAR:', metar);
 
             // Store data
             metar_info = metar[0];
             datetimeStr = metar[1];
-            metar_icao = metar[2];
+            station_icao = metar[2];
 
-            if (metar_icao) {
-                if (metarText) { metarText.value = 'Closest METAR station report is ' + metar_icao; }
+            if (station_icao) {
+                if (metarText) { metarText.value = 'Closest available METAR station is ' + station_icao; }
             } else {
                 if (metarText) { metarText.value = 'No nearby METAR stations found'; }
             }
@@ -2223,14 +2273,9 @@
         }
 
         // Update GUI elements
-        dateField.style.backgroundColor = '';
-        metarField.style.backgroundColor = '';
-        dateField.value = datetimeStr; // Update datetime field
+        dateField.value = datetimeStr;
         metarField.value = metar_info || metar_message;
-        setMetarButton(prefix, enable=true); // Update button: Enable
-
-        // Store METAR in flight plan data
-        window.flight_plan_data[`${prefix}_METAR_ICAO`] = metar_info;
+        setMetarButton(prefix, enable=true);
 
         // Update the expected runway based on wind direction and runway orientation
         if (metar_info != '') {
@@ -2242,12 +2287,41 @@
             // metarText.value = js.window.messages;
             // Change value of RUNWAY field in the the predicted runway
             if (runway_predicted) { runwayField.value = runway_predicted; }
-
             // Store RUNWAY number in flight plan data
             window.flight_plan_data[`${prefix}_RUNWAY`] = runway_predicted;
+            // Store METAR in flight plan data
+            window.flight_plan_data[`${prefix}_METAR_ICAO`] = metar_info;
         }
 
         console.log(`METAR data for [${prefix}]: [${metar_info}] with predicted runway [${runway_predicted}]`);
+
+
+        // Create widget for Airportweather
+        if (icao) {
+            // Show the AirportWeather iframe for the retrieved ICAO (for the given prefix)
+            try {
+                const awContainer = document.getElementById(prefix.toLowerCase() + '-airportweather-container');
+                const awIframe = document.getElementById(prefix.toLowerCase() + '-airportweather-iframe');
+                if (awIframe) {
+                    // set the iframe src to the ICAO page on AirportWeather
+                    awIframe.src = 'https://airportweather.com/' + icao.toLowerCase();
+                }
+                if (awContainer) {
+                    awContainer.style.display = 'block';
+                }
+            } catch (e) {
+                console.warn('Failed to show AirportWeather iframe:', e);
+            }
+        } else {
+            if (metarText) { metarText.value = 'No nearby METAR stations found'; }
+            // Hide AirportWeather container when no METAR ICAO available
+            try {
+                const awContainer = document.getElementById(prefix.toLowerCase() + '-airportweather-container');
+                if (awContainer) { awContainer.style.display = 'none'; }
+            } catch (e) { /* ignore */ }
+        }
+
+
 
     }
 
@@ -2761,8 +2835,8 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         icao_stations = list(df_stations['icao'].values[0:int(n)])
         # name_stations = list(df_stations['name'].values[0:int(n)])
 
-        print(df_stations)
-        print(icao_stations)
+        # print(df_stations)
+        # print(icao_stations)
         # print(name_stations)
 
         # Return
