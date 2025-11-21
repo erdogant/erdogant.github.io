@@ -431,7 +431,7 @@ input[type="text"]:hover {
 }
 
 /* When in fullscreen, remove border radius and ensure full coverage */
-.mobile-fullscreen #route-map {
+/*.mobile-fullscreen #route-map {
     border-radius: 0 !important;
     height: 100vh !important;
     height: 100dvh !important;
@@ -441,7 +441,8 @@ input[type="text"]:hover {
     background: #fff !important;
     width: 100% !important;
     height: 100% !important;
-}
+}*/
+
 .leaflet-control-container .leaflet-top {
     z-index: 1000;
 }
