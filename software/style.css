@@ -412,9 +412,12 @@ input[type="text"]:hover {
     bottom: 0;
     width: 100vw !important;
     height: 100vh !important;
-    /* iPhone notch safe-area */
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
+    height: 100dvh !important; /* Use dynamic viewport height for mobile */
+    /* iPhone notch safe-area - removed bottom padding to prevent cutoff */
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
     overflow: hidden !important;
     z-index: 9990;
     background: #000; /* Prevent white bars */
@@ -426,6 +429,14 @@ input[type="text"]:hover {
     border-radius: 4px;
     background: #fff;
 }
+
+/* When in fullscreen, remove border radius and ensure full coverage */
+.mobile-fullscreen #route-map {
+    border-radius: 0 !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+}
+
 .leaflet-container {
     background: #fff !important;
     width: 100% !important;
@@ -511,26 +522,6 @@ body:not(.mobile-fullscreen) #fullscreen-btn {
 
 #fullscreen-btn:hover {
     background-color: #f0f0f0;
-}
-
-/* FULLSCREEN MODE FIXED OVERLAY */
-.mobile-fullscreen {
-    position: fixed !important;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-
-    width: 100vw !important;
-    height: 100vh !important;
-
-    /* iPhone notch safe-area */
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
-
-    overflow: hidden !important;
-    z-index: 9990;
-    background: #000; /* Prevent white bars */
 }
 
 body.no-scroll {
