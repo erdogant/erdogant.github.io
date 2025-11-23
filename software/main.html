@@ -28,8 +28,8 @@
     <link rel="stylesheet" href="https://pyscript.net/releases/2025.8.1/core.css">
     <script type="module" src="https://pyscript.net/releases/2025.8.1/core.js"></script>
 
-</head>
 
+</head>
 
 
 <body>
@@ -560,7 +560,7 @@
                 <input type="checkbox" id="aviation-toggle" checked> Show Airports
             </label>
             <label>
-                <input type="checkbox" id="airspace-toggle" checked> Show Airspace
+                <input type="checkbox" id="airspace-toggle" checked> Show Airspaces
             </label>
         </div>
 
@@ -574,16 +574,16 @@
         <div class="button-row">
             <div style="display: flex; gap: 10px;">
                 <label>
-                    <input type="checkbox" id="TMZ-toggle">TMZ
+                    <input type="checkbox" id="TMZ-toggle" unchecked>TMZ
                 </label>
                 <label>
-                    <input type="checkbox" id="CTA_TMA-toggle">CTA/TMA
+                    <input type="checkbox" id="CTA_TMA-toggle" unchecked>CTA/TMA
                 </label>
                 <label>
-                    <input type="checkbox" id="danger-toggle">Danger
+                    <input type="checkbox" id="danger-toggle" unchecked>Danger
                 </label>
                 <label>
-                    <input type="checkbox" id="prohibited-toggle">Prohibited
+                    <input type="checkbox" id="prohibited-toggle" unchecked>Prohibited
                 </label>
             </div>
         </div>
@@ -1300,22 +1300,22 @@
     async function toggleAirspaceLayer() {
         const airspaceCheckbox = document.getElementById('airspace-toggle');
         const TMZCheckbox = document.getElementById('TMZ-toggle');
+        const CTACheckbox = document.getElementById('CTA_TMA-toggle');
+        const dangerCheckbox = document.getElementById('danger-toggle');
+        const prohibitedCheckbox = document.getElementById('prohibited-toggle');
 
         if (!airspaceCheckbox) return;
 
         if (!window.airspaces) {
             console.error('No airspace data available');
-            js.window.alert('No airspace data available for this region');
-            airspaceCheckbox.checked = false;
-            if (TMZCheckbox) TMZCheckbox.checked = false;
+            // airspaceCheckbox.checked = false;
+            TMZCheckbox.checked = false;
+            CTACheckbox.checked = false;
+            dangerCheckbox.checked = false;
+            prohibitedCheckbox.checked = false;
             return;
         }
 
-        // Sync TMZ checkbox state with main airspace toggle
-        if (TMZCheckbox) {
-            TMZCheckbox.checked = airspaceCheckbox.checked;
-            toggleTMZLayer(); // Update TMZ layer based on new state
-        }
 
         // Always clear existing layers first
         Object.values(airspaceLayerGroups).forEach(layer => {
@@ -1344,20 +1344,26 @@
             console.log('Removed all airspace layers');
         }
 
+        // Sync TMZ checkbox state with main airspace toggle
+        if (!TMZCheckbox.checked) {
+            // TMZCheckbox.checked = airspaceCheckbox.checked;
+            toggleTMZLayer();
+        }
+
         // Sync other checkboxes with main airspace toggle
-        const CTACheckbox = document.getElementById('CTA_TMA-toggle');
-        if (CTACheckbox) {
-            CTACheckbox.checked = airspaceCheckbox.checked;
+        if (!CTACheckbox.checked) {
+            // CTACheckbox.checked = airspaceCheckbox.checked;
+            toggleCTATMALayer();
         }
 
-        const dangerCheckbox = document.getElementById('danger-toggle');
-        if (dangerCheckbox) {
-            dangerCheckbox.checked = airspaceCheckbox.checked;
+        if (!dangerCheckbox.checked) {
+            // dangerCheckbox.checked = airspaceCheckbox.checked;
+            toggleDangerLayer();
         }
 
-        const prohibitedCheckbox = document.getElementById('prohibited-toggle');
-        if (prohibitedCheckbox) {
-            prohibitedCheckbox.checked = airspaceCheckbox.checked;
+        if (!prohibitedCheckbox.checked) {
+            // prohibitedCheckbox.checked = airspaceCheckbox.checked;
+            toggleProhibitedLayer();
         }
     }
 
@@ -1706,26 +1712,26 @@
 
 
         if (TMZCheckbox) {
-            TMZCheckbox.checked = airspaceCheckbox.checked;
+            // TMZCheckbox.checked = airspaceCheckbox.checked;
             toggleTMZLayer();
         }
         if (TMZCheckbox) {
             TMZCheckbox.addEventListener('change', toggleTMZLayer);
         }
         if (CTACheckbox) {
-            CTACheckbox.checked = airspaceCheckbox.checked;
+            // CTACheckbox.checked = airspaceCheckbox.checked;
             toggleCTATMALayer();
         }
         if (CTACheckbox) CTACheckbox.addEventListener('change', toggleCTATMALayer);
 
         if (dangerCheckbox) {
-            dangerCheckbox.checked = airspaceCheckbox.checked;
+            // dangerCheckbox.checked = airspaceCheckbox.checked;
             toggleDangerLayer();
         }
         if (dangerCheckbox) dangerCheckbox.addEventListener('change', toggleDangerLayer);
 
         if (prohibitedCheckbox) {
-            prohibitedCheckbox.checked = airspaceCheckbox.checked;
+            // prohibitedCheckbox.checked = airspaceCheckbox.checked;
             toggleProhibitedLayer();
         }
         if (prohibitedCheckbox) prohibitedCheckbox.addEventListener('change', toggleProhibitedLayer);
@@ -2432,9 +2438,11 @@
 <!-- PyScript configuration -->
 <!--============================================-->
 
+
 <py-config>
   packages = ["pandas", "numpy", "jinja2", "requests"]
 </py-config>
+
 
 <script>
 // Add event listeners for FIC spinners
@@ -2450,6 +2458,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
     }
 });
 </script>
+
 
 
 <!-- PyScript for flightplan functionality -->
@@ -2487,27 +2496,6 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
     import logging
     logger = logging.getLogger('SKYWALK')
-
-    async def load_cached_zip(cache_key, url=None):
-        """Load data from cache or download and cache it
-        Args:
-            cache_key: Key to use for caching
-            url: URL to fetch data from if not in cache
-        Returns:
-            bytes: The loaded data
-        """
-        if is_cached(cache_key):
-            print(f"📦 Using cached data for: {cache_key}")
-            cached_data = load_from_cache(cache_key)
-            return cached_data
-
-        if url:
-            print(f"⬇️ Downloading from: {url}")
-            data = await fetch_zip(url)
-            if data:
-                save_to_cache(cache_key, data, encode_base64=True)
-                return data
-        return None
 
 
     def get_default_settings():
@@ -2641,7 +2629,11 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         }
         return data
 
-    # Cache Helpers
+
+    # ================================================
+    # CACHE HELPERS
+    # ================================================
+
     def clear_cache():
         """Clear all cached data from localStorage"""
         try:
@@ -2656,6 +2648,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             print(f"❌ Error clearing cache: {e}")
             return False
 
+
     def is_cached(cache_key):
         try:
             cached = js.localStorage.getItem(cache_key)
@@ -2663,6 +2656,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             return bool(cached)
         except:
             return False
+
 
     def save_to_cache(cache_key, data, encode_base64=False):
         """Save data to localStorage with optional base64 encoding"""
@@ -2675,6 +2669,28 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         except Exception as e:
             print(f"❌ Error saving to cache: {e}")
             return False
+
+
+    async def load_cached_zip(cache_key, url=None):
+        """Load data from cache or download and cache it
+        Args:
+            cache_key: Key to use for caching
+            url: URL to fetch data from if not in cache
+        Returns:
+            bytes: The loaded data
+        """
+        if is_cached(cache_key):
+            print(f"📦 Using cached data for: {cache_key}")
+            cached_data = load_from_cache(cache_key)
+            return cached_data
+
+        if url:
+            print(f"⬇️ Downloading from: {url}")
+            data = await fetch_zip(url)
+            if data:
+                save_to_cache(cache_key, data, encode_base64=True)
+                return data
+        return None
 
 
     def load_from_cache(cache_key):
@@ -2690,6 +2706,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         except Exception as e:
             print(f"⚠️ Error decoding cached data: {e}")
             return None
+
 
     # Fetch ZIP from remote and save to cache
     async def fetch_zip(url):
@@ -2708,6 +2725,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             print(f"❌ Failed to download {url} - Status: {response.status}")
             js.document.getElementById('loading-spinner').style.display = 'none'
             return None
+
 
     # Extract CSV inside the ZIP
     def extract_csv_from_zip(zip_bytes, password=None):
@@ -2737,6 +2755,190 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             raise
 
 
+    async def get_core_js():
+        """
+        Load https://pyscript.net/releases/2025.8.1/core.js
+        either from cache or from download.
+        """
+        cache_key = "pyscript_core_js_2025_8_1"
+        url = "https://pyscript.net/releases/2025.8.1/core.js"
+
+        # Try cache first
+        data = load_from_cache(cache_key)
+        if data is not None:
+            return data
+
+        # Otherwise: download it
+        data = await download_file(url)
+
+        # Save to cache in base64
+        # encode_base64=True is required when storing binary data in localStorage. Otherwise it will be corrupted.
+        save_to_cache(cache_key, data, encode_base64=True)
+
+        return data
+
+    # ================================================
+    # METAR HELPERS
+    # ================================================
+
+    def get_top_metar_stations(fname, n=5, return_df=False):
+        # Retrieve all metar stations for the country
+        print(f'>func: get_top_metar_stations({fname}, {n})')
+
+        icao = js.window.flight_plan_data[f'{fname}_ICAO']
+        lat = js.window.flight_plan_data[f'{fname}_LATLON'][0]
+        lon = js.window.flight_plan_data[f'{fname}_LATLON'][1]
+
+        print(f'icao: {icao}, lat: {lat}, lon: {lon}')
+
+        # Import METAR data
+        df_stations = get_metar_stations(todf=True)
+
+        if n is None or n > df_stations.shape[0]:
+            n = df_stations.shape[0]
+
+        # If icao is in df_stations, then return
+        if icao in df_stations['icao'].values:
+            print(f'Found {icao} in METAR stations')
+            return [icao]
+
+        # Return all or selection
+        if (lat is not None) and (lon is not None):
+            # Compute haversine distance
+            df_stations['distance_to_target'] = haversine_distances(lat, lon, df_stations['lat'].values, df_stations['lon'].values)
+            # df_stations['distance_to_target'] = df_stations.apply(lambda row: compute.haversine(row['lat'], row['lon'], lat, lon), axis=1)
+            # Sort on closest METAR stations
+            df_stations.sort_values(by='distance_to_target', inplace=True)
+        else:
+            df_stations['distance_to_target'] = None
+
+        # Filter on top distance metar stations
+        icao_stations = list(df_stations['icao'].values[0:int(n)])
+        # name_stations = list(df_stations['name'].values[0:int(n)])
+
+        # print(df_stations)
+        # print(icao_stations)
+        # print(name_stations)
+
+        # Return
+        if return_df:
+            return df_stations
+        else:
+            return icao_stations
+
+
+    def get_metar_stations(fname=None, todf=True):
+        if fname == 'DEPARTURE':
+            AERODROME_DATA = window.AERODROME_DEPARTURE_DATA.copy()
+        elif fname == 'ARRIVAL':
+            AERODROME_DATA = window.AERODROME_ARRIVAL_DATA.copy()
+        else:
+            AERODROME_DATA = window.AERODROME_DATA.copy()
+
+        if todf:
+            icao_with_metar = [
+            {"icao": item["icao"], "lat": item["lat"], "lon": item["lon"], "country": item["country"], "name": item["name"]}
+                for item in AERODROME_DATA
+                if item.get("metar_station") is True
+            ]
+            icao_with_metar = pd.DataFrame(icao_with_metar)
+        else:
+            icao_with_metar = {
+                item["icao"]: {"lat": item["lat"], "lon": item["lon"], "country": item["country"], "name": item["name"]}
+                for item in AERODROME_DATA
+                if item.get("metar_station") is True
+            }
+
+        # Return
+        return icao_with_metar
+
+
+    def remove_metar_widget(fname):
+        """Remove METAR widget for the specified aerodrome if it exists"""
+        print(f"---> remove_metar_widget({fname})")
+
+        # Clear the METAR container
+        widget_id = f"{fname.lower()}WidgetContainer"
+        widget = js.document.getElementById(widget_id)
+
+        # Clear the container instead of removing it
+        if widget:
+            widget.innerHTML = ''
+            print(f"🧹 Cleared METAR widget for {fname}")
+
+        # Clear the datetime field
+        datetime_field = js.document.getElementById(f'datetime-metar-taf-{fname.lower()}')
+        datetime_field.value = ''
+        datetime_field.style.backgroundColor = '';
+        # Clear button to normal
+        button = js.document.getElementById(f'metar-widget-btn-{fname.lower()}')
+        button.style.backgroundColor = '';
+        # Clear the METAR field
+        metarField = js.document.getElementById(f'metar-field-{fname.lower()}')
+        metarField.value = ''
+        metarField.style.backgroundColor = '';
+        metarText = js.document.getElementById(f'metar-text-{fname.lower()}')
+        metarText.value = ' '
+
+        # Clear datetime
+        js.window.flight_plan_data[f'{fname.upper()}_METAR'] = ''
+        js.window.flight_plan_data[f'{fname.upper()}_METAR_ICAO'] = ''
+        print(f"🧹 Cleared METAR datetime for {fname}")
+
+
+    def haversine_distances(lat1, lon1, lats, lons):
+        distances = np.array(list(map(lambda x, y: haversine(lat1, lon1, x, y), lats, lons)))
+        return distances
+
+
+    def haversine(lat1, lon1, lat2, lon2):
+        """
+        Calculate the Haversine distance between two sets of latitude and longitude coordinates.
+
+        Parameters
+        ----------
+        lat1 : float
+            Latitude of the first point in degrees.
+        lon1 : float
+            Longitude of the first point in degrees.
+        lat2 : float
+            Latitude of the second point in degrees.
+        lon2 : float
+            Longitude of the second point in degrees.
+
+        Returns
+        -------
+        float
+            The Haversine distance between the two points in kilometers.
+
+        Example
+        -------
+        >>> haversine(37.7749, -122.4194, 34.0522, -118.2437)
+        >>> 616.7752155325443
+
+        """
+        # if (lat1 is None) or (lon1 is None) or (lat2 is None) or (lon2 is None):
+        #     print(lat1)
+        #     return None
+
+        R = 6371  # Radius of the Earth in kilometers
+
+        # Convert latitude and longitude from degrees to radians
+        lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
+
+        # Haversine formula
+        dlat = lat2 - lat1
+        dlon = lon2 - lon1
+        a = math.sin(dlat / 2) ** 2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2) ** 2
+        c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+        # Distance in kilometers
+        distance = R * c
+        return distance
+
+    # ================================================
+    # AIRSPACE HELPERS
+    # ================================================
 
     # Main loader: called from JS
     async def import_country_selected(fname, country):
@@ -2812,129 +3014,6 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         js.document.getElementById('loading-spinner').style.display = 'none'
 
 
-    def get_top_metar_stations(fname, n=5, return_df=False):
-        # Retrieve all metar stations for the country
-        print(f'>func: get_top_metar_stations({fname}, {n})')
-
-        icao = js.window.flight_plan_data[f'{fname}_ICAO']
-        lat = js.window.flight_plan_data[f'{fname}_LATLON'][0]
-        lon = js.window.flight_plan_data[f'{fname}_LATLON'][1]
-
-        print(f'icao: {icao}, lat: {lat}, lon: {lon}')
-
-        # Import METAR data
-        df_stations = get_metar_stations(todf=True)
-
-        if n is None or n > df_stations.shape[0]:
-            n = df_stations.shape[0]
-
-        # If icao is in df_stations, then return
-        if icao in df_stations['icao'].values:
-            print(f'Found {icao} in METAR stations')
-            return [icao]
-
-        # Return all or selection
-        if (lat is not None) and (lon is not None):
-            # Compute haversine distance
-            df_stations['distance_to_target'] = haversine_distances(lat, lon, df_stations['lat'].values, df_stations['lon'].values)
-            # df_stations['distance_to_target'] = df_stations.apply(lambda row: compute.haversine(row['lat'], row['lon'], lat, lon), axis=1)
-            # Sort on closest METAR stations
-            df_stations.sort_values(by='distance_to_target', inplace=True)
-        else:
-            df_stations['distance_to_target'] = None
-
-        # Filter on top distance metar stations
-        icao_stations = list(df_stations['icao'].values[0:int(n)])
-        # name_stations = list(df_stations['name'].values[0:int(n)])
-
-        # print(df_stations)
-        # print(icao_stations)
-        # print(name_stations)
-
-        # Return
-        if return_df:
-            return df_stations
-        else:
-            return icao_stations
-
-
-    def get_metar_stations(fname=None, todf=True):
-        if fname == 'DEPARTURE':
-            AERODROME_DATA = window.AERODROME_DEPARTURE_DATA.copy()
-        elif fname == 'ARRIVAL':
-            AERODROME_DATA = window.AERODROME_ARRIVAL_DATA.copy()
-        else:
-            AERODROME_DATA = window.AERODROME_DATA.copy()
-
-        if todf:
-            icao_with_metar = [
-            {"icao": item["icao"], "lat": item["lat"], "lon": item["lon"], "country": item["country"], "name": item["name"]}
-                for item in AERODROME_DATA
-                if item.get("metar_station") is True
-            ]
-            icao_with_metar = pd.DataFrame(icao_with_metar)
-        else:
-            icao_with_metar = {
-                item["icao"]: {"lat": item["lat"], "lon": item["lon"], "country": item["country"], "name": item["name"]}
-                for item in AERODROME_DATA
-                if item.get("metar_station") is True
-            }
-
-        # Return
-        return icao_with_metar
-
-
-    def haversine_distances(lat1, lon1, lats, lons):
-        distances = np.array(list(map(lambda x, y: haversine(lat1, lon1, x, y), lats, lons)))
-        return distances
-
-
-    def haversine(lat1, lon1, lat2, lon2):
-        """
-        Calculate the Haversine distance between two sets of latitude and longitude coordinates.
-
-        Parameters
-        ----------
-        lat1 : float
-            Latitude of the first point in degrees.
-        lon1 : float
-            Longitude of the first point in degrees.
-        lat2 : float
-            Latitude of the second point in degrees.
-        lon2 : float
-            Longitude of the second point in degrees.
-
-        Returns
-        -------
-        float
-            The Haversine distance between the two points in kilometers.
-
-        Example
-        -------
-        >>> haversine(37.7749, -122.4194, 34.0522, -118.2437)
-        >>> 616.7752155325443
-
-        """
-        # if (lat1 is None) or (lon1 is None) or (lat2 is None) or (lon2 is None):
-        #     print(lat1)
-        #     return None
-
-        R = 6371  # Radius of the Earth in kilometers
-
-        # Convert latitude and longitude from degrees to radians
-        lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
-
-        # Haversine formula
-        dlat = lat2 - lat1
-        dlon = lon2 - lon1
-        a = math.sin(dlat / 2) ** 2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2) ** 2
-        c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-
-        # Distance in kilometers
-        distance = R * c
-        return distance
-
-
     def concat_airspaces(country):
         # Import airspace polygon data
         new_airspaces = import_airspaces(country)
@@ -2955,6 +3034,10 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                 js.window.airspaces = prefixed_airspaces
         # print(js.window.airspaces.keys())
 
+
+    # ================================================
+    # AERODROME HELPERS
+    # ================================================
 
     def concat_country_aerodromes():
         # Combine departure and arrival data when possible and store in global variable
@@ -3071,6 +3154,10 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         await update_aerodrome_image(fname)
         # Remove METAR widget
         remove_metar_widget(fname)
+
+    # ================================================
+    # GUI HELPERS
+    # ================================================
 
     def clean_string(value):
         # Convert to string and strip brackets/quotes
@@ -3249,40 +3336,6 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             js.window.flight_plan_data[key] = ''
 
 
-    def remove_metar_widget(fname):
-        """Remove METAR widget for the specified aerodrome if it exists"""
-        print(f"---> remove_metar_widget({fname})")
-
-        # Clear the METAR container
-        widget_id = f"{fname.lower()}WidgetContainer"
-        widget = js.document.getElementById(widget_id)
-
-        # Clear the container instead of removing it
-        if widget:
-            widget.innerHTML = ''
-            print(f"🧹 Cleared METAR widget for {fname}")
-
-        # Clear the datetime field
-        datetime_field = js.document.getElementById(f'datetime-metar-taf-{fname.lower()}')
-        datetime_field.value = ''
-        datetime_field.style.backgroundColor = '';
-        # Clear button to normal
-        button = js.document.getElementById(f'metar-widget-btn-{fname.lower()}')
-        button.style.backgroundColor = '';
-        # Clear the METAR field
-        metarField = js.document.getElementById(f'metar-field-{fname.lower()}')
-        metarField.value = ''
-        metarField.style.backgroundColor = '';
-        metarText = js.document.getElementById(f'metar-text-{fname.lower()}')
-        metarText.value = ' '
-
-        # Clear datetime
-        js.window.flight_plan_data[f'{fname.upper()}_METAR'] = ''
-        js.window.flight_plan_data[f'{fname.upper()}_METAR_ICAO'] = ''
-        print(f"🧹 Cleared METAR datetime for {fname}")
-
-
-
     async def clear_aerodrome_fields(fname):
         """Clear all aerodrome GUI fields and flight_plan_data"""
         print(f"🧹 Clearing all {fname} fields...")
@@ -3350,6 +3403,10 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         # Reset to default image
         await clear_aerodrome_image(fname)
 
+
+    # ================================================
+    # IMAGE HELPERS
+    # ================================================
 
     async def update_aerodrome_image(fname):
         """Update image from DEPARTURE_IMAGE or ARRIVAL_IMAGE or use default"""
@@ -3420,6 +3477,10 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                 break
         # Return
         return row_dict
+
+    # ================================================
+    # RUNWAY HELPERS
+    # ================================================
 
 
     def retrieve_runways(row_dict):
@@ -3723,6 +3784,9 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
         return False
 
+    # ================================================
+    # FLIGHTPLAN HELPERS
+    # ================================================
 
     async def create_new_flightplan():
         """Initialize new flightplan - returns current datetime for UI"""
@@ -4299,6 +4363,9 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             else:
                 print(f"⚠️ FICs dropdown not found: {spinner_id}")
 
+    # ================================================
+    # ATC HELPERS
+    # ================================================
 
     async def create_summary_atc(reverse_path=False):
         """Create ATC summary (placeholder function)"""
@@ -4797,7 +4864,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         return html_string
 
     # =================================================================
-    # FUNCTIONS FOR AIRSPACE PROCESSING
+    # HELPERS FOR AIRSPACE PROCESSING
     # =================================================================
 
     def read_file_from_url(url, verbose=3):
@@ -5221,7 +5288,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
 
     # =================================================================
-    # Make functions available to JavaScript
+    # PYTHON TO JAVASCRIPT PORTAL
     # =================================================================
 
     js.window.create_new_flightplan = create_new_flightplan
@@ -5234,6 +5301,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
     js.window.save_aerodrome_to_json = save_aerodrome_to_json
     js.window.load_aerodrome_from_json = load_aerodrome_from_json
     js.window.clear_cache = clear_cache
+    # js.window.get_core_js = get_core_js
     js.window.get_top_metar_stations = get_top_metar_stations
 
     # ATC
@@ -5561,6 +5629,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
         // Clear all input fields and departure fields
         await clear_general_fields();
+
         DATETIME.value = await window.create_new_flightplan();
 
         // Store default flight plan data
@@ -5937,6 +6006,7 @@ const COUNTRIES_DATA = [
             }
         });
     }
+
     // Initialize with DEPARTURE
     initializeAerodromeFields('DEPARTURE');
     initializeAerodromeFields('ARRIVAL');
