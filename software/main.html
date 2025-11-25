@@ -190,7 +190,7 @@
 		<input type="text" id="DEPARTURE_ELEVATION" placeholder="Field Elevation (ft)" title="Departure aerodrome elevation in feet (ft)." aria-label="Departure field elevation in feet">
 	  </div>
 
-	  <!-- Line 6: ROUTE_NAME, ROUTE_ALTITUDE, CIRCUIT_ALTITUDE inputs -->
+	  <!-- ROUTE_NAME, ROUTE_ALTITUDE, CIRCUIT_ALTITUDE inputs -->
 	  <div class="button-row">
 		<input type="text" id="DEPARTURE_ROUTE_NAME" placeholder="Route Name", class="UPPERCASE_input">
 		<input type="text" id="DEPARTURE_ROUTE_ALTITUDE" placeholder="Route Altitude">
@@ -222,41 +222,53 @@
 
    <label_h1>METAR Information</label_h1>
 
-   <div class="button-row">
-        <button id="metar-widget-btn-departure" onclick="window.retrieve_metar_and_widget('DEPARTURE')" style="transition: background-color 0.3s; z-index: 1">Load METAR Information</button>
-        <!--<label style="display:flex; align-items:center; gap:6px; margin-left:6px; color:#666; font-size:12px;">
-            <input type="checkbox" id="metar-decoded-departure" title="Show decoded METAR (human-readable)" style="width:16px; height:16px; margin:0;"/>
-            <span>Decoded</span>
-        </label>-->
+   <div style="display: flex; gap: 1px; margin-top: 1px;">
+       <input type="text" id="metar-text-departure" readonly
+           style="transition: background-color 0.3s; width: 70%;
+                  padding: 0; box-sizing: border-box; font-size: 10px;
+                  border: none; background-color: transparent;
+                  color: #333333; outline: none;">
+
+       <input type="text" id="datetime-metar-taf-departure" readonly
+           title="The UTC date/time for the retrieved METAR data."
+           style="transition: background-color 0.3s; width: 30%;
+                  padding: 0; box-sizing: border-box; font-size: 10px;
+                  border: none; background-color: transparent;
+                  color: #333333; outline: none;">
    </div>
 
-    <div style="display: flex; gap: 5px; margin-top: 2px;">
-        <input type="text" id="metar-text-departure" readonly
-            style="transition: background-color 0.3s; width: 70%;
-                   min-height: 10px; max-height: 10px; resize: vertical;
-                   padding: 8px; box-sizing: border-box; font-size: 10px;
-                   border: none;
-                   color: #333333; outline: none;">
-
-        <input type="text" id="datetime-metar-taf-departure" readonly
-            title="The UTC date/time for the retrieved METAR data."
-            style="transition: background-color 0.3s; width: 30%;
-                   min-height: 10px; max-height: 10px; resize: vertical;
-                   padding: 8px; box-sizing: border-box; font-size: 10px;
-                   border: none;
-                   color: #333333; outline: none;">
+    <div class="button-row">
+         <button id="metar-widget-btn-departure" onclick="window.retrieve_metar_and_widget('DEPARTURE')" style="transition: background-color 0.3s; z-index: 1">Load METAR Information</button>
     </div>
 
     <div class="button-row">
         <textarea id="metar-field-departure" placeholder="METAR Information" style="transition: background-color 0.3s; width: 100%; min-height: 80px; max-height: 120px; resize: vertical; padding: 8px; box-sizing: border-box;" title="METAR information for the departure aerodrome is shown here after automatically retrieved." aria-label="METAR Information"></textarea>
     </div>
 
+    <!-- WIND INFORMATION -->
+	  <div class="button-row">
+			<input type="text" id="DEPARTURE_WIND_DIRECTION" placeholder="Angle (°)" style="font-size: 11px;">
+    		<input type="text" id="DEPARTURE_WIND_SPEED" placeholder="Strength (kt)" style="font-size: 11px;">
+    		<input type="text" id="DEPARTURE_WIND_GUST" placeholder="Gust (kt)" style="font-size: 11px;">
+    		<input type="text" id="DEPARTURE_WIND_VARIATION" placeholder="Var (°)" style="font-size: 11px;">
+	  </div>
+	  <div class="button-row">
+			<label for="DEPARTURE_WIND_HEADWIND">Headwind: </label><input type="text" id="DEPARTURE_WIND_HEADWIND" placeholder="..." style="border: none; background: transparent; outline: none; padding: 0; font-family: inherit; font-size: 10; color: inherit; background-color: transparent;">
+			<label for="DEPARTURE_WIND_CROSSWIND">Crosswind: </label><input type="text" id="DEPARTURE_WIND_CROSSWIND" placeholder="..." style="border: none; background: transparent; outline: none; padding: 0; font-family: inherit; font-size: 10; color: inherit; background-color: transparent;">
+	  </div>
+
+
+   <label_h1>METAR-TAF</label_h1>
+
+    <div class="button-row">
+        <button id="widget-btn-departure" onclick="window.retrieve_widgets('DEPARTURE')" style="transition: background-color 0.3s; z-index: 1">Retrieve Widgets</button>
+    </div>
+
+    <!--METAR-TAF WIDGET-->
     <div id="departureWidgetContainer" style="display: flex; justify-content: center; align-items: center;"></div>
 
-
+    <!-- AIRPORT WEATHER WIDGET -->
     <label_h1>Airport Weather</label_h1>
-
-    <!-- Simple iframe for airportweather -->
     <div class="button-row" style="overflow: hidden;">
         <div id="departure-airportweather-container" style="width:100%; height:2400px; overflow:hidden; position:relative; display:none;">
             <iframe
@@ -361,40 +373,55 @@
             <input type="text" id="ARRIVAL_ATC_TELEPHONE" placeholder="Telephone">
         </div>
 
-        <!--<label_h1>Save Arrival Information</label_h1>-->
-
-
         <label_h1>METAR Information</label_h1>
 
-        <div class="button-row">
-            <button id="metar-widget-btn-arrival" onclick="window.retrieve_metar_and_widget('ARRIVAL')" style="transition: background-color 0.3s; z-index: 1">Load METAR Information</button>
-        </div>
-        <div style="display: flex; gap: 5px; margin-top: 2px;">
+        <div style="display: flex; gap: 1px; margin-top: 1px;">
             <input type="text" id="metar-text-arrival" readonly
                 style="transition: background-color 0.3s; width: 70%;
-                       min-height: 10px; max-height: 10px; resize: vertical;
-                       padding: 8px; box-sizing: border-box; font-size: 10px;
-                       border: none;
+                       padding: 0; box-sizing: border-box; font-size: 10px;
+                       border: none; background-color: transparent;
                        color: #333333; outline: none;">
 
             <input type="text" id="datetime-metar-taf-arrival" readonly
                 title="The UTC date/time for the retrieved METAR data."
                 style="transition: background-color 0.3s; width: 30%;
-                       min-height: 10px; max-height: 10px; resize: vertical;
-                       padding: 8px; box-sizing: border-box; font-size: 10px;
-                       border: none;
+                       padding: 0; box-sizing: border-box; font-size: 10px;
+                       border: none; background-color: transparent;
                        color: #333333; outline: none;">
         </div>
+
+        <div class="button-row">
+            <button id="metar-widget-btn-arrival" onclick="window.retrieve_metar_and_widget('ARRIVAL')" style="transition: background-color 0.3s; z-index: 1">Load METAR Information</button>
+        </div>
+
         <div class="button-row">
             <textarea id="metar-field-arrival" placeholder="METAR Information" style="transition: background-color 0.3s; width: 100%; min-height: 80px; max-height: 120px; resize: vertical; padding: 8px; box-sizing: border-box;" title="METAR information for the arrival aerodrome is shown here after automatically retrieved." aria-label="METAR Information"></textarea>
         </div>
 
-        <div id="arrivalWidgetContainer" style="display: flex; justify-content: center; align-items: center;"></div>
+        <!-- WIND INFORMATION -->
+        <div class="button-row">
+            <input type="text" id="ARRIVAL_WIND_DIRECTION" placeholder="Angle (°)" style="font-size: 11px;">
+            <input type="text" id="ARRIVAL_WIND_SPEED" placeholder="Strength (kt)" style="font-size: 11px;">
+            <input type="text" id="ARRIVAL_WIND_GUST" placeholder="Gust (kt)" style="font-size: 11px;">
+            <input type="text" id="ARRIVAL_WIND_VARIATION" placeholder="Var (°)" style="font-size: 11px;">
+        </div>
+        <div class="button-row">
+			<label for="ARRIVAL_WIND_HEADWIND">Headwind: </label><input type="text" id="ARRIVAL_WIND_HEADWIND" placeholder="..." style="border: none; background: transparent; outline: none; padding: 0; font-family: inherit; font-size: 10; color: inherit; background-color: transparent;">
+			<label for="ARRIVAL_WIND_CROSSWIND">Crosswind: </label><input type="text" id="ARRIVAL_WIND_CROSSWIND" placeholder="..." style="border: none; background: transparent; outline: none; padding: 0; font-family: inherit; font-size: 10; color: inherit; background-color: transparent;">
+        </div>
 
 
+        <label_h1>METAR-TAF</label_h1>
+
+        <div class="button-row">
+            <button id="widget-btn-arrival" onclick="window.retrieve_widgets('ARRIVAL')" style="transition: background-color 0.3s; z-index: 1">Retrieve Widgets</button>
+        </div>
+
+        <!-- METAR-TAF WIDGET-->
+		<div id="arrivalWidgetContainer" style="display: flex; justify-content: center; align-items: center;"></div>
+
+		<!-- AIRPORTWEATHER WIDGET-->
         <label_h1>Airport Weather</label_h1>
-
-        <!-- Simple iframe for airportweather -->
         <div class="button-row" style="overflow: hidden;">
             <div id="arrival-airportweather-container" style="width:100%; height:2400px; overflow:hidden; position:relative; display:none;">
                 <iframe
@@ -1875,6 +1902,34 @@
         updateColors('arrival');
     }
 
+    function createAirportWeatherWidget(icao, prefix) {
+        if (icao) {
+            const awContainer = document.getElementById(prefix.toLowerCase() + '-airportweather-container');
+            const awIframe = document.getElementById(prefix.toLowerCase() + '-airportweather-iframe');
+
+            // Show the AirportWeather iframe for the retrieved ICAO (for the given prefix)
+            try {
+                if (awIframe) {
+                    // set the iframe src to the ICAO page on AirportWeather
+                    awIframe.src = 'https://airportweather.com/' + icao.toLowerCase();
+                }
+                if (awContainer) {
+                    awContainer.style.display = 'block';
+                }
+                return true;
+            } catch (e) {
+                console.warn('Failed to show AirportWeather iframe:', e);
+            }
+        } else {
+            // Hide AirportWeather container when no METAR ICAO available
+            try {
+                // const awContainer = document.getElementById(prefix.toLowerCase() + '-airportweather-container');
+                if (awContainer) { awContainer.style.display = 'none'; }
+                return false;
+            } catch (e) { /* ignore */ }
+        }
+    }
+
     function createMetarWidget(containerId, icao, name, uniqueSuffix) {
         /*Create and embed a METAR widget for an aerodrome.
         This function creates and embeds a METAR widget for an aerodrome.
@@ -1890,7 +1945,7 @@
 
         console.log(`🛫 Creating METAR widget for ${icao}`);
         if (icao === 'unknown') {
-            window.alert("Please fill in ICAO field first before loading METAR data");
+            window.alert("⚠️ Please fill in ICAO field first before loading METAR information.");
             return false;
         }
 
@@ -1900,7 +1955,6 @@
 
         // Create unique ID for this widget instance
         const widgetId = `metartaf-${uniqueSuffix}`;
-
 
         // Create <a> element
         const link = document.createElement('a');
@@ -1974,7 +2028,21 @@
         return `${dd}-${mm}-${yyyy} ${timePart}`;
     }
 
-    async function fetch_metar(metar_stations, splitlines = true, decoded = false, prefix = '') {
+    async function fetchMetar(icao) {
+        const url = `https://tgftp.nws.noaa.gov/data/observations/metar/stations/${icao}.TXT`;
+        const response = await fetch(url);
+        const text = await response.text();
+
+        const lines = text.trim().split('\n');
+        // const lines = splitlines ? text.contents.split("\n") : text.contents;
+        return [
+            formatDateDMY(lines[0]),
+            lines[1],
+            icao,
+        ];
+    }
+
+    async function fetch_metar(metar_stations, splitlines = true, decoded = false) {
         console.log(`>Func: fetch_metar(${metar_stations})`);
 
         // Make a function that runs over the list of metar_stations
@@ -2007,18 +2075,18 @@
                 console.log(metar_data);
 
                 if (metar_data)  {
-                    metar_info = metar_data[1];
+                    metar_icao = metar_data[1];
                     metar_date = metar_data[0];
                 }
                 if (metar_date !== '') {
                     metar_date = formatDateDMY(metar_date);
                 }
 
-                // console.log(metar_info);
+                // console.log(metar_icao);
                 // console.log(metar_date);
-                // Return only when `metar_info` is successfully found**:
-                if (metar_info) {
-                    return [metar_info, metar_date, icao];
+                // Return only when `metar_icao` is successfully found**:
+                if (metar_icao) {
+                    return [metar_icao, metar_date, icao];
                 }
 
                 // Wait 0.5 seconds before continuing to next station to be polite to the server
@@ -2026,7 +2094,7 @@
 
             } catch (err) {
                 // return null, null;
-                console.log(`  >Could not fetch the report of ${icao}`);
+                console.log(`  >${icao}: Could not fetch the report: ${url}`);
             }
         }
         // Return when empty and nothing found
@@ -2107,7 +2175,7 @@
     //     document.getElementById('metar-widget-btn-departure')?.addEventListener('click', async () => {
     //         const name = document.getElementById('DEPARTURE_NAME').value || '';
     //         const icao = document.getElementById('DEPARTURE_ICAO').value.toUpperCase() || '';
-    //         let metar_info = '';
+    //         let metar_icao = '';
     //         let metar_date = nowtime(utc=true)
 
     //         try {
@@ -2116,7 +2184,7 @@
     //             console.log(metar_data);
 
     //             if (metar_data) {
-    //               metar_info = metar_data[1]
+    //               metar_icao = metar_data[1]
     //               metar_date = metar_data[0]
     //             }
     //             // Set the original METAR datetime
@@ -2151,7 +2219,7 @@
     //         const name = document.getElementById('ARRIVAL_NAME').value || '';
     //         const icao = document.getElementById('ARRIVAL_ICAO').value.toUpperCase() || '';
 
-    //         let metar_info = '';
+    //         let metar_icao = '';
     //         let metar_date = nowtime(utc=true)
 
     //         try {
@@ -2159,7 +2227,7 @@
     //             metar_data = await fetch_metar(icao, true, false);
 
     //             if (metar_data) {
-    //               metar_info = metar_data[1]
+    //               metar_icao = metar_data[1]
     //               metar_date = metar_data[0]
     //             }
     //             // Set the original METAR datetime
@@ -2196,11 +2264,82 @@
      * Accepts either an element reference or an element ID string.
      */
 
+    async function compute_wind_envelope_js(prefix, metar_icao) {
+        console.log(`   >func: compute_wind_envelope_js(${prefix})`);
+        // Get the values from the input fields
+        const runwayField = document.getElementById(prefix + '_RUNWAY');
+        const windDirectionField = document.getElementById(prefix + '_WIND_DIRECTION');
+        const windSpeedField = document.getElementById(prefix + '_WIND_SPEED');
+        const windGustField = document.getElementById(prefix + '_WIND_GUST');
+        const windVariationField = document.getElementById(prefix + '_WIND_VARIATION');
+        const windHeadwindField = document.getElementById(prefix + '_WIND_HEADWIND');
+        const windCrosswindField = document.getElementById(prefix + '_WIND_CROSSWIND');
+
+        // Runway number is required
+        if (runwayField == '') {
+            alert("No valid runway information available. The wind envelope cannot be computed.");
+            return;
+        }
+        // METAR information is required
+        if (metar_icao == '' || metar_icao == null) {
+            alert("No valid METAR data available. Please load METAR information first.");
+            return;
+        }
+
+        // Compute the wind direction, strength, gust and variation
+        const wind_dict = analyzeWind(metar_icao).toJs();
+        const headwind_value = headwind(wind_dict.direction, wind_dict.speed, runwayField.value);
+        const crosswind_value = crosswind(wind_dict.direction, wind_dict.speed, runwayField.value);
+
+        // Update wind-related fields
+        windDirectionField.value = (wind_dict.direction === '' || wind_dict.direction === null || wind_dict.direction === undefined || wind_dict.direction === 'None')
+            ? ''
+            : wind_dict.direction;
+
+        windSpeedField.value = (wind_dict.speed === '' || wind_dict.speed === null || wind_dict.speed === undefined || wind_dict.speed === 'None')
+            ? ''
+            : wind_dict.speed;
+
+        windVariationField.value = (wind_dict.variation === '' || wind_dict.variation === null || wind_dict.variation === undefined || wind_dict.variation === 'None')
+            ? ''
+            : String(wind_dict.variation).replace(/,/g, '-');
+
+        windGustField.value = (wind_dict.gust === '' || wind_dict.gust === null || wind_dict.gust === undefined || wind_dict.gust === 'None')
+            ? ''
+            : wind_dict.gust;
+
+        windHeadwindField.value = (headwind_value === '' || headwind_value === null || headwind_value === undefined || headwind_value === 'None')
+            ? ''
+            : headwind_value;
+
+        windCrosswindField.value = (crosswind_value === '' || crosswind_value === null || crosswind_value === undefined || crosswind_value === 'None')
+            ? ''
+            : crosswind_value;
+
+        console.log(`Runway: ${runwayField.value}`)
+        console.log(`Headwind: ${headwind_value}`)
+        console.log(`Crosswind: ${crosswind_value}`)
+        console.log('Wind Dictionary:')
+        console.log(wind_dict);
+        // Compute the wind envelope
+        console.log('Max limits:')
+        console.log(window.settings['MAX_HEADWIND_LIMIT'])
+        console.log(window.settings['MAX_CROSSWIND_LIMIT'])
+
+    }
+
+
     async function setMetarButton(prefix, enable=true) {
           const metarField = document.getElementById('metar-field-' + prefix.toLowerCase());
           const button = document.getElementById('metar-widget-btn-' + prefix.toLowerCase());
           const dateField = document.getElementById('datetime-metar-taf-' + prefix.toLowerCase());
           const metarText = document.getElementById('metar-text-' + prefix.toLowerCase());
+          const windDirectionField = document.getElementById(prefix + '_WIND_DIRECTION');
+          const windSpeedField = document.getElementById(prefix + '_WIND_SPEED');
+          const windGustField = document.getElementById(prefix + '_WIND_GUST');
+          const windVariationField = document.getElementById(prefix + '_WIND_VARIATION');
+          const windHeadwindField = document.getElementById(prefix + '_WIND_HEADWIND');
+          const windCrosswindField = document.getElementById(prefix + '_WIND_CROSSWIND');
 
           if (enable) {
             button.disabled = false;
@@ -2209,8 +2348,14 @@
             button.style.opacity = '1';
             button.style.backgroundColor = '';
             metarField.style.backgroundColor = '';
-            dateField.style.backgroundColor = '';
-            metarText.style.backgroundColor = '';
+            dateField.style.backgroundColor = 'transparent';
+            metarText.style.backgroundColor = 'transparent';
+            windDirectionField.style.backgroundColor = '';
+            windSpeedField.style.backgroundColor = '';
+            windGustField.style.backgroundColor = '';
+            windVariationField.style.backgroundColor = '';
+            windHeadwindField.style.backgroundColor = 'transparent';
+            windCrosswindField.style.backgroundColor = 'transparent';
           } else {
             button.disabled = true;
             button.setAttribute('aria-disabled', 'true');
@@ -2223,15 +2368,51 @@
             metarField.style.backgroundColor = '#ffebee';
             dateField.style.backgroundColor = '#ffebee';
             metarText.style.backgroundColor = '#ffebee';
+            windDirectionField.style.backgroundColor = '#ffebee';
+            windSpeedField.style.backgroundColor = '#ffebee';
+            windGustField.style.backgroundColor = '#ffebee';
+            windVariationField.style.backgroundColor = '#ffebee';
+            windHeadwindField.style.backgroundColor = '#ffebee';
+            windCrosswindField.style.backgroundColor = '#ffebee';
           }
     }
+
+
+    async function retrieve_widgets(prefix) {
+        console.log('Retrieving widgets for prefix:', prefix);
+        const button = document.getElementById('widget-btn-' + prefix.toLowerCase());
+        const icao = document.getElementById(prefix + '_ICAO').value || '';
+
+        // Styling button
+        button.disabled = true;
+        button.setAttribute('aria-disabled', 'true');
+        button.style.opacity = '0.6';
+        button.style.cursor = 'Be patient, fetching METAR data...';
+
+        // Create the METAR-TAF widget
+        const metarWidgetResult = createMetarWidget(prefix.toLowerCase() + 'WidgetContainer', icao, name, prefix.toUpperCase());
+        // Create the AirportWeather widget
+        const airportWidgetResult = createAirportWeatherWidget(icao, prefix);
+        // Set the buttons
+        if (!metarWidgetResult) {
+            console.log(`METAR widget for ${prefix} not created, returning early.`);
+            metarField.value = 'No METAR data available for ' + icao;
+        }
+        // Styling button
+        button.disabled = false;
+        button.style.cursor = 'pointer';
+        button.setAttribute('aria-disabled', 'false');
+        button.style.opacity = '1';
+        button.style.backgroundColor = '';
+    }
+
 
     async function retrieve_metar_and_widget(prefix) {
         console.log('Retrieving METAR and widget for prefix:', prefix);
 
         // Get the values from the input fields
-        const name = document.getElementById(prefix.toUpperCase() + '_NAME').value || '';
-        const icao = document.getElementById(prefix.toUpperCase() + '_ICAO').value || '';
+        const name = document.getElementById(prefix + '_NAME').value || '';
+        const icao = document.getElementById(prefix + '_ICAO').value || '';
 
         // Get the button element that we can fill with METAR data
         const button = document.getElementById('metar-widget-btn-' + prefix.toLowerCase());
@@ -2244,7 +2425,6 @@
 
         // Set default values
         let metar_icao = '';
-        let metar_info = '';
         let metar_message = '';
         let datetimeStr = nowtime(true); // UTC
         let runway_predicted = '';
@@ -2260,26 +2440,30 @@
         // Update button: Disable
         setMetarButton(prefix, enable=false);
 
-        // Create the widget
-        const metarWidgetResult = createMetarWidget(prefix.toLowerCase() + 'WidgetContainer', icao, name, prefix.toUpperCase());
+        // Create the METAR-TAF widget
+        // const metarWidgetResult = createMetarWidget(prefix.toLowerCase() + 'WidgetContainer', icao, name, prefix.toUpperCase());
+        // Create the AirportWeather widget
+        // const airportWidgetResult = createAirportWeatherWidget(icao, prefix);
 
         // Fetch METAR data from URL
         try {
+            // Retrieve the METAR data for the closest station
             icao_stations = get_top_metar_stations(prefix, 5, false).toJs();
             console.log('Closest METAR stations:')
             console.log(icao_stations);
 
             // Fetch the METAR data for the closest station (pass decoded flag)
-            metar = await fetch_metar(icao_stations, true, false, prefix);
+            metar = await fetch_metar(icao_stations, true, false);
+            // metar = await fetchMetar(icao_stations[0]);
             // console.log('Fetched METAR:', metar);
 
             // Store data
-            metar_info = metar[0];
+            metar_icao = metar[0];
             datetimeStr = metar[1];
-            station_icao = metar[2];
+            stationName = metar[2];
 
-            if (station_icao) {
-                if (metarText) { metarText.value = 'Closest available METAR station is ' + station_icao; }
+            if (stationName) {
+                if (metarText) { metarText.value = 'Closest available METAR station is ' + stationName; }
             } else {
                 if (metarText) { metarText.value = 'No nearby METAR stations found'; }
             }
@@ -2291,64 +2475,41 @@
             setMetarButton(prefix, enable=true);
         }
 
-        if (!metarWidgetResult) {
-            console.log(`METAR widget for ${prefix} not created, returning early.`);
-            metarField.value = 'No METAR data available for ' + icao;
-            // Update button: Enable
-            setMetarButton(prefix, enable=true);
-            return;
-        }
+        // if (!metarWidgetResult) {
+        //     console.log(`METAR widget for ${prefix} not created, returning early.`);
+        //     metarField.value = 'No METAR data available for ' + icao;
+        //     setMetarButton(prefix, enable=true);
+        //     return;
+        // }
 
         // Update GUI elements
         dateField.value = datetimeStr;
-        metarField.value = metar_info || metar_message;
+        metarField.value = metar_icao || metar_message;
         setMetarButton(prefix, enable=true);
 
         // Update the expected runway based on wind direction and runway orientation
-        if (metar_info != '') {
+        if (metar_icao !== '' && metar_icao != null) {
             console.log(`All data is READY to compute the RUNWAY with the METAR data`);
             // Compute expected runway number based on wind direction and runway orientation
-            runway_predicted = expected_runway_number(prefix, metar_info, extra_runways=runwayField.value);
-            // Change RUNWAY field color to pink
+            runway_predicted = expected_runway_number(prefix, metar_icao, extra_runways=runwayField.value);
+            // Change RUNWAY field color to pink to show that it is predicted
             runwayField.style.backgroundColor = '#ffebee';
             // metarText.value = js.window.messages;
             // Change value of RUNWAY field in the the predicted runway
-            if (runway_predicted) { runwayField.value = runway_predicted; }
+            if (runway_predicted) {
+                runwayField.value = runway_predicted;
+            } else {
+                window.alert("⚠️ Runway number could not be predicted. Please set the runway number manually.");
+            }
+            // Compute wind parameters from METAR data
+            compute_wind_envelope_js(prefix, metar_icao);
             // Store RUNWAY number in flight plan data
             window.flight_plan_data[`${prefix}_RUNWAY`] = runway_predicted;
             // Store METAR in flight plan data
-            window.flight_plan_data[`${prefix}_METAR_ICAO`] = metar_info;
+            window.flight_plan_data[`${prefix}_METAR_ICAO`] = metar_icao;
         }
 
-        console.log(`METAR data for [${prefix}]: [${metar_info}] with predicted runway [${runway_predicted}]`);
-
-
-        // Create widget for Airportweather
-        if (icao) {
-            // Show the AirportWeather iframe for the retrieved ICAO (for the given prefix)
-            try {
-                const awContainer = document.getElementById(prefix.toLowerCase() + '-airportweather-container');
-                const awIframe = document.getElementById(prefix.toLowerCase() + '-airportweather-iframe');
-                if (awIframe) {
-                    // set the iframe src to the ICAO page on AirportWeather
-                    awIframe.src = 'https://airportweather.com/' + icao.toLowerCase();
-                }
-                if (awContainer) {
-                    awContainer.style.display = 'block';
-                }
-            } catch (e) {
-                console.warn('Failed to show AirportWeather iframe:', e);
-            }
-        } else {
-            if (metarText) { metarText.value = 'No nearby METAR stations found'; }
-            // Hide AirportWeather container when no METAR ICAO available
-            try {
-                const awContainer = document.getElementById(prefix.toLowerCase() + '-airportweather-container');
-                if (awContainer) { awContainer.style.display = 'none'; }
-            } catch (e) { /* ignore */ }
-        }
-
-
+        console.log(`METAR data for [${prefix}]: [${metar_icao}] with predicted runway [${runway_predicted}]`);
 
     }
 
@@ -2869,7 +3030,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         # Clear the datetime field
         datetime_field = js.document.getElementById(f'datetime-metar-taf-{fname.lower()}')
         datetime_field.value = ''
-        datetime_field.style.backgroundColor = '';
+        datetime_field.style.backgroundColor = 'transparent';
         # Clear button to normal
         button = js.document.getElementById(f'metar-widget-btn-{fname.lower()}')
         button.style.backgroundColor = '';
@@ -2878,6 +3039,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         metarField.value = ''
         metarField.style.backgroundColor = '';
         metarText = js.document.getElementById(f'metar-text-{fname.lower()}')
+        metarText.style.backgroundColor = 'transparent';
         metarText.value = ' '
 
         # Clear datetime
@@ -3308,7 +3470,12 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             else:
                 print(f"  ⚠️ Element not found: {field_id}")
 
+        # print(js.window.flight_plan_data.get(f'{fname}_CTR'))
+        # print(js.window.flight_plan_data.get(f'{fname}_ATC_TOWER'))
+        # print(js.window.flight_plan_data.get(f'{fname}_ATC_TOWER'))
+
         print(f"✅ Updated {updated_count} GUI fields")
+
 
 
     async def clear_enroute_fields():
@@ -3479,9 +3646,76 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         return row_dict
 
     # ================================================
-    # RUNWAY HELPERS
+    # WIND ENVELOPE HELPERS
     # ================================================
 
+    def compute_wind_envelope(fname):
+        """Compute the wind envelope based on the METAR data and runway number.
+
+        The wind envelope can be used to visually see whether the crosswind/headwind remains within the limits
+        with variable winds. To compute this, the wind strenghts is kept constant but the wind angle is varied
+        from 0-360 degrees. If the red line (the present wind conditions) crosses the the blue line
+        (the maximum wind limits), it indicates that certain wind angles can push the aircraft outside the maximum
+        crosswind/headwind limits.
+
+        The wind envelope is computed with the following parameters:
+        - runway_number: The runway number.
+        - max_headwind: The maximum headwind limit.
+        - max_crosswind: The maximum crosswind limit.
+
+        From the METAR data, the following parameters are used:
+        - wind direction: The wind direction.
+        - wind strength: The wind strength.
+        - wind gust: The wind gust.
+        - wind variation: The wind variation.
+
+        """
+        logger.info(f"func: compute_wind_envelope() - {fname}")
+        # In case the user has changed the runway input, update the flightplan data
+        #  js.window.flight_plan_data.update(
+        #     {f"{fname}_RUNWAY": self.RUNWAY_input.text.strip()}
+        # )
+
+        # Get the METAR data and runway number
+        METAR_DATA = js.window.flight_plan_data.get(f"{fname}_METAR_ICAO", {})
+        RUNWAY = js.window.flight_plan_data.get(f"{fname}_RUNWAY", "")
+        # Check if the runway and METAR data are set, otherwise show a popup and return
+        if RUNWAY == "" or METAR_DATA == {}:
+            logger.warning(f"Set the runway.")
+            print("Set Runway", "Please set the runway.")
+            return
+
+        # In case the user has changed the wind input fields, update the METAR data
+        # logger.info(f"Updating in dict from GUI fields")
+        # METAR_DATA["wind"]["direction"] = format_wind_direction(
+        #     self.wind_direction_input.text.strip()
+        # )
+        # METAR_DATA["wind"]["speed"] = self.wind_speed_input.text.strip()
+        # METAR_DATA["wind"]["gust"] = self.wind_gust_input.text.strip()
+        # METAR_DATA["wind"]["variation"] = self.wind_variation_input.text.strip()
+        # Update the flightplan data with the METAR data
+        js.window.flight_plan_data[f"{fname}_METAR"] = METAR_DATA
+
+        # Compute the wind envelope
+        # WIND_ENVELOPE = compute.wind_envelope_kivy(
+        #     METAR_DATA=METAR_DATA,
+        #     runway_number=RUNWAY,
+        #     max_headwind=app.SETTINGS["MAX_HEADWIND_LIMIT"],
+        #     max_crosswind=app.SETTINGS["MAX_CROSSWIND_LIMIT"],
+        #     make_plot=True,
+        #     show_message=True,
+        #     temp_dir=get_tempdir("TEMP_IMAGES"),
+        # )
+
+        # Update the flightplan data with the wind envelope
+        # js.window.flight_plan_data.update({f"{self.fname}_WIND_ENVELOPE": WIND_ENVELOPE})
+        # Render the wind envelope and show the image in the GUI
+        # self._render_wind_envelope()
+
+
+    # ================================================
+    # RUNWAY HELPERS
+    # ================================================
 
     def retrieve_runways(row_dict):
         """Retrieve the runways from ICAO"""
@@ -3545,6 +3779,12 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         # Return
         return expect_runway
 
+    def correct_runway_number(runway_direction):
+        """Correct the runway number by extracting the first two characters from the provided runway direction."""
+        if isinstance(runway_direction, str) and len(runway_direction) > 1:
+            runway_direction = runway_direction[0:2]
+            runway_direction = int(runway_direction)
+        return runway_direction
 
     def runway_headwind(wind_direction, wind_strength, runway_direction):
         """Compute whether the input runway number has headwind.
@@ -3593,6 +3833,80 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         else:
             return False
 
+    # ================================================
+    # WIND HELPERS
+    # ================================================
+
+    def variable_wind_range(wind_vrb):
+        # Input looks like: '190-350' or '340-40'
+        if isinstance(wind_vrb, list): wind_vrb = wind_vrb[0]
+        if wind_vrb == '' or wind_vrb is None:
+            return None
+        total_range = None
+        # Split
+        wind_vrb = np.array(wind_vrb.split('-'))
+        # Check numeric
+        wind_vrb = wind_vrb[np.array(list(map(is_numeric, wind_vrb)))]
+        # Continue
+        if len(wind_vrb) > 0:
+            # Make int
+            wind_vrb = list(map(int, wind_vrb))
+            # Always make a list of 2
+            if len(wind_vrb) >= 2:
+                start, end = wind_vrb[0], wind_vrb[-1]
+            else:
+                start, end = wind_vrb[0], wind_vrb[0]
+
+            # Compute range
+            if start <= end:
+                total_range = np.array(list(range(start, end + 1, 10)))
+            else:
+                total_range = np.array(list(range(start, 360, 10)) + list(range(0, end + 1, 10)))
+        # Total range
+        return total_range
+
+    def crosswind(wind_direction, wind_strength, runway_direction):
+        """Compute crosswind strength.
+
+        Crosswind component = sin(runway-wind Direction)*strength
+
+        Parameters
+        ----------
+        wind_direction : int[0-360]
+            The wind direction in degrees.
+        wind_strength : float
+            The strenght of the wind.
+        runway_direction : String or integer
+            The runway direction in degrees but in 2 decimals '24' or '06' etc.
+
+        Returns
+        -------
+        result : float
+            crosswind strength.
+
+        Examples
+        --------
+        # Example usage:
+        >>> wind_direction = 250
+        >>> wind_strength = 4
+        >>> runway_direction = "27"
+        >>> cw = crosswind(wind_direction, wind_strength, runway_direction)
+        >>> print(f"Result: {cw}")
+
+        """
+        print(f'   >func: crosswind({wind_direction}, {wind_strength}, {runway_direction})')
+        if (wind_direction is None) or not is_numeric(wind_direction) or (wind_strength is None) or (runway_direction is None):
+            print(f'Error: Wind direction:{wind_direction} and wind strength:{wind_strength} should be numeric')
+            return None
+
+        runway_direction = correct_runway_number(runway_direction)
+        if not isinstance(runway_direction, (int, float)):
+            return None
+
+        radians_difference = math.radians(wind_direction - (runway_direction * 10))
+        result = round(math.sin(radians_difference) * wind_strength, 1)
+        if result == 0: result = int(result)
+        return result
 
     def headwind(wind_direction, wind_strength, runway_direction):
         """Compute headwind strength.
@@ -3623,6 +3937,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         >>> print(f"Result: {hw}")
 
         """
+        print(f'   >func: headwind({wind_direction}, {wind_strength}, {runway_direction})')
         if (wind_direction is None) or not is_numeric(wind_direction) or (wind_strength is None) or (runway_direction is None):
             return None
         # Check runway
@@ -3635,18 +3950,9 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         # print(runway_direction)
 
         radians_difference = math.radians(wind_direction - (runway_direction * 10))
-        result = math.cos(radians_difference) * wind_strength
+        result = round(math.cos(radians_difference) * wind_strength, 1)
         if result == 0: result = int(result)
         return result
-
-
-    def correct_runway_number(runway_direction):
-        """Correct the runway number by extracting the first two characters from the provided runway direction."""
-        if isinstance(runway_direction, str) and len(runway_direction) > 1:
-            runway_direction = runway_direction[0:2]
-            runway_direction = int(runway_direction)
-        return runway_direction
-
 
     def analyzeWind(metar):
         """Method parse and analyze wind datas from METAR message and
@@ -3654,7 +3960,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         Support Knots (KT) and Meter Per Second (MPS) units.
         Units are not informations returned by method.
         If `analyzeWind()` can't decode wind information (in case of unavaibility
-        indicated by ///////KT), method return None.
+        indicated by KT method return None.
 
         Returns
         --------
@@ -4121,7 +4427,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
         if not json_data:
             print(f"⚠️ Aerodrome data not found: {cache_key}")
-            js.window.alert(f"⚠️ No previous profile for aerodrome {selected_icao} is available in {fname}.")
+            js.window.alert(f"⚠️ No existing custom profile for aerodrome {selected_icao} is available for the {fname}.")
             return
 
         # Parse JSON
@@ -4151,9 +4457,10 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             remove_metar_widget(fname)
 
             print(f"✅ Aerodrome data loaded successfully for {fname}")
+            js.window.alert(f"✅ Aerodrome data loaded successfully for {fname}")
         except Exception as e:
             print(f"❌ Error loading aerodrome data: {str(e)}")
-            js.window.alert(f"❌ Error loading aerodrome data: {str(e)}")
+            js.window.alert(f"⚠️ Error loading aerodrome data: {str(e)}")
 
 
     def save_aerodrome_to_json(fname):
@@ -4807,7 +5114,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         new_win = window.open("", pagename)
         if not new_win:
             # blocked
-            window.alert("Popup blocked. Try allowing popups for this site.")
+            window.alert("⚠️ Popup blocked. Allow popups to view the ATC communication.")
             return
         new_win.document.write(html_content)
         new_win.document.close()
@@ -5351,6 +5658,10 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
     # METAR HELPERS
     js.window.expected_runway_number = expected_runway_number
+    js.window.analyzeWind = analyzeWind
+    js.window.headwind = headwind
+    js.window.crosswind = crosswind
+    js.window.compute_wind_envelope = compute_wind_envelope
 
   </script>
 
@@ -5617,7 +5928,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
     new_plan_btn.onclick = async () => {
       try {
         // Check if PyScript is ready
-        if (!pyscriptReady) return alert("Please wait, SkyWalk is initializing..");
+        if (!pyscriptReady) return alert("⚠️ Please wait, SkyWalk is initializing..");
 
         // Uncheck the airspace toggle
         const airspaceToggle = document.getElementById('airspace-toggle');
@@ -5646,7 +5957,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
       } catch (error) {
         console.error("Error creating new flightplan:", error);
-        alert("Error creating new flightplan. Please try again.");
+        alert("⚠️ Error creating new flightplan. Please try again.");
       }
     };
 
@@ -5660,7 +5971,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
           highlightMissingFields();
         } catch (error) {
           console.error("Error loading flightplan:", error);
-          alert("Error loading flightplan: " + error);
+          alert("⚠️ Error loading flightplan: " + error);
         }
       }
     });
@@ -5691,7 +6002,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             window.save_enroute_to_json('ENROUTE1');
             window.alert("✓ FIC is saved on local device");
         } catch (error) {
-          console.error("Error saving FIC data:", error);
+          console.error("⚠️ Error saving FIC data:", error);
         }
       }
     });
@@ -5704,7 +6015,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             window.save_enroute_to_json('ENROUTE2');
             window.alert("✓ FIC2 is saved on local device");
         } catch (error) {
-          console.error("Error saving FIC2 data:", error);
+          console.error("⚠️ Error saving FIC2 data:", error);
         }
       }
     });
