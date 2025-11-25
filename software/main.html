@@ -238,7 +238,7 @@
    </div>
 
     <div class="button-row">
-         <button id="metar-widget-btn-departure" onclick="window.retrieve_metar_and_widget('DEPARTURE')" style="transition: background-color 0.3s; z-index: 1">Load METAR Information</button>
+         <button id="metar-btn-departure" onclick="window.retrieve_metar('DEPARTURE')" style="transition: background-color 0.3s; z-index: 1">Load METAR Information</button>
     </div>
 
     <div class="button-row">
@@ -391,7 +391,7 @@
         </div>
 
         <div class="button-row">
-            <button id="metar-widget-btn-arrival" onclick="window.retrieve_metar_and_widget('ARRIVAL')" style="transition: background-color 0.3s; z-index: 1">Load METAR Information</button>
+            <button id="metar-btn-arrival" onclick="window.retrieve_metar('ARRIVAL')" style="transition: background-color 0.3s; z-index: 1">Load METAR Information</button>
         </div>
 
         <div class="button-row">
@@ -1875,7 +1875,7 @@
        */
         function updateColors(prefix) {
             const dateField = document.getElementById(`datetime-metar-taf-${prefix}`);
-            const button = document.getElementById(`metar-widget-btn-${prefix}`);
+            const button = document.getElementById(`metar-btn-${prefix}`);
             const metarField = document.getElementById(`metar-field-${prefix}`);
             if (!dateField?.value) return;
 
@@ -2172,7 +2172,7 @@
 
     // Event listener for button
     // document.addEventListener('DOMContentLoaded', () => {
-    //     document.getElementById('metar-widget-btn-departure')?.addEventListener('click', async () => {
+    //     document.getElementById('metar-btn-departure')?.addEventListener('click', async () => {
     //         const name = document.getElementById('DEPARTURE_NAME').value || '';
     //         const icao = document.getElementById('DEPARTURE_ICAO').value.toUpperCase() || '';
     //         let metar_icao = '';
@@ -2206,7 +2206,7 @@
     //         }
 
     //         // Reset colors for the DEPARTURE GUI
-    //         const button = document.getElementById('metar-widget-btn-departure');
+    //         const button = document.getElementById('metar-btn-departure');
     //         const dateField = document.getElementById('datetime-metar-taf-departure');
     //         button.style.backgroundColor = '';
     //         dateField.style.backgroundColor = '';
@@ -2215,7 +2215,7 @@
 
     //     });
 
-    //     document.getElementById('metar-widget-btn-arrival')?.addEventListener('click', async () => {
+    //     document.getElementById('metar-btn-arrival')?.addEventListener('click', async () => {
     //         const name = document.getElementById('ARRIVAL_NAME').value || '';
     //         const icao = document.getElementById('ARRIVAL_ICAO').value.toUpperCase() || '';
 
@@ -2249,7 +2249,7 @@
     //         }
 
     //         // Reset colors for the ARRIVAL GUI
-    //         const button = document.getElementById('metar-widget-btn-arrival');
+    //         const button = document.getElementById('metar-btn-arrival');
     //         const dateField = document.getElementById('datetime-metar-taf-arrival');
     //         button.style.backgroundColor = '';
     //         dateField.style.backgroundColor = '';
@@ -2331,7 +2331,7 @@
 
     async function setMetarButton(prefix, enable=true) {
           const metarField = document.getElementById('metar-field-' + prefix.toLowerCase());
-          const button = document.getElementById('metar-widget-btn-' + prefix.toLowerCase());
+          const button = document.getElementById('metar-btn-' + prefix.toLowerCase());
           const dateField = document.getElementById('datetime-metar-taf-' + prefix.toLowerCase());
           const metarText = document.getElementById('metar-text-' + prefix.toLowerCase());
           const windDirectionField = document.getElementById(prefix + '_WIND_DIRECTION');
@@ -2407,7 +2407,7 @@
     }
 
 
-    async function retrieve_metar_and_widget(prefix) {
+    async function retrieve_metar(prefix) {
         console.log('Retrieving METAR and widget for prefix:', prefix);
 
         // Get the values from the input fields
@@ -2415,7 +2415,7 @@
         const icao = document.getElementById(prefix + '_ICAO').value || '';
 
         // Get the button element that we can fill with METAR data
-        const button = document.getElementById('metar-widget-btn-' + prefix.toLowerCase());
+        const button = document.getElementById('metar-btn-' + prefix.toLowerCase());
         const dateField = document.getElementById('datetime-metar-taf-' + prefix.toLowerCase());
         const metarField = document.getElementById('metar-field-' + prefix.toLowerCase());
         const metarText = document.getElementById('metar-text-' + prefix.toLowerCase());
@@ -3021,18 +3021,25 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         # Clear the METAR container
         widget_id = f"{fname.lower()}WidgetContainer"
         widget = js.document.getElementById(widget_id)
-
         # Clear the container instead of removing it
         if widget:
             widget.innerHTML = ''
             print(f"🧹 Cleared METAR widget for {fname}")
+
+        # Clear the airportweather container
+        # widget_id = f"{fname.lower()}-airportweather-container"
+        # widget = js.document.getElementById(widget_id)
+        # Clear the container instead of removing it
+        # if widget:
+        #     widget.innerHTML = ''
+        #     print(f"🧹 Cleared airportweather widget for {fname}")
 
         # Clear the datetime field
         datetime_field = js.document.getElementById(f'datetime-metar-taf-{fname.lower()}')
         datetime_field.value = ''
         datetime_field.style.backgroundColor = 'transparent';
         # Clear button to normal
-        button = js.document.getElementById(f'metar-widget-btn-{fname.lower()}')
+        button = js.document.getElementById(f'metar-btn-{fname.lower()}')
         button.style.backgroundColor = '';
         # Clear the METAR field
         metarField = js.document.getElementById(f'metar-field-{fname.lower()}')
@@ -3041,6 +3048,19 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         metarText = js.document.getElementById(f'metar-text-{fname.lower()}')
         metarText.style.backgroundColor = 'transparent';
         metarText.value = ' '
+
+        windDirectionField = js.document.getElementById(fname + '_WIND_DIRECTION');
+        windSpeedField = js.document.getElementById(fname + '_WIND_SPEED');
+        windGustField = js.document.getElementById(fname + '_WIND_GUST');
+        windVariationField = js.document.getElementById(fname + '_WIND_VARIATION');
+        windHeadwindField = js.document.getElementById(fname + '_WIND_HEADWIND');
+        windCrosswindField = js.document.getElementById(fname + '_WIND_CROSSWIND');
+        windDirectionField.value = '';
+        windSpeedField.value = '';
+        windGustField.value = '';
+        windVariationField.value = '';
+        windHeadwindField.value = '';
+        windCrosswindField.value = '';
 
         # Clear datetime
         js.window.flight_plan_data[f'{fname.upper()}_METAR'] = ''
