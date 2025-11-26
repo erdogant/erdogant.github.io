@@ -151,11 +151,11 @@
 
     <div class="button-row">
         <select id="DEPARTURE_COUNTRY">
-            <option value=""></option>
+            <option value="">Select Country</option>
         </select>
         <select id="DEPARTURE_ICAO_CITY">
-            <option value=""></option>
-            <!-- ICAO City options will be populated dynamically -->
+            <option value="">Select ICAO</option>
+            <!-- ICAO City options will be populated dynamically IN import_country_selected()-->
         </select>
     </div>
 
@@ -219,74 +219,117 @@
 
    <!--<label_h1>Save Departure Information</label_h1>-->
 
+   <!-- METAR Information -->
+   <div style="margin-bottom: 1em;">
+       <button type="button" onclick="toggleMetarMenu()"
+               style="width: 100%; text-align: left; font-weight: bold; background-color: #E6EEF7;">
+           <center>+ METAR Information</center>
+       </button>
 
-   <label_h1>METAR Information</label_h1>
+       <div id="MetarMenuContent"
+            style="display: none; padding-left: 1em; border: 0px solid gray; border-radius: 10px;">
 
-   <div style="display: flex; gap: 1px; margin-top: 1px;">
-       <input type="text" id="metar-text-departure" readonly
-           style="transition: background-color 0.3s; width: 70%;
-                  padding: 0; box-sizing: border-box; font-size: 10px;
-                  border: none; background-color: transparent;
-                  color: #333333; outline: none;">
+           <div style="display: flex; gap: 1px; margin-top: 1px;">
+               <input type="text" id="METAR-TEXT-DEPARTURE" readonly
+                   style="transition: background-color 0.3s; width: 70%;
+                          padding: 0; box-sizing: border-box; font-size: 10px;
+                          border: none; background-color: transparent;
+                          color: #333333; outline: none;">
 
-       <input type="text" id="datetime-metar-taf-departure" readonly
-           title="The UTC date/time for the retrieved METAR data."
-           style="transition: background-color 0.3s; width: 30%;
-                  padding: 0; box-sizing: border-box; font-size: 10px;
-                  border: none; background-color: transparent;
-                  color: #333333; outline: none;">
-   </div>
+               <input type="text" id="DATETIME-METAR-DEPARTURE" readonly
+                   title="The UTC date/time for the retrieved METAR data."
+                   style="transition: background-color 0.3s; width: 30%;
+                          padding: 0; box-sizing: border-box; font-size: 10px;
+                          border: none; background-color: transparent;
+                          color: #333333; outline: none;">
+           </div>
 
-    <div class="button-row">
-         <button id="metar-btn-departure" onclick="window.retrieve_metar('DEPARTURE')" style="transition: background-color 0.3s; z-index: 1">Load METAR Information</button>
-    </div>
+           <div class="button-row">
+               <textarea id="METAR-FIELD-DEPARTURE"
+                   placeholder="METAR Information"
+                   style="transition: background-color 0.3s; width: 100%; min-height: 80px; max-height: 120px;
+                          resize: vertical; padding: 8px; box-sizing: border-box; border-radius: 10px"
+                   title="METAR information for the departure aerodrome is shown here after automatically retrieved."
+                   aria-label="METAR Information"></textarea>
+           </div>
 
-    <div class="button-row">
-        <textarea id="metar-field-departure" placeholder="METAR Information" style="transition: background-color 0.3s; width: 100%; min-height: 80px; max-height: 120px; resize: vertical; padding: 8px; box-sizing: border-box;" title="METAR information for the departure aerodrome is shown here after automatically retrieved." aria-label="METAR Information"></textarea>
-    </div>
+           <!-- WIND INFORMATION -->
+           <div class="button-row">
+               <input type="text" id="DEPARTURE_WIND_DIRECTION" placeholder="Angle (°)" style="font-size: 11px;">
+               <input type="text" id="DEPARTURE_WIND_SPEED" placeholder="Strength (kt)" style="font-size: 11px;">
+               <input type="text" id="DEPARTURE_WIND_GUST"  placeholder="Gust (kt)" style="font-size: 11px;">
+               <input type="text" id="DEPARTURE_WIND_VARIATION" placeholder="Var (°)" style="font-size: 11px;">
+           </div>
 
-    <!-- WIND INFORMATION -->
-	  <div class="button-row">
-			<input type="text" id="DEPARTURE_WIND_DIRECTION" placeholder="Angle (°)" style="font-size: 11px;">
-    		<input type="text" id="DEPARTURE_WIND_SPEED" placeholder="Strength (kt)" style="font-size: 11px;">
-    		<input type="text" id="DEPARTURE_WIND_GUST" placeholder="Gust (kt)" style="font-size: 11px;">
-    		<input type="text" id="DEPARTURE_WIND_VARIATION" placeholder="Var (°)" style="font-size: 11px;">
-	  </div>
-	  <div class="button-row">
-			<label for="DEPARTURE_WIND_HEADWIND">Headwind: </label><input type="text" id="DEPARTURE_WIND_HEADWIND" placeholder="..." style="border: none; background: transparent; outline: none; padding: 0; font-family: inherit; font-size: 10; color: inherit; background-color: transparent;">
-			<label for="DEPARTURE_WIND_CROSSWIND">Crosswind: </label><input type="text" id="DEPARTURE_WIND_CROSSWIND" placeholder="..." style="border: none; background: transparent; outline: none; padding: 0; font-family: inherit; font-size: 10; color: inherit; background-color: transparent;">
-	  </div>
+           <div class="button-row">
+               <label for="DEPARTURE_WIND_HEADWIND">Headwind: </label>
+               <input type="text" id="DEPARTURE_WIND_HEADWIND" placeholder="..."
+                   style="border: none; background: transparent; outline: none; padding: 0;
+                          font-family: inherit; font-size: 10; color: inherit;">
 
+               <label for="DEPARTURE_WIND_CROSSWIND">Crosswind: </label>
+               <input type="text" id="DEPARTURE_WIND_CROSSWIND" placeholder="..."
+                   style="border: none; background: transparent; outline: none; padding: 0;
+                          font-family: inherit; font-size: 10; color: inherit;">
+           </div>
 
-   <label_h1>METAR-TAF</label_h1>
+           <div class="button-row">
+               <button id="METAR-BTN-DEPARTURE"
+                       onclick="window.retrieve_metar('DEPARTURE')"
+                       style="transition: background-color 0.3s; z-index: 1">
+                   Retrieve METAR Information
+               </button>
+           </div>
 
-    <div class="button-row">
-        <button id="widget-btn-departure" onclick="window.retrieve_widgets('DEPARTURE')" style="transition: background-color 0.3s; z-index: 1">Retrieve Widgets</button>
-    </div>
-
-    <!--METAR-TAF WIDGET-->
-    <div id="departureWidgetContainer" style="display: flex; justify-content: center; align-items: center;"></div>
-
-    <!-- AIRPORT WEATHER WIDGET -->
-    <label_h1>Airport Weather</label_h1>
-    <div class="button-row" style="overflow: hidden;">
-        <div id="departure-airportweather-container" style="width:100%; height:2400px; overflow:hidden; position:relative; display:none;">
-            <iframe
-            id="departure-airportweather-iframe"
-            src=""
-            width="100%"
-            height="6000"
-            frameborder="0"
-            style="border:0; min-height:1000px; overflow:hidden; margin-top:-200px; display:block;"
-            title="AirportWeather"
-            allowfullscreen
-            scrolling="no"
-            ></iframe>
-        </div>
-    </div>
+       </div> <!-- closes MetarMenuContent -->
+   </div> <!-- closes METAR main container -->
 
 
-</div>
+
+   <!-- WIDGETS SECTION -->
+   <div style="margin-bottom: 1em;">
+       <button type="button" onclick="toggleWidgetsMenu()"
+               style="width: 100%; text-align: left; font-weight: bold; background-color: #E6EEF7;">
+           <center>+ WIDGETS</center>
+       </button>
+
+       <div id="widgetsMenuContent" style="display: none; padding-left: 1em;">
+
+           <!-- METAR-TAF WIDGET -->
+           <div id="DEPARTURE-WidgetContainer"
+                style="display: flex; justify-content: center; align-items: center;">
+           </div>
+
+           <!-- AIRPORT WEATHER WIDGET -->
+           <div class="button-row" style="overflow: hidden;">
+               <div id="DEPARTURE-airportweather-container"
+                    style="width:100%; height:2400px; overflow:hidden; position:relative; display:none;">
+
+                   <iframe id="DEPARTURE-airportweather-iframe"
+                           src=""
+                           width="100%"
+                           height="6000"
+                           frameborder="0"
+                           style="border:0; min-height:1000px; overflow:hidden; margin-top:-200px; display:block;"
+                           title="AirportWeather"
+                           allowfullscreen
+                           scrolling="no"></iframe>
+               </div>
+           </div>
+
+           <div class="button-row">
+               <button id="WIDGET-BTN-DEPARTURE"
+                       onclick="window.retrieve_widgets('DEPARTURE')"
+                       style="transition: background-color 0.3s; z-index: 1">
+                   Retrieve Widgets
+               </button>
+           </div>
+
+       </div> <!-- closes widgetsMenuContent -->
+    </div> <!-- closes WIDGETS main container -->
+
+	</div>
+
 
 
     <!-- ============================================= -->
@@ -308,10 +351,10 @@
         <!-- Line 2: COUNTRY and ICAO_CITY spinners aligned -->
         <div class="button-row">
             <select id="ARRIVAL_COUNTRY">
-                <option value=""></option>
+                <option value="">Select Country</option>
             </select>
                 <select id="ARRIVAL_ICAO_CITY">
-                <option value=""></option>
+                <option value="">Select ICAO</option>
                 <!-- ICAO City options will be populated dynamically -->
                 </select>
         </div>
@@ -376,13 +419,13 @@
         <label_h1>METAR Information</label_h1>
 
         <div style="display: flex; gap: 1px; margin-top: 1px;">
-            <input type="text" id="metar-text-arrival" readonly
+            <input type="text" id="METAR-TEXT-ARRIVAL" readonly
                 style="transition: background-color 0.3s; width: 70%;
                        padding: 0; box-sizing: border-box; font-size: 10px;
                        border: none; background-color: transparent;
                        color: #333333; outline: none;">
 
-            <input type="text" id="datetime-metar-taf-arrival" readonly
+            <input type="text" id="DATETIME-METAR-ARRIVAL" readonly
                 title="The UTC date/time for the retrieved METAR data."
                 style="transition: background-color 0.3s; width: 30%;
                        padding: 0; box-sizing: border-box; font-size: 10px;
@@ -391,11 +434,11 @@
         </div>
 
         <div class="button-row">
-            <button id="metar-btn-arrival" onclick="window.retrieve_metar('ARRIVAL')" style="transition: background-color 0.3s; z-index: 1">Load METAR Information</button>
+            <button id="METAR-BTN-ARRIVAL" onclick="window.retrieve_metar('ARRIVAL')" style="transition: background-color 0.3s; z-index: 1">Retrieve METAR Information</button>
         </div>
 
         <div class="button-row">
-            <textarea id="metar-field-arrival" placeholder="METAR Information" style="transition: background-color 0.3s; width: 100%; min-height: 80px; max-height: 120px; resize: vertical; padding: 8px; box-sizing: border-box;" title="METAR information for the arrival aerodrome is shown here after automatically retrieved." aria-label="METAR Information"></textarea>
+            <textarea id="METAR-FIELD-ARRIVAL" placeholder="METAR Information" style="transition: background-color 0.3s; width: 100%; min-height: 80px; max-height: 120px; resize: vertical; padding: 8px; box-sizing: border-box; border-radius: 10px" title="METAR information for the arrival aerodrome is shown here after automatically retrieved." aria-label="METAR Information"></textarea>
         </div>
 
         <!-- WIND INFORMATION -->
@@ -411,21 +454,21 @@
         </div>
 
 
-        <label_h1>METAR-TAF</label_h1>
+        <label_h1>WIDGETS</label_h1>
 
         <div class="button-row">
-            <button id="widget-btn-arrival" onclick="window.retrieve_widgets('ARRIVAL')" style="transition: background-color 0.3s; z-index: 1">Retrieve Widgets</button>
+            <button id="WIDGET-BTN-ARRIVAL" onclick="window.retrieve_widgets('ARRIVAL')" style="transition: background-color 0.3s; z-index: 1">Retrieve Widgets</button>
         </div>
 
         <!-- METAR-TAF WIDGET-->
-		<div id="arrivalWidgetContainer" style="display: flex; justify-content: center; align-items: center;"></div>
+		<div id="ARRIVAL-WidgetContainer" style="display: flex; justify-content: center; align-items: center;"></div>
 
 		<!-- AIRPORTWEATHER WIDGET-->
-        <label_h1>Airport Weather</label_h1>
+        <!--<label_h1>Airport Weather</label_h1>-->
         <div class="button-row" style="overflow: hidden;">
-            <div id="arrival-airportweather-container" style="width:100%; height:2400px; overflow:hidden; position:relative; display:none;">
+            <div id="ARRIVAL-airportweather-container" style="width:100%; height:2400px; overflow:hidden; position:relative; display:none;">
                 <iframe
-                id="arrival-airportweather-iframe"
+                id="ARRIVAL-airportweather-iframe"
                 src=""
                 width="100%"
                 height="6000"
@@ -445,7 +488,6 @@
     <!-- =============== TAB ENROUTE =============== -->
     <div id="Enroute" class="tabcontent">
         <label_h1>Enroute Information</label_h1>
-
 
     <!-- Line: FIC Name and FIC Frequency labels -->
         <div class="button-row">
@@ -662,7 +704,15 @@
 
 
 
-
+<script>
+    function toggleWidgetsMenu() {
+        const content = document.getElementById('widgetsMenuContent');
+        content.style.display = (content.style.display === 'none' || content.style.display === '') ? 'block' : 'none';
+    }
+    function toggleMetarMenu() {
+        const content = document.getElementById('MetarMenuContent');
+        content.style.display = (content.style.display === 'none' || content.style.display === '') ? 'block' : 'none';
+    }</script>
 
 <script>
     let routeMap = null;
@@ -1874,9 +1924,9 @@
        * Used to visually alert user that METAR data should be refreshed.
        */
         function updateColors(prefix) {
-            const dateField = document.getElementById(`datetime-metar-taf-${prefix}`);
-            const button = document.getElementById(`metar-btn-${prefix}`);
-            const metarField = document.getElementById(`metar-field-${prefix}`);
+            const dateField = document.getElementById(`DATETIME-METAR-${prefix}`);
+            const button = document.getElementById(`METAR-BTN-${prefix}`);
+            const metarField = document.getElementById(`METAR-FIELD-${prefix}`);
             if (!dateField?.value) return;
 
             // Parse the date parts
@@ -1904,8 +1954,8 @@
 
     function createAirportWeatherWidget(icao, prefix) {
         if (icao) {
-            const awContainer = document.getElementById(prefix.toLowerCase() + '-airportweather-container');
-            const awIframe = document.getElementById(prefix.toLowerCase() + '-airportweather-iframe');
+            const awContainer = document.getElementById(`${prefix}-airportweather-container`);
+            const awIframe = document.getElementById(`${prefix}-airportweather-iframe`);
 
             // Show the AirportWeather iframe for the retrieved ICAO (for the given prefix)
             try {
@@ -1923,7 +1973,7 @@
         } else {
             // Hide AirportWeather container when no METAR ICAO available
             try {
-                // const awContainer = document.getElementById(prefix.toLowerCase() + '-airportweather-container');
+                // const awContainer = document.getElementById(prefix + '-airportweather-container');
                 if (awContainer) { awContainer.style.display = 'none'; }
                 return false;
             } catch (e) { /* ignore */ }
@@ -2047,7 +2097,7 @@
 
         // Make a function that runs over the list of metar_stations
         const stations = Array.isArray(metar_stations) ? metar_stations : [metar_stations];
-        // const metarField = document.getElementById('metar-field-' + prefix.toLowerCase());
+        // const metarField = document.getElementById('METAR-FIELD-' + prefix);
 
 
         for (const icao of stations) {
@@ -2172,7 +2222,7 @@
 
     // Event listener for button
     // document.addEventListener('DOMContentLoaded', () => {
-    //     document.getElementById('metar-btn-departure')?.addEventListener('click', async () => {
+    //     document.getElementById('METAR-BTN-DEPARTURE')?.addEventListener('click', async () => {
     //         const name = document.getElementById('DEPARTURE_NAME').value || '';
     //         const icao = document.getElementById('DEPARTURE_ICAO').value.toUpperCase() || '';
     //         let metar_icao = '';
@@ -2206,8 +2256,8 @@
     //         }
 
     //         // Reset colors for the DEPARTURE GUI
-    //         const button = document.getElementById('metar-btn-departure');
-    //         const dateField = document.getElementById('datetime-metar-taf-departure');
+    //         const button = document.getElementById('METAR-BTN-DEPARTURE');
+    //         const dateField = document.getElementById('DATETIME-METAR-DEPARTURE');
     //         button.style.backgroundColor = '';
     //         dateField.style.backgroundColor = '';
     //         // Update datetime field with current time
@@ -2215,7 +2265,7 @@
 
     //     });
 
-    //     document.getElementById('metar-btn-arrival')?.addEventListener('click', async () => {
+    //     document.getElementById('METAR-BTN-ARRIVAL')?.addEventListener('click', async () => {
     //         const name = document.getElementById('ARRIVAL_NAME').value || '';
     //         const icao = document.getElementById('ARRIVAL_ICAO').value.toUpperCase() || '';
 
@@ -2241,7 +2291,7 @@
     //         }
 
     //         // Create the widget
-    //         var metarWidgetResult = createMetarWidget('arrivalWidgetContainer', icao, name, 'ARRIVAL');
+    //         var metarWidgetResult = createMetarWidget('ARRIVAL-WidgetContainer', icao, name, 'ARRIVAL');
     //         // If createMetarWidget indicates no result or an issue, return early
     //         if (!metarWidgetResult) {
     //             console.log("METAR widget not created, returning early.");
@@ -2249,8 +2299,8 @@
     //         }
 
     //         // Reset colors for the ARRIVAL GUI
-    //         const button = document.getElementById('metar-btn-arrival');
-    //         const dateField = document.getElementById('datetime-metar-taf-arrival');
+    //         const button = document.getElementById('METAR-BTN-ARRIVAL');
+    //         const dateField = document.getElementById('DATETIME-METAR-ARRIVAL');
     //         button.style.backgroundColor = '';
     //         dateField.style.backgroundColor = '';
     //         // Update datetime field with current time
@@ -2282,7 +2332,7 @@
         }
         // METAR information is required
         if (metar_icao == '' || metar_icao == null) {
-            alert("No valid METAR data available. Please load METAR information first.");
+            alert("No valid METAR data available. Please retrieve METAR information first.");
             return;
         }
 
@@ -2330,67 +2380,67 @@
 
 
     async function setMetarButton(prefix, enable=true) {
-          const metarField = document.getElementById('metar-field-' + prefix.toLowerCase());
-          const button = document.getElementById('metar-btn-' + prefix.toLowerCase());
-          const dateField = document.getElementById('datetime-metar-taf-' + prefix.toLowerCase());
-          const metarText = document.getElementById('metar-text-' + prefix.toLowerCase());
-          const windDirectionField = document.getElementById(prefix + '_WIND_DIRECTION');
-          const windSpeedField = document.getElementById(prefix + '_WIND_SPEED');
-          const windGustField = document.getElementById(prefix + '_WIND_GUST');
-          const windVariationField = document.getElementById(prefix + '_WIND_VARIATION');
-          const windHeadwindField = document.getElementById(prefix + '_WIND_HEADWIND');
-          const windCrosswindField = document.getElementById(prefix + '_WIND_CROSSWIND');
+        const button = document.getElementById('METAR-BTN-' + prefix);
+        const dateField = document.getElementById('DATETIME-METAR-' + prefix);
+        const metarField = document.getElementById('METAR-FIELD-' + prefix);
+        const metarText = document.getElementById('METAR-TEXT-' + prefix);
+        const windDirectionField = document.getElementById(prefix + '_WIND_DIRECTION');
+        const windSpeedField = document.getElementById(prefix + '_WIND_SPEED');
+        const windGustField = document.getElementById(prefix + '_WIND_GUST');
+        const windVariationField = document.getElementById(prefix + '_WIND_VARIATION');
+        const windHeadwindField = document.getElementById(prefix + '_WIND_HEADWIND');
+        const windCrosswindField = document.getElementById(prefix + '_WIND_CROSSWIND');
 
-          if (enable) {
-            button.disabled = false;
-            button.style.cursor = 'pointer';
-            button.setAttribute('aria-disabled', 'false');
-            button.style.opacity = '1';
-            button.style.backgroundColor = '';
-            metarField.style.backgroundColor = '';
-            dateField.style.backgroundColor = 'transparent';
-            metarText.style.backgroundColor = 'transparent';
-            windDirectionField.style.backgroundColor = '';
-            windSpeedField.style.backgroundColor = '';
-            windGustField.style.backgroundColor = '';
-            windVariationField.style.backgroundColor = '';
-            windHeadwindField.style.backgroundColor = 'transparent';
-            windCrosswindField.style.backgroundColor = 'transparent';
-          } else {
-            button.disabled = true;
-            button.setAttribute('aria-disabled', 'true');
-            button.style.opacity = '0.6';
-            button.style.cursor = 'Be patient, fetching METAR data...';
-            metarText.value = ' ';
-            metarField.value = 'Be patient, fetching METAR data...';
+        if (enable) {
+          button.disabled = false;
+          button.style.cursor = 'pointer';
+          button.setAttribute('aria-disabled', 'false');
+          button.style.opacity = '1';
+          button.style.backgroundColor = '';
+          metarField.style.backgroundColor = '';
+          dateField.style.backgroundColor = 'transparent';
+          metarText.style.backgroundColor = 'transparent';
+          windDirectionField.style.backgroundColor = '';
+          windSpeedField.style.backgroundColor = '';
+          windGustField.style.backgroundColor = '';
+          windVariationField.style.backgroundColor = '';
+          windHeadwindField.style.backgroundColor = 'transparent';
+          windCrosswindField.style.backgroundColor = 'transparent';
+        } else {
+          button.disabled = true;
+          button.setAttribute('aria-disabled', 'true');
+          button.style.opacity = '0.6';
+          button.style.cursor = 'Be patient, fetching METAR data...';
+          metarText.value = ' ';
+          metarField.value = 'Be patient, fetching METAR data...';
 
-            button.style.backgroundColor = '#ffebee'; // Change background color to light red
-            metarField.style.backgroundColor = '#ffebee';
-            dateField.style.backgroundColor = '#ffebee';
-            metarText.style.backgroundColor = '#ffebee';
-            windDirectionField.style.backgroundColor = '#ffebee';
-            windSpeedField.style.backgroundColor = '#ffebee';
-            windGustField.style.backgroundColor = '#ffebee';
-            windVariationField.style.backgroundColor = '#ffebee';
-            windHeadwindField.style.backgroundColor = '#ffebee';
-            windCrosswindField.style.backgroundColor = '#ffebee';
-          }
+          button.style.backgroundColor = '#ffebee'; // Change background color to light red
+          metarField.style.backgroundColor = '#ffebee';
+          dateField.style.backgroundColor = '#ffebee';
+          metarText.style.backgroundColor = '#ffebee';
+          windDirectionField.style.backgroundColor = '#ffebee';
+          windSpeedField.style.backgroundColor = '#ffebee';
+          windGustField.style.backgroundColor = '#ffebee';
+          windVariationField.style.backgroundColor = '#ffebee';
+          windHeadwindField.style.backgroundColor = '#ffebee';
+          windCrosswindField.style.backgroundColor = '#ffebee';
+        }
     }
 
 
     async function retrieve_widgets(prefix) {
         console.log('Retrieving widgets for prefix:', prefix);
-        const button = document.getElementById('widget-btn-' + prefix.toLowerCase());
+        const button = document.getElementById('WIDGET-BTN-' + prefix);
         const icao = document.getElementById(prefix + '_ICAO').value || '';
 
         // Styling button
-        button.disabled = true;
-        button.setAttribute('aria-disabled', 'true');
-        button.style.opacity = '0.6';
-        button.style.cursor = 'Be patient, fetching METAR data...';
+        // button.disabled = true;
+        // button.setAttribute('aria-disabled', 'true');
+        // button.style.opacity = '0.6';
+        // button.style.cursor = 'Be patient, fetching widgets...';
 
         // Create the METAR-TAF widget
-        const metarWidgetResult = createMetarWidget(prefix.toLowerCase() + 'WidgetContainer', icao, name, prefix.toUpperCase());
+        const metarWidgetResult = createMetarWidget(prefix + '-WidgetContainer', icao, name, prefix);
         // Create the AirportWeather widget
         const airportWidgetResult = createAirportWeatherWidget(icao, prefix);
         // Set the buttons
@@ -2413,14 +2463,15 @@
         // Get the values from the input fields
         const name = document.getElementById(prefix + '_NAME').value || '';
         const icao = document.getElementById(prefix + '_ICAO').value || '';
+        const country = document.getElementById(prefix + '_COUNTRY').value || '';
 
         // Get the button element that we can fill with METAR data
-        const button = document.getElementById('metar-btn-' + prefix.toLowerCase());
-        const dateField = document.getElementById('datetime-metar-taf-' + prefix.toLowerCase());
-        const metarField = document.getElementById('metar-field-' + prefix.toLowerCase());
-        const metarText = document.getElementById('metar-text-' + prefix.toLowerCase());
+        const button = document.getElementById('METAR-BTN-' + prefix);
+        const dateField = document.getElementById('DATETIME-METAR-' + prefix);
+        const metarField = document.getElementById('METAR-FIELD-' + prefix);
+        const metarText = document.getElementById('METAR-TEXT-' + prefix);
         const runwayField = document.getElementById(prefix + '_RUNWAY');
-        // const decodedCheckbox = document.getElementById('metar-decoded-' + prefix.toLowerCase());
+        // const decodedCheckbox = document.getElementById('metar-decoded-' + prefix);
         // const decoded = decodedCheckbox ? decodedCheckbox.checked : false;
 
         // Set default values
@@ -2432,8 +2483,8 @@
         let name_stations = [''];
 
         // If ICAO is empty or not provided, notify the user and return early
-        if (!icao) {
-            alert("Please fill in ICAO field first before loading METAR data");
+        if (!icao || !country) {
+            alert("⚠️ To retrieve the METAR information, please select country and airport (ICAO) first.");
             return;
         }
 
@@ -3019,7 +3070,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         print(f"---> remove_metar_widget({fname})")
 
         # Clear the METAR container
-        widget_id = f"{fname.lower()}WidgetContainer"
+        widget_id = f"{fname}-WidgetContainer"
         widget = js.document.getElementById(widget_id)
         # Clear the container instead of removing it
         if widget:
@@ -3027,27 +3078,17 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             print(f"🧹 Cleared METAR widget for {fname}")
 
         # Clear the airportweather container
-        # widget_id = f"{fname.lower()}-airportweather-container"
+        # widget_id = f"{fname}-airportweather-container"
         # widget = js.document.getElementById(widget_id)
         # Clear the container instead of removing it
         # if widget:
         #     widget.innerHTML = ''
         #     print(f"🧹 Cleared airportweather widget for {fname}")
 
-        # Clear the datetime field
-        datetime_field = js.document.getElementById(f'datetime-metar-taf-{fname.lower()}')
-        datetime_field.value = ''
-        datetime_field.style.backgroundColor = 'transparent';
-        # Clear button to normal
-        button = js.document.getElementById(f'metar-btn-{fname.lower()}')
-        button.style.backgroundColor = '';
-        # Clear the METAR field
-        metarField = js.document.getElementById(f'metar-field-{fname.lower()}')
-        metarField.value = ''
-        metarField.style.backgroundColor = '';
-        metarText = js.document.getElementById(f'metar-text-{fname.lower()}')
-        metarText.style.backgroundColor = 'transparent';
-        metarText.value = ' '
+        datetime_field = js.document.getElementById(f'DATETIME-METAR-{fname}')
+        button = js.document.getElementById(f'METAR-BTN-{fname}')
+        metarField = js.document.getElementById(f'METAR-FIELD-{fname}')
+        metarText = js.document.getElementById(f'METAR-TEXT-{fname}')
 
         windDirectionField = js.document.getElementById(fname + '_WIND_DIRECTION');
         windSpeedField = js.document.getElementById(fname + '_WIND_SPEED');
@@ -3055,6 +3096,16 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         windVariationField = js.document.getElementById(fname + '_WIND_VARIATION');
         windHeadwindField = js.document.getElementById(fname + '_WIND_HEADWIND');
         windCrosswindField = js.document.getElementById(fname + '_WIND_CROSSWIND');
+
+        button.style.backgroundColor = '';
+        datetime_field.value = ''
+        datetime_field.style.backgroundColor = 'transparent';
+
+        metarField.value = ''
+        metarField.style.backgroundColor = '';
+        metarText.style.backgroundColor = 'transparent';
+        metarText.value = ' '
+
         windDirectionField.value = '';
         windSpeedField.value = '';
         windGustField.value = '';
@@ -3167,7 +3218,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                     select = js.document.getElementById(f'{fname}_ICAO_CITY')
                     if select:
                         # Clear existing options except the first placeholder
-                        select.innerHTML = '<option value="">ICAO City</option>'
+                        select.innerHTML = '<option value="">Select ICAO</option>'
 
                         # Add each ICAO city as an option
                         for icao in sorted(icao_codes):
@@ -3545,8 +3596,15 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             f'{fname}_ATC_ATIS_FREQ',
             f'{fname}_ATC_GROUND',
             f'{fname}_ATC_TELEPHONE',
-            f'datetime-metar-taf-{fname}',
-            f'metar-field-{fname}',
+            f'DATETIME-METAR-{fname}',
+            f'METAR-FIELD-{fname}',
+            f'METAR-TEXT-{fname}',
+            f'{fname}_WIND_DIRECTION',
+            f'{fname}_WIND_SPEED',
+            f'{fname}_WIND_GUST',
+            f'{fname}_WIND_VARIATION',
+            f'{fname}_WIND_HEADWIND',
+            f'{fname}_WIND_CROSSWIND',
         ]
 
         print(f"Clearing fields for {fname}:")
@@ -4140,6 +4198,11 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         # Remove METAR widget
         remove_metar_widget('DEPARTURE')
         remove_metar_widget('ARRIVAL')
+
+        select = js.document.getElementById('DEPARTURE_ICAO_CITY')
+        select.innerHTML = '<option value="">Select ICAO</option>'
+        select = js.document.getElementById('ARRIVAL_ICAO_CITY')
+        select.innerHTML = '<option value="">Select ICAO</option>'
 
         js.window.AERODROME_DEPARTURE_DATA = {}
         js.window.AERODROME_ARRIVAL_DATA = {}
