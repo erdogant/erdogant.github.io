@@ -579,3 +579,83 @@ body.mobile-fullscreen #bottom-buttons,
 body.mobile-fullscreen .output-box {
     display: none !important;
 }
+
+/* Collapse/expand icon styling */
+.collapsible {
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin: 8px 0;
+    overflow: hidden;
+    background: #f5f5f5; /* Light gray background */
+}
+
+.collapsible-header {
+    padding: 10px 14px;
+    background: #e9e9e9; /* Slightly darker light gray for header */
+    cursor: pointer;
+    /*font-weight: bold;*/
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+}
+
+.collapsible-header::after {
+    content: "▼";
+    font-size: 10px;
+    transition: transform 0.2s;
+}
+
+.collapsible.open .collapsible-header::after {
+    transform: rotate(-180deg);
+}
+
+.collapsible-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.25s ease-out;
+    padding: 0 14px;
+    background: #f5f5f5; /* Light gray content background */
+}
+
+.collapsible.open .collapsible-content {
+    padding: 10px 14px;
+}
+
+/*METAR MENU GRID*/
+
+.wind-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.tile {
+    background: white;
+    border: 1px solid #dcdcdc;
+    border-radius: 14px;
+    padding: 14px 10px;
+    text-align: center;
+    font-size: 16px;
+    line-height: 1.2;
+    position: relative;
+}
+
+.tile-value {
+    font-size: 22px;
+    background: "transparent"; /* white background */
+    text-align: center;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 6px;
+    z-index: 5;
+    border-radius: 4px; /* optional: rounded corners */
+}
+
+.tile-label {
+    font-size: 12px;
+    color: #777;
+    display: block;
+}
