@@ -683,48 +683,82 @@
     <div id="Enroute" class="tabcontent">
         <label_h1>Enroute Information</label_h1>
 
-    <!-- Line: FIC Name and FIC Frequency labels -->
-        <div class="button-row">
+
+    <div class="input-grid-2x2">
+        <div class="tile">
+            <input id="FIC_NAME" type="text" class="tile-value REPLACE_INFO">
+            <span class="tile-label">FIC name</span>
+        </div>
+        <div class="tile">
+            <input id="FIC_FREQUENCY" type="text" class="tile-value">
+            <span class="tile-label">frequency (Mhz)</span>
+        </div>
+        <div class="tile">
+            <input id="OVERHEAD" type="text" class="tile-value UPPERCASE_input">
+            <span class="tile-label">Overhead</span>
+        </div>
+        <div class="tile">
+            <input id="SQUAWK" type="text" class="tile-value">
+            <span class="tile-label">SQUAWK</span>
+        </div>
+    </div>
+
+
+    <!--<div class="button-row">
           <div style="display:flex; flex-direction:column; flex:1; margin-right:10px;">
             <label for="FIC_NAME">FIC name</label>
           </div>
           <div style="display:flex; flex-direction:column; flex:1;">
             <label for="FIC_FREQUENCY">FIC frequency</label>
           </div>
-        </div>
+    </div>
 
-        <!-- Line: FIC Name and FIC Frequency inputs -->
-        <div class="button-row">
+    <div class="button-row">
           <input type="text" id="FIC_NAME" placeholder="FIC Name", class="REPLACE_INFO">
           <input type="text" id="FIC_FREQUENCY" placeholder="FIC Frequency">
-        </div>
-        <div class="button-row">
+    </div>
+    <div class="button-row">
           <input type="text" id="OVERHEAD" placeholder="Overhead Point", class="UPPERCASE_input">
           <input type="text" id="SQUAWK" placeholder="SQUAWK">
-        </div>
+    </div>-->
 
-       	<!--Create selectionbox that is populated with previously cached FICs-->
-    	<div class="button-row">
-               	<select id="fic_spinner">
-             	  <option value="">Select saved FIC</option>
-               	</select>
-                <button id="fic_save_btn" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">💾</button>
-                <button id="fic_delete_btn" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">🗑️</button>
-    	</div>
+   	<!--Create selectionbox that is populated with previously cached FICs-->
+   	<div class="button-row">
+        <select id="fic_spinner">
+            <option value="">Select saved FIC</option>
+        </select>
+        <button id="fic_save_btn" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">💾</button>
+        <button id="fic_delete_btn" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">🗑️</button>
+   	</div>
 
-        <!-- Line: SECOND FIC label -->
         <label_h1>SECOND FIC</label_h1>
 
-        <!-- Line: FIC Name2 and FIC Frequency2 inputs -->
-        <div class="button-row">
+        <!--<div class="button-row">
           <input type="text" id="FIC_NAME2" placeholder="FIC Name 2", class="REPLACE_INFO">
           <input type="text" id="FIC_FREQUENCY2" placeholder="FIC Frequency 2">
         </div>
         <div class="button-row">
           <input type="text" id="OVERHEAD2" placeholder="Overhead Point", class="UPPERCASE_input">
           <input type="text" id="SQUAWK2" placeholder="SQUAWK">
+        </div>-->
+        <div class="input-grid-2x2">
+            <div class="tile">
+                <input id="FIC_NAME2" type="text" class="tile-value REPLACE_INFO">
+                <span class="tile-label">Secondary FIC name</span>
+            </div>
+            <div class="tile">
+                <input id="FIC_FREQUENCY2" type="text" class="tile-value">
+                <span class="tile-label">frequency (Mhz)</span>
+            </div>
+            <div class="tile">
+                <input id="OVERHEAD2" type="text" class="tile-value UPPERCASE_input">
+                <span class="tile-label">Overhead</span>
+            </div>
+            <div class="tile">
+                <input id="SQUAWK2" type="text" class="tile-value">
+                <span class="tile-label">SQUAWK</span>
+            </div>
         </div>
-
        	<!--Create selectionbox that is populated with previously cached FICs-->
     	<div class="button-row">
                	<select id="fic_spinner2">

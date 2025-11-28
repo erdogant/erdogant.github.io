@@ -664,3 +664,8 @@ body.mobile-fullscreen .output-box {
     color: #777;
     display: block;
 }
+.input-grid-2x2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
