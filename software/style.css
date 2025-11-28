@@ -627,7 +627,7 @@ body.mobile-fullscreen .output-box {
 
 .wind-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 12px;
     margin-top: 12px;
 }
@@ -642,10 +642,15 @@ body.mobile-fullscreen .output-box {
     line-height: 1.2;
     position: relative;
 }
-
+.tile.twice-width {
+    width: 214px;
+}
+.tile.fix-width {
+    width: 100px;
+}
 .tile-value {
     font-size: 22px;
-    background: "transparent"; /* white background */
+    background: transparent; /* white background */
     text-align: center;
     font-weight: 700;
     display: block;

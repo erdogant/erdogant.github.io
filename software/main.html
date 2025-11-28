@@ -88,28 +88,25 @@
 	  <div class="button-row">
 		<input type="text" id="FLIGHTPLAN" placeholder="Flightplan Name">
 		<input type="text" id="DATETIME" placeholder="dd-mm-yyyy hh:mm">
-		<!--<button id="set_datetime_btn">Now</button>-->
 		<button id="set_datetime_btn" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">⏰</button>
 	  </div>
 
 
 	  <!-- Aircraft Info Label -->
-	  <label_h1>Aircraft</label_h1>
+	<label_h1>Aircraft</label_h1>
 
-	  <!-- CALLSIGN + Aircraft Type row -->
-	  <div class="button-row">
-        <input type="text" id="CALLSIGN" class="UPPERCASE_input" placeholder="CALLSIGN (PH-SVU)">
-        <input type="text" id="AIRCRAFT_TYPE" class="UPPERCASE_input" placeholder="Aircraft Type (Robin400)">
+    <div class="button-row">
+        <input type="text" id="CALLSIGN" class="UPPERCASE_input" placeholder="PH-XYZ", title="CALLSIGN of the aircraft">
+        <input type="text" id="AIRCRAFT_TYPE" class="UPPERCASE_input" placeholder="ROBIN400", title="Aircraft type">
     </div>
 
-	  <!-- Persons on Board + Flight Rules row -->
-	  <div class="button-row">
-		<input type="text" id="POB" placeholder="Persons on Board">
-		<select id="FLIGHT_RULES">
-		  <option value="VFR">VFR</option>
-		  <option value="IFR">IFR</option>
-		</select>
-	  </div>
+    <div class="button-row">
+        <input type="text" id="POB", placeholder="Persons on Board", title="Number of person on board">
+        <select id="FLIGHT_RULES">
+            <option value="VFR">VFR</option>
+            <option value="IFR">IFR</option>
+        </select>
+    </div>
 
 
 	  <!-- Bottom Buttons Container -->
@@ -167,55 +164,99 @@
 	  </div>
 
     <div class="button-row">
-        <button id="DEPARTURE_USE_CACHED" onclick="window.load_aerodrome_from_json('DEPARTURE')" style="background-color: #006280; border: 1px solid #333333; color: #ffffff;" title="Load previously saved fields for the selected aerodrome.">Load Aerodrome</button>
-        <button id="save_fields_btn_departure" onclick="window.save_aerodrome_to_json('DEPARTURE')" style="background-color: #006280; border: 1px solid #333333; color: #ffffff;" title="Save your custom fields for this aerodrome.">Save Aerodrome</button>
+        <button id="DEPARTURE_USE_CACHED" onclick="window.load_aerodrome_from_json('DEPARTURE')" style="background-color: #006280; border: 1px solid #333333; color: #ffffff;" title="Load previously saved fields for the selected aerodrome">Load Aerodrome</button>
+        <button id="save_fields_btn_departure" onclick="window.save_aerodrome_to_json('DEPARTURE')" style="background-color: #006280; border: 1px solid #333333; color: #ffffff;" title="Save your custom fields for this aerodrome">Save Aerodrome</button>
     </div>
 
 
 
     <label_h1>Aerodrome</label_h1>
 
-	  <!-- Line 5: POSITION, RUNWAY, ELEVATION inputs -->
-	  <div class="button-row">
-		<input type="text" id="DEPARTURE_POSITION" placeholder="Position (At the Apron)", class="UPPERCASE_input">
-		<select id="DEPARTURE_CTR" onchange="highlightMissingFields()">
-		  <option value=""></option>
-		  <option value="CTR">CTR</option>
-		</select>
+        <!-- Line 5: POSITION, RUNWAY, ELEVATION inputs -->
+        <div class="button-row">
+            <input type="text" id="DEPARTURE_POSITION", class="tile-value UPPERCASE_input", placeholder="Position of the Aircraft (at the apron)", title="Position of the aircraft">
+            <select id="DEPARTURE_CTR", onchange="highlightMissingFields()", class="tile-value">
+                <option value=""></option>
+                <option value="CTR">CTR</option>
+            </select>
+        </div>
 
-	  </div>
+        <div class="wind-grid">
+            <div class="tile fix-width">
+                <input id="DEPARTURE_RUNWAY" type="text", class="tile-value", title="The runway will be automatically determined when retrieving the METAR information.">
+                <span class="tile-label">runway number</span>
+            </div>
+            <div class="tile fix-width">
+                <input id="DEPARTURE_ELEVATION" type="text", class="tile-value", title="Elevation of the field in feet.">
+                <span class="tile-label">field elevation (ft)</span>
+            </div>
+            <div class="tile fix-width">
+                <input id="DEPARTURE_CIRCUIT_ALTITUDE" type="text", class="tile-value", title="The altitude of the circuit in feet.">
+                <span class="tile-label">circuit altitude (ft)</span>
+            </div>
+            <div class="tile fix-width">
+                <input id="DEPARTURE_ROUTE_ALTITUDE" type="text", class="tile-value", title="The altitude of the route in feet.">
+                <span class="tile-label">route altitude (ft)</span>
+            </div>
+            <div class="tile twice-width">
+                <input id="DEPARTURE_ROUTE_NAME" type="text", class="tile-value UPPERCASE_input", title="The name of the route (e.g., MIKE/ROMEO) for departure.">
+                <span class="tile-label">route name</span>
+            </div>
+        </div>
 
-	  <div class="button-row">
+	  <!--<div class="button-row">
 		<input type="text" id="DEPARTURE_RUNWAY" placeholder="Runway Number" title="Runway number is automatically predicted when retrieving METAR data" aria-label="Runway number is automatically predicted when retrieving METAR data">
 		<input type="text" id="DEPARTURE_ELEVATION" placeholder="Field Elevation (ft)" title="Departure aerodrome elevation in feet (ft)." aria-label="Departure field elevation in feet">
 	  </div>
-
-	  <!-- ROUTE_NAME, ROUTE_ALTITUDE, CIRCUIT_ALTITUDE inputs -->
 	  <div class="button-row">
 		<input type="text" id="DEPARTURE_ROUTE_NAME" placeholder="Route Name", class="UPPERCASE_input">
 		<input type="text" id="DEPARTURE_ROUTE_ALTITUDE" placeholder="Route Altitude">
 		<input type="text" id="DEPARTURE_CIRCUIT_ALTITUDE" placeholder="Circuit Altitude">
-	  </div>
+	  </div>-->
+
 
 	  <!-- Line 7: Frequency label -->
 	  <label_h1>Frequency</label_h1>
 
 	  <!-- Line 8: ATC_TOWER and ATC_APPROACH inputs -->
-	  <div class="button-row">
+   <div class="wind-grid">
+
+       <div class="tile fix-width">
+           <input id="DEPARTURE_ATC_TOWER" type="text" class="tile-value">
+           <span class="tile-label">tower/ radio (MHz)</span>
+       </div>
+       <div class="tile fix-width">
+           <input id="DEPARTURE_ATC_APPROACH" type="text" class="tile-value">
+           <span class="tile-label">approach (MHz)</span>
+       </div>
+       <div class="tile fix-width">
+           <input id="DEPARTURE_ATC_ATIS_FREQ" type="text" class="tile-value">
+           <span class="tile-label">ATIS (MHz)</span>
+       </div>
+       <div class="tile fix-width">
+           <input id="DEPARTURE_ATC_GROUND" type="text" class="tile-value">
+           <span class="tile-label">ground/ delivery (MHz)</span>
+       </div>
+       <div class="tile twice-width">
+           <input id="DEPARTURE_ATC_TELEPHONE" type="text" class="tile-value">
+           <span class="tile-label">telephone number</span>
+       </div>
+   </div>
+
+	  <!--<div class="button-row">
 		<input type="text" id="DEPARTURE_ATC_TOWER" placeholder="Tower Frequency">
 		<input type="text" id="DEPARTURE_ATC_APPROACH" placeholder="Approach Frequency">
 	  </div>
 
-	  <!-- Line 9: ATC_ATIS_FREQ and ATC_GROUND inputs -->
 	  <div class="button-row">
 		<input type="text" id="DEPARTURE_ATC_ATIS_FREQ" placeholder="ATIS Frequency">
 		<input type="text" id="DEPARTURE_ATC_GROUND" placeholder="Ground Frequency">
 	  </div>
 
-	  <!-- Line 10: ATC_TELEPHONE input -->
 	  <div class="button-row">
 		<input type="text" id="DEPARTURE_ATC_TELEPHONE" placeholder="Telephone">
 	  </div>
+			-->
 
 
    <label_h1>METAR WIDGETS</label_h1>
@@ -273,12 +314,12 @@
 
                <div class="tile">
                    <input id="DEPARTURE_WIND_HEADWIND" type="text" class="tile-value">
-                   <span class="tile-label">headwind</span>
+                   <span class="tile-label">headwind (kt)</span>
                </div>
 
                <div class="tile">
                    <input id="DEPARTURE_WIND_CROSSWIND" type="text" class="tile-value">
-                   <span class="tile-label">crosswind</span>
+                   <span class="tile-label">crosswind (kt)</span>
                </div>
 
            </div>
@@ -300,8 +341,8 @@
    <div class="collapsible" data-title="METAR-TAF">
    <div class="collapsible-header"></div>
    <div class="collapsible-content">
-       <div id="CONTAINER-METARTAF-DEPARTURE" style="display: flex; justify-content: center; align-items: center;">
-       </div>
+       <!--<div id="CONTAINER-METARTAF-DEPARTURE" style="display: flex; justify-content: center; align-items: center;">
+       </div>-->
             <div class="button-row">
                 <button id="BTN-METARTAF-DEPARTURE"
                     onclick="window.set_widget('DEPARTURE', 'METARTAF')"
@@ -309,6 +350,20 @@
                     Retrieve METAR-TAF Widget
                 </button>
             </div>
+
+            <div id="CONTAINER-METARTAF-DEPARTURE" style="display: flex; justify-content: center; align-items: center;">
+                <iframe id="DEPARTURE-METARTAF-iframe"
+                        src=""
+                        width="100%"
+                        height="500"
+                        frameborder="0"
+                        style="border:0; min-height:500px; overflow:hidden; display:block;"
+                        title="METAR-TAF"
+                        allowfullscreen
+                        scrolling="no">
+               </iframe>
+            </div>
+
    </div>
    </div>
 
@@ -317,18 +372,20 @@
     <div class="collapsible-header"></div>
     <div class="collapsible-content">
         <div class="button-row">
+
             <button id="BTN-AIRPORTWEATHER-DEPARTURE"
                 onclick="window.set_widget('DEPARTURE', 'AIRPORTWEATHER')"
                 style="transition: background-color 0.3s; z-index: 1; background-color: #006280; border: 1px solid #333333; color: #ffffff;">
                 Retrieve AirportWeather Widget
             </button>
         </div>
+
+        <!--
+        1. make the iframe large enough =4000 the put the commercial stuff at the bottom.
+        2. Remove the top 125px of the website and hte bottom 1500px.
+        3. Do not allow scroll
+        -->
         <div id="CONTAINER-AIRPORTWEATHER-DEPARTURE" style="display: flex; justify-content: center; align-items: center;">
-            <!--
-            1. make the iframe large enough =4000 the put the commercial stuff at the bottom.
-            2. Remove the top 125px of the website and hte bottom 1500px.
-            3. Do not allow scroll
-            -->
             <iframe id="DEPARTURE-airportweather-iframe"
                     src=""
                     width="100%"
@@ -337,8 +394,10 @@
                     style="border:0; min-height:1000px; overflow:hidden; margin-top:-125px; margin-bottom:-1500px; display:block;"
                     title="AirportWeather"
                     allowfullscreen
-                    scrolling="no"></iframe>
+                    scrolling="no">
+            </iframe>
         </div>
+
     </div>
     </div>
 
@@ -379,10 +438,8 @@
 	<!-- Line 4: NAME and ICAO inputs -->
         <div class="button-row">
             <input type="text" id="ARRIVAL_NAME" placeholder="Airport Name">
-            <input type="text" id="ARRIVAL_ICAO" class="UPPERCASE_input" placeholder="ICAO">
+            <input type="text" id="ARRIVAL_ICAO", class="UPPERCASE_input", placeholder="ICAO">
         </div>
-
-
         <div class="button-row">
             <button id="ARRIVAL_USE_CACHED" onclick="window.load_aerodrome_from_json('ARRIVAL')" style="background-color: #006280; border: 1px solid #333333; color: #ffffff;" title="Load previously saved fields for the selected aerodrome.">Load Aerodrome</button>
             <button id="save_fields_btn_arrival" onclick="window.save_aerodrome_to_json('ARRIVAL')" style="background-color: #006280; border: 1px solid #333333; color: #ffffff;" title="Save your custom fields for this aerodrome.">Save Aerodrome</button>
@@ -393,44 +450,84 @@
 
         <!-- Line 5: POSITION, RUNWAY, ELEVATION inputs -->
         <div class="button-row">
-            <input type="text" id="ARRIVAL_POSITION" placeholder="Position (At the Apron)", class="UPPERCASE_input">
-            <select id="ARRIVAL_CTR" onchange="highlightMissingFields()">
+            <input type="text" id="ARRIVAL_POSITION", class="tile-value UPPERCASE_input", placeholder="Position of the Aircraft (at the apron)", title="Position of the aircraft">
+            <select id="ARRIVAL_CTR", onchange="highlightMissingFields()", class="tile-value">
                 <option value=""></option>
                 <option value="CTR">CTR</option>
             </select>
         </div>
 
-        <div class="button-row">
+        <div class="wind-grid">
+            <div class="tile fix-width">
+                <input id="ARRIVAL_RUNWAY" type="text", class="tile-value", title="The runway will be automatically determined when retrieving the METAR information.">
+                <span class="tile-label">runway number</span>
+            </div>
+            <div class="tile fix-width">
+                <input id="ARRIVAL_ELEVATION" type="text", class="tile-value", title="Elevation of the field in feet.">
+                <span class="tile-label">field elevation (ft)</span>
+            </div>
+            <div class="tile fix-width">
+                <input id="ARRIVAL_CIRCUIT_ALTITUDE" type="text", class="tile-value", title="The altitude of the circuit in feet.">
+                <span class="tile-label">circuit altitude (ft)</span>
+            </div>
+            <div class="tile fix-width">
+                <input id="ARRIVAL_ROUTE_ALTITUDE" type="text", class="tile-value", title="The altitude of the route in feet.">
+                <span class="tile-label">route altitude (ft)</span>
+            </div>
+            <div class="tile twice-width">
+                <input id="ARRIVAL_ROUTE_NAME" type="text", class="tile-value UPPERCASE_input", title="The name of the route (e.g., MIKE/ROMEO) for departure.">
+                <span class="tile-label">route name</span>
+            </div>
+
+        </div>
+
+        <!--<div class="button-row">
             <input type="text" id="ARRIVAL_RUNWAY" placeholder="Runway Number">
             <input type="text" id="ARRIVAL_ELEVATION" placeholder="Field Elevation (ft)" title="Arrival aerodrome elevation in feet (ft)." aria-label="Arrival field elevation in feet">
         </div>
-
-        <!-- Line 6: ROUTE_NAME, ROUTE_ALTITUDE, CIRCUIT_ALTITUDE inputs -->
         <div class="button-row">
             <input type="text" id="ARRIVAL_ROUTE_NAME" placeholder="Route Name", class="UPPERCASE_input">
             <input type="text" id="ARRIVAL_ROUTE_ALTITUDE" placeholder="Route Altitude">
             <input type="text" id="ARRIVAL_CIRCUIT_ALTITUDE" placeholder="Circuit Altitude">
-        </div>
+        </div>-->
 
         <!-- Line 7: Frequency label -->
         <label_h1>Frequency</label_h1>
+        <div class="wind-grid">
+            <div class="tile fix-width">
+                <input id="ARRIVAL_ATC_TOWER" type="text" class="tile-value">
+                <span class="tile-label">tower/ radio (MHz)</span>
+            </div>
+            <div class="tile fix-width">
+                <input id="ARRIVAL_ATC_APPROACH" type="text" class="tile-value">
+                <span class="tile-label">approach (MHz)</span>
+            </div>
+            <div class="tile fix-width">
+                <input id="ARRIVAL_ATC_ATIS_FREQ" type="text" class="tile-value">
+                <span class="tile-label">ATIS (MHz)</span>
+            </div>
+            <div class="tile fix-width">
+                <input id="ARRIVAL_ATC_GROUND" type="text" class="tile-value">
+                <span class="tile-label">ground/ delivery (MHz)</span>
+            </div>
+            <div class="tile twice-width">
+                <input id="ARRIVAL_ATC_TELEPHONE" type="text" class="tile-value">
+                <span class="tile-label">telephone number</span>
+            </div>
+        </div>
 
-        <!-- Line 8: ATC_TOWER and ATC_APPROACH inputs -->
-        <div class="button-row">
+
+        <!--<div class="button-row">
             <input type="text" id="ARRIVAL_ATC_TOWER" placeholder="Tower Frequency">
             <input type="text" id="ARRIVAL_ATC_APPROACH" placeholder="Approach Frequency">
         </div>
-
-        <!-- Line 9: ATC_ATIS_FREQ and ATC_GROUND inputs -->
         <div class="button-row">
             <input type="text" id="ARRIVAL_ATC_ATIS_FREQ" placeholder="ATIS Frequency">
             <input type="text" id="ARRIVAL_ATC_GROUND" placeholder="Ground Frequency">
         </div>
-
-        <!-- Line 10: ATC_TELEPHONE input -->
         <div class="button-row">
             <input type="text" id="ARRIVAL_ATC_TELEPHONE" placeholder="Telephone">
-        </div>
+        </div>-->
 
         <label_h1>WIDGETS</label_h1>
 
@@ -513,8 +610,9 @@
         <div class="collapsible" data-title="METAR-TAF">
         <div class="collapsible-header"></div>
         <div class="collapsible-content">
-            <div id="CONTAINER-METARTAF-ARRIVAL" style="display: flex; justify-content: center; align-items: center;">
-            </div>
+            <!--<div id="CONTAINER-METARTAF-ARRIVAL" style="display: flex; justify-content: center; align-items: center;">
+            </div>-->
+
             <div class="button-row">
                 <button id="BTN-METARTAF-ARRIVAL"
                     onclick="window.set_widget('ARRIVAL', 'METARTAF')"
@@ -522,6 +620,20 @@
                     Retrieve METAR-TAF Widget
                 </button>
             </div>
+
+            <div id="CONTAINER-METARTAF-ARRIVAL" style="display: flex; justify-content: center; align-items: center;">
+                <iframe id="ARRIVAL-METARTAF-iframe"
+                        src=""
+                        width="100%"
+                        height="500"
+                        frameborder="0"
+                        style="border:0; min-height:500px; overflow:hidden; display:block;"
+                        title="METAR-TAF"
+                        allowfullscreen
+                        scrolling="no">
+               </iframe>
+            </div>
+
         </div>
         </div>
 
@@ -529,6 +641,7 @@
          <div class="collapsible" data-title="AIRPORTWEATHER">
          <div class="collapsible-header"></div>
          <div class="collapsible-content">
+
              <div class="button-row">
                 <button id="BTN-AIRPORTWEATHER-ARRIVAL"
                     onclick="window.set_widget('ARRIVAL', 'AIRPORTWEATHER')"
@@ -536,12 +649,13 @@
                     Retrieve AirportWeather Widget
                 </button>
              </div>
+
+             <!--
+             1. make the iframe large enough =4000 the put the commercial stuff at the bottom.
+             2. Remove the top 125px of the website and hte bottom 1500px.
+             3. Do not allow scroll
+             -->
              <div id="CONTAINER-AIRPORTWEATHER-ARRIVAL" style="display: flex; justify-content: center; align-items: center;">
-                 <!--
-                 1. make the iframe large enough =4000 the put the commercial stuff at the bottom.
-                 2. Remove the top 125px of the website and hte bottom 1500px.
-                 3. Do not allow scroll
-                 -->
                  <iframe id="ARRIVAL-airportweather-iframe"
                          src=""
                          width="100%"
@@ -550,8 +664,10 @@
                          style="border:0; min-height:1000px; overflow:hidden; margin-top:-125px; margin-bottom:-1500px; display:block;"
                          title="AirportWeather"
                          allowfullscreen
-                         scrolling="no"></iframe>
+                         scrolling="no">
+                </iframe>
              </div>
+
          </div>
          </div>
 
@@ -3220,7 +3336,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         windHeadwindField = js.document.getElementById(fname + '_WIND_HEADWIND');
         windCrosswindField = js.document.getElementById(fname + '_WIND_CROSSWIND');
 
-        button.style.backgroundColor = 'transparent';
+        button.style.backgroundColor = '#006280';
         datetime_field.style.backgroundColor = 'transparent';
         metarField.style.backgroundColor = 'transparent';
         metarText.style.backgroundColor = 'transparent';
