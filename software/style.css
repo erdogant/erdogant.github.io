@@ -623,34 +623,46 @@ body.mobile-fullscreen .output-box {
     padding: 10px 14px;
 }
 
-/*METAR MENU GRID*/
+/* GRID*/
 
 .wind-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
     gap: 12px;
     margin-top: 12px;
 }
 
+.input-grid-2x2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+/*.wind-grid_3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 12px;
+}*/
+.grid-one-third-two-thirds {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 12px;
+    margin-top: 12px;
+}
 .tile {
     background: white;
     border: 1px solid #dcdcdc;
     border-radius: 14px;
-    padding: 14px 10px;
+    padding: 12px 10px;
     text-align: center;
     font-size: 16px;
     line-height: 1.2;
     position: relative;
 }
-.tile.twice-width {
-    width: 214px;
-}
-.tile.fix-width {
-    width: 100px;
-}
+
 .tile-value {
     font-size: 22px;
-    background: transparent; /* white background */
+    /*background: transparent;*/
     text-align: center;
     font-weight: 700;
     display: block;
@@ -663,9 +675,4 @@ body.mobile-fullscreen .output-box {
     font-size: 12px;
     color: #777;
     display: block;
-}
-.input-grid-2x2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
 }

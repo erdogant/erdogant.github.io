@@ -96,8 +96,8 @@
 	<label_h1>Aircraft</label_h1>
 
     <div class="button-row">
-        <input type="text" id="CALLSIGN" class="UPPERCASE_input" placeholder="PH-XYZ", title="CALLSIGN of the aircraft">
-        <input type="text" id="AIRCRAFT_TYPE" class="UPPERCASE_input" placeholder="ROBIN400", title="Aircraft type">
+        <input type="text" id="CALLSIGN" class="UPPERCASE_input" placeholder="CALLSIGN (PH-XYZ)", title="CALLSIGN of the aircraft">
+        <input type="text" id="AIRCRAFT_TYPE" class="UPPERCASE_input" placeholder="Aircraft (ROBIN400)", title="Aircraft type">
     </div>
 
     <div class="button-row">
@@ -108,6 +108,11 @@
         </select>
     </div>
 
+    <label_h1>Save</label_h1>
+
+    <div class="button-row">
+        <button id="save_fields_btn" style="background-color: #4CAF50; color: white;" title="Saving fields in flightplan">Save Flightplan</button>
+    </div>
 
 	  <!-- Bottom Buttons Container -->
 	  <div id="bottom-container">
@@ -182,23 +187,28 @@
         </div>
 
         <div class="wind-grid">
-            <div class="tile fix-width">
+            <div class="tile">
                 <input id="DEPARTURE_RUNWAY" type="text", class="tile-value", title="The runway will be automatically determined when retrieving the METAR information.">
                 <span class="tile-label">runway number</span>
             </div>
-            <div class="tile fix-width">
+            <div class="tile">
                 <input id="DEPARTURE_ELEVATION" type="text", class="tile-value", title="Elevation of the field in feet.">
                 <span class="tile-label">field elevation (ft)</span>
             </div>
-            <div class="tile fix-width">
+            <div class="tile">
                 <input id="DEPARTURE_CIRCUIT_ALTITUDE" type="text", class="tile-value", title="The altitude of the circuit in feet.">
                 <span class="tile-label">circuit altitude (ft)</span>
             </div>
-            <div class="tile fix-width">
+        </div>
+
+        <div class="grid-one-third-two-thirds">
+            <!-- This takes 1/3 of the width -->
+            <div class="tile">
                 <input id="DEPARTURE_ROUTE_ALTITUDE" type="text", class="tile-value", title="The altitude of the route in feet.">
                 <span class="tile-label">route altitude (ft)</span>
             </div>
-            <div class="tile twice-width">
+            <!-- This takes 2/3 of the width -->
+            <div class="tile">
                 <input id="DEPARTURE_ROUTE_NAME" type="text", class="tile-value UPPERCASE_input", title="The name of the route (e.g., MIKE/ROMEO) for departure.">
                 <span class="tile-label">route name</span>
             </div>
@@ -221,23 +231,25 @@
 	  <!-- Line 8: ATC_TOWER and ATC_APPROACH inputs -->
    <div class="wind-grid">
 
-       <div class="tile fix-width">
+       <div class="tile">
            <input id="DEPARTURE_ATC_TOWER" type="text" class="tile-value">
            <span class="tile-label">tower/ radio (MHz)</span>
        </div>
-       <div class="tile fix-width">
+       <div class="tile">
            <input id="DEPARTURE_ATC_APPROACH" type="text" class="tile-value">
            <span class="tile-label">approach (MHz)</span>
        </div>
-       <div class="tile fix-width">
+       <div class="tile">
            <input id="DEPARTURE_ATC_ATIS_FREQ" type="text" class="tile-value">
            <span class="tile-label">ATIS (MHz)</span>
        </div>
-       <div class="tile fix-width">
-           <input id="DEPARTURE_ATC_GROUND" type="text" class="tile-value">
-           <span class="tile-label">ground/ delivery (MHz)</span>
-       </div>
-       <div class="tile twice-width">
+   </div>
+    <div class="grid-one-third-two-thirds">
+        <div class="tile">
+            <input id="DEPARTURE_ATC_GROUND" type="text" class="tile-value">
+            <span class="tile-label">ground/ delivery (MHz)</span>
+        </div>
+       <div class="tile">
            <input id="DEPARTURE_ATC_TELEPHONE" type="text" class="tile-value">
            <span class="tile-label">telephone number</span>
        </div>
@@ -458,23 +470,28 @@
         </div>
 
         <div class="wind-grid">
-            <div class="tile fix-width">
+            <div class="tile">
                 <input id="ARRIVAL_RUNWAY" type="text", class="tile-value", title="The runway will be automatically determined when retrieving the METAR information.">
                 <span class="tile-label">runway number</span>
             </div>
-            <div class="tile fix-width">
+            <div class="tile">
                 <input id="ARRIVAL_ELEVATION" type="text", class="tile-value", title="Elevation of the field in feet.">
                 <span class="tile-label">field elevation (ft)</span>
             </div>
-            <div class="tile fix-width">
+            <div class="tile">
                 <input id="ARRIVAL_CIRCUIT_ALTITUDE" type="text", class="tile-value", title="The altitude of the circuit in feet.">
                 <span class="tile-label">circuit altitude (ft)</span>
             </div>
-            <div class="tile fix-width">
+        </div>
+
+        <div class="grid-one-third-two-thirds">
+            <!-- This takes 1/3 of the width -->
+            <div class="tile">
                 <input id="ARRIVAL_ROUTE_ALTITUDE" type="text", class="tile-value", title="The altitude of the route in feet.">
                 <span class="tile-label">route altitude (ft)</span>
             </div>
-            <div class="tile twice-width">
+            <!-- This takes 2/3 of the width -->
+            <div class="tile">
                 <input id="ARRIVAL_ROUTE_NAME" type="text", class="tile-value UPPERCASE_input", title="The name of the route (e.g., MIKE/ROMEO) for departure.">
                 <span class="tile-label">route name</span>
             </div>
@@ -494,23 +511,26 @@
         <!-- Line 7: Frequency label -->
         <label_h1>Frequency</label_h1>
         <div class="wind-grid">
-            <div class="tile fix-width">
+            <div class="tile">
                 <input id="ARRIVAL_ATC_TOWER" type="text" class="tile-value">
                 <span class="tile-label">tower/ radio (MHz)</span>
             </div>
-            <div class="tile fix-width">
+            <div class="tile">
                 <input id="ARRIVAL_ATC_APPROACH" type="text" class="tile-value">
                 <span class="tile-label">approach (MHz)</span>
             </div>
-            <div class="tile fix-width">
+            <div class="tile">
                 <input id="ARRIVAL_ATC_ATIS_FREQ" type="text" class="tile-value">
                 <span class="tile-label">ATIS (MHz)</span>
             </div>
-            <div class="tile fix-width">
+        </div>
+
+        <div class="grid-one-third-two-thirds">
+            <div class="tile">
                 <input id="ARRIVAL_ATC_GROUND" type="text" class="tile-value">
                 <span class="tile-label">ground/ delivery (MHz)</span>
             </div>
-            <div class="tile twice-width">
+            <div class="tile">
                 <input id="ARRIVAL_ATC_TELEPHONE" type="text" class="tile-value">
                 <span class="tile-label">telephone number</span>
             </div>
@@ -759,6 +779,7 @@
                 <span class="tile-label">SQUAWK</span>
             </div>
         </div>
+
        	<!--Create selectionbox that is populated with previously cached FICs-->
     	<div class="button-row">
                	<select id="fic_spinner2">
@@ -828,11 +849,6 @@
                 <button id="BTN_HTML_ENROUTE">Enroute ATC</button>
                 <button id="BTN_HTML_EN_REV">Reverse</button>
             </div>
-       </div>
-
-
-       <div class="button-row">
-           <button id="save_fields_btn" style="background-color: #4CAF50; color: white;" title="Saving fields in flightplan">Save Flightplan</button>
        </div>
 
     </div>
@@ -2654,7 +2670,8 @@
           metarText.value = ' ';
           metarField.value = 'Be patient, fetching METAR data...';
 
-          buttonMetar.style.backgroundColor = '#ffebee'; // Change background color to light red
+          // Change background color to light red
+          buttonMetar.style.backgroundColor = '#ffebee';
           metarField.style.backgroundColor = '#ffebee';
           dateField.style.backgroundColor = '#ffebee';
           metarText.style.backgroundColor = '#ffebee';
@@ -2822,9 +2839,10 @@
             // Change value of RUNWAY field in the the predicted runway
             if (runway_predicted) {
                 runwayField.value = runway_predicted;
-            } else {
-                window.alert("⚠️ Runway number could not be predicted. Please set the runway number manually.");
             }
+            // else {
+            //     window.alert(`⚠️ Runway number could not be predicted for ${prefix}. Please set the runway number manually.`);
+            // }
             // Compute wind parameters from METAR data
             compute_wind_envelope_js(prefix, metar_icao);
             // Store RUNWAY number in flight plan data
@@ -3726,13 +3744,16 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                 js.document.getElementById(field).value = flight_plan_dict[field]
 
 
-    def update_enroute_gui_fields(enroute_dict):
+    def update_enroute_gui_fields(enroute_dict, spinner_name):
         """Update ENROUTE GUI fields from js.window.flight_plan_data"""
         print('----> update_enroute_gui_fields()')
         print("🔄 Updating ENROUTE GUI fields...")
 
         # Get all fields that need updating
-        fields = ['FIC_NAME', 'FIC_FREQUENCY', 'OVERHEAD', 'SQUAWK', 'FIC_NAME2', 'FIC_FREQUENCY2', 'OVERHEAD2', 'SQUAWK2']
+        if spinner_name == 'fic_spinner':
+            fields = ['FIC_NAME', 'FIC_FREQUENCY', 'OVERHEAD', 'SQUAWK']
+        else:
+            fields = ['FIC_NAME2', 'FIC_FREQUENCY2', 'OVERHEAD2', 'SQUAWK2']
 
         # Update each GUI field from flight_plan_data
         for field in fields:
@@ -4608,7 +4629,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                 js.window.flight_plan_data[key] = value if value not in ('', None, 'None', 'nan') else ''
 
             # Update GUI FIELDS
-            update_enroute_gui_fields(enroute_dict)
+            update_enroute_gui_fields(enroute_dict, spinner_name)
             # Update missing fields colors
             js.window.highlightMissingFields()
 
@@ -6026,80 +6047,6 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
     const tabButtons = document.querySelectorAll(".tablinks");
     const tabContents = document.querySelectorAll(".tabcontent");
 
-    // Function to check for missing fields and update highlighting
-    function highlightMissingFields() {
-        console.log("---> highlightMissingFields()");
-        const inputs = [
-          CALLSIGN,
-          AIRCRAFT_TYPE,
-          POB,
-          FLIGHTPLAN,
-          DEPARTURE_NAME,
-          DEPARTURE_ICAO,
-          DEPARTURE_POSITION,
-          DEPARTURE_ATC_GROUND,
-          DEPARTURE_ATC_ATIS_FREQ,
-          DEPARTURE_ATC_TOWER,
-          DEPARTURE_ROUTE_ALTITUDE,
-          DEPARTURE_ROUTE_NAME,
-          DEPARTURE_RUNWAY,
-          ARRIVAL_NAME,
-          ARRIVAL_ICAO,
-          ARRIVAL_RUNWAY,
-          ARRIVAL_ROUTE_NAME,
-          ARRIVAL_ROUTE_ALTITUDE,
-          ARRIVAL_CIRCUIT_ALTITUDE,
-          ARRIVAL_ATC_TOWER,
-          FIC_NAME,
-          FIC_FREQUENCY,
-          OVERHEAD,
-          SQUAWK,
-        ];
-
-        // Reset all backgrounds first
-        inputs.forEach(input => input.style.backgroundColor = '');
-
-        const missing = [];
-        if (!FLIGHTPLAN.value) { missing.push('Flightplan Name'); FLIGHTPLAN.style.backgroundColor = '#ffeb3b'; }
-        if (!CALLSIGN.value) { missing.push('CALLSIGN'); CALLSIGN.style.backgroundColor = '#ffeb3b'; }
-        if (!AIRCRAFT_TYPE.value) { missing.push('Aircraft Type'); AIRCRAFT_TYPE.style.backgroundColor = '#ffeb3b'; }
-        if (!POB.value) { missing.push('POB'); POB.style.backgroundColor = '#ffeb3b'; }
-
-        if (!DEPARTURE_NAME.value) { missing.push('Aerodrome Name (Dep.)'); DEPARTURE_NAME.style.backgroundColor = '#ffeb3b'; }
-        if (!DEPARTURE_ICAO.value) { missing.push('ICAO (Dep.)'); DEPARTURE_ICAO.style.backgroundColor = '#ffeb3b'; }
-        if (!DEPARTURE_POSITION.value) { missing.push('Position (Dep.)'); DEPARTURE_POSITION.style.backgroundColor = '#ffeb3b'; }
-        if (!DEPARTURE_RUNWAY.value) { missing.push('Runway (Dep.)'); DEPARTURE_RUNWAY.style.backgroundColor = '#ffeb3b'; }
-        if (!DEPARTURE_ROUTE_NAME.value) { missing.push('Route Name (Dep.)'); DEPARTURE_ROUTE_NAME.style.backgroundColor = '#ffeb3b'; }
-        if (!DEPARTURE_ROUTE_ALTITUDE.value) { missing.push('Route Altitude (Dep.)'); DEPARTURE_ROUTE_ALTITUDE.style.backgroundColor = '#ffeb3b'; }
-        if (!DEPARTURE_ATC_TOWER.value) { missing.push('Freq. Tower/Radio (Dep.)'); DEPARTURE_ATC_TOWER.style.backgroundColor = '#ffeb3b'; }
-        if (DEPARTURE_CTR.value === 'CTR') {
-            if (!DEPARTURE_ATC_ATIS_FREQ.value) { missing.push('Freq. ATIS (Dep.)'); DEPARTURE_ATC_ATIS_FREQ.style.backgroundColor = '#ffeb3b'; }
-            if (!DEPARTURE_ATC_GROUND.value) { missing.push('Freq. Delivery/Ground (Dep.)'); DEPARTURE_ATC_GROUND.style.backgroundColor = '#ffeb3b'; }
-        }
-
-        if (!ARRIVAL_NAME.value) { missing.push('Aerodrome Name (Arr.)'); ARRIVAL_NAME.style.backgroundColor = '#ffeb3b'; }
-        if (!ARRIVAL_ICAO.value) { missing.push('ICAO (Arr.)'); ARRIVAL_ICAO.style.backgroundColor = '#ffeb3b'; }
-        if (!ARRIVAL_RUNWAY.value) { missing.push('Runway (Arr.)'); ARRIVAL_RUNWAY.style.backgroundColor = '#ffeb3b'; }
-        if (!ARRIVAL_ROUTE_NAME.value) { missing.push('Route Name (Arr.)'); ARRIVAL_ROUTE_NAME.style.backgroundColor = '#ffeb3b'; }
-        if (!ARRIVAL_ROUTE_ALTITUDE.value) { missing.push('Route Altitude (Arr.)'); ARRIVAL_ROUTE_ALTITUDE.style.backgroundColor = '#ffeb3b'; }
-        if (!ARRIVAL_CIRCUIT_ALTITUDE.value) { missing.push('Route Altitude (Arr.)'); ARRIVAL_CIRCUIT_ALTITUDE.style.backgroundColor = '#ffeb3b'; }
-        if (!ARRIVAL_ATC_TOWER.value) { missing.push('Freq. Tower/Radio (Arr.)'); ARRIVAL_ATC_TOWER.style.backgroundColor = '#ffeb3b'; }
-
-        if (!FIC_NAME.value) { missing.push('FIC name'); FIC_NAME.style.backgroundColor = '#ffeb3b'; }
-        if (!FIC_FREQUENCY.value) { missing.push('FIC Freq.'); FIC_FREQUENCY.style.backgroundColor = '#ffeb3b'; }
-        if (!OVERHEAD.value) { missing.push('Overhead point.'); OVERHEAD.style.backgroundColor = '#ffeb3b'; }
-        if (!SQUAWK.value) { missing.push('SQUAWK.'); SQUAWK.style.backgroundColor = '#ffeb3b'; }
-
-        missing_label.textContent = missing.length ? 'Missing: ' + missing.join(', ') : 'All fields are OK! Create your ATC now.';
-        if (!missing.length) {
-          missing_label.style.fontSize = '12px';
-          missing_label.style.color = 'green';
-        } else {
-          missing_label.style.fontSize = '';
-          missing_label.style.color = '';
-        }
-    }
-
     // Function to replace INFORMATION with INFO in input fields
     function updateEnrouteFields() {
         document.querySelectorAll('.REPLACE_INFO').forEach(input => {
@@ -6162,9 +6109,6 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
     const fic_save_btn = document.getElementById('fic_save_btn');
     const fic_save_btn2 = document.getElementById('fic_save_btn2');
 
-
-    // const retrieve_metar_btn = document.getElementById('retrieve_metar_btn');
-
     // Create buttons to generate ATC at the ATC page
     const BTN_HTML_SUMMARY = document.getElementById('BTN_HTML_SUMMARY');
     const BTN_HTML_SUMMARY_REV = document.getElementById('BTN_HTML_SUMMARY_REV');
@@ -6184,6 +6128,17 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         input.value = input.value.toUpperCase();
         });
     });
+
+    // Make transparent for all fields with class="TRANSPARENT_input"
+    // document.querySelectorAll('.TRANSPARENT_input').forEach(input => {
+    //     input.addEventListener('input', () => {
+    //         if (input.value === '') {
+    //             input.style.backgroundColor = '';
+    //         } else {
+    //             input.style.backgroundColor = 'transparent';
+    //         }
+    //     });
+    // });
 
     document.querySelectorAll('.REPLACE_INFO').forEach(input => {
         input.addEventListener('input', () => {
@@ -6478,71 +6433,576 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         }
     });
 
-    const inputs = [
-      CALLSIGN,
-      AIRCRAFT_TYPE,
-      POB,
-      FLIGHTPLAN,
-      DEPARTURE_ATC_TOWER,
-      DEPARTURE_ATC_ATIS_FREQ,
-      DEPARTURE_ATC_GROUND,
-      DEPARTURE_ROUTE_ALTITUDE,
-      DEPARTURE_ROUTE_NAME,
-      DEPARTURE_RUNWAY,
-      DEPARTURE_POSITION,
-      DEPARTURE_NAME,
-      DEPARTURE_ICAO,
-      ARRIVAL_NAME,
-      ARRIVAL_ICAO,
-      ARRIVAL_RUNWAY,
-      ARRIVAL_ROUTE_NAME,
-      ARRIVAL_ROUTE_ALTITUDE,
-      ARRIVAL_CIRCUIT_ALTITUDE,
-      ARRIVAL_ATC_TOWER,
-      FIC_NAME,
-      FIC_FREQUENCY,
-      OVERHEAD,
-      SQUAWK,
-    ];
-      inputs.forEach(input => {
-        input.addEventListener('input', () => {
-          const missing = [];
-          // Reset all backgrounds first
-          inputs.forEach(inp => inp.style.backgroundColor = '');
 
-          if (!FLIGHTPLAN.value) { missing.push('Flightplan Name'); FLIGHTPLAN.style.backgroundColor = '#ffeb3b'; }
-          if (!CALLSIGN.value) { missing.push('CALLSIGN'); CALLSIGN.style.backgroundColor = '#ffeb3b'; }
-          if (!AIRCRAFT_TYPE.value) { missing.push('Aircraft Type'); AIRCRAFT_TYPE.style.backgroundColor = '#ffeb3b'; }
-          if (!POB.value) { missing.push('POB'); POB.style.backgroundColor = '#ffeb3b'; }
+    function getGUIfields() {
+        GUIfields = {
+          'FLIGHTPLAN': {
+              element: document.getElementById('FLIGHTPLAN'),
+              name: 'Flightplan Name',
+              color_empty: '#ffeb3b',
+              color_filled: '',
+              required_atc_departure: false,
+              required_atc_arrival: false,
+              required_atc_enroute: false,
+          },
+          'CALLSIGN': {
+                element: document.getElementById('CALLSIGN'),
+                name: 'Callsign',
+                color_empty: '#ffeb3b',
+                color_filled: '',
+                required_atc_departure: true,
+                required_atc_arrival: true,
+                required_atc_enroute: true,
+            },
+            'AIRCRAFT_TYPE': {
+                element: document.getElementById('AIRCRAFT_TYPE'),
+                name: 'Aircraft Type',
+                color_empty: '#ffeb3b',
+                color_filled: '',
+                required_atc_departure: true,
+                required_atc_arrival: true,
+                required_atc_enroute: true,
+            },
+            'POB': {
+                element: document.getElementById('POB'),
+                name: 'Persons on Board',
+                color_empty: '#ffeb3b',
+                color_filled: '',
+                required_atc_departure: true,
+                required_atc_arrival: true,
+                required_atc_enroute: true,
+            },
+            'DEPARTURE_ATC_TOWER': {
+                element: document.getElementById('DEPARTURE_ATC_TOWER'),
+                name: 'Departure Tower Frequency',
+                color_empty: '#ffeb3b',
+                color_filled: 'transparent',
+                required_atc_departure: true,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            'DEPARTURE_ATC_ATIS_FREQ': {
+                element: document.getElementById('DEPARTURE_ATC_ATIS_FREQ'),
+                name: 'Departure ATIS Frequency',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            'DEPARTURE_ATC_GROUND': {
+                element: document.getElementById('DEPARTURE_ATC_GROUND'),
+                name: 'Departure Ground Frequency',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            'DEPARTURE_ATC_APPROACH': {
+                element: document.getElementById('DEPARTURE_ATC_APPROACH'),
+                name: 'Departure Frequency Approach',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            'DEPARTURE_ATC_TELEPHONE': {
+                element: document.getElementById('DEPARTURE_ATC_TELEPHONE'),
+                name: 'Departure Telephone Number',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            'DEPARTURE_ROUTE_ALTITUDE': {
+                element: document.getElementById('DEPARTURE_ROUTE_ALTITUDE'),
+                name: 'Departure Route Altitude',
+                color_empty: '#ffeb3b',
+                color_filled: 'transparent',
+                required_atc_departure: true,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            'DEPARTURE_ROUTE_NAME': {
+                element: document.getElementById('DEPARTURE_ROUTE_NAME'),
+                name: 'Departure Route Name',
+                color_empty: '#ffeb3b',
+                color_filled: 'transparent',
+                required_atc_departure: true,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            'DEPARTURE_RUNWAY': {
+                element: document.getElementById('DEPARTURE_RUNWAY'),
+                name: 'Departure Runway',
+                color_empty: '#ffeb3b',
+                color_filled: 'transparent',
+                required_atc_departure: true,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            'DEPARTURE_POSITION': {
+                element: document.getElementById('DEPARTURE_POSITION'),
+                name: 'Departure Position',
+                color_empty: '#ffeb3b',
+                color_filled: '',
+                required_atc_departure: true,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            'DEPARTURE_NAME': {
+                element: document.getElementById('DEPARTURE_NAME'),
+                name: 'Departure Airport Name',
+                color_empty: '#ffeb3b',
+                color_filled: '',
+                required_atc_departure: true,
+                required_atc_arrival: false,
+                required_atc_enroute: true,
+            },
+            'DEPARTURE_ICAO': {
+                element: document.getElementById('DEPARTURE_ICAO'),
+                name: 'Departure ICAO',
+                color_empty: '#ffeb3b',
+                color_filled: '',
+                required_atc_departure: true,
+                required_atc_arrival: false,
+                required_atc_enroute: true,
+            },
+            'ARRIVAL_NAME': {
+                element: document.getElementById('ARRIVAL_NAME'),
+                name: 'Arrival Airport Name',
+                color_empty: '#ffeb3b',
+                color_filled: '',
+                required_atc_departure: false,
+                required_atc_arrival: true,
+                required_atc_enroute: true,
+            },
+            'ARRIVAL_ICAO': {
+                element: document.getElementById('ARRIVAL_ICAO'),
+                name: 'Arrival ICAO',
+                color_empty: '#ffeb3b',
+                color_filled: '',
+                required_atc_departure: false,
+                required_atc_arrival: true,
+                required_atc_enroute: true,
+            },
+            'ARRIVAL_RUNWAY': {
+                element: document.getElementById('ARRIVAL_RUNWAY'),
+                name: 'Arrival Runway',
+                color_empty: '#ffeb3b',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: true,
+                required_atc_enroute: false,
+            },
+            'ARRIVAL_ROUTE_NAME': {
+                element: document.getElementById('ARRIVAL_ROUTE_NAME'),
+                name: 'Arrival Route Name',
+                color_empty: '#ffeb3b',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: true,
+                required_atc_enroute: false,
+            },
+            'ARRIVAL_ROUTE_ALTITUDE': {
+                element: document.getElementById('ARRIVAL_ROUTE_ALTITUDE'),
+                name: 'Arrival Route Altitude',
+                color_empty: '#ffeb3b',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: true,
+                required_atc_enroute: false,
+            },
+            'ARRIVAL_CIRCUIT_ALTITUDE': {
+                element: document.getElementById('ARRIVAL_CIRCUIT_ALTITUDE'),
+                name: 'Arrival Circuit Altitude',
+                color_empty: '#ffeb3b',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: true,
+                required_atc_enroute: false,
+            },
+            'ARRIVAL_ATC_TOWER': {
+                element: document.getElementById('ARRIVAL_ATC_TOWER'),
+                name: 'Arrival Tower Frequency',
+                color_empty: '#ffeb3b',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: true,
+                required_atc_enroute: false,
+            },
+            'ARRIVAL_ATC_ATIS_FREQ': {
+                element: document.getElementById('ARRIVAL_ATC_ATIS_FREQ'),
+                name: 'Arrival ATIS Frequency',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            'ARRIVAL_ATC_GROUND': {
+                element: document.getElementById('ARRIVAL_ATC_GROUND'),
+                name: 'Arrival Ground Frequency',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            'ARRIVAL_ATC_APPROACH': {
+                element: document.getElementById('ARRIVAL_ATC_APPROACH'),
+                name: 'Arrival Frequency Approach',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            'ARRIVAL_ATC_TELEPHONE': {
+                element: document.getElementById('ARRIVAL_ATC_TELEPHONE'),
+                name: 'Arrival Telephone Number',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
 
-          if (!DEPARTURE_NAME.value) { missing.push('Aerodrome Name (Dep.)'); DEPARTURE_NAME.style.backgroundColor = '#ffeb3b'; }
-          if (!DEPARTURE_ICAO.value) { missing.push('ICAO (Dep.)'); DEPARTURE_ICAO.style.backgroundColor = '#ffeb3b'; }
-          if (!DEPARTURE_POSITION.value) { missing.push('Position (Dep.)'); DEPARTURE_POSITION.style.backgroundColor = '#ffeb3b'; }
-          if (!DEPARTURE_RUNWAY.value) { missing.push('Runway (Dep.)'); DEPARTURE_RUNWAY.style.backgroundColor = '#ffeb3b'; }
-          if (!DEPARTURE_ROUTE_NAME.value) { missing.push('Route Name (Dep.)'); DEPARTURE_ROUTE_NAME.style.backgroundColor = '#ffeb3b'; }
-          if (!DEPARTURE_ROUTE_ALTITUDE.value) { missing.push('Route Altitude (Dep.)'); DEPARTURE_ROUTE_ALTITUDE.style.backgroundColor = '#ffeb3b'; }
-          if (!DEPARTURE_ATC_TOWER.value) { missing.push('Freq. Tower/Radio (Dep.)'); DEPARTURE_ATC_TOWER.style.backgroundColor = '#ffeb3b'; }
-          if (!SQUAWK.value) { missing.push('SQUAWK.'); SQUAWK.style.backgroundColor = '#ffeb3b'; }
-          if (DEPARTURE_CTR.value === 'CTR') {
-              if (!DEPARTURE_ATC_ATIS_FREQ.value) { missing.push('Freq. ATIS (Dep.)'); DEPARTURE_ATC_ATIS_FREQ.style.backgroundColor = '#ffeb3b'; }
-              if (!DEPARTURE_ATC_GROUND.value) { missing.push('Freq. Delivery/Ground (Dep.)'); DEPARTURE_ATC_GROUND.style.backgroundColor = '#ffeb3b'; }
-          }
+            'FIC_NAME': {
+                element: document.getElementById('FIC_NAME'),
+                name: 'FIC Name',
+                color_empty: '#ffeb3b',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: true,
+            },
+            'FIC_FREQUENCY': {
+                element: document.getElementById('FIC_FREQUENCY'),
+                name: 'FIC Frequency',
+                color_empty: '#ffeb3b',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: true,
+            },
+            'OVERHEAD': {
+                element: document.getElementById('OVERHEAD'),
+                name: 'Overhead',
+                color_empty: '#ffeb3b',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: true,
+            },
+            'SQUAWK': {
+                element: document.getElementById('SQUAWK'),
+                name: 'Squawk',
+                color_empty: '#ffeb3b',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: true,
+            },
 
-          if (!ARRIVAL_NAME.value) { missing.push('Aerodrome Name (Arr.)'); ARRIVAL_NAME.style.backgroundColor = '#ffeb3b'; }
-          if (!ARRIVAL_ICAO.value) { missing.push('ICAO (Arr.)'); ARRIVAL_ICAO.style.backgroundColor = '#ffeb3b'; }
-          if (!ARRIVAL_RUNWAY.value) { missing.push('Runway (Arr.)'); ARRIVAL_RUNWAY.style.backgroundColor = '#ffeb3b'; }
-          if (!ARRIVAL_ROUTE_NAME.value) { missing.push('Route Name (Arr.)'); ARRIVAL_ROUTE_NAME.style.backgroundColor = '#ffeb3b'; }
-          if (!ARRIVAL_ROUTE_ALTITUDE.value) { missing.push('Route Altitude (Arr.)'); ARRIVAL_ROUTE_ALTITUDE.style.backgroundColor = '#ffeb3b'; }
-          if (!ARRIVAL_CIRCUIT_ALTITUDE.value) { missing.push('Route Altitude (Arr.)'); ARRIVAL_CIRCUIT_ALTITUDE.style.backgroundColor = '#ffeb3b'; }
-          if (!ARRIVAL_ATC_TOWER.value) { missing.push('Freq. Tower/Radio (Arr.)'); ARRIVAL_ATC_TOWER.style.backgroundColor = '#ffeb3b'; }
+            // THE NOT-ATC FIELDS
+            'DEPARTURE_ELEVATION': {
+                element: document.getElementById('DEPARTURE_ELEVATION'),
+                name: 'Departure Elevation',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
 
-          if (!FIC_NAME.value) { missing.push('FIC name'); FIC_NAME.style.backgroundColor = '#ffeb3b'; }
-          if (!FIC_FREQUENCY.value) { missing.push('FIC Freq.'); FIC_FREQUENCY.style.backgroundColor = '#ffeb3b'; }
-          if (!OVERHEAD.value) { missing.push('Overhead point.'); OVERHEAD.style.backgroundColor = '#ffeb3b'; }
+            'DEPARTURE_CIRCUIT_ALTITUDE': {
+                element: document.getElementById('DEPARTURE_CIRCUIT_ALTITUDE'),
+                name: 'Departure Circuit Altitude',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
 
-          missing_label.textContent = missing.length ? 'Missing: ' + missing.join(', ') : 'All fields are OK! Create your ATC now.';
+            //ARRIVAL NOT ATC FIELDS
+            'ARRIVAL_ELEVATION': {
+                element: document.getElementById('ARRIVAL_ELEVATION'),
+                name: 'Arrival Elevation',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            'ARRIVAL_ATC_APPROACH': {
+                element: document.getElementById('ARRIVAL_ATC_APPROACH'),
+                name: 'Arrival Frequency Approach',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            'ARRIVAL_ATC_TELEPHONE': {
+                element: document.getElementById('ARRIVAL_ATC_TELEPHONE'),
+                name: 'Arrival Telephone Number',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            // DEPARTURE WIND
+            'DEPARTURE_WIND_DIRECTION': {
+                element: document.getElementById('DEPARTURE_WIND_DIRECTION'),
+                name: 'Departure Wind Direction',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            'DEPARTURE_WIND_SPEED': {
+                element: document.getElementById('DEPARTURE_WIND_SPEED'),
+                name: 'Departure Wind Speed',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            'DEPARTURE_WIND_GUST': {
+                element: document.getElementById('DEPARTURE_WIND_GUST'),
+                name: 'Departure Wind Gust',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            'DEPARTURE_WIND_VARIATION': {
+                element: document.getElementById('DEPARTURE_WIND_VARIATION'),
+                name: 'Departure Wind Variation',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            'DEPARTURE_WIND_HEADWIND': {
+                element: document.getElementById('DEPARTURE_WIND_HEADWIND'),
+                name: 'Departure Headwind',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            'DEPARTURE_WIND_CROSSWIND': {
+                element: document.getElementById('DEPARTURE_WIND_CROSSWIND'),
+                name: 'Departure Crosswind',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            // ARRIVAL WIND
+            'ARRIVAL_WIND_DIRECTION': {
+                element: document.getElementById('ARRIVAL_WIND_DIRECTION'),
+                name: 'Arrival Wind Direction',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            'ARRIVAL_WIND_SPEED': {
+                element: document.getElementById('ARRIVAL_WIND_SPEED'),
+                name: 'Arrival Wind Speed',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            'ARRIVAL_WIND_GUST': {
+                element: document.getElementById('ARRIVAL_WIND_GUST'),
+                name: 'Arrival Wind Gust',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            'ARRIVAL_WIND_VARIATION': {
+                element: document.getElementById('ARRIVAL_WIND_VARIATION'),
+                name: 'Arrival Wind Variation',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            'ARRIVAL_WIND_HEADWIND': {
+                element: document.getElementById('ARRIVAL_WIND_HEADWIND'),
+                name: 'Arrival Headwind',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            'ARRIVAL_WIND_CROSSWIND': {
+                element: document.getElementById('ARRIVAL_WIND_CROSSWIND'),
+                name: 'Arrival Crosswind',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            //ENROUTE FIELDS
+            'FIC_NAME2': {
+                element: document.getElementById('FIC_NAME2'),
+                name: 'FIC2 Name',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            'FIC_FREQUENCY2': {
+                element: document.getElementById('FIC_FREQUENCY2'),
+                name: 'FIC2 Frequency',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            'OVERHEAD2': {
+                element: document.getElementById('OVERHEAD2'),
+                name: 'Overhead (second)',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            'SQUAWK2': {
+                element: document.getElementById('SQUAWK2'),
+                name: 'Squawk (second)',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+        };
+
+        // UPDATE THE EXCEPTIONS WHEN CTR IS USED
+        if (DEPARTURE_CTR.value === 'CTR') {
+            GUIfields.DEPARTURE_ATC_ATIS_FREQ = {
+                element: document.getElementById('DEPARTURE_ATC_ATIS_FREQ'),
+                name: 'Departure ATIS Frequency',
+                color_empty: '#ffeb3b',
+                color_filled: 'transparent',
+                required_atc_departure: true,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            };
+            GUIfields.DEPARTURE_ATC_GROUND = {
+                element: document.getElementById('DEPARTURE_ATC_GROUND'),
+                name: 'Departure Ground Frequency',
+                color_empty: '#ffeb3b',
+                color_filled: 'transparent',
+                required_atc_departure: true,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            };
+        }
+        if (ARRIVAL_CTR.value === 'CTR') {
+            GUIfields.ARRIVAL_ATC_ATIS_FREQ = {
+                element: document.getElementById('ARRIVAL_ATC_ATIS_FREQ'),
+                name: 'Arrival ATIS Frequency',
+                color_empty: '#ffeb3b',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: true,
+                required_atc_enroute: false,
+            };
+            GUIfields.ARRIVAL_ATC_GROUND = {
+                element: document.getElementById('ARRIVAL_ATC_GROUND'),
+                name: 'Arrival Ground Frequency',
+                color_empty: '#ffeb3b',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: true,
+                required_atc_enroute: false,
+            };
+        }
+
+        return GUIfields
+    }
+
+    const inputs = getGUIfields();
+    let missing = [];
+
+    function addTextMissingFields(missing) {
+        // Create one big string with all missing labels that is shown in TAB of ATC
+        missing_label.textContent = missing.length ? 'Missing: ' + missing.join(', ') : 'All fields are OK! Create your ATC now.';
+        if (!missing.length) {
+          missing_label.style.fontSize = '12px';
+          missing_label.style.color = 'green';
+        } else {
+          missing_label.style.fontSize = '';
+          missing_label.style.color = '';
+        }
+    }
+
+    function updateGUIField(item, missing) {
+        // Update the GUI field with color and add missing label when required for ATC fields
+        if (!item.element.value) {
+            // If any of the required ATC fields are empty, add the label to the missing array
+            if (item.required_atc_departure || item.required_atc_arrival || item.required_atc_enroute) {
+                missing.push(item.name);
+            }
+            item.element.style.backgroundColor = item.color_empty;
+        } else {
+            item.element.style.backgroundColor = item.color_filled;
+        }
+    }
+
+    // Catch each keystroke and analyze it
+    Object.values(inputs).forEach(item => {
+        item.element.addEventListener('input', () => {
+            // Update the GUI field
+            updateGUIField(item, missing);
+            // Add missing label when required for ATC fields
+            addTextMissingFields(missing)
         });
-      });
+    });
+
+    // Function to check for missing fields and update highlighting
+    function highlightMissingFields() {
+      console.log("---> highlightMissingFields()");
+        const inputs = getGUIfields();
+        const missing = [];
+        // Loop through and highlight empty fields
+        Object.entries(inputs).forEach(([key, item]) => {
+          // Update the GUI field
+            updateGUIField(item, missing);
+        });
+        // Add missing label when required for ATC fields
+        addTextMissingFields(missing);
+    }
+
   </script>
 
 </body>
