@@ -33,13 +33,16 @@
 
 
 <body>
-  <div id="app">
-    <div id="loading-spinner" class="spinner-overlay" style="display: flex;">
-      <div class="spinner-container">
-        <div class="spinner"></div>
-        <div class="spinner-text">Loading SkyWalk. Please wait..</div>
-      </div>
-    </div>
+
+    <div id="app">
+        <div id="loading-spinner" class="spinner-overlay" style="display: flex;">
+            <div class="spinner-container">
+                <div class="spinner"></div>
+                <div class="spinner-text">Loading SkyWalk. Please wait..</div>
+            </div>
+        </div>
+
+
 
 
     <!-- Tab links -->
@@ -63,73 +66,80 @@
 	<!--<div id="General" class="tabcontent" style="display:block;">-->
 	<div id="General" class="tabcontent">
 
-	<!-- Logo -->
-	  <div class="logo-container">
-		<a href="https://erdogant.github.io/skywalk-docs/pages/html/index.html" target="_blank">
-		  <img id="skywalk_logo" alt="SkyWalk">
-		</a>
-		<div class="version" style="margin-bottom: 5px; ">version: 0.4.4</div>
-	  </div>
+        <!-- Logo -->
+        <div class="logo-container">
+        <a href="https://erdogant.github.io/skywalk-docs/pages/html/index.html" target="_blank">
+            <img id="skywalk_logo" alt="SkyWalk">
+        </a>
+        <div class="version" style="margin-bottom: 5px; ">version: 0.4.4</div>
+        </div>
+
+        <div>
+        <div class="tile" style="text-align: center; border: none;">
+            <input id="FLIGHTPLAN" type="text" onchange="createDateTime()" class="tile-value" title="Name your flightplan" placeholder="My Flightplan name" style="flex: 1;">
+            <input id="DATETIME" type="label" style="text-align: center; font-size: 12px; background-color: transparent; color: #777; border: none;" disabled>
+        </div>
+        </div>
 
 
-	<div class="button-row" style="justify-content: center;">
-	    <label_h1 style="margin: 0; text-align: center;">Flightplan</label_h1>
-	</div>
-
-	<div class="button-row">
-	    <button id="new_plan_btn">New Flightplan</button>
-		<select id="plan_spinner" onchange="this.value && window.load_flightplan()">
-		    <option value="">Load Flightplan</option>
-		</select>
-		<button id="delete_btn" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">🗑️</button>
-	</div>
-
-	  <!-- Flightplan Name row -->
-	  <div class="button-row">
-		<input type="text" id="FLIGHTPLAN" placeholder="Flightplan Name">
-		<input type="text" id="DATETIME" placeholder="dd-mm-yyyy hh:mm">
-		<button id="set_datetime_btn" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">⏰</button>
-	  </div>
+        <!--<label_h1>Aircraft</label_h1>-->
+        <div class="wind-grid">
+        <div class="tile">
+            <input id="CALLSIGN" type="text", class="tile-value UPPERCASE_input", title="CALLSIGN of the aircraft">
+            <span class="tile-label">CALLSIGN (PH-XYZ)</span>
+        </div>
+        <div class="tile">
+            <input id="AIRCRAFT_TYPE" type="text", class="tile-value UPPERCASE_input", title="Aircraft name (ROBIN400)">
+            <span class="tile-label">Aircraft name</span>
+        </div>
+        </div>
 
 
-	  <!-- Aircraft Info Label -->
-	<label_h1>Aircraft</label_h1>
+        <div class="wind-grid">
+        <div class="tile">
+            <input id="POB" type="text", class="tile-value UPPERCASE_input", title="Persons on Board">
+            <span class="tile-label">Persons on Board</span>
+        </div>
 
-    <div class="button-row">
-        <input type="text" id="CALLSIGN" class="UPPERCASE_input" placeholder="CALLSIGN (PH-XYZ)", title="CALLSIGN of the aircraft">
-        <input type="text" id="AIRCRAFT_TYPE" class="UPPERCASE_input" placeholder="Aircraft (ROBIN400)", title="Aircraft type">
-    </div>
-
-    <div class="button-row">
-        <input type="text" id="POB", placeholder="Persons on Board", title="Number of person on board">
-        <select id="FLIGHT_RULES">
+        <select id="FLIGHT_RULES", class="tile-value-dropdown">
             <option value="VFR">VFR</option>
             <option value="IFR">IFR</option>
         </select>
-    </div>
+        </div>
 
-    <label_h1>Save</label_h1>
 
-    <div class="button-row">
-        <button id="save_fields_btn" style="background-color: #4CAF50; color: white;" title="Saving fields in flightplan">Save Flightplan</button>
-    </div>
+        <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
+            <!-- Delete Button -->
+            <button id="delete_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete Flightplan">🗑️</button>
 
-	  <!-- Bottom Buttons Container -->
-	  <div id="bottom-container">
-    	  <div class="coffee-container">
-    		<a href="https://www.buymeacoffee.com/erdogant" target="_blank">
-    		  <img id="coffee_image" alt="Coffee Donation">
-    		</a>
-    	  </div>
+            <!-- Plan Spinner -->
+            <select id="plan_spinner" onchange="this.value && window.load_flightplan()" class="tile-value-dropdown" style="flex: 1; font-size: 12px; font-weight: normal;">
+                <option value="">Load</option>
+            </select>
 
-    	  <!--<div class="bottom-ad">-->
+            <!-- New Plan Button -->
+            <button id="new_plan_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Create New Flightplan">➕</button>
+            <!-- Save button -->
+            <button id="save_fields_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Flightplan">💾</button>
+        </div>
+
+
+        <!-- Bottom Buttons Container -->
+        <div id="bottom-container">
+        <div class="coffee-container">
+        <a href="https://www.buymeacoffee.com/erdogant" target="_blank">
+     	  <img id="coffee_image" alt="Coffee Donation">
+        </a>
+        </div>
+
+        <!--<div class="bottom-ad">-->
            	<center>
           		<script async src="https://media.ethicalads.io/media/client/ethicalads.min.js"></script>
           		<div data-ea-publisher="erdogantgithubio" data-ea-type="text"></div>
            	</center>
-    	  <!--</div>-->
+        <!--</div>-->
 
-	  </div>
+        </div>
 
 	</div>
 
@@ -140,47 +150,55 @@
 
 	<div id="Departure" class="tabcontent">
 
-	  <!-- Departure Information Label -->
-	  <label_h1>Departure Information</label_h1>
+        <!-- Departure Information Label -->
+        <label_h1>Departure Information</label_h1>
 
-	  <!-- Departure Image -->
-    <div class="logo-container" style="margin-top: 20px;">
-        <img id="DEPARTURE_image_cache" alt="Departure Aerodrome" style="max-width: 100%; height: auto; border-radius: 10px; cursor: pointer;" onclick="openAerodromeMap('DEPARTURE')">
-    </div>
+        <!-- Departure Image -->
+        <div class="logo-container" style="margin-top: 20px;">
+            <img id="DEPARTURE_image_cache" alt="Departure Aerodrome" style="max-width: 100%; height: auto; border-radius: 10px; cursor: pointer;" onclick="openAerodromeMap('DEPARTURE')">
+        </div>
 
 
-    <label_h1>Select Departure</label_h1>
+        <label_h1>Select Departure</label_h1>
+
+        <div class="wind-grid">
+            <select id="DEPARTURE_COUNTRY" class="tile-value-dropdown" style="font-weight: normal;">
+                <option value="">Select Country</option>
+            </select>
+            <select id="DEPARTURE_ICAO_CITY" class="tile-value-dropdown" style="font-weight: normal;">
+                <option value="">Select ICAO</option>
+                <!-- ICAO City options will be populated dynamically IN import_country_selected()-->
+            </select>
+        </div>
+
 
     <div class="button-row">
-        <select id="DEPARTURE_COUNTRY">
-            <option value="">Select Country</option>
-        </select>
-        <select id="DEPARTURE_ICAO_CITY">
-            <option value="">Select ICAO</option>
-            <!-- ICAO City options will be populated dynamically IN import_country_selected()-->
-        </select>
+        <input type="text" id="DEPARTURE_ICAO" class="UPPERCASE_input" placeholder="ICAO">
+        <button id="DEPARTURE_USE_CACHED" onclick="window.load_aerodrome_from_json('DEPARTURE')" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">🔄</button>
+        <button id="save_fields_btn_departure" onclick="window.save_aerodrome_to_json('DEPARTURE')" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">💾</button>
     </div>
 
 
-	  <!-- Line 4: NAME and ICAO inputs -->
-	  <div class="button-row">
-		<input type="text" id="DEPARTURE_NAME" placeholder="Airport Name">
-		<input type="text" id="DEPARTURE_ICAO" class="UPPERCASE_input" placeholder="ICAO">
-	  </div>
+    <label_h1>Aerodrome Information</label_h1>
 
-    <div class="button-row">
-        <button id="DEPARTURE_USE_CACHED" onclick="window.load_aerodrome_from_json('DEPARTURE')" style="background-color: #006280; border: 1px solid #333333; color: #ffffff;" title="Load previously saved fields for the selected aerodrome">Load Aerodrome</button>
-        <button id="save_fields_btn_departure" onclick="window.save_aerodrome_to_json('DEPARTURE')" style="background-color: #006280; border: 1px solid #333333; color: #ffffff;" title="Save your custom fields for this aerodrome">Save Aerodrome</button>
-    </div>
+    <div class="collapsible" data-title="AERODROME">
+    <div class="collapsible-header"></div>
+    <div class="collapsible-content">
 
+        <div class="wind-grid">
+            <div class="tile">
+                <input id="DEPARTURE_NAME" type="text" class="tile-value" title="Name of the aerodrome how it is known on the radio">
+                <span class="tile-label">Aerodrome</span>
+            </div>
+        </div>
 
+        <div class="grid-two-thirds-one-third">
+            <div class="tile">
+                <input id="DEPARTURE_POSITION" type="text" class="tile-value" title="Position of the Aircraft (at the apron)">
+                <span class="tile-label">Position of the aircraft</span>
+            </div>
 
-    <label_h1>Aerodrome</label_h1>
-
-        <!-- Line 5: POSITION, RUNWAY, ELEVATION inputs -->
-        <div class="button-row">
-            <input type="text" id="DEPARTURE_POSITION", class="tile-value UPPERCASE_input", placeholder="Position of the Aircraft (at the apron)", title="Position of the aircraft">
-            <select id="DEPARTURE_CTR", onchange="highlightMissingFields()", class="tile-value">
+            <select id="DEPARTURE_CTR", onchange="highlightMissingFields()", class="tile-value-dropdown">
                 <option value=""></option>
                 <option value="CTR">CTR</option>
             </select>
@@ -188,87 +206,69 @@
 
         <div class="wind-grid">
             <div class="tile">
-                <input id="DEPARTURE_RUNWAY" type="text", class="tile-value", title="The runway will be automatically determined when retrieving the METAR information.">
+                <input id="DEPARTURE_RUNWAY" type="text" class="tile-value" title="The runway will be automatically determined when retrieving the METAR information.">
                 <span class="tile-label">runway number</span>
             </div>
             <div class="tile">
-                <input id="DEPARTURE_ELEVATION" type="text", class="tile-value", title="Elevation of the field in feet.">
+                <input id="DEPARTURE_ELEVATION" type="text" class="tile-value" title="Elevation of the field in feet.">
                 <span class="tile-label">field elevation (ft)</span>
             </div>
             <div class="tile">
-                <input id="DEPARTURE_CIRCUIT_ALTITUDE" type="text", class="tile-value", title="The altitude of the circuit in feet.">
+                <input id="DEPARTURE_CIRCUIT_ALTITUDE" type="text" class="tile-value" title="The altitude of the circuit in feet.">
                 <span class="tile-label">circuit altitude (ft)</span>
             </div>
         </div>
 
-        <div class="grid-one-third-two-thirds">
+        <div class="grid-two-thirds-one-third">
             <!-- This takes 1/3 of the width -->
             <div class="tile">
-                <input id="DEPARTURE_ROUTE_ALTITUDE" type="text", class="tile-value", title="The altitude of the route in feet.">
-                <span class="tile-label">route altitude (ft)</span>
+                <input id="DEPARTURE_ROUTE_NAME" type="text" class="tile-value UPPERCASE_input" title="The name of the route (e.g., MIKE/ROMEO) for departure.">
+                <span class="tile-label">route name</span>
             </div>
             <!-- This takes 2/3 of the width -->
             <div class="tile">
-                <input id="DEPARTURE_ROUTE_NAME" type="text", class="tile-value UPPERCASE_input", title="The name of the route (e.g., MIKE/ROMEO) for departure.">
-                <span class="tile-label">route name</span>
+                <input id="DEPARTURE_ROUTE_ALTITUDE" type="text" class="tile-value" title="The altitude of the route in feet.">
+                <span class="tile-label">route altitude (ft)</span>
+            </div>
+        </div>
+    </div>
+    </div>
+
+	  <!--<label_h1>Contact</label_h1>-->
+
+    <div class="collapsible" data-title="CONTACT">
+    <div class="collapsible-header"></div>
+    <div class="collapsible-content">
+
+        <div class="wind-grid">
+            <div class="tile">
+                <input id="DEPARTURE_ATC_GROUND" type="text" class="tile-value">
+                <span class="tile-label">ground/ delivery (MHz)</span>
+            </div>
+            <div class="tile">
+                <input id="DEPARTURE_ATC_TOWER" type="text" class="tile-value">
+                <span class="tile-label">tower/ radio (MHz)</span>
+            </div>
+            <div class="tile">
+                <input id="DEPARTURE_ATC_ATIS_FREQ" type="text" class="tile-value">
+                <span class="tile-label">ATIS (MHz)</span>
             </div>
         </div>
 
-	  <!--<div class="button-row">
-		<input type="text" id="DEPARTURE_RUNWAY" placeholder="Runway Number" title="Runway number is automatically predicted when retrieving METAR data" aria-label="Runway number is automatically predicted when retrieving METAR data">
-		<input type="text" id="DEPARTURE_ELEVATION" placeholder="Field Elevation (ft)" title="Departure aerodrome elevation in feet (ft)." aria-label="Departure field elevation in feet">
-	  </div>
-	  <div class="button-row">
-		<input type="text" id="DEPARTURE_ROUTE_NAME" placeholder="Route Name", class="UPPERCASE_input">
-		<input type="text" id="DEPARTURE_ROUTE_ALTITUDE" placeholder="Route Altitude">
-		<input type="text" id="DEPARTURE_CIRCUIT_ALTITUDE" placeholder="Circuit Altitude">
-	  </div>-->
-
-
-	  <!-- Line 7: Frequency label -->
-	  <label_h1>Frequency</label_h1>
-
-	  <!-- Line 8: ATC_TOWER and ATC_APPROACH inputs -->
-   <div class="wind-grid">
-
-       <div class="tile">
-           <input id="DEPARTURE_ATC_TOWER" type="text" class="tile-value">
-           <span class="tile-label">tower/ radio (MHz)</span>
-       </div>
-       <div class="tile">
-           <input id="DEPARTURE_ATC_APPROACH" type="text" class="tile-value">
-           <span class="tile-label">approach (MHz)</span>
-       </div>
-       <div class="tile">
-           <input id="DEPARTURE_ATC_ATIS_FREQ" type="text" class="tile-value">
-           <span class="tile-label">ATIS (MHz)</span>
-       </div>
-   </div>
-    <div class="grid-one-third-two-thirds">
-        <div class="tile">
-            <input id="DEPARTURE_ATC_GROUND" type="text" class="tile-value">
-            <span class="tile-label">ground/ delivery (MHz)</span>
+        <div class="grid-two-thirds-one-third">
+            <div class="tile">
+                <input id="DEPARTURE_ATC_TELEPHONE" type="text" class="tile-value">
+                <span class="tile-label">telephone number</span>
+            </div>
+            <div class="tile">
+                <input id="DEPARTURE_ATC_APPROACH" type="text" class="tile-value">
+                <span class="tile-label">approach (MHz)</span>
+            </div>
         </div>
-       <div class="tile">
-           <input id="DEPARTURE_ATC_TELEPHONE" type="text" class="tile-value">
-           <span class="tile-label">telephone number</span>
-       </div>
-   </div>
 
-	  <!--<div class="button-row">
-		<input type="text" id="DEPARTURE_ATC_TOWER" placeholder="Tower Frequency">
-		<input type="text" id="DEPARTURE_ATC_APPROACH" placeholder="Approach Frequency">
-	  </div>
+    </div>
+    </div>
 
-	  <div class="button-row">
-		<input type="text" id="DEPARTURE_ATC_ATIS_FREQ" placeholder="ATIS Frequency">
-		<input type="text" id="DEPARTURE_ATC_GROUND" placeholder="Ground Frequency">
-	  </div>
-
-	  <div class="button-row">
-		<input type="text" id="DEPARTURE_ATC_TELEPHONE" placeholder="Telephone">
-	  </div>
-			-->
 
 
    <label_h1>METAR WIDGETS</label_h1>
@@ -359,7 +359,7 @@
                 <button id="BTN-METARTAF-DEPARTURE"
                     onclick="window.set_widget('DEPARTURE', 'METARTAF')"
                     style="transition: background-color 0.3s; z-index: 1; background-color: #006280; border: 1px solid #333333; color: #ffffff;">
-                    Retrieve METAR-TAF Widget
+                    Retrieve METAR-TAF
                 </button>
             </div>
 
@@ -388,7 +388,7 @@
             <button id="BTN-AIRPORTWEATHER-DEPARTURE"
                 onclick="window.set_widget('DEPARTURE', 'AIRPORTWEATHER')"
                 style="transition: background-color 0.3s; z-index: 1; background-color: #006280; border: 1px solid #333333; color: #ffffff;">
-                Retrieve AirportWeather Widget
+                Retrieve AirportWeather
             </button>
         </div>
 
@@ -429,200 +429,205 @@
         <label_h1>Arrival Information</label_h1>
 
         <!-- ARRIVAL Image -->
-      	  <div class="logo-container" style="margin-top: 20px;">
-      		<img id="ARRIVAL_image_cache" alt="Arrival Aerodrome" style="max-width: 100%; height: auto; border-radius: 10px; cursor: pointer;" onclick="openAerodromeMap('ARRIVAL')">
-      	  </div>
+        <div class="logo-container" style="margin-top: 20px;">
+            <img id="ARRIVAL_image_cache" alt="Arrival Aerodrome" style="max-width: 100%; height: auto; border-radius: 10px; cursor: pointer;" onclick="openAerodromeMap('ARRIVAL')">
+        </div>
 
          <label_h1>Select Arrival</label_h1>
 
         <!-- Line 2: COUNTRY and ICAO_CITY spinners aligned -->
-        <div class="button-row">
-            <select id="ARRIVAL_COUNTRY">
+        <div class="wind-grid">
+            <select id="ARRIVAL_COUNTRY" class="tile-value-dropdown" style="font-weight: normal;">
                 <option value="">Select Country</option>
             </select>
-                <select id="ARRIVAL_ICAO_CITY">
+            <select id="ARRIVAL_ICAO_CITY" class="tile-value-dropdown" style="font-weight: normal;">
                 <option value="">Select ICAO</option>
-                <!-- ICAO City options will be populated dynamically -->
-                </select>
+                <!-- ICAO City options will be populated dynamically IN import_country_selected()-->
+            </select>
         </div>
 
-
-	<!-- Line 4: NAME and ICAO inputs -->
+<!--
         <div class="button-row">
-            <input type="text" id="ARRIVAL_NAME" placeholder="Airport Name">
             <input type="text" id="ARRIVAL_ICAO", class="UPPERCASE_input", placeholder="ICAO">
         </div>
         <div class="button-row">
             <button id="ARRIVAL_USE_CACHED" onclick="window.load_aerodrome_from_json('ARRIVAL')" style="background-color: #006280; border: 1px solid #333333; color: #ffffff;" title="Load previously saved fields for the selected aerodrome.">Load Aerodrome</button>
             <button id="save_fields_btn_arrival" onclick="window.save_aerodrome_to_json('ARRIVAL')" style="background-color: #006280; border: 1px solid #333333; color: #ffffff;" title="Save your custom fields for this aerodrome.">Save Aerodrome</button>
-        </div>
-
-
-     <label_h1>Aerodrome</label_h1>
-
-        <!-- Line 5: POSITION, RUNWAY, ELEVATION inputs -->
-        <div class="button-row">
-            <input type="text" id="ARRIVAL_POSITION", class="tile-value UPPERCASE_input", placeholder="Position of the Aircraft (at the apron)", title="Position of the aircraft">
-            <select id="ARRIVAL_CTR", onchange="highlightMissingFields()", class="tile-value">
-                <option value=""></option>
-                <option value="CTR">CTR</option>
-            </select>
-        </div>
-
-        <div class="wind-grid">
-            <div class="tile">
-                <input id="ARRIVAL_RUNWAY" type="text", class="tile-value", title="The runway will be automatically determined when retrieving the METAR information.">
-                <span class="tile-label">runway number</span>
-            </div>
-            <div class="tile">
-                <input id="ARRIVAL_ELEVATION" type="text", class="tile-value", title="Elevation of the field in feet.">
-                <span class="tile-label">field elevation (ft)</span>
-            </div>
-            <div class="tile">
-                <input id="ARRIVAL_CIRCUIT_ALTITUDE" type="text", class="tile-value", title="The altitude of the circuit in feet.">
-                <span class="tile-label">circuit altitude (ft)</span>
-            </div>
-        </div>
-
-        <div class="grid-one-third-two-thirds">
-            <!-- This takes 1/3 of the width -->
-            <div class="tile">
-                <input id="ARRIVAL_ROUTE_ALTITUDE" type="text", class="tile-value", title="The altitude of the route in feet.">
-                <span class="tile-label">route altitude (ft)</span>
-            </div>
-            <!-- This takes 2/3 of the width -->
-            <div class="tile">
-                <input id="ARRIVAL_ROUTE_NAME" type="text", class="tile-value UPPERCASE_input", title="The name of the route (e.g., MIKE/ROMEO) for departure.">
-                <span class="tile-label">route name</span>
-            </div>
-
-        </div>
-
-        <!--<div class="button-row">
-            <input type="text" id="ARRIVAL_RUNWAY" placeholder="Runway Number">
-            <input type="text" id="ARRIVAL_ELEVATION" placeholder="Field Elevation (ft)" title="Arrival aerodrome elevation in feet (ft)." aria-label="Arrival field elevation in feet">
-        </div>
-        <div class="button-row">
-            <input type="text" id="ARRIVAL_ROUTE_NAME" placeholder="Route Name", class="UPPERCASE_input">
-            <input type="text" id="ARRIVAL_ROUTE_ALTITUDE" placeholder="Route Altitude">
-            <input type="text" id="ARRIVAL_CIRCUIT_ALTITUDE" placeholder="Circuit Altitude">
         </div>-->
 
-        <!-- Line 7: Frequency label -->
-        <label_h1>Frequency</label_h1>
-        <div class="wind-grid">
-            <div class="tile">
-                <input id="ARRIVAL_ATC_TOWER" type="text" class="tile-value">
-                <span class="tile-label">tower/ radio (MHz)</span>
-            </div>
-            <div class="tile">
-                <input id="ARRIVAL_ATC_APPROACH" type="text" class="tile-value">
-                <span class="tile-label">approach (MHz)</span>
-            </div>
-            <div class="tile">
-                <input id="ARRIVAL_ATC_ATIS_FREQ" type="text" class="tile-value">
-                <span class="tile-label">ATIS (MHz)</span>
-            </div>
-        </div>
-
-        <div class="grid-one-third-two-thirds">
-            <div class="tile">
-                <input id="ARRIVAL_ATC_GROUND" type="text" class="tile-value">
-                <span class="tile-label">ground/ delivery (MHz)</span>
-            </div>
-            <div class="tile">
-                <input id="ARRIVAL_ATC_TELEPHONE" type="text" class="tile-value">
-                <span class="tile-label">telephone number</span>
-            </div>
-        </div>
-
-
-        <!--<div class="button-row">
-            <input type="text" id="ARRIVAL_ATC_TOWER" placeholder="Tower Frequency">
-            <input type="text" id="ARRIVAL_ATC_APPROACH" placeholder="Approach Frequency">
-        </div>
         <div class="button-row">
-            <input type="text" id="ARRIVAL_ATC_ATIS_FREQ" placeholder="ATIS Frequency">
-            <input type="text" id="ARRIVAL_ATC_GROUND" placeholder="Ground Frequency">
+            <input type="text" id="ARRIVAL_ICAO" class="UPPERCASE_input" placeholder="ICAO">
+            <button id="ARRIVAL_USE_CACHED" onclick="window.load_aerodrome_from_json('ARRIVAL')" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">🔄</button>
+            <button id="save_fields_btn_arrival" onclick="window.save_aerodrome_to_json('ARRIVAL')" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">💾</button>
         </div>
-        <div class="button-row">
-            <input type="text" id="ARRIVAL_ATC_TELEPHONE" placeholder="Telephone">
-        </div>-->
 
-        <label_h1>WIDGETS</label_h1>
+
+        <label_h1>Aerodrome Information</label_h1>
+
+        <div class="collapsible" data-title="AERODROME">
+        <div class="collapsible-header"></div>
+        <div class="collapsible-content">
+
+            <div class="wind-grid">
+                <div class="tile">
+                    <input id="ARRIVAL_NAME" type="text" class="tile-value" title="Name of the aerodrome how it is known on the radio">
+                    <span class="tile-label">Aerodrome</span>
+                </div>
+            </div>
+
+            <div class="grid-two-thirds-one-third">
+                <div class="tile">
+                    <input id="ARRIVAL_POSITION" type="text" class="tile-value" title="Position of the Aircraft (at the apron)">
+                    <span class="tile-label">Position of the aircraft</span>
+                </div>
+
+                <select id="ARRIVAL_CTR", class="tile-value-dropdown" onchange="highlightMissingFields()">
+                    <option value=""></option>
+                    <option value="CTR">CTR</option>
+                </select>
+            </div>
+
+            <div class="wind-grid">
+                <div class="tile">
+                    <input id="ARRIVAL_RUNWAY" type="text", class="tile-value", title="The runway will be automatically determined when retrieving the METAR information.">
+                    <span class="tile-label">runway number</span>
+                </div>
+                <div class="tile">
+                    <input id="ARRIVAL_ELEVATION" type="text", class="tile-value", title="Elevation of the field in feet.">
+                    <span class="tile-label">field elevation (ft)</span>
+                </div>
+                <div class="tile">
+                    <input id="ARRIVAL_CIRCUIT_ALTITUDE" type="text", class="tile-value", title="The altitude of the circuit in feet.">
+                    <span class="tile-label">circuit altitude (ft)</span>
+                </div>
+            </div>
+
+            <div class="grid-two-thirds-one-third">
+                <!-- This takes 2/3 of the width -->
+                <div class="tile">
+                    <input id="ARRIVAL_ROUTE_NAME" type="text", class="tile-value UPPERCASE_input", title="The name of the route (e.g., MIKE/ROMEO) for departure.">
+                    <span class="tile-label">route name</span>
+                </div>
+                <!-- This takes 1/3 of the width -->
+                <div class="tile">
+                    <input id="ARRIVAL_ROUTE_ALTITUDE" type="text", class="tile-value", title="The altitude of the route in feet.">
+                    <span class="tile-label">route altitude (ft)</span>
+                </div>
+            </div>
+
+        </div>
+        </div>
+
+
+        <!--<label_h1>Contact</label_h1>-->
+        <div class="collapsible" data-title="CONTACT">
+        <div class="collapsible-header"></div>
+        <div class="collapsible-content">
+
+            <div class="wind-grid">
+                    <div class="tile">
+                        <input id="ARRIVAL_ATC_GROUND" type="text" class="tile-value">
+                        <span class="tile-label">ground/ delivery (MHz)</span>
+                    </div>
+                <div class="tile">
+                    <input id="ARRIVAL_ATC_TOWER" type="text" class="tile-value">
+                    <span class="tile-label">tower/ radio (MHz)</span>
+                </div>
+                <div class="tile">
+                    <input id="ARRIVAL_ATC_ATIS_FREQ" type="text" class="tile-value">
+                    <span class="tile-label">ATIS (MHz)</span>
+                </div>
+            </div>
+
+                <div class="grid-two-thirds-one-third">
+                <div class="tile">
+                    <input id="ARRIVAL_ATC_TELEPHONE" type="text" class="tile-value">
+                    <span class="tile-label">telephone number</span>
+                </div>
+                <div class="tile">
+                    <input id="ARRIVAL_ATC_APPROACH" type="text" class="tile-value">
+                    <span class="tile-label">approach (MHz)</span>
+                </div>
+            </div>
+
+        </div>
+        </div>
+
+
+        <label_h1>METAR WIDGETS</label_h1>
 
         <!-- METAR Information -->
-            <div class="collapsible" data-title="METAR Information">
-            <div class="collapsible-header"></div>
-            <div class="collapsible-content">
+        <div class="collapsible" data-title="METAR INFORMATION">
+        <div class="collapsible-header"></div>
+        <div class="collapsible-content">
 
-                <div style="display: flex; gap: 1px; margin-top: 1px;">
-                    <input type="text" id="METAR-TEXT-ARRIVAL" readonly
-                        style="transition: background-color 0.3s; width: 70%;
-                               padding: 0; box-sizing: border-box; font-size: 10px;
-                               border: none; background-color: transparent;
-                               color: #333333; outline: none;">
+            <div style="display: flex; gap: 1px; margin-top: 1px;">
+                <input type="text" id="METAR-TEXT-ARRIVAL" readonly
+                    style="transition: background-color 0.3s; width: 70%;
+                            padding: 0; box-sizing: border-box; font-size: 10px;
+                            border: none; background-color: transparent;
+                            color: #333333; outline: none;">
 
-                    <input type="text" id="DATETIME-METAR-ARRIVAL" readonly
-                        title="The UTC date/time for the retrieved METAR data."
-                        style="transition: background-color 0.3s; width: 30%;
-                               padding: 0; box-sizing: border-box; font-size: 10px;
-                               border: none; background-color: transparent;
-                               color: #333333; outline: none;">
+                <input type="text" id="DATETIME-METAR-ARRIVAL" readonly
+                    title="The UTC date/time for the retrieved METAR data."
+                    style="transition: background-color 0.3s; width: 30%;
+                            padding: 0; box-sizing: border-box; font-size: 10px;
+                            border: none; background-color: transparent;
+                            color: #333333; outline: none;">
+            </div>
+
+            <div class="button-row">
+                <textarea id="METAR-FIELD-ARRIVAL"
+                    placeholder="METAR Information"
+                    style="transition: background-color 0.3s; width: 100%; min-height: 80px; max-height: 120px; resize: vertical; padding: 8px; box-sizing: border-box; border-radius: 10px"
+                    title="METAR information for the arrival aerodrome is shown here after automatically retrieved."
+                    aria-label="METAR Information"></textarea>
+            </div>
+
+            <!-- WIND INFORMATION -->
+            <div class="wind-grid">
+
+                <div class="tile">
+                    <input id="ARRIVAL_WIND_DIRECTION" type="text" class="tile-value">
+                    <span class="tile-label">direction (°)</span>
                 </div>
 
-                <div class="button-row">
-                    <textarea id="METAR-FIELD-ARRIVAL"
-                        placeholder="METAR Information"
-                        style="transition: background-color 0.3s; width: 100%; min-height: 80px; max-height: 120px; resize: vertical; padding: 8px; box-sizing: border-box; border-radius: 10px"
-                        title="METAR information for the arrival aerodrome is shown here after automatically retrieved."
-                        aria-label="METAR Information"></textarea>
+                <div class="tile">
+                    <input id="ARRIVAL_WIND_SPEED" type="text" class="tile-value">
+                    <span class="tile-label">speed (kt)</span>
                 </div>
 
-                <!-- WIND INFORMATION -->
-                <div class="wind-grid">
-
-                    <div class="tile">
-                        <input id="ARRIVAL_WIND_DIRECTION" type="text" class="tile-value">
-                        <span class="tile-label">direction (°)</span>
-                    </div>
-
-                    <div class="tile">
-                        <input id="ARRIVAL_WIND_SPEED" type="text" class="tile-value">
-                        <span class="tile-label">speed (kt)</span>
-                    </div>
-
-                    <div class="tile">
-                        <input id="ARRIVAL_WIND_GUST" type="text" class="tile-value">
-                        <span class="tile-label">gust (kt)</span>
-                    </div>
-
-                    <div class="tile">
-                        <input id="ARRIVAL_WIND_VARIATION" type="text" class="tile-value">
-                        <span class="tile-label">variation (°)</span>
-                    </div>
-
-                    <div class="tile">
-                        <input id="ARRIVAL_WIND_HEADWIND" type="text" class="tile-value">
-                        <span class="tile-label">headwind</span>
-                    </div>
-
-                    <div class="tile">
-                        <input id="ARRIVAL_WIND_CROSSWIND" type="text" class="tile-value">
-                        <span class="tile-label">crosswind</span>
-                    </div>
-
+                <div class="tile">
+                    <input id="ARRIVAL_WIND_GUST" type="text" class="tile-value">
+                    <span class="tile-label">gust (kt)</span>
                 </div>
 
-                <div class="button-row">
-                    <button id="BTN-METAR-ARRIVAL"
-                            onclick="window.retrieve_metar('ARRIVAL')"
-                            style="transition: background-color 0.3s; z-index: 1; background-color: #006280; border: 1px solid #333333; color: #ffffff;">
-                            Retrieve METAR Information
-                    </button>
+                <div class="tile">
+                    <input id="ARRIVAL_WIND_VARIATION" type="text" class="tile-value">
+                    <span class="tile-label">variation (°)</span>
+                </div>
+
+                <div class="tile">
+                    <input id="ARRIVAL_WIND_HEADWIND" type="text" class="tile-value">
+                    <span class="tile-label">headwind</span>
+                </div>
+
+                <div class="tile">
+                    <input id="ARRIVAL_WIND_CROSSWIND" type="text" class="tile-value">
+                    <span class="tile-label">crosswind</span>
                 </div>
 
             </div>
+
+            <div class="button-row">
+                <button id="BTN-METAR-ARRIVAL"
+                        onclick="window.retrieve_metar('ARRIVAL')"
+                        style="transition: background-color 0.3s; z-index: 1; background-color: #006280; border: 1px solid #333333; color: #ffffff;">
+                        Retrieve METAR Information
+                </button>
+            </div>
+
+        </div>
         </div>
 
 
@@ -637,7 +642,7 @@
                 <button id="BTN-METARTAF-ARRIVAL"
                     onclick="window.set_widget('ARRIVAL', 'METARTAF')"
                     style="transition: background-color 0.3s; z-index: 1; background-color: #006280; border: 1px solid #333333; color: #ffffff;">
-                    Retrieve METAR-TAF Widget
+                    Retrieve METAR-TAF
                 </button>
             </div>
 
@@ -666,7 +671,7 @@
                 <button id="BTN-AIRPORTWEATHER-ARRIVAL"
                     onclick="window.set_widget('ARRIVAL', 'AIRPORTWEATHER')"
                     style="transition: background-color 0.3s; z-index: 1; background-color: #006280; border: 1px solid #333333; color: #ffffff;">
-                    Retrieve AirportWeather Widget
+                    Retrieve AirportWeather
                 </button>
              </div>
 
@@ -704,64 +709,53 @@
         <label_h1>Enroute Information</label_h1>
 
 
-    <div class="input-grid-2x2">
-        <div class="tile">
-            <input id="FIC_NAME" type="text" class="tile-value REPLACE_INFO">
-            <span class="tile-label">FIC name</span>
+        <div class="grid-two-thirds-one-third">
+            <div class="tile">
+                <input id="FIC_NAME" type="text" class="tile-value REPLACE_INFO">
+                <span class="tile-label">FIC name</span>
+            </div>
+            <div class="tile">
+                <input id="FIC_FREQUENCY" type="text" class="tile-value">
+                <span class="tile-label">frequency (Mhz)</span>
+            </div>
         </div>
-        <div class="tile">
-            <input id="FIC_FREQUENCY" type="text" class="tile-value">
-            <span class="tile-label">frequency (Mhz)</span>
-        </div>
-        <div class="tile">
-            <input id="OVERHEAD" type="text" class="tile-value UPPERCASE_input">
-            <span class="tile-label">Overhead</span>
-        </div>
-        <div class="tile">
-            <input id="SQUAWK" type="text" class="tile-value">
-            <span class="tile-label">SQUAWK</span>
-        </div>
-    </div>
 
-
-    <!--<div class="button-row">
-          <div style="display:flex; flex-direction:column; flex:1; margin-right:10px;">
-            <label for="FIC_NAME">FIC name</label>
-          </div>
-          <div style="display:flex; flex-direction:column; flex:1;">
-            <label for="FIC_FREQUENCY">FIC frequency</label>
-          </div>
-    </div>
-
-    <div class="button-row">
-          <input type="text" id="FIC_NAME" placeholder="FIC Name", class="REPLACE_INFO">
-          <input type="text" id="FIC_FREQUENCY" placeholder="FIC Frequency">
-    </div>
-    <div class="button-row">
-          <input type="text" id="OVERHEAD" placeholder="Overhead Point", class="UPPERCASE_input">
-          <input type="text" id="SQUAWK" placeholder="SQUAWK">
-    </div>-->
+        <div class="grid-two-thirds-one-third">
+            <div class="tile">
+                <input id="OVERHEAD" type="text" class="tile-value UPPERCASE_input">
+                <span class="tile-label">Overhead</span>
+            </div>
+            <div class="tile">
+                <input id="SQUAWK" type="text" class="tile-value">
+                <span class="tile-label">SQUAWK</span>
+            </div>
+        </div>
 
    	<!--Create selectionbox that is populated with previously cached FICs-->
-   	<div class="button-row">
-        <select id="fic_spinner">
+   	<!--<div class="button-row">
+        <select id="fic_spinner" class="tile-value-dropdown">
             <option value="">Select saved FIC</option>
         </select>
         <button id="fic_save_btn" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">💾</button>
         <button id="fic_delete_btn" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">🗑️</button>
-   	</div>
+   	</div>-->
+
+    <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
+        <!-- Delete Button -->
+        <button id="fic_delete_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete Flightplan">🗑️</button>
+
+        <!-- Spinner -->
+        <select id="fic_spinner" class="tile-value-dropdown" style="flex: 1; font-size: 12px; font-weight: normal;">
+            <option value="">Select saved FIC</option>
+        </select>
+
+        <!-- Save button -->
+        <button id="fic_save_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Flightplan">💾</button>
+    </div>
 
         <label_h1>SECOND FIC</label_h1>
 
-        <!--<div class="button-row">
-          <input type="text" id="FIC_NAME2" placeholder="FIC Name 2", class="REPLACE_INFO">
-          <input type="text" id="FIC_FREQUENCY2" placeholder="FIC Frequency 2">
-        </div>
-        <div class="button-row">
-          <input type="text" id="OVERHEAD2" placeholder="Overhead Point", class="UPPERCASE_input">
-          <input type="text" id="SQUAWK2" placeholder="SQUAWK">
-        </div>-->
-        <div class="input-grid-2x2">
+        <div class="grid-two-thirds-one-third">
             <div class="tile">
                 <input id="FIC_NAME2" type="text" class="tile-value REPLACE_INFO">
                 <span class="tile-label">Secondary FIC name</span>
@@ -770,6 +764,8 @@
                 <input id="FIC_FREQUENCY2" type="text" class="tile-value">
                 <span class="tile-label">frequency (Mhz)</span>
             </div>
+        </div>
+        <div class="grid-two-thirds-one-third">
             <div class="tile">
                 <input id="OVERHEAD2" type="text" class="tile-value UPPERCASE_input">
                 <span class="tile-label">Overhead</span>
@@ -781,13 +777,30 @@
         </div>
 
        	<!--Create selectionbox that is populated with previously cached FICs-->
-    	<div class="button-row">
-               	<select id="fic_spinner2">
-             	  <option value="">Select saved FIC</option>
-               	</select>
-                <button id="fic_save_btn2" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">💾</button>
-                <button id="fic_delete_btn2" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">🗑️</button>
-    	</div>
+        <!--<div class="wind-grid">
+            <select id="fic_spinner2" class="tile-value-dropdown">
+                <option value="">Select saved FIC</option>
+            </select>
+
+            <button id="fic_save_btn2" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">💾</button>
+            <button id="fic_delete_btn2" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">🗑️</button>
+        </div>
+        -->
+
+        <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
+            <!-- Delete Button -->
+            <button id="fic_delete_btn2" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete Flightplan">🗑️</button>
+
+            <!-- Spinner -->
+            <select id="fic_spinner2" class="tile-value-dropdown" style="flex: 1; font-size: 12px; font-weight: normal;">
+                <option value="">Select saved FIC</option>
+            </select>
+
+            <!-- Save button -->
+            <button id="fic_save_btn2" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Flightplan">💾</button>
+        </div>
+
+
 
     </div>
 
@@ -838,8 +851,8 @@
                 <button id="BTN_HTML_SUMMARY_REV">Reverse</button>
             </div>
             <div class="button-row">
-                <button id="BTN_HTML_ARRIVAL">ARRIVAL ATC</button>
-                <button id="BTN_HTML_ARRIVAL_REV">Reverse</button>
+                <button id="BTN_HTML_DEPARTURE">Departure ATC</button>
+                <button id="BTN_HTML_DEPARTURE_REV">Reverse</button>
             </div>
             <div class="button-row">
                 <button id="BTN_HTML_ARRIVAL">Arrival ATC</button>
@@ -2081,11 +2094,15 @@
 
 <script>
     // Set datetime field in the GENERAL TAB
-    document.getElementById('set_datetime_btn').addEventListener('click', () => {
-      /* Update datetime field to current local time. */
-      document.getElementById('DATETIME').value = nowtime(false);
-    });
+    // document.getElementById('set_datetime_btn').addEventListener('click', () => {
+    //   document.getElementById('DATETIME').value = nowtime(false);
+    // });
 
+
+    function createDateTime() {
+      console.log("---> createDateTime()");
+      document.getElementById('DATETIME').value = nowtime(false);
+    }
 
     // Add save button functionality
     document.getElementById('save_fields_btn')?.addEventListener('click', () => {
@@ -4832,8 +4849,8 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             # Remove METAR widget
             remove_metar_widget(fname)
 
-            print(f"✅ Aerodrome data loaded successfully for {fname}")
-            js.window.alert(f"✅ Aerodrome data loaded successfully for {fname}")
+            print(f"✅ Aerodrome {selected_icao} successfully loaded for {fname}")
+            js.window.alert(f"✅ Aerodrome {selected_icao} successfully loaded for {fname}")
         except Exception as e:
             print(f"❌ Error loading aerodrome data: {str(e)}")
             js.window.alert(f"⚠️ Error loading aerodrome data: {str(e)}")
@@ -4997,7 +5014,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         select = js.document.getElementById('plan_spinner')
         if select:
             # Clear existing options except the first placeholder
-            select.innerHTML = '<option value="">Select flightplan</option>'
+            select.innerHTML = '<option value="">Load</option>'
 
             # Add each flightplan as an option
             for plan_name in flightplan_names:
@@ -6440,7 +6457,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
               element: document.getElementById('FLIGHTPLAN'),
               name: 'Flightplan Name',
               color_empty: '#ffeb3b',
-              color_filled: '',
+              color_filled: 'transparent',
               required_atc_departure: false,
               required_atc_arrival: false,
               required_atc_enroute: false,
@@ -6449,7 +6466,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                 element: document.getElementById('CALLSIGN'),
                 name: 'Callsign',
                 color_empty: '#ffeb3b',
-                color_filled: '',
+                color_filled: 'transparent',
                 required_atc_departure: true,
                 required_atc_arrival: true,
                 required_atc_enroute: true,
@@ -6458,7 +6475,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                 element: document.getElementById('AIRCRAFT_TYPE'),
                 name: 'Aircraft Type',
                 color_empty: '#ffeb3b',
-                color_filled: '',
+                color_filled: 'transparent',
                 required_atc_departure: true,
                 required_atc_arrival: true,
                 required_atc_enroute: true,
@@ -6467,7 +6484,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                 element: document.getElementById('POB'),
                 name: 'Persons on Board',
                 color_empty: '#ffeb3b',
-                color_filled: '',
+                color_filled: 'transparent',
                 required_atc_departure: true,
                 required_atc_arrival: true,
                 required_atc_enroute: true,
@@ -6548,7 +6565,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                 element: document.getElementById('DEPARTURE_POSITION'),
                 name: 'Departure Position',
                 color_empty: '#ffeb3b',
-                color_filled: '',
+                color_filled: 'transparent',
                 required_atc_departure: true,
                 required_atc_arrival: false,
                 required_atc_enroute: false,
@@ -6557,7 +6574,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                 element: document.getElementById('DEPARTURE_NAME'),
                 name: 'Departure Airport Name',
                 color_empty: '#ffeb3b',
-                color_filled: '',
+                color_filled: 'transparent',
                 required_atc_departure: true,
                 required_atc_arrival: false,
                 required_atc_enroute: true,
@@ -6571,11 +6588,20 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                 required_atc_arrival: false,
                 required_atc_enroute: true,
             },
+            'ARRIVAL_POSITION': {
+                element: document.getElementById('ARRIVAL_POSITION'),
+                name: 'Arrival Position',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
             'ARRIVAL_NAME': {
                 element: document.getElementById('ARRIVAL_NAME'),
                 name: 'Arrival Airport Name',
                 color_empty: '#ffeb3b',
-                color_filled: '',
+                color_filled: 'transparent',
                 required_atc_departure: false,
                 required_atc_arrival: true,
                 required_atc_enroute: true,

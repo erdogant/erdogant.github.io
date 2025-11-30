@@ -627,27 +627,33 @@ body.mobile-fullscreen .output-box {
 
 .wind-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: 12px;
-    margin-top: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
 }
 
 .input-grid-2x2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
+    gap: 10px;
 }
-/*.wind-grid_3 {
+.wind-grid_3 {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-top: 12px;
-}*/
+    gap: 10px;
+    margin-top: 10px;
+}
 .grid-one-third-two-thirds {
     display: grid;
     grid-template-columns: 1fr 2fr;
-    gap: 12px;
-    margin-top: 12px;
+    gap: 10px;
+    margin-top: 10px;
+}
+.grid-two-thirds-one-third {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
 }
 .tile {
     background: white;
@@ -662,7 +668,7 @@ body.mobile-fullscreen .output-box {
 
 .tile-value {
     font-size: 22px;
-    /*background: transparent;*/
+    /*background: transparent;*/ /* do not set! Background is determined during interaction */
     text-align: center;
     font-weight: 700;
     display: block;
@@ -675,4 +681,31 @@ body.mobile-fullscreen .output-box {
     font-size: 12px;
     color: #777;
     display: block;
+}
+
+/*DROPDOWN MENU*/
+.tile-value-dropdown {
+    font-size: 14px; /* Smaller, more refined */
+    background: transparent;
+    text-align: center;
+    font-weight: 600; /* Slightly less bold */
+    display: block;
+    margin-bottom: 6px; /* Less spacing */
+    padding: 8px 6px; /* Comfortable padding */
+    border: 1px solid #e0e0e0; /* Subtle border */
+    border-radius: 14px; /* Softer rounded corners */
+    outline: none;
+    transition: all 0.2s ease; /* Smooth transitions */
+    cursor: pointer;
+}
+
+.tile-value-dropdown:hover {
+    border-color: #b0b0b0; /* Darker border on hover */
+    background: #f9f9f9; /* Subtle background */
+}
+
+.tile-value-dropdown:focus {
+    border-color: #4a90e2; /* Blue border when focused */
+    background: #f5f9ff; /* Light blue background */
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1); /* Subtle glow */
 }
