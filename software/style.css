@@ -15,7 +15,18 @@ label_h1 {
     letter-spacing: 0.5px;
     text-align: center;
 }
-
+label_h2 {
+    display: block;
+    font-weight: bold;
+    margin-top: 6px;
+    margin-bottom: 6px;
+    padding: 1px;
+    color: #2a3f54; /* Navy-ish dark color */
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+}
 label {
     display: block;
     font-weight: normal;
@@ -343,6 +354,7 @@ input[type="text"]:hover {
     text-transform: uppercase;
 }
 
+/*SPINNER*/
 .spinner-overlay {
     display: none;
     position: fixed;
@@ -584,10 +596,16 @@ body.mobile-fullscreen .output-box {
 .collapsible {
     font-size: 14px;
     border: 1px solid #ccc;
-    border-radius: 6px;
+    border-radius: 6px; /* round edged corners */
     margin: 8px 0;
     overflow: hidden;
     background: #f5f5f5; /* Light gray background */
+}
+
+.collapsible:hover {
+    border-color: #b0b0b0; /* Darker border on hover */
+    /*background: #fafafa;*/
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1); /* Subtle glow */
 }
 
 .collapsible-header {
@@ -664,9 +682,12 @@ body.mobile-fullscreen .output-box {
     font-size: 16px;
     line-height: 1.2;
     position: relative;
+    overflow: hidden; /* remove scrollbar when the inside object is larger */
 }
 
 .tile-value {
+    width: 100%;
+    box-sizing: border-box; /* ensures padding stays inside */
     font-size: 22px;
     /*background: transparent;*/ /* do not set! Background is determined during interaction */
     text-align: center;
@@ -676,25 +697,33 @@ body.mobile-fullscreen .output-box {
     z-index: 5;
     border-radius: 4px; /* optional: rounded corners */
 }
+.tile:hover {
+    border-color: #b0b0b0; /* Darker border on hover */
+    background: #fafafa; /* Subtle background */
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1); /* Subtle glow */
+}
 
 .tile-label {
-    font-size: 12px;
+    font-size: 11px;
     color: #777;
     display: block;
 }
 
 /*DROPDOWN MENU*/
 .tile-value-dropdown {
+    width: 100%;
+    box-sizing: border-box; /* ensures padding stays inside */
     font-size: 14px; /* Smaller, more refined */
-    background: transparent;
-    text-align: center;
+    color: #333;
+    background: #fff;
+    text-align: left;
     font-weight: 600; /* Slightly less bold */
     display: block;
     margin-bottom: 6px; /* Less spacing */
     padding: 8px 6px; /* Comfortable padding */
     border: 1px solid #e0e0e0; /* Subtle border */
     border-radius: 14px; /* Softer rounded corners */
-    outline: none;
+    outline: #f5f5f5;
     transition: all 0.2s ease; /* Smooth transitions */
     cursor: pointer;
 }
@@ -708,4 +737,13 @@ body.mobile-fullscreen .output-box {
     border-color: #4a90e2; /* Blue border when focused */
     background: #f5f9ff; /* Light blue background */
     box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1); /* Subtle glow */
+}
+
+/* BORDER WITH ROUNED EDGES */
+.border-round-eged {
+    background-color: #f5f5f5;
+    border-radius: 14px; /* Rounded edges */
+    padding: 8px 6px; /* Comfortable space at the top-down and left-right border */
+    border: 1px solid #ccc;
+    margin: 8px 0; /* keep spacing between adjacent elements */
 }

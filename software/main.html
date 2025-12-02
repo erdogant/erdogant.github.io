@@ -27,7 +27,8 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://pyscript.net/releases/2025.8.1/core.css">
     <script type="module" src="https://pyscript.net/releases/2025.8.1/core.js"></script>
-
+    <!--<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>-->
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 
 </head>
 
@@ -63,66 +64,80 @@
 
 
     <!-- =============== TAB GENERAL =============== -->
-	<!--<div id="General" class="tabcontent" style="display:block;">-->
 	<div id="General" class="tabcontent">
 
         <!-- Logo -->
         <div class="logo-container">
-        <a href="https://erdogant.github.io/skywalk-docs/pages/html/index.html" target="_blank">
-            <img id="skywalk_logo" alt="SkyWalk">
-        </a>
-        <div class="version" style="margin-bottom: 5px; ">version: 0.5.0</div>
+            <a href="https://erdogant.github.io/skywalk-docs/pages/html/index.html" target="_blank">
+                <img id="skywalk_logo" alt="SkyWalk">
+            </a>
+            <div class="version" style="margin-bottom: 5px; ">version: 0.5.0</div>
         </div>
 
         <div>
-        <div class="tile" style="text-align: center; border: none;">
-            <input id="FLIGHTPLAN" type="text" onchange="createDateTime()" class="tile-value" title="Name your flightplan" placeholder="My Flightplan name" style="flex: 1;font-size: 18px;">
-            <input id="DATETIME" type="label" style="text-align: center; font-size: 12px; background-color: transparent; color: #777; border: none;" disabled>
-        </div>
+            <div class="tile" style="text-align: center; border: none;">
+                <input id="FLIGHTPLAN" type="text" onchange="createDateTime()" class="tile-value" title="Name your flightplan" placeholder="My Flightplan name" style="flex: 1;font-size: 18px;">
+                <input id="DATETIME" type="label" style="text-align: center; font-size: 12px; background-color: transparent; color: #777; border: none;" disabled>
+            </div>
         </div>
 
 
         <!--<label_h1>Aircraft</label_h1>-->
-        <div class="wind-grid">
-        <div class="tile">
-            <input id="CALLSIGN" type="text", class="tile-value UPPERCASE_input", title="CALLSIGN of the aircraft">
-            <span class="tile-label">CALLSIGN (PH-XYZ)</span>
+        <div class="border-round-eged">
+            <div class="wind-grid">
+                <div class="tile">
+                    <input id="CALLSIGN" type="text", class="tile-value UPPERCASE_input", title="CALLSIGN of the aircraft">
+                    <span class="tile-label">CALLSIGN (PH-XYZ)</span>
+                </div>
+                <div class="tile">
+                    <input id="AIRCRAFT_TYPE" type="text", class="tile-value UPPERCASE_input", title="Aircraft name (ROBIN400)">
+                    <span class="tile-label">Aircraft name</span>
+                </div>
+            </div>
+
+
+            <div class="wind-grid">
+                <div class="tile">
+                    <input id="POB" type="text", class="tile-value UPPERCASE_input", title="Persons on Board">
+                    <span class="tile-label">Persons on Board</span>
+                </div>
+
+                <select id="FLIGHT_RULES", class="tile-value-dropdown", style="text-align: center;">
+                    <option value="VFR">VFR</option>
+                    <option value="IFR">IFR</option>
+                </select>
+            </div>
+
+            <div class="wind-grid">
+                <!--<input id="DEPARTURE_OK" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; width: 30px; height: 30px;">-->
+                <div class="tile">
+                    <!--<select id="DEPARTURE_COUNTRY" class="tile-value-dropdown" style="font-weight: normal;">
+                        <option value="">Select Country</option>
+                    </select>-->
+                    <input id="DEPARTURE_ICAO_2" type="text" class="tile-value UPPERCASE_input sync-departure" onchange="window.load_aerodrome_from_json('DEPARTURE', elementId='DEPARTURE_ICAO_2');" title="Departure ICAO">
+                    <span id="DEPARTURE_ICAO_2_LABEL" class="tile-label">Departure (ICAO)</span>
+                </div>
+                <div class="tile">
+                    <input id="ARRIVAL_ICAO_2" type="text" class="tile-value UPPERCASE_input sync-arrival" onchange="window.load_aerodrome_from_json('ARRIVAL', elementId='ARRIVAL_ICAO_2');" title="Arrival ICAO">
+                    <span id="ARRIVAL_ICAO_2_LABEL" class="tile-label">Arrival (ICAO)</span>
+                </div>
+            </div>
         </div>
-        <div class="tile">
-            <input id="AIRCRAFT_TYPE" type="text", class="tile-value UPPERCASE_input", title="Aircraft name (ROBIN400)">
-            <span class="tile-label">Aircraft name</span>
-        </div>
-        </div>
 
+            <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
+                <!-- Delete Button -->
+                <button id="delete_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete Flightplan">🗑️</button>
 
-        <div class="wind-grid">
-        <div class="tile">
-            <input id="POB" type="text", class="tile-value UPPERCASE_input", title="Persons on Board">
-            <span class="tile-label">Persons on Board</span>
-        </div>
+                <!-- Plan Spinner -->
+                <select id="plan_spinner" class="tile-value-dropdown" onchange="this.value && window.load_flightplan()" style="flex: 1; font-size: 12px; font-weight: normal;">
+                    <option value=""></option>
+                </select>
 
-        <select id="FLIGHT_RULES", class="tile-value-dropdown">
-            <option value="VFR">VFR</option>
-            <option value="IFR">IFR</option>
-        </select>
-        </div>
-
-
-        <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
-            <!-- Delete Button -->
-            <button id="delete_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete Flightplan">🗑️</button>
-
-            <!-- Plan Spinner -->
-            <select id="plan_spinner" onchange="this.value && window.load_flightplan()" class="tile-value-dropdown" style="flex: 1; font-size: 12px; font-weight: normal;">
-                <option value="">Load</option>
-            </select>
-
-            <!-- New Plan Button -->
-            <button id="new_plan_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Create New Flightplan">➕</button>
-            <!-- Save button -->
-            <button id="save_fields_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Flightplan">💾</button>
-        </div>
-
+                <!-- New Plan Button -->
+                <button id="new_plan_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Create New Flightplan">🧹</button>
+                <!-- Save button -->
+                <button id="save_fields_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Flightplan">💾</button>
+            </div>
 
         <!-- Bottom Buttons Container -->
         <div id="bottom-container">
@@ -160,24 +175,26 @@
 
 
         <label_h1>Select Departure</label_h1>
+        <div class="border-round-eged">
+            <div class="wind-grid">
+                <select id="DEPARTURE_COUNTRY" class="tile-value-dropdown" style="font-weight: normal;">
+                    <option value="">Select Country</option>
+                </select>
+                <select id="DEPARTURE_ICAO_CITY" class="tile-value-dropdown" style="font-weight: normal;">
+                    <option value="">Select ICAO</option>
+                    <!-- ICAO City options will be populated dynamically IN import_country_selected()-->
+                </select>
+            </div>
 
-        <div class="wind-grid">
-            <select id="DEPARTURE_COUNTRY" class="tile-value-dropdown" style="font-weight: normal;">
-                <option value="">Select Country</option>
-            </select>
-            <select id="DEPARTURE_ICAO_CITY" class="tile-value-dropdown" style="font-weight: normal;">
-                <option value="">Select ICAO</option>
-                <!-- ICAO City options will be populated dynamically IN import_country_selected()-->
-            </select>
+
+            <div class="button-row">
+                <input type="text" id="DEPARTURE_ICAO" class="tile-value UPPERCASE_input sync-departure" onchange="window.load_aerodrome_from_json('DEPARTURE')" placeholder="ICAO">
+                <!--<button id="DEPARTURE_USE_CACHED" onclick="window.load_aerodrome_from_json('DEPARTURE')" title="Load custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>-->
+                <button id="save_fields_btn_departure" onclick="window.save_aerodrome_to_json('DEPARTURE')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">💾</button>
+                <button id="BTN-METAR-ICON-DEPARTURE_1" onclick="window.retrieve_metar('DEPARTURE')" title="Load METAR data for aerodrome and automatically predict the runway number based on the wind direction" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🌤</button>
+            </div>
+
         </div>
-
-
-    <div class="button-row">
-        <input type="text" id="DEPARTURE_ICAO" class="UPPERCASE_input" placeholder="ICAO">
-        <button id="DEPARTURE_USE_CACHED" onclick="window.load_aerodrome_from_json('DEPARTURE')" title="Load custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>
-        <button id="save_fields_btn_departure" onclick="window.save_aerodrome_to_json('DEPARTURE')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">💾</button>
-        <button id="BTN-METAR-ICON-DEPARTURE" onclick="window.retrieve_metar('DEPARTURE')" title="Load METAR data for aerodrome and automatically predict the runway number based on the wind direction" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🌤</button>
-    </div>
 
 
     <label_h1>Aerodrome Information</label_h1>
@@ -199,7 +216,7 @@
                 <span class="tile-label">Position of the aircraft</span>
             </div>
 
-            <select id="DEPARTURE_CTR", onchange="highlightMissingFields()", class="tile-value-dropdown">
+            <select id="DEPARTURE_CTR" class="tile-value-dropdown" onchange="highlightMissingFields()" style="text-align: center;">
                 <option value=""></option>
                 <option value="CTR">CTR</option>
             </select>
@@ -208,7 +225,10 @@
         <div class="wind-grid">
             <div class="tile">
                 <input id="DEPARTURE_RUNWAY" type="text" class="tile-value" title="The runway will be automatically determined when retrieving the METAR information.">
-                <span class="tile-label">Runway number</span>
+                <span class="tile-label">
+                    Runway nr.
+                    <button id="BTN-METAR-ICON-DEPARTURE_2" onclick="window.retrieve_metar('DEPARTURE')" title="Load METAR data for aerodrome and automatically predict the runway number based on the wind direction" style="background-color: transparent; border: none; width: 10px; padding: 1px; cursor: pointer;">🌤</button>
+                </span>
             </div>
             <div class="tile">
                 <input id="DEPARTURE_ELEVATION" type="text" class="tile-value" title="Elevation of the field in feet.">
@@ -236,7 +256,6 @@
     </div>
 
 	  <!--<label_h1>Contact</label_h1>-->
-
     <div class="collapsible" data-title="CONTACT">
     <div class="collapsible-header"></div>
     <div class="collapsible-content">
@@ -279,6 +298,10 @@
        <div class="collapsible-header"></div>
        <div class="collapsible-content">
 
+           <div class="button-row">
+                <button id="BTN-METAR-DEPARTURE" onclick="window.retrieve_metar('DEPARTURE')" style="transition: background-color 0.3s; z-index: 1; background-color: #006280; border: 1px solid #333333; color: #ffffff; cursor: pointer;" title="Retrieve METAR information.">Retrieve METAR Information 🌤</button>
+           </div>
+
            <div style="display: flex; gap: 1px; margin-top: 1px;">
                <input type="text" id="METAR-TEXT-DEPARTURE" readonly
                    style="transition: background-color 0.3s; width: 70%;
@@ -305,7 +328,7 @@
            <!-- WIND INFORMATION -->
            <div class="wind-grid">
 
-               <div class="tile">
+                <div class="tile">
                    <input id="DEPARTURE_WIND_DIRECTION" type="text" class="tile-value">
                    <span class="tile-label">Direction (°)</span>
                </div>
@@ -326,28 +349,37 @@
                </div>
 
                <div class="tile">
-                   <input id="DEPARTURE_WIND_HEADWIND" type="text" class="tile-value">
+                   <input id="DEPARTURE_WIND_HEADWIND" readonly type="text" class="tile-value" title="Headwind is calculated based on the wind speed and direction relative to the runway. This value can not be changed." style="background-color: transparent;">
                    <span class="tile-label">Headwind (kt)</span>
                </div>
 
                <div class="tile">
-                   <input id="DEPARTURE_WIND_CROSSWIND" type="text" class="tile-value">
+                   <input id="DEPARTURE_WIND_CROSSWIND" readonly type="text" class="tile-value" title="Crosswind is calculated based on the wind speed and direction relative to the runway. This value can not be changed." style="background-color: transparent;">
                    <span class="tile-label">Crosswind (kt)</span>
                </div>
 
            </div>
 
            <div class="button-row">
-               <button id="BTN-METAR-DEPARTURE"
-                   onclick="window.retrieve_metar('DEPARTURE')"
-                   style="transition: background-color 0.3s; z-index: 1; background-color: #006280; border: 1px solid #333333; color: #ffffff; cursor: pointer;"
-                   title="Load previously saved fields for the selected aerodrome.">
-                       Retrieve METAR Information 🌤
+               <button id="BTN-PLOT-WIND-DEPARTURE"
+                   onclick="window.windEnvelope_js('DEPARTURE')">
+                       Show wind envelope plot
                    </button>
+               </div>
+
+           <div class="tile">
+               <div id="DEPARTURE_WIND_ENVELOPE_PLOT" style="width: 100%; box-sizing: border-box;"></div>
+           </div>
+
+           <div class="button-row">
+               <textarea id="DEPARTURE_WIND_ENVELOPE_TEXT"
+                   placeholder="..."
+                   style="transition: background-color 0.3s; width: 100%; min-height: 80px; max-height: 120px; resize: vertical; padding: 8px; box-sizing: border-box; border-radius: 10px">
+                </textarea>
            </div>
 
        </div>
-   </div>
+       </div>
 
 
    <!-- METAR-TAF WIDGET -->
@@ -434,34 +466,27 @@
             <img id="ARRIVAL_image_cache" alt="Arrival Aerodrome" style="max-width: 100%; height: auto; border-radius: 10px; cursor: pointer;" onclick="openAerodromeMap('ARRIVAL')">
         </div>
 
-         <label_h1>Select Arrival</label_h1>
 
-        <!-- Line 2: COUNTRY and ICAO_CITY spinners aligned -->
-        <div class="wind-grid">
-            <select id="ARRIVAL_COUNTRY" class="tile-value-dropdown" style="font-weight: normal;">
-                <option value="">Select Country</option>
-            </select>
-            <select id="ARRIVAL_ICAO_CITY" class="tile-value-dropdown" style="font-weight: normal;">
-                <option value="">Select ICAO</option>
-                <!-- ICAO City options will be populated dynamically IN import_country_selected()-->
-            </select>
+        <label_h1>Select Arrival</label_h1>
+        <div class="border-round-eged">
+            <div class="wind-grid">
+                <select id="ARRIVAL_COUNTRY" class="tile-value-dropdown" style="font-weight: normal;">
+                    <option value="">Select Country</option>
+                </select>
+                <select id="ARRIVAL_ICAO_CITY" class="tile-value-dropdown" style="font-weight: normal;">
+                    <option value="">Select ICAO</option>
+                    <!-- ICAO City options will be populated dynamically IN import_country_selected()-->
+                </select>
+            </div>
+
+            <div class="button-row">
+                <input type="text" id="ARRIVAL_ICAO" class="tile-value UPPERCASE_input sync-arrival" onchange="window.load_aerodrome_from_json('ARRIVAL')" placeholder="ICAO">
+                <!--<button id="ARRIVAL_USE_CACHED" onclick="window.load_aerodrome_from_json('ARRIVAL')" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>-->
+                <button id="save_fields_btn_arrival" onclick="window.save_aerodrome_to_json('ARRIVAL')" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">💾</button>
+                <button id="BTN-METAR-ICON-ARRIVAL_1" onclick="window.retrieve_metar('ARRIVAL')" title="Load METAR data for aerodrome and automatically predict the runway number based on the wind direction" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🌤</button>
+            </div>
         </div>
 
-<!--
-        <div class="button-row">
-            <input type="text" id="ARRIVAL_ICAO", class="UPPERCASE_input", placeholder="ICAO">
-        </div>
-        <div class="button-row">
-            <button id="ARRIVAL_USE_CACHED" onclick="window.load_aerodrome_from_json('ARRIVAL')" style="background-color: #006280; border: 1px solid #333333; color: #ffffff;" title="Load previously saved fields for the selected aerodrome.">Load Aerodrome</button>
-            <button id="save_fields_btn_arrival" onclick="window.save_aerodrome_to_json('ARRIVAL')" style="background-color: #006280; border: 1px solid #333333; color: #ffffff;" title="Save your custom fields for this aerodrome.">Save Aerodrome</button>
-        </div>-->
-
-        <div class="button-row">
-            <input type="text" id="ARRIVAL_ICAO" class="UPPERCASE_input" placeholder="ICAO">
-            <button id="ARRIVAL_USE_CACHED" onclick="window.load_aerodrome_from_json('ARRIVAL')" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>
-            <button id="save_fields_btn_arrival" onclick="window.save_aerodrome_to_json('ARRIVAL')" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">💾</button>
-            <button id="BTN-METAR-ICON-ARRIVAL" onclick="window.retrieve_metar('ARRIVAL')" title="Load METAR data for aerodrome and automatically predict the runway number based on the wind direction" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🌤</button>
-        </div>
 
 
         <label_h1>Aerodrome Information</label_h1>
@@ -492,7 +517,10 @@
             <div class="wind-grid">
                 <div class="tile">
                     <input id="ARRIVAL_RUNWAY" type="text", class="tile-value", title="The runway will be automatically determined when retrieving the METAR information.">
-                    <span class="tile-label">Runway number</span>
+                    <span class="tile-label">
+                        Runway nr.
+                        <button id="BTN-METAR-ICON-ARRIVAL_2" onclick="window.retrieve_metar('ARRIVAL')" title="Load METAR data for aerodrome and automatically predict the runway number based on the wind direction" style="background-color: transparent; border: none; width: 10px; padding: 1px; cursor: pointer;">🌤</button>
+                    </span>
                 </div>
                 <div class="tile">
                     <input id="ARRIVAL_ELEVATION" type="text", class="tile-value", title="Elevation of the field in feet.">
@@ -559,9 +587,14 @@
         <label_h1>METAR WIDGETS</label_h1>
 
         <!-- METAR Information -->
-        <div class="collapsible" data-title="METAR INFORMATION">
+        <div class="collapsible" id="COLLAPSIBLE_MENU_METAR_ARRIVAL" data-title="METAR INFORMATION">
+        <!--<div class="collapsible" data-title="METAR INFORMATION">-->
         <div class="collapsible-header"></div>
         <div class="collapsible-content">
+
+            <div class="button-row">
+                <button id="BTN-METAR-ARRIVAL" onclick="window.retrieve_metar('ARRIVAL')" style="transition: background-color 0.3s; z-index: 1; background-color: #006280; border: 1px solid #333333; color: #ffffff; cursor: pointer;" title="Retrieve METAR information.">Retrieve METAR Information 🌤</button>
+            </div>
 
             <div style="display: flex; gap: 1px; margin-top: 1px;">
                 <input type="text" id="METAR-TEXT-ARRIVAL" readonly
@@ -621,12 +654,25 @@
 
             </div>
 
+            <!--onclick="window.windEnvelope_js('ARRIVAL'); window.toggleCollapsibleMenu('COLLAPSIBLE_MENU_METAR_ARRIVAL');">-->
             <div class="button-row">
-                <button id="BTN-METAR-ARRIVAL"
-                        onclick="window.retrieve_metar('ARRIVAL')"
-                        style="transition: background-color 0.3s; z-index: 1; background-color: #006280; border: 1px solid #333333; color: #ffffff; cursor: pointer;">
-                        Retrieve METAR Information 🌤
-                </button>
+               <button id="BTN-PLOT-WIND-ARRIVAL"
+                    onclick="window.windEnvelope_js('ARRIVAL');">
+                    Show wind envelope plot
+               </button>
+
+            </div>
+
+            <div class="tile">
+                <div id="ARRIVAL_WIND_ENVELOPE_PLOT" style="width: 100%; box-sizing: border-box;"></div>
+            </div>
+
+            <div class="button-row">
+                <textarea id="ARRIVAL_WIND_ENVELOPE_TEXT"
+                    placeholder="..."
+                    style="transition: background-color 0.3s; width: 100%; min-height: 120px; max-height: 150px; resize: vertical; padding: 8px; box-sizing: border-box; border-radius: 10px"
+                    title="Wind envelope message is shown here.">
+                </textarea>
             </div>
 
         </div>
@@ -710,96 +756,101 @@
     <div id="Enroute" class="tabcontent">
         <label_h1>Enroute Information</label_h1>
 
+        <div class="border-round-eged">
+            <label_h2>Flight Information Centre (FIC)</label_h2>
+            <div class="grid-two-thirds-one-third">
+                <div class="tile">
+                    <input id="FIC_NAME" type="text" class="tile-value REPLACE_INFO" style="font-size: 14px;">
+                    <span class="tile-label">FIC name</span>
+                </div>
+                <div class="tile">
+                    <input id="FIC_FREQUENCY" type="text" class="tile-value">
+                    <span class="tile-label">Frequency (Mhz)</span>
+                </div>
+            </div>
 
-        <div class="grid-two-thirds-one-third">
-            <div class="tile">
-                <input id="FIC_NAME" type="text" class="tile-value REPLACE_INFO">
-                <span class="tile-label">FIC name</span>
+            <div class="grid-two-thirds-one-third">
+                <div class="tile">
+                    <input id="OVERHEAD" type="text" class="tile-value UPPERCASE_input" style="font-size: 11px;">
+                    <span class="tile-label">Overhead</span>
+                </div>
+                <div class="tile">
+                    <input id="SQUAWK" type="text" class="tile-value">
+                    <span class="tile-label">SQUAWK</span>
+                </div>
             </div>
-            <div class="tile">
-                <input id="FIC_FREQUENCY" type="text" class="tile-value">
-                <span class="tile-label">Frequency (Mhz)</span>
+
+           	<!--Create selectionbox that is populated with previously cached FICs-->
+           	<!--<div class="button-row">
+                <select id="fic_spinner" class="tile-value-dropdown">
+                    <option value="">Select saved FIC</option>
+                </select>
+                <button id="fic_save_btn" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">💾</button>
+                <button id="fic_delete_btn" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">🗑️</button>
+           	</div>-->
+
+            <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
+                <!-- Delete Button -->
+                <button id="fic_delete_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete Flightplan">🗑️</button>
+                <!-- Spinner -->
+                <select id="fic_spinner" class="tile-value-dropdown" style="flex: 1; font-size: 12px; font-weight: normal;">
+                    <option value="">Select saved FIC</option>
+                </select>
+                <!-- Save button -->
+                <button id="fic_save_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Flightplan">💾</button>
             </div>
+
         </div>
 
-        <div class="grid-two-thirds-one-third">
-            <div class="tile">
-                <input id="OVERHEAD" type="text" class="tile-value UPPERCASE_input">
-                <span class="tile-label">Overhead</span>
+
+        <div class="border-round-eged">
+            <label_h2>Secondary Flight Information Centre (FIC)</label_h2>
+
+            <div class="grid-two-thirds-one-third">
+                <div class="tile">
+                    <input id="FIC_NAME2" type="text" class="tile-value REPLACE_INFO" style="font-size: 14px;">
+                    <span class="tile-label">Secondary FIC name</span>
+                </div>
+                <div class="tile">
+                    <input id="FIC_FREQUENCY2" type="text" class="tile-value">
+                    <span class="tile-label">frequency (Mhz)</span>
+                </div>
             </div>
-            <div class="tile">
-                <input id="SQUAWK" type="text" class="tile-value">
-                <span class="tile-label">SQUAWK</span>
+            <div class="grid-two-thirds-one-third">
+                <div class="tile">
+                    <input id="OVERHEAD2" type="text" class="tile-value UPPERCASE_input" style="font-size: 11px;">
+                    <span class="tile-label">Overhead</span>
+                </div>
+                <div class="tile">
+                    <input id="SQUAWK2" type="text" class="tile-value">
+                    <span class="tile-label">SQUAWK</span>
+                </div>
             </div>
-        </div>
 
-   	<!--Create selectionbox that is populated with previously cached FICs-->
-   	<!--<div class="button-row">
-        <select id="fic_spinner" class="tile-value-dropdown">
-            <option value="">Select saved FIC</option>
-        </select>
-        <button id="fic_save_btn" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">💾</button>
-        <button id="fic_delete_btn" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">🗑️</button>
-   	</div>-->
+           	<!--Create selectionbox that is populated with previously cached FICs-->
+            <!--<div class="wind-grid">
+                <select id="fic_spinner2" class="tile-value-dropdown">
+                    <option value="">Select saved FIC</option>
+                </select>
 
-    <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
-        <!-- Delete Button -->
-        <button id="fic_delete_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete Flightplan">🗑️</button>
-
-        <!-- Spinner -->
-        <select id="fic_spinner" class="tile-value-dropdown" style="flex: 1; font-size: 12px; font-weight: normal;">
-            <option value="">Select saved FIC</option>
-        </select>
-
-        <!-- Save button -->
-        <button id="fic_save_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Flightplan">💾</button>
-    </div>
-
-        <label_h1>SECOND FIC</label_h1>
-
-        <div class="grid-two-thirds-one-third">
-            <div class="tile">
-                <input id="FIC_NAME2" type="text" class="tile-value REPLACE_INFO">
-                <span class="tile-label">Secondary FIC name</span>
+                <button id="fic_save_btn2" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">💾</button>
+                <button id="fic_delete_btn2" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">🗑️</button>
             </div>
-            <div class="tile">
-                <input id="FIC_FREQUENCY2" type="text" class="tile-value">
-                <span class="tile-label">frequency (Mhz)</span>
+            -->
+
+            <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
+                <!-- Delete Button -->
+                <button id="fic_delete_btn2" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete Flightplan">🗑️</button>
+
+                <!-- Spinner -->
+                <select id="fic_spinner2" class="tile-value-dropdown" style="flex: 1; font-size: 12px; font-weight: normal;">
+                    <option value="">Select saved FIC</option>
+                </select>
+
+                <!-- Save button -->
+                <button id="fic_save_btn2" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Flightplan">💾</button>
             </div>
-        </div>
-        <div class="grid-two-thirds-one-third">
-            <div class="tile">
-                <input id="OVERHEAD2" type="text" class="tile-value UPPERCASE_input">
-                <span class="tile-label">Overhead</span>
-            </div>
-            <div class="tile">
-                <input id="SQUAWK2" type="text" class="tile-value">
-                <span class="tile-label">SQUAWK</span>
-            </div>
-        </div>
 
-       	<!--Create selectionbox that is populated with previously cached FICs-->
-        <!--<div class="wind-grid">
-            <select id="fic_spinner2" class="tile-value-dropdown">
-                <option value="">Select saved FIC</option>
-            </select>
-
-            <button id="fic_save_btn2" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">💾</button>
-            <button id="fic_delete_btn2" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">🗑️</button>
-        </div>
-        -->
-
-        <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
-            <!-- Delete Button -->
-            <button id="fic_delete_btn2" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete Flightplan">🗑️</button>
-
-            <!-- Spinner -->
-            <select id="fic_spinner2" class="tile-value-dropdown" style="flex: 1; font-size: 12px; font-weight: normal;">
-                <option value="">Select saved FIC</option>
-            </select>
-
-            <!-- Save button -->
-            <button id="fic_save_btn2" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Flightplan">💾</button>
         </div>
 
 
@@ -810,10 +861,36 @@
 
 
     <div id="ATC" class="tabcontent">
+
         <!-- ATC -->
         <label_h1>Display Settings</label_h1>
 
-        <div style="border: 1px solid lightgrey; border-radius: 10px; padding: 10px;">
+        <!--<div class="border-round-eged">-->
+            <div class="wind-grid">
+                <div class="tile">
+                    <select id="atc_fontsize" class="tile-value-dropdown">
+                        <option value="small">Small</option>
+                        <option value="medium">Medium</option>
+                        <option value="large" selected>Large</option>
+                        <option value="xl">Extra Large</option>
+                        <option value="xxl">XXL</option>
+                    </select>
+                    <span class="tile-label">Choose Font Size</span>
+                </div>
+                <div class="tile">
+                    <select id="atc_columns" class="tile-value-dropdown">
+                        <option value="1">1</option>
+                        <option value="2" selected>2</option>
+                        <option value="3">3</option>
+                    </select>
+                    <span class="tile-label">Choose Columns</span>
+                </div>
+            </div>
+
+
+
+        <!--</div>-->
+        <!--<div style="border: 1px solid lightgrey; border-radius: 10px; padding: 10px;">
             <div class="button-row">
                 <div style="display:flex; flex-direction:column; flex:1; margin-right:10px;">
                     <label for="atc_fontsize">Choose Font Size</label>
@@ -835,7 +912,7 @@
                     </select>
                 </div>
             </div>
-        </div>
+        </div>-->
 
         <label_h1>Required Fields</label_h1>
         <div style="border: 1px solid lightgrey; border-radius: 10px; padding: 10px;">
@@ -873,10 +950,10 @@
 
     <!-- =============== TAB MAP =============== -->
     <div id="MAP" class="tabcontent">
-        <!--<label_h1>MAP</label_h1>-->
+        <label_h1>MAP</label_h1>
 
-        <div class="button-row">
-            <select id="layer-select">
+        <div class="wind-grid">
+            <select id="layer-select" class="tile-value-dropdown">
                 <option value="OpenStreetMap">OpenStreetMap</option>
                 <option value="OpenTopoMap">OpenTopoMap</option>
                 <!--<option value="Carto Voyager">Carto Voyager</option>-->
@@ -936,7 +1013,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 
         <label_h1>Warning</label_h1>
-         <div class="warning" style="margin-bottom: 20px; border: 2px solid orange; border-radius: 10px; padding: 10px;">The airspace projections on the map are based on data that can be outdated or inaccurate. Do not navigate using the map but only use it for educational purposes.</div>
+        <div class="warning" style="margin-bottom: 20px; border: 2px solid orange; border-radius: 10px; padding: 10px;">The airspace projections on the map are based on data that can be outdated or inaccurate. Do not navigate using the map but only use it for educational purposes.</div>
 
 
 
@@ -983,6 +1060,35 @@
             });
         });
     });
+
+    function toggleCollapsibleMenu(fieldId) {
+        const block = document.getElementById(fieldId);
+        if (!block) return;
+        const content = block.querySelector('.collapsible-content');
+        block.classList.toggle('open');
+        if (block.classList.contains('open')) {
+            content.style.maxHeight = content.scrollHeight + "px";
+        } else {
+            content.style.maxHeight = null;
+        }
+    }
+    window.toggleCollapsibleMenu = toggleCollapsibleMenu;
+
+
+    function syncFields(className) {
+        // SYNC FIELDS OF DEPARTURE_ICAO AND DEPARTURE_ICAO_2
+        const fields = document.querySelectorAll('.' + className);
+        fields.forEach(field => {
+            field.addEventListener('input', e => {
+                fields.forEach(f => {
+                    if (f !== e.target) f.value = e.target.value.toUpperCase();
+                });
+            });
+        });
+    }
+
+    syncFields('sync-departure');
+    syncFields('sync-arrival');
 </script>
 
 
@@ -1094,7 +1200,8 @@
             // Ensure the first and last points always match current departure and arrival.
             const eps = 1e-6;
             function coordsEqual(a, b) {
-                return Math.abs(a[0] - b[0]) < eps && Math.abs(a[1] - b[1]) < eps;
+                // return Math.abs(a[0] - b[0]) < eps && Math.abs(a[1] - b[1]) < eps;
+                return (a[0] - b[0]) < eps && (a[1] - b[1]) < eps;
             }
             // Update departure (first) point if it changed
             if (!coordsEqual(window.waypoints[0], depCoords)) {
@@ -2112,7 +2219,7 @@
         try {
           // Get flightplan name
           const flightplanName = document.getElementById('FLIGHTPLAN')?.value;
-          if (!flightplanName) { window.alert("⚠️ Please enter a Flightplan name before saving");
+          if (!flightplanName) { window.alert("ℹ️ Please enter a Flightplan name before saving");
             return;
           }
 
@@ -2146,7 +2253,7 @@
         try {
             // Save aerodrome data to JSON files
             window.save_aerodrome_to_json('DEPARTURE');
-            window.alert(`✅ Departure aerodrome ${selected_icao} is saved!`);
+            window.alert(`✅ Departure aerodrome ${selected_icao} is saved! You can now load it.`);
         } catch (error) {
           console.error("⚠️ Error saving Aerodrome data:", error);
         }
@@ -2166,7 +2273,7 @@
         try {
             // Save aerodrome data to JSON files
             window.save_aerodrome_to_json('ARRIVAL');
-            window.alert(`✅ Arrival aerodrome ${selected_icao} is saved!`);
+            window.alert(`✅ Arrival aerodrome ${selected_icao} is saved! You can now load it.`);
         } catch (error) {
           console.error("⚠️ Error saving Aerodrome data:", error);
         }
@@ -2270,7 +2377,7 @@
 
         console.log(`🛫 Creating METAR widget for ${icao}`);
         if (icao === 'unknown') {
-            window.alert("⚠️ Please fill in ICAO field first before loading METAR information.");
+            window.alert("ℹ️ Please fill in ICAO field first before loading METAR information.");
             return false;
         }
 
@@ -2376,7 +2483,7 @@
 
 
         for (const icao of stations) {
-            console.log(`  >Working on fetching report of ${icao}`);
+            console.log(`  >Fetching METAR report of ${icao}`);
             // if (metarField) {
             //     metarField.value = 'Attempting to fetch the report of METAR station: ' + icao;
             // } else {
@@ -2589,8 +2696,8 @@
      * Accepts either an element reference or an element ID string.
      */
 
-    async function compute_wind_envelope_js(prefix, metar_icao) {
-        console.log(`>func: compute_wind_envelope_js(${prefix})`);
+    async function update_wind_gui_fields(prefix, metar_icao) {
+        console.log(`>func: update_wind_gui_fields(${prefix})`);
         // Get the values from the input fields
         const runwayField = document.getElementById(prefix + '_RUNWAY');
         const windDirectionField = document.getElementById(prefix + '_WIND_DIRECTION');
@@ -2647,16 +2754,15 @@
         console.log('   >Wind Dictionary:')
         console.log(wind_dict);
         // Compute the wind envelope
-        console.log('Max limits:')
-        console.log(window.settings['MAX_HEADWIND_LIMIT'])
-        console.log(window.settings['MAX_CROSSWIND_LIMIT'])
+        console.log(`   >Max limits: Headwind: ${window.settings['MAX_HEADWIND_LIMIT']}, Crosswind: ${window.settings['MAX_CROSSWIND_LIMIT']}`)
 
     }
 
 
     async function setMetarButton(prefix, enable=true) {
         const buttonMetar = document.getElementById('BTN-METAR-' + prefix);
-        const buttonMetarIcon = document.getElementById('BTN-METAR-ICON-' + prefix);
+        const buttonMetarIcon1 = document.getElementById('BTN-METAR-ICON-' + prefix + '_1');
+        const buttonMetarIcon2 = document.getElementById('BTN-METAR-ICON-' + prefix + '_2');
         const dateField = document.getElementById('DATETIME-METAR-' + prefix);
         const metarField = document.getElementById('METAR-FIELD-' + prefix);
         const metarText = document.getElementById('METAR-TEXT-' + prefix);
@@ -2668,14 +2774,16 @@
         const windCrosswindField = document.getElementById(prefix + '_WIND_CROSSWIND');
 
         if (enable) {
-          buttonMetarIcon.disabled = false;
-          buttonMetarIcon.style.cursor = 'pointer';
-
+          buttonMetarIcon1.disabled = false;
+          buttonMetarIcon1.style.cursor = 'pointer';
+          buttonMetarIcon2.disabled = false;
+          buttonMetarIcon2.style.cursor = 'pointer';
           buttonMetar.disabled = false;
           buttonMetar.style.cursor = 'pointer';
           buttonMetar.setAttribute('aria-disabled', 'false');
           buttonMetar.style.opacity = '1';
           buttonMetar.style.backgroundColor = '#80B0C0';
+
           metarField.style.backgroundColor = 'transparent';
           dateField.style.backgroundColor = 'transparent';
           metarText.style.backgroundColor = 'transparent';
@@ -2686,13 +2794,15 @@
           windHeadwindField.style.backgroundColor = 'transparent';
           windCrosswindField.style.backgroundColor = 'transparent';
         } else {
-          buttonMetarIcon.disabled = true;
-          buttonMetarIcon.style.cursor = "not-allowed";
-
+          buttonMetarIcon1.disabled = true;
+          buttonMetarIcon1.style.cursor = "not-allowed";
+          buttonMetarIcon2.disabled = true;
+          buttonMetarIcon2.style.cursor = "not-allowed";
           buttonMetar.disabled = true;
+          buttonMetar.style.cursor = "not-allowed";
           buttonMetar.setAttribute('aria-disabled', 'true');
           buttonMetar.style.opacity = '0.6';
-          buttonMetar.style.cursor = 'Be patient, fetching METAR data...';
+
           metarText.value = ' ';
           metarField.value = 'Be patient, fetching METAR data...';
 
@@ -2801,7 +2911,7 @@
 
         // If ICAO is empty or not provided, notify the user and return early
         if (!icao || !country) {
-            alert("⚠️ To retrieve the METAR information, please select country and load aerodrome (ICAO) first.");
+            alert("ℹ️ To retrieve the METAR information, please select country and load aerodrome (ICAO) first.");
             return;
         }
 
@@ -2857,18 +2967,21 @@
             }
             // else {
             //     window.alert(`⚠️ Runway number could not be predicted for ${prefix}. Please set the runway number manually.`);
-            // }
-            // Compute wind parameters from METAR data
-            compute_wind_envelope_js(prefix, metar_icao);
+
+            // Compute wind parameters from METAR data and update wind GUI fields
+            window.update_wind_gui_fields(prefix, metar_icao)
+            // Create wind envelope
+            window.windEnvelope_js(prefix,  25, 15, false)
+
             // Store RUNWAY number in flight plan data
             window.flight_plan_data[`${prefix}_RUNWAY`] = runway_predicted;
             // Store METAR in flight plan data
             window.flight_plan_data[`${prefix}_METAR_ICAO`] = metar_icao;
             // Display alert message
-            window.alert(`✅ METAR weather information is loaded from the closest station: (${stationName}). The predicted runway is: [${runway_predicted}]`);
+            // window.alert(`✅ METAR information is loaded from the closest station: ${stationName}.\n✅ The predicted runway is: ${runway_predicted}`);
         }
 
-        console.log(`METAR data for [${prefix}]: [${metar_icao}] with predicted runway [${runway_predicted}]`);
+        console.log(`✅ METAR information is loaded from the closest station: ${stationName}.\n✅ The predicted runway is: ${runway_predicted}`);
 
     }
 
@@ -2908,7 +3021,7 @@
 <script>
   // List of images to cache
   const IMAGES_TO_CACHE = {
-    skywalk_logo: "https://erdogant.github.io/datasets/skywalk/figs/Slide2.PNG",
+    skywalk_logo: "https://erdogant.github.io/datasets/skywalk/figs/Slide1.PNG",
     coffee_image: "https://erdogant.github.io/datasets/skywalk/figs/buy_me_a_coffee.png"
   };
   // Default ICAO image URL (not cached with others since it's used differently)
@@ -3020,7 +3133,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
     def get_default_settings():
         """Get default settings"""
-        print('----> get_default_settings()')
+        print('> func: get_default_settings()')
         data = {
             'DEPARTURE_COUNTRY': '',
             'DEPARTURE_ICAO': '',
@@ -3058,9 +3171,9 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
     def get_default_data():
         """Get default flightplan data structure - copied from utils_skywalk.py"""
-        print('----> get_default_data()')
+        print('> func: get_default_data()')
         data = {
-            # General/Flightplan
+            # General Flightplan
             'FLIGHTPLAN': '',           # Name of the flightplan
             'DATETIME': datetime.now().strftime('%d-%m-%Y %H:%M'),
             'CALLSIGN': '',             # Aircraft callsign
@@ -3374,9 +3487,20 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         return icao_with_metar
 
 
+    def remove_wind_envelope_plot(fname):
+        print(f"> func: remove_wind_envelope_plot({fname})")
+
+        # Clear field
+        element = js.document.getElementById(f'{fname}_WIND_ENVELOPE_TEXT')
+        element.value = ''
+        element = js.document.getElementById(f'{fname}_WIND_ENVELOPE_PLOT')
+        if element:
+            element.innerHTML = ''
+
+
     def remove_metar_widget(fname):
         """Remove METAR widget for the specified aerodrome if it exists"""
-        print(f"---> remove_metar_widget({fname})")
+        print(f"> func: remove_metar_widget({fname})")
 
         # Clear the METAR container
         widget_id = f"{fname}-WidgetContainer"
@@ -3384,7 +3508,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         # Clear the container instead of removing it
         if widget:
             widget.innerHTML = ''
-            print(f"🧹 Cleared METAR widget for {fname}")
+            print(f"   >🧹 Cleared METAR widget for {fname}")
 
         # Clear the airportweather container
         # widget_id = f"{fname}-airportweather-container"
@@ -3483,8 +3607,8 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
     # Main loader: called from JS
     async def import_country_selected(fname, country):
-        print('----> import_country_selected()')
-        print(f"🌍 Loading {fname} aerodrome data for: {country}")
+        print(f'>func: import_country_selected({fname}, {country})')
+        print(f"   >🌍 Loading {fname} aerodrome data for: {country}")
         zip_bytes = None
 
         try:
@@ -3613,12 +3737,11 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
     async def populate_aerodrome_fields_from_icao(fname, city_icao):
         """Populate aerodrome fields when ICAO city is selected."""
-        print('----> populate_aerodrome_fields_from_icao()')
-        print(f"🔍 Searching for data: {city_icao}")
+        print(f'> func: populate_aerodrome_fields_from_icao({fname}, {city_icao})')
 
         # Get the stored dataframe
         if not hasattr(js.window, f'AERODROME_{fname}_DATA'):
-            print(f"⚠️ No aerodrome data available:'AERODROME_{fname}_DATA'")
+            print(f"   >⚠️ No aerodrome data available:'AERODROME_{fname}_DATA'")
             return
 
         # Get data
@@ -3631,7 +3754,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         row_dict = get_icao_data(df, city_icao)
 
         if not row_dict:
-            print(f"⚠️ No data found for {city_icao}")
+            print(f"   >⚠️ No data found for {city_icao}")
             return
 
         # Get runway data
@@ -3695,6 +3818,8 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         await update_aerodrome_image(fname)
         # Remove METAR widget
         remove_metar_widget(fname)
+        # remove wind envelope plot
+        remove_wind_envelope_plot(fname)
 
     # ================================================
     # GUI HELPERS
@@ -3832,15 +3957,14 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             # Get the HTML element
             element = js.document.getElementById(field_id)
 
+            # Only continue if element exists
             if element:
                 # Convert value to string and handle special cases
                 if value is not None and value != '' and str(value) != 'nan' and str(value) != 'None':
-                    # Handle boolean for CTR
+
+                  # Handle boolean for CTR
                     if field_id == f'{fname}_CTR':
-                        if value or str(value).lower() == 'true':
-                            element.value = 'CTR'
-                        else:
-                            element.value = ''
+                        element.value = 'CTR' if (value or str(value).lower() == 'true') else ''
                     else:
                         element.value = str(value)
 
@@ -3852,12 +3976,20 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             else:
                 print(f"  ⚠️ Element not found: {field_id}")
 
+        # For the ICAO field: also sync its mirror
+        icao_element = js.document.getElementById(f'{fname}_ICAO')
+        element_icao_2 = js.document.getElementById(f'{fname}_ICAO_2')
+        element_icao_2.value = icao_element.value
+
+        # Set a check for the loaded ICAO
+        icao_label = js.document.getElementById(f'{fname}_ICAO_2_LABEL')
+        icao_label.textContent = f'✅ {fname.title()} (ICAO)'
+
         # print(js.window.flight_plan_data.get(f'{fname}_CTR'))
         # print(js.window.flight_plan_data.get(f'{fname}_ATC_TOWER'))
         # print(js.window.flight_plan_data.get(f'{fname}_ATC_TOWER'))
 
         print(f"✅ Updated {updated_count} GUI fields")
-
 
 
     async def clear_enroute_fields():
@@ -3920,7 +4052,13 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
         print(f"Clearing fields for {fname}:")
 
-        # Clear GUI fields
+        # First clear the unique field names
+        element = js.document.getElementById(f'{fname}_ICAO_2')
+        element.value = ''
+        element = js.document.getElementById(f'{fname}_ICAO_2_LABEL')
+        element.textContent = f'{fname.title()} (ICAO)'
+
+        # Clear all GUI fields with overlapping names
         for field_id in field_ids:
             element = js.document.getElementById(field_id)
             if element:
@@ -4147,7 +4285,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             rwys_clean = re.findall(r'\d+', extra_runways)
             runways.extend(rwys_clean)
             runways = list(set(runways))
-            print(f'Extended runway list: {runways}')
+        print(f'   >All available runways: {runways}')
 
         # Extract wind information from METAR data
         wind_dict = analyzeWind(metar_icao)
@@ -4166,9 +4304,10 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             print(f'func: expected_runway_number() > No wind direction {wind_direction} or wind_strength {wind_strength} or runways {runways} found')
 
         # Return
+        print(f'   >Predicted runway: {expect_runway}')
         return expect_runway
 
-    def correct_runway_number(runway_direction):
+    def correctRunwayNumber(runway_direction):
         """Correct the runway number by extracting the first two characters from the provided runway direction."""
         if isinstance(runway_direction, str) and len(runway_direction) > 1:
             runway_direction = runway_direction[0:2]
@@ -4211,7 +4350,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         if (wind_direction is None) or not is_numeric(wind_direction) or (wind_strength is None) or (runway_direction is None):
             return None
 
-        runway_direction = correct_runway_number(runway_direction)
+        runway_direction = correctRunwayNumber(runway_direction)
         if not isinstance(runway_direction, (int, float)):
             return None
 
@@ -4288,7 +4427,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             print(f'Error: Wind direction:{wind_direction} and wind strength:{wind_strength} should be numeric')
             return None
 
-        runway_direction = correct_runway_number(runway_direction)
+        runway_direction = correctRunwayNumber(runway_direction)
         if not isinstance(runway_direction, (int, float)):
             return None
 
@@ -4330,7 +4469,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         if (wind_direction is None) or not is_numeric(wind_direction) or (wind_strength is None) or (runway_direction is None):
             return None
         # Check runway
-        runway_direction = correct_runway_number(runway_direction)
+        runway_direction = correctRunwayNumber(runway_direction)
         if not isinstance(runway_direction, (int, float)):
             return None
 
@@ -4510,6 +4649,10 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         remove_metar_widget('DEPARTURE')
         remove_metar_widget('ARRIVAL')
 
+        # Remove wind envelope
+        remove_wind_envelope_plot('DEPARTURE')
+        remove_wind_envelope_plot('ARRIVAL')
+
         select = js.document.getElementById('DEPARTURE_ICAO_CITY')
         select.innerHTML = '<option value="">Select ICAO</option>'
         select = js.document.getElementById('ARRIVAL_ICAO_CITY')
@@ -4626,7 +4769,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
         if not json_data:
             print(f"⚠️ ENROUTE not found: {user_selection}")
-            js.window.alert(f"⚠️ ENROUTE '{user_selection}' not found")
+            js.window.alert(f"⚠️ ENROUTE '{user_selection}' not found.")
             return
 
         # Parse JSON
@@ -4660,6 +4803,8 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
     async def load_flightplan():
         """Load flightplan from localStorage"""
+        print(f"> func: load_flightplan()")
+
         plan_name = js.document.getElementById('plan_spinner').value
 
         # First clear all fields
@@ -4672,7 +4817,12 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             print("⚠️ No flightplan selected")
             return
 
-        print(f"📂 Loading flightplan: {plan_name}")
+        # Remove METAR widget
+        remove_metar_widget('DEPARTURE')
+        remove_metar_widget('ARRIVAL')
+        # remove wind envelope plot
+        remove_wind_envelope_plot('DEPARTURE')
+        remove_wind_envelope_plot('ARRIVAL')
 
         # Load from localStorage
         storage_key = f"flightplan_{plan_name}"
@@ -4680,7 +4830,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
         if not json_data:
             print(f"⚠️ Flightplan not found: {plan_name}")
-            js.window.alert(f"⚠️ Flightplan '{plan_name}' not found")
+            js.window.alert(f"⚠️ Flightplan '{plan_name}' not found.")
             return
 
         # Parse JSON
@@ -4724,7 +4874,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             print(f"✅ Flightplan '{plan_name}' loaded successfully")
         except Exception as e:
             print(f"❌ Error loading flightplan: {e}")
-            js.window.alert(f"⚠️ Error loading flightplan: {e}")
+            js.window.alert(f"❗ Error loading flightplan: {e}")
 
 
 
@@ -4804,7 +4954,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             return True
 
 
-    async def load_aerodrome_from_json(fname):
+    async def load_aerodrome_from_json(fname, elementId=None):
         """Load aerodrome data for departure or arrival from localStorage.
 
         This function loads cached aerodrome data for either departure or arrival from browser localStorage.
@@ -4814,21 +4964,32 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             load_aerodrome_from_json('DEPARTURE')
             load_aerodrome_from_json('ARRIVAL')
         """
-        # Make cache key
-        selected_icao = js.document.getElementById(f'{fname}_ICAO').value.upper() or ''
-        cache_key = fname + '_' + selected_icao
-
-        # Load cached data
-        json_data = js.localStorage.getItem(cache_key)
+        # Get element ID for ICAO
+        if elementId is None: elementId = f'{fname}_ICAO'
+        selected_icao = js.document.getElementById(elementId).value.strip().upper() or ''
 
         if selected_icao == '':
-            print(f"⚠️ ICAO not selected")
-            js.window.alert(f"⚠️ ICAO must be set first before loading.");
+            print(f"⚠️ The input ICAO is not valid or empty. Please set it first before continuing.")
+            js.window.alert(f"⚠️ The input ICAO is not valid or empty. Please set it first before continuing.");
             return
 
+        # Load cached data
+        cache_key = fname + '_' + selected_icao
+        json_data = js.localStorage.getItem(cache_key)
+
         if not json_data:
+            # Check whether the opposite data exists
+            fname_opposite = 'DEPARTURE' if fname == 'ARRIVAL' else 'ARRIVAL'
+            json_data = js.localStorage.getItem(fname_opposite + '_' + selected_icao)
+            if json_data:
+                # This is a quark where I will replace the name of DEPARTURE into ARRIVAL or the otherway arround.
+                json_data = json_data.replace(fname_opposite, fname)
+
+        if not json_data:
+            # Clean all GUI fields
+            await clear_aerodrome_fields(fname)
             print(f"⚠️ Aerodrome data not found: {cache_key}")
-            js.window.alert(f"⚠️ No existing custom profile for aerodrome {selected_icao} is available for the {fname}.")
+            js.window.alert(f"ℹ️ The aerodrome {selected_icao} is not ready yet. You need to load, check and save it first at the {fname.lower()} tab.")
             return
 
         # Parse JSON
@@ -4867,11 +5028,14 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             # Remove METAR widget
             remove_metar_widget(fname)
 
-            print(f"✅ Aerodrome {selected_icao} successfully loaded for {fname}")
-            js.window.alert(f"✅ Aerodrome {selected_icao} successfully loaded for {fname}")
+            # Remove wind envelope
+            remove_wind_envelope_plot(fname)
+
+            print(f"✅ Aerodrome {selected_icao} successfully loaded for {fname.lower()}")
+            # js.window.alert(f"✅ Aerodrome {selected_icao} successfully loaded for {fname.lower()}")
         except Exception as e:
-            print(f"❌ Error loading aerodrome data: {str(e)}")
-            js.window.alert(f"⚠️ Error loading aerodrome data: {str(e)}")
+            print(f"⚠️ Error loading aerodrome data: {str(e)}")
+            js.window.alert(f"❗ Error loading aerodrome {selected_icao}: {str(e)}")
 
 
     def save_aerodrome_to_json(fname):
@@ -4892,7 +5056,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             save_aerodrome_to_json('DEPARTURE')
             save_aerodrome_to_json('ARRIVAL')
         """
-        print(f'----> save_aerodrome_to_json({fname})')
+        print(f'> func: save_aerodrome_to_json({fname})')
         dict_fname = {}
 
         # Get flightplan data from dictionary
@@ -4915,7 +5079,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                         print(f'Saving to {cache_key} dictionary: {key}: {field_value}')
                         dict_fname[key] = field_value
         else:
-            print(f'{fname} not valid to save to JSON')
+            print(f'   >{fname} not valid to save to JSON')
             return
 
         # Save to cache
@@ -4933,7 +5097,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         Args:
             prefix (str): 'ENROUTE1', 'ENROUTE2'
         """
-        print(f'----> save_enroute_to_json({prefix})')
+        print(f'> func: save_enroute_to_json({prefix})')
 
         # Create empty dict
         dict_enroute = {}
@@ -4962,7 +5126,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                 'SQUAWK': js.document.getElementById('SQUAWK2').value
             }
         else:
-            print(f'Invalid prefix: {prefix}')
+            print(f'   >Invalid prefix: {prefix}')
             return
 
         if not listname or listname == '':
@@ -4976,20 +5140,20 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                 dict_enroute[key] = ''
 
         # Save to cache
-        print(f'----> {prefix} SAVED: {cache_key}')
+        print(f'   >{prefix} SAVED: {cache_key}')
         # Convert to JSON string
         json_data = json.dumps(dict_enroute)
         # Save to cache
         js.localStorage.setItem(cache_key, json_data)
         # Update FIC dropdown after saving
         update_dropdown_enroute_FIC()
-        print(f"✅ FIC data saved and dropdown updated")
+        print(f"   >✅ FIC data saved and dropdown updated")
 
 
     def print_local_storage():
         # Get localStorage info
 
-        print(f"💾 Saved to localStorage: {storage_key}")
+        print(f"   >💾 Saved to localStorage: {storage_key}")
         print(f"   Storage Type: Browser localStorage")
         print(f"   Storage Location: Browser's IndexedDB/localStorage database")
         print(f"   Key: {storage_key}")
@@ -5032,7 +5196,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         select = js.document.getElementById('plan_spinner')
         if select:
             # Clear existing options except the first placeholder
-            select.innerHTML = '<option value="">Load</option>'
+            select.innerHTML = '<option value="">Select and load Flightplan</option>'
 
             # Add each flightplan as an option
             for plan_name in flightplan_names:
@@ -6072,6 +6236,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
     js.window.analyzeWind = analyzeWind
     js.window.headwind = headwind
     js.window.crosswind = crosswind
+    js.window.correctRunwayNumber = correctRunwayNumber
     js.window.compute_wind_envelope = compute_wind_envelope
 
   </script>
@@ -6246,16 +6411,16 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
        */
       if (typeof window.create_new_flightplan === 'function') {
         pyscriptReady = true;
-        console.log("PyScript is ready!");
+        console.log("> func: checkPyScriptReady()");
         // Get default flight plan data
         window.flight_plan_data = window.get_default_data();
-        console.log("Default data is initialized.");
+        console.log("   >Default data is initialized.");
         // Get default settings
         window.settings = window.get_default_settings();
-        console.log("Settings data is initialized.");
+        console.log("   >Settings data is initialized.");
         // Restore settings from cache
         restoreSettingsFromCache();
-        console.log("Display settings data is restored from cache.");
+        console.log("   >Custom User settings are restored from cache.");
         // Hide loading spinner once everything is ready
         document.getElementById('loading-spinner').style.display = 'none';
       }
@@ -6475,7 +6640,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
               element: document.getElementById('FLIGHTPLAN'),
               name: 'Flightplan Name',
               color_empty: '#ffeb3b',
-              color_filled: 'transparent',
+              color_filled: '#fafafa',
               required_atc_departure: false,
               required_atc_arrival: false,
               required_atc_enroute: false,
@@ -6601,10 +6766,19 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                 element: document.getElementById('DEPARTURE_ICAO'),
                 name: 'Departure ICAO',
                 color_empty: '#ffeb3b',
-                color_filled: '',
+                color_filled: 'transparent',
                 required_atc_departure: true,
                 required_atc_arrival: false,
                 required_atc_enroute: true,
+            },
+            'DEPARTURE_ICAO_2': {
+                element: document.getElementById('DEPARTURE_ICAO_2'),
+                name: 'Departure ICAO 2',
+                color_empty: '#ffeb3b',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
             },
             'ARRIVAL_POSITION': {
                 element: document.getElementById('ARRIVAL_POSITION'),
@@ -6628,10 +6802,19 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                 element: document.getElementById('ARRIVAL_ICAO'),
                 name: 'Arrival ICAO',
                 color_empty: '#ffeb3b',
-                color_filled: '',
+                color_filled: 'transparent',
                 required_atc_departure: false,
                 required_atc_arrival: true,
                 required_atc_enroute: true,
+            },
+            'ARRIVAL_ICAO_2': {
+                element: document.getElementById('ARRIVAL_ICAO_2'),
+                name: 'Arrival ICAO 2',
+                color_empty: '#ffeb3b',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
             },
             'ARRIVAL_RUNWAY': {
                 element: document.getElementById('ARRIVAL_RUNWAY'),
@@ -7191,5 +7374,384 @@ const COUNTRIES_DATA = [
     // Initialize with DEPARTURE
     initializeAerodromeFields('DEPARTURE');
     initializeAerodromeFields('ARRIVAL');
+
+</script>
+
+
+<script>
+    // import React, { useState, useEffect } from 'react';
+    // import * as Plotly from 'plotly';
+    // function crosswind(windDir, windSpeed, runwayDir) {
+    //   if (windDir === null || windSpeed === null) return null;
+    //   const angle = windDir - runwayDir;
+    //   return windSpeed * Math.sin(angle * Math.PI / 180);
+    // }
+
+    // function headwind(windDir, windSpeed, runwayDir) {
+    //   if (windDir === null || windSpeed === null) return null;
+    //   const angle = windDir - runwayDir;
+    //   return windSpeed * Math.cos(angle * Math.PI / 180);
+    // }
+
+    // function correctRunwayNumber(runwayNumber) {
+    //   const num = parseInt(runwayNumber);
+    //   return num * 10; // Convert runway number to degrees
+    // }
+
+    function lineIntersection(x1, y1, x2, y2) {
+      const intersections = { x: [], y: [] };
+
+      for (let i = 0; i < x1.length - 1; i++) {
+        for (let j = 0; j < x2.length - 1; j++) {
+          const det = (x1[i+1] - x1[i]) * (y2[j+1] - y2[j]) - (x2[j+1] - x2[j]) * (y1[i+1] - y1[i]);
+
+          // if (Math.abs(det) > 0.0001) {
+          if (det > 0.0001) {
+            const t = ((x2[j] - x1[i]) * (y2[j+1] - y2[j]) - (y2[j] - y1[i]) * (x2[j+1] - x2[j])) / det;
+            const u = ((x2[j] - x1[i]) * (y1[i+1] - y1[i]) - (y2[j] - y1[i]) * (x1[i+1] - x1[i])) / det;
+
+            if (t >= 0 && t <= 1 && u >= 0 && u <= 1) {
+              intersections.x.push(x1[i] + t * (x1[i+1] - x1[i]));
+              intersections.y.push(y1[i] + t * (y1[i+1] - y1[i]));
+            }
+          }
+        }
+      }
+
+      return intersections;
+    }
+
+    function pointInPolygon(x, y, polyX, polyY) {
+      let inside = false;
+      for (let i = 0, j = polyX.length - 1; i < polyX.length; j = i++) {
+        const xi = polyX[i], yi = polyY[i];
+        const xj = polyX[j], yj = polyY[j];
+
+        const intersect = ((yi > y) !== (yj > y)) &&
+          (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
+      }
+      return inside;
+    }
+
+    function variableWindRange(variation) {
+      if (!variation) return null;
+      const parts = variation.split('/');
+      if (parts.length !== 2) return null;
+
+      const start = parseInt(parts[0]);
+      const end = parseInt(parts[1]);
+
+      const range = [];
+      let current = start;
+      while (current !== end) {
+        range.push(current);
+        current = (current + 10) % 360;
+      }
+      range.push(end);
+
+      return range;
+    }
+
+    async function windEnvelope_js(prefix, maxHeadwind = 25, maxCrosswind = 15, update_gui_fields = true) {
+      console.log(`>func: windEnvelope_js(${prefix})`);
+      // Get the values from the input fields
+      const runwayNumberField = document.getElementById(prefix + '_RUNWAY');
+      const windDirectionField = document.getElementById(prefix + '_WIND_DIRECTION');
+      const windSpeedField = document.getElementById(prefix + '_WIND_SPEED');
+      const windGustField = document.getElementById(prefix + '_WIND_GUST');
+      const windVariationField = document.getElementById(prefix + '_WIND_VARIATION');
+
+      // The fields below are updated with the calculated headwind and crosswind values
+      const windHeadwindField = document.getElementById(prefix + '_WIND_HEADWIND');
+      const windCrosswindField = document.getElementById(prefix + '_WIND_CROSSWIND');
+      const windEnvelopeField = document.getElementById(prefix + '_WIND_ENVELOPE_TEXT');
+      // maxHeadwind = window.settings['MAX_HEADWIND_LIMIT']
+      // maxCrosswind = window.settings['MAX_CROSSWIND_LIMIT']
+
+      const results = {
+        xy: [null, null],
+        xy_outside_envelope: false,
+        wind_vrb: false,
+        wind_gust: false,
+        line_intersection: null,
+        message: ''
+      };
+
+      const evalStrValue = (value) => {
+        if (value === '' || value === null || value === 'nan' || value === 'NA' ||
+            value === 'N/A' || value === 'None' || value === 'none' || value === undefined) {
+          return null;
+        }
+        try {
+          return parseInt(value);
+        } catch {
+          return value;
+        }
+      };
+
+      const runwayDirection = correctRunwayNumber(runwayNumberField.value);
+      const windDirection = evalStrValue(windDirectionField.value);
+      const windStrength = evalStrValue(windSpeedField.value);
+      const windGust = evalStrValue(windGustField.value);
+      const windVrb = (windVariationField.value) ? windVariationField.value.replace(/-/g, '/') : windVariationField.value;
+
+      // Runway direction is required
+      if (runwayDirection == '') {
+          alert("⚠️ No valid runway information available. The wind envelope cannot be computed.");
+          return results;
+      }
+
+      if (windDirection === null || windStrength === null) {
+        results.message = 'Wind Envelope cannot be computed with missing wind direction or strength.';
+        return results;
+      }
+
+      if (String(windDirection).trim().toLowerCase() === 'vrb') {
+        results.message = 'Wind Envelope cannot be computed with variable (VRB) winds.';
+        return results;
+      }
+
+      results.wind_gust = windGust;
+
+      // Generate wind direction range
+      const windDirectionFull = [];
+      for (let i = 0; i < 360; i += 10) {
+        windDirectionFull.push(i);
+      }
+
+      // Compute crosswind and headwind components
+      const crosswindComponents = windDirectionFull.map(dir =>
+        // Math.abs(Math.sin((windDirection - dir) * Math.PI / 180) * maxCrosswind) // only show right part
+        Math.sin((windDirection - dir) * Math.PI / 180) * maxCrosswind // show left and right half
+      );
+      const headwindComponents = windDirectionFull.map(dir =>
+        Math.abs(Math.cos((windDirection - dir) * Math.PI / 180) * maxHeadwind) // only shown top half
+        // Math.cos((windDirection - dir) * Math.PI / 180) * maxHeadwind // show top and down half
+      );
+
+      // Current wind envelope
+      const crosswindRange = windDirectionFull.map(dir =>
+        // Math.abs(Math.sin((windDirection - dir) * Math.PI / 180) * windStrength) // only show right part
+        Math.sin((windDirection - dir) * Math.PI / 180) * windStrength // show left and right half
+      );
+      const headwindRange = windDirectionFull.map(dir =>
+        Math.abs(Math.cos((windDirection - dir) * Math.PI / 180) * windStrength) // only shown top half
+        // Math.cos((windDirection - dir) * Math.PI / 180) * windStrength // show top and down half
+      );
+
+      // Compute cross/headwind
+      let crosswindX = crosswind(windDirection, windStrength, runwayDirection) || 0;
+      let headwindY = headwind(windDirection, windStrength, runwayDirection) || 0;
+
+      // Check intersection
+      let intersection = lineIntersection(crosswindComponents, headwindComponents, crosswindRange, headwindRange);
+      let x = null, y = null;
+
+      if (intersection.x.length > 0) {
+        results.line_intersection = 'intersection';
+        x = intersection.x.reduce((a, b) => a + b, 0) / intersection.x.length;
+        y = intersection.y.reduce((a, b) => a + b, 0) / intersection.y.length;
+      }
+
+      // Variable wind range
+      const windVrbRange = variableWindRange(windVrb);
+
+      if (windVrbRange !== null) {
+        results.wind_vrb = true;
+        const crosswindRange1 = windVrbRange.map(dir =>
+          // Math.abs(Math.sin((windDirection - dir) * Math.PI / 180) * windStrength) // only show right part
+          Math.sin((windDirection - dir) * Math.PI / 180) * windStrength // show left and right half
+        );
+        const headwindRange1 = windVrbRange.map(dir =>
+          // Math.abs(Math.cos((windDirection - dir) * Math.PI / 180) * windStrength) // only show right part
+          Math.cos((windDirection - dir) * Math.PI / 180) * windStrength // show left and right half
+        );
+
+        intersection = lineIntersection(crosswindComponents, headwindComponents, crosswindRange1, headwindRange1);
+        if (intersection.x.length > 0) {
+          results.line_intersection = 'vrb_range';
+          x = intersection.x.reduce((a, b) => a + b, 0) / intersection.x.length;
+          y = intersection.y.reduce((a, b) => a + b, 0) / intersection.y.length;
+        }
+      }
+
+      // Check if outside envelope
+      const p1Y = Math.abs(headwindY); // only shown top half
+      // const p1Y = headwindY; // show top and down half
+      // const p1X = Math.abs(crosswindX);
+      const p1X = crosswindX;
+
+      const sortedIndices = crosswindComponents
+        .map((val, idx) => ({ val, idx }))
+        .sort((a, b) => a.val - b.val)
+        .map(item => item.idx);
+
+      const polyX = sortedIndices.map(i => crosswindComponents[i]);
+      const polyY = sortedIndices.map(i => headwindComponents[i]);
+      polyX.push(0, polyX[0]);
+      polyY.push(0, polyY[0]);
+
+      if (!pointInPolygon(p1X, p1Y, polyX, polyY)) {
+        results.line_intersection = 'outside envelope';
+        results.xy_outside_envelope = true;
+      }
+
+      // Set message and xy
+      if (headwindY < 0) {
+        results.message = `Warning: Tail wind for runway ${runwayDirection}.`;
+        results.xy = [x, y];
+      } else if (results.line_intersection === 'outside envelope') {
+        results.message = `Warning: Wind is outside the limit boundaries for runway ${runwayDirection}.`;
+        results.xy = [crosswindX, headwindY];
+      } else if (results.line_intersection === 'vrb_range') {
+        results.message = `Warning: Variable wind directions may cause to stray beyond the limit boundaries for runway ${runwayDirection}.`;
+        results.xy = [x, y];
+      } else if (results.line_intersection === 'intersection') {
+        results.message = `Warning: Wind angle and direction is within the limits for runway ${runwayDirection}. However, in case the wind directions changes, it strays beyond the limit boundaries for runway ${runwayDirection}.`;
+        results.xy = [x, y];
+      } else {
+        results.message = `All variable winds are within the limits for runway ${runwayDirection}.`;
+        results.xy = [null, null];
+      }
+
+      if (crosswindX < 0 && headwindY > 0) {
+          results.message += ` Crosswind (${crosswindX}kt) is from the left.`;
+      } else if (crosswindX > 0 && headwindY > 0) {
+          results.message += ` Crosswind (${crosswindX}kt) is from the right.`;
+      }
+
+      // console.log(windDirectionField.value)
+      // if windDirectionField.value.trim().toLowerCase() === 'vrb') {
+      //   results.message = `Wind direction is variable (VRB) and therefore no runway prediction could be made.`;
+      // }
+
+      // Create plot data
+      const traces = [
+        {
+          x: crosswindComponents,
+          y: headwindComponents,
+          mode: 'lines+markers',
+          name: 'Wind Limit Envelope',
+          line: { color: 'blue' }
+        },
+        {
+          x: crosswindRange,
+          y: headwindRange,
+          mode: 'lines',
+          name: 'Wind Angle [0-360]',
+          line: { color: 'red', dash: 'dash' }
+        },
+        {
+          // x: [Math.abs(crosswindX)], // only show right part
+          // y: [Math.abs(headwindY)],  // only show right part
+          x: [crosswindX], // show left and right half
+          y: [headwindY], // show left and right half
+          mode: 'markers',
+          name: 'Current wind',
+          marker: { color: '#8B0000', symbol: 'x', size: 15 }
+        }
+      ];
+
+      if (windVrbRange !== null) {
+        const vrbCrosswindRange = windVrbRange.map(dir =>
+          // Math.abs(Math.sin((windDirection - dir) * Math.PI / 180) * windStrength) // only show right part
+          Math.sin((windDirection - dir) * Math.PI / 180) * windStrength // show left and right half
+        );
+        const vrbHeadwindRange = windVrbRange.map(dir =>
+          Math.abs(Math.cos((windDirection - dir) * Math.PI / 180) * windStrength) // show only top half
+          // Math.cos((windDirection - dir) * Math.PI /  180) * windStrength // show top and down half
+        );
+
+        traces.push({
+          x: vrbCrosswindRange,
+          y: vrbHeadwindRange,
+          mode: 'lines',
+          name: 'Variable Wind',
+          line: { color: '#FF8C00' }
+        });
+      }
+
+      if (windGust !== null) {
+        const crosswindGustX = crosswind(windDirection, windGust, runwayDirection);
+        const headwindGustY = headwind(windDirection, windGust, runwayDirection);
+
+        const crosswindGust = windDirectionFull.map(dir =>
+          // Math.abs(Math.sin((windDirection - dir) * Math.PI / 180) * windGust) // show only right half
+          Math.sin((windDirection - dir) * Math.PI / 180) * windGust // how left and right half
+        );
+        const headwindGust = windDirectionFull.map(dir =>
+          Math.abs(Math.cos((windDirection - dir) * Math.PI / 180) * windGust) // show only top half
+          // Math.cos((windDirection - dir) * Math.PI / 180) * windGust // show top and down half
+        );
+
+        traces.push({
+          // x: [Math.abs(crosswindGustX)], // only show right part
+          // y: [Math.abs(headwindGustY)], // only show right part
+          x: [crosswindGustX], // show left and right half
+          y: [headwindGustY], // show left and right half
+          mode: 'markers',
+          name: 'Wind gust',
+          marker: { color: '#9678b6', symbol: 'x', size: 15 }
+        });
+
+        traces.push({
+          x: crosswindGust,
+          y: headwindGust,
+          mode: 'lines',
+          name: 'Gust Angle [0-360]',
+          line: { color: '#9678b6', dash: 'dash' }
+        });
+
+        if (windVrbRange !== null) {
+          const vrbCrosswindsGust = windVrbRange.map(dir =>
+            // Math.abs(Math.sin((windDirection - dir) * Math.PI / 180) * windGust) // only show right part
+            Math.sin((windDirection - dir) * Math.PI / 180) * windGust // show left and right half
+          );
+          const vrbHeadwindsGust = windVrbRange.map(dir =>
+            // Math.abs(Math.cos((windDirection - dir) * Math.PI / 180) * windGust) // show only top half
+            Math.cos((windDirection - dir) * Math.PI / 180) * windGust // show top and down half
+          );
+
+          traces.push({
+            x: vrbCrosswindsGust,
+            y: vrbHeadwindsGust,
+            mode: 'lines',
+            name: 'Variable Wind (Gust)',
+            line: { color: '#e9692c' }
+          });
+        }
+      }
+
+      results.traces = traces;
+      results.runwayDirection = runwayDirection;
+
+      if (results.traces) {
+        // const title = `Wind Envelope for runway ${results.runwayDirection}<br>${results.message.replace(/\./g, '.<br>')}`;
+
+        const layout = {
+          xaxis: { title: 'Crosswind Component (knots)' },
+          yaxis: { title: 'Headwind Component (knots)' },
+          showlegend: false,
+          // height: 350,
+          // width: 350,
+          margin: { t: 20, l: 30, r: 10, b: 30 },
+          font: { size: 8 }  // Makes all text 10px
+        };
+
+        console.log('   >Create plotly plot!');
+        Plotly.newPlot(`${prefix}_WIND_ENVELOPE_PLOT`, results.traces, layout, {responsive: true});
+      }
+
+      // Update headwind and crosswind values
+      if (update_gui_fields) {
+        console.log('Update headwind and crosswind values')
+        windHeadwindField.value = headwindY;
+        windCrosswindField.value = crosswindX;
+      }
+      windEnvelopeField.value = results.message;
+      return results;
+    }
+
 
 </script>
