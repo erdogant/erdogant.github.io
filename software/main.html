@@ -109,11 +109,7 @@
             </div>
 
             <div class="wind-grid">
-                <!--<input id="DEPARTURE_OK" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; width: 30px; height: 30px;">-->
                 <div class="tile">
-                    <!--<select id="DEPARTURE_COUNTRY" class="tile-value-dropdown" style="font-weight: normal;">
-                        <option value="">Select Country</option>
-                    </select>-->
                     <input id="DEPARTURE_ICAO_2" type="text" class="tile-value UPPERCASE_input sync-departure" onchange="window.load_aerodrome_from_json('DEPARTURE', elementId='DEPARTURE_ICAO_2');" title="Departure ICAO">
                     <span id="DEPARTURE_ICAO_2_LABEL" class="tile-label">Departure (ICAO)</span>
                 </div>
@@ -175,7 +171,8 @@
 
 
         <label_h1>Select Departure</label_h1>
-        <div class="border-round-eged">
+
+        <div class="border-round-eged" id="DEPARTURE_SELECT_AERODROME_BORDER">
             <div class="wind-grid">
                 <select id="DEPARTURE_COUNTRY" class="tile-value-dropdown" style="font-weight: normal;">
                     <option value="">Select Country</option>
@@ -189,9 +186,9 @@
 
             <div class="button-row">
                 <input type="text" id="DEPARTURE_ICAO" class="tile-value UPPERCASE_input sync-departure" onchange="window.load_aerodrome_from_json('DEPARTURE')" placeholder="ICAO">
-                <!--<button id="DEPARTURE_USE_CACHED" onclick="window.load_aerodrome_from_json('DEPARTURE')" title="Load custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>-->
+                <button id="DEPARTURE_USE_CACHED" onclick="window.load_aerodrome_from_json('DEPARTURE')" title="Load custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>
                 <button id="save_fields_btn_departure" onclick="window.save_aerodrome_to_json('DEPARTURE')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">💾</button>
-                <button id="BTN-METAR-ICON-DEPARTURE_1" onclick="window.retrieve_metar('DEPARTURE')" title="Load METAR data for aerodrome and automatically predict the runway number based on the wind direction" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🌤</button>
+                <!--<button id="BTN-METAR-ICON-DEPARTURE_1" onclick="window.retrieve_metar('DEPARTURE')" title="Load METAR data for aerodrome and automatically predict the runway number based on the wind direction" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🌤</button>-->
             </div>
 
         </div>
@@ -363,7 +360,7 @@
            <div class="button-row">
                <button id="BTN-PLOT-WIND-DEPARTURE"
                    onclick="window.windEnvelope_js('DEPARTURE')">
-                       Show wind envelope plot
+                       Compute Wind Envelope
                    </button>
                </div>
 
@@ -468,7 +465,7 @@
 
 
         <label_h1>Select Arrival</label_h1>
-        <div class="border-round-eged">
+        <div class="border-round-eged" id="ARRIVAL_SELECT_AERODROME_BORDER">
             <div class="wind-grid">
                 <select id="ARRIVAL_COUNTRY" class="tile-value-dropdown" style="font-weight: normal;">
                     <option value="">Select Country</option>
@@ -481,9 +478,9 @@
 
             <div class="button-row">
                 <input type="text" id="ARRIVAL_ICAO" class="tile-value UPPERCASE_input sync-arrival" onchange="window.load_aerodrome_from_json('ARRIVAL')" placeholder="ICAO">
-                <!--<button id="ARRIVAL_USE_CACHED" onclick="window.load_aerodrome_from_json('ARRIVAL')" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>-->
+                <button id="ARRIVAL_USE_CACHED" onclick="window.load_aerodrome_from_json('ARRIVAL')" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>
                 <button id="save_fields_btn_arrival" onclick="window.save_aerodrome_to_json('ARRIVAL')" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">💾</button>
-                <button id="BTN-METAR-ICON-ARRIVAL_1" onclick="window.retrieve_metar('ARRIVAL')" title="Load METAR data for aerodrome and automatically predict the runway number based on the wind direction" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🌤</button>
+                <!--<button id="BTN-METAR-ICON-ARRIVAL_1" onclick="window.retrieve_metar('ARRIVAL')" title="Load METAR data for aerodrome and automatically predict the runway number based on the wind direction" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🌤</button>-->
             </div>
         </div>
 
@@ -591,9 +588,9 @@
         <!--<div class="collapsible" data-title="METAR INFORMATION">-->
         <div class="collapsible-header"></div>
         <div class="collapsible-content">
-
+            <!--window.toggleCollapsibleMenu('COLLAPSIBLE_MENU_METAR_ARRIVAL');-->
             <div class="button-row">
-                <button id="BTN-METAR-ARRIVAL" onclick="window.retrieve_metar('ARRIVAL')" style="transition: background-color 0.3s; z-index: 1; background-color: #006280; border: 1px solid #333333; color: #ffffff; cursor: pointer;" title="Retrieve METAR information.">Retrieve METAR Information 🌤</button>
+                <button id="BTN-METAR-ARRIVAL" onclick="window.retrieve_metar('ARRIVAL');" style="transition: background-color 0.3s; z-index: 1; background-color: #006280; border: 1px solid #333333; color: #ffffff; cursor: pointer;" title="Retrieve METAR information.">Retrieve METAR Information 🌤</button>
             </div>
 
             <div style="display: flex; gap: 1px; margin-top: 1px;">
@@ -658,7 +655,7 @@
             <div class="button-row">
                <button id="BTN-PLOT-WIND-ARRIVAL"
                     onclick="window.windEnvelope_js('ARRIVAL');">
-                    Show wind envelope plot
+                    Compute Wind Envelope
                </button>
 
             </div>
@@ -670,7 +667,7 @@
             <div class="button-row">
                 <textarea id="ARRIVAL_WIND_ENVELOPE_TEXT"
                     placeholder="..."
-                    style="transition: background-color 0.3s; width: 100%; min-height: 120px; max-height: 150px; resize: vertical; padding: 8px; box-sizing: border-box; border-radius: 10px"
+                    style="transition: background-color 0.3s; width: 100%; min-height: 140px; max-height: 150px; resize: vertical; padding: 8px; box-sizing: border-box; border-radius: 10px"
                     title="Wind envelope message is shown here.">
                 </textarea>
             </div>
@@ -2533,163 +2530,6 @@
         return [null, null, null];
     }
 
-    // async function analyzeWind(metar) {
-    //   console.log(`Func: analyzeWind(${metar})`);
-
-    //     // Regex lists for KT and MPS
-    //     const regexListKT = [
-    //         /\d{5}KT/,         // 33005KT
-    //         /\d{5}G\d{2}KT/,   // 33010G25KT
-    //         /VRB\d{2}KT/       // VRB03KT
-    //     ];
-
-    //     const regexListMPS = [
-    //         /\d{5}MPS/,
-    //         /\d{5}G\d{2}MPS/,
-    //         /VRB\d{2}MPS/
-    //     ];
-
-    //     let search = null;
-
-    //     // Try to find KT matches
-    //     for (let i = 0; i < regexListKT.length && !search; i++) {
-    //         search = metar.match(regexListKT[i]);
-    //     }
-
-    //     // If no KT match, try MPS
-    //     if (!search) {
-    //         for (let i = 0; i < regexListMPS.length && !search; i++) {
-    //             search = metar.match(regexListMPS[i]);
-    //         }
-    //         if (!search) {
-    //             return null; // Could not decode wind
-    //         }
-    //     }
-
-    //     const windTot = search[0];
-
-    //     // Extract direction
-    //     let direction = windTot.substring(0, 3);
-    //     if (direction !== "VRB") {
-    //         direction = parseInt(direction, 10);
-    //     }
-
-    //     // Extract speed
-    //     let speed = parseInt(windTot.substring(3, 5), 10);
-
-    //     // Extract gust if exists
-    //     let gust = null;
-    //     const gustIndex = windTot.indexOf("G");
-    //     if (gustIndex !== -1) {
-    //         gust = parseInt(windTot.substring(gustIndex + 1, gustIndex + 3), 10);
-    //     }
-
-    //     // Extract wind variation (e.g. 180V240)
-    //     let variation = null;
-    //     const variationMatch = metar.match(/\d{3}V\d{3}/);
-
-    //     if (variationMatch) {
-    //         const [from, to] = variationMatch[0].split("V").map(v => parseInt(v, 10));
-    //         variation = [from, to];
-    //     }
-
-    //     return {
-    //         direction: direction,
-    //         speed: speed,
-    //         gust: gust,
-    //         variation: variation
-    //     };
-    // }
-
-
-    // Event listener for button
-    // document.addEventListener('DOMContentLoaded', () => {
-    //     document.getElementById('BTN-METAR-DEPARTURE')?.addEventListener('click', async () => {
-    //         const name = document.getElementById('DEPARTURE_NAME').value || '';
-    //         const icao = document.getElementById('DEPARTURE_ICAO').value.toUpperCase() || '';
-    //         let metar_icao = '';
-    //         let metar_date = nowtime(utc=true)
-
-    //         try {
-    //             // Fetch METAR data from url
-    //             metar_data = await fetch_metar(icao, true, false);
-    //             console.log(metar_data);
-
-    //             if (metar_data) {
-    //               metar_icao = metar_data[1]
-    //               metar_date = metar_data[0]
-    //             }
-    //             // Set the original METAR datetime
-    //             if (metar_date !== '') {
-    //                 metar_date = formatDateDMY(metar_date)
-    //                 // console.log("METAR datetime:", metar_date);
-    //             }
-
-    //         } catch (error) {
-    //             console.log("Error retrieving METAR data: " + error);
-    //         }
-
-    //         // Create the widget
-    //         var metarWidgetResult = createMetarTafWidget('departureWidgetContainer', icao, name, 'DEPARTURE');
-    //         // If createMetarTafWidget indicates no result or an issue, return early
-    //         if (!metarWidgetResult) {
-    //             console.log("METAR widget not created, returning early.");
-    //             return;
-    //         }
-
-    //         // Reset colors for the DEPARTURE GUI
-    //         const button = document.getElementById('BTN-METAR-DEPARTURE');
-    //         const dateField = document.getElementById('DATETIME-METAR-DEPARTURE');
-    //         button.style.backgroundColor = '';
-    //         dateField.style.backgroundColor = '';
-    //         // Update datetime field with current time
-    //         dateField.value = metar_date;
-
-    //     });
-
-    //     document.getElementById('BTN-METAR-ARRIVAL')?.addEventListener('click', async () => {
-    //         const name = document.getElementById('ARRIVAL_NAME').value || '';
-    //         const icao = document.getElementById('ARRIVAL_ICAO').value.toUpperCase() || '';
-
-    //         let metar_icao = '';
-    //         let metar_date = nowtime(utc=true)
-
-    //         try {
-    //             // Fetch METAR data from url
-    //             metar_data = await fetch_metar(icao, true, false);
-
-    //             if (metar_data) {
-    //               metar_icao = metar_data[1]
-    //               metar_date = metar_data[0]
-    //             }
-    //             // Set the original METAR datetime
-    //             if (metar_date !== '') {
-    //                 metar_date = formatDateDMY(metar_date)
-    //                 // console.log("METAR datetime:", metar_date);
-    //             }
-
-    //         } catch (error) {
-    //             console.log("Error retrieving METAR data: " + error);
-    //         }
-
-    //         // Create the widget
-    //         var metarWidgetResult = createMetarTafWidget('ARRIVAL-WidgetContainer', icao, name, 'ARRIVAL');
-    //         // If createMetarTafWidget indicates no result or an issue, return early
-    //         if (!metarWidgetResult) {
-    //             console.log("METAR widget not created, returning early.");
-    //             return;
-    //         }
-
-    //         // Reset colors for the ARRIVAL GUI
-    //         const button = document.getElementById('BTN-METAR-ARRIVAL');
-    //         const dateField = document.getElementById('DATETIME-METAR-ARRIVAL');
-    //         button.style.backgroundColor = '';
-    //         dateField.style.backgroundColor = '';
-    //         // Update datetime field with current time
-    //         dateField.value = metar_date;
-
-    //     });
-    // });
 
     /**
      * Reset METAR button UI state to enabled/active.
@@ -2752,7 +2592,7 @@
         console.log(`   >Headwind: ${headwind_value}`)
         console.log(`   >Crosswind: ${crosswind_value}`)
         console.log('   >Wind Dictionary:')
-        console.log(wind_dict);
+        console.log(`   >${wind_dict}`);
         // Compute the wind envelope
         console.log(`   >Max limits: Headwind: ${window.settings['MAX_HEADWIND_LIMIT']}, Crosswind: ${window.settings['MAX_CROSSWIND_LIMIT']}`)
 
@@ -2761,7 +2601,7 @@
 
     async function setMetarButton(prefix, enable=true) {
         const buttonMetar = document.getElementById('BTN-METAR-' + prefix);
-        const buttonMetarIcon1 = document.getElementById('BTN-METAR-ICON-' + prefix + '_1');
+        // const buttonMetarIcon1 = document.getElementById('BTN-METAR-ICON-' + prefix + '_1');
         const buttonMetarIcon2 = document.getElementById('BTN-METAR-ICON-' + prefix + '_2');
         const dateField = document.getElementById('DATETIME-METAR-' + prefix);
         const metarField = document.getElementById('METAR-FIELD-' + prefix);
@@ -2772,10 +2612,11 @@
         const windVariationField = document.getElementById(prefix + '_WIND_VARIATION');
         const windHeadwindField = document.getElementById(prefix + '_WIND_HEADWIND');
         const windCrosswindField = document.getElementById(prefix + '_WIND_CROSSWIND');
+        const borderFieldAerodrome = document.getElementById(prefix + '_SELECT_AERODROME_BORDER');
 
         if (enable) {
-          buttonMetarIcon1.disabled = false;
-          buttonMetarIcon1.style.cursor = 'pointer';
+          // buttonMetarIcon1.disabled = false;
+          // buttonMetarIcon1.style.cursor = 'pointer';
           buttonMetarIcon2.disabled = false;
           buttonMetarIcon2.style.cursor = 'pointer';
           buttonMetar.disabled = false;
@@ -2793,9 +2634,11 @@
           windVariationField.style.backgroundColor = 'transparent';
           windHeadwindField.style.backgroundColor = 'transparent';
           windCrosswindField.style.backgroundColor = 'transparent';
+
+          borderFieldAerodrome.style.backgroundColor = '';
         } else {
-          buttonMetarIcon1.disabled = true;
-          buttonMetarIcon1.style.cursor = "not-allowed";
+          // buttonMetarIcon1.disabled = true;
+          // buttonMetarIcon1.style.cursor = "not-allowed";
           buttonMetarIcon2.disabled = true;
           buttonMetarIcon2.style.cursor = "not-allowed";
           buttonMetar.disabled = true;
@@ -2817,6 +2660,8 @@
           windVariationField.style.backgroundColor = '#ffebee';
           windHeadwindField.style.backgroundColor = '#ffebee';
           windCrosswindField.style.backgroundColor = '#ffebee';
+          borderFieldAerodrome.style.backgroundColor = '#ffebee';
+
         }
     }
 
@@ -2827,10 +2672,10 @@
         const button = document.getElementById(`BTN-${widgetname}-${prefix}`);
 
         // Styling button
-        // button.disabled = true;
-        // button.setAttribute('aria-disabled', 'true');
-        // button.style.opacity = '0.6';
-        // button.style.cursor = 'Be patient, fetching widgets...';
+        button.disabled = true;
+        button.setAttribute('aria-disabled', 'true');
+        button.style.opacity = '0.6';
+        button.style.cursor = 'Be patient, fetching widgets...';
 
         // Create the METAR-TAF widget
         if (widgetname === 'AIRPORTWEATHER') {
@@ -2841,11 +2686,6 @@
             const metarWidgetResult = createMetarTafWidget(`CONTAINER-METARTAF-${prefix}`, icao, name, prefix);
         }
 
-        // Set the buttons
-        // if (!metarWidgetResult) {
-        //     console.log(`METAR widget for ${prefix} not created, returning early.`);
-        //     metarField.value = 'No METAR data available for ' + icao;
-        // }
         // Styling button
         button.disabled = false;
         button.style.cursor = 'pointer';
@@ -2854,37 +2694,9 @@
         button.style.backgroundColor = '#80B0C0';
     }
 
-    // async function retrieve_widgets(prefix) {
-    //     console.log('Retrieving widgets for prefix:', prefix);
-    //     const button = document.getElementById('WIDGET-BTN-' + prefix);
-    //     const icao = document.getElementById(prefix + '_ICAO').value || '';
-
-    //     // Styling button
-    //     // button.disabled = true;
-    //     // button.setAttribute('aria-disabled', 'true');
-    //     // button.style.opacity = '0.6';
-    //     // button.style.cursor = 'Be patient, fetching widgets...';
-
-    //     // Create the METAR-TAF widget
-    //     const metarWidgetResult = createMetarTafWidget(prefix + '-WidgetContainer', icao, name, prefix);
-    //     // Create the AirportWeather widget
-    //     const airportWidgetResult = createAirportWeatherWidget(icao, prefix);
-    //     // Set the buttons
-    //     if (!metarWidgetResult) {
-    //         console.log(`METAR widget for ${prefix} not created, returning early.`);
-    //         metarField.value = 'No METAR data available for ' + icao;
-    //     }
-    //     // Styling button
-    //     button.disabled = false;
-    //     button.style.cursor = 'pointer';
-    //     button.setAttribute('aria-disabled', 'false');
-    //     button.style.opacity = '1';
-    //     button.style.backgroundColor = '';
-    // }
-
 
     async function retrieve_metar(prefix) {
-        console.log('Retrieving METAR and widget for prefix:', prefix);
+        console.log(`> func: retrieve_metar(${prefix})`);
 
         // Get the values from the input fields
         const name = document.getElementById(prefix + '_NAME').value || '';
@@ -2922,8 +2734,8 @@
         try {
             // Retrieve the METAR data for the closest station
             icao_stations = get_top_metar_stations(prefix, 5, false).toJs();
-            console.log('Closest METAR stations:')
-            console.log(icao_stations);
+            console.log('   >Closest METAR stations:')
+            console.log(`   >${icao_stations}`);
 
             // Fetch the METAR data for the closest station (pass decoded flag)
             metar = await fetch_metar(icao_stations, true, false);
@@ -2942,7 +2754,7 @@
             }
 
         } catch (error) {
-            console.log(`Error retrieving METAR data. ${prefix} has likely no weather station. Error:`, error);
+            console.log(`   >Error retrieving METAR data. ${prefix} has likely no weather station. Error:`, error);
             metar_message = 'No METAR weather station available for ' + icao;
             // Update button: Enable
             setMetarButton(prefix, enable=true);
@@ -2955,7 +2767,7 @@
 
         // Update the expected runway based on wind direction and runway orientation
         if (metar_icao !== '' && metar_icao != null) {
-            console.log(`All data is READY to compute the RUNWAY with the METAR data`);
+            console.log(`   >All data is READY to compute the RUNWAY with the METAR data`);
             // Compute expected runway number based on wind direction and runway orientation
             runway_predicted = expected_runway_number(prefix, metar_icao, extra_runways=runwayField.value);
             // Change RUNWAY field color to pink to show that it is predicted
@@ -2970,7 +2782,7 @@
 
             // Compute wind parameters from METAR data and update wind GUI fields
             window.update_wind_gui_fields(prefix, metar_icao)
-            // Create wind envelope
+            // Create wind envelope plot
             window.windEnvelope_js(prefix,  25, 15, false)
 
             // Store RUNWAY number in flight plan data
@@ -2981,7 +2793,7 @@
             // window.alert(`✅ METAR information is loaded from the closest station: ${stationName}.\n✅ The predicted runway is: ${runway_predicted}`);
         }
 
-        console.log(`✅ METAR information is loaded from the closest station: ${stationName}.\n✅ The predicted runway is: ${runway_predicted}`);
+        console.log(`   >✅ METAR information is loaded from the closest station: ${stationName}.\n   >✅ The predicted runway is: ${runway_predicted}`);
 
     }
 
@@ -3494,8 +3306,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         element = js.document.getElementById(f'{fname}_WIND_ENVELOPE_TEXT')
         element.value = ''
         element = js.document.getElementById(f'{fname}_WIND_ENVELOPE_PLOT')
-        if element:
-            element.innerHTML = ''
+        element.innerHTML = ''
 
 
     def remove_metar_widget(fname):
@@ -3608,7 +3419,6 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
     # Main loader: called from JS
     async def import_country_selected(fname, country):
         print(f'>func: import_country_selected({fname}, {country})')
-        print(f"   >🌍 Loading {fname} aerodrome data for: {country}")
         zip_bytes = None
 
         try:
@@ -3618,8 +3428,8 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             if zip_bytes:
                 PASSWORD = js.window.settings['key_aerodromes']
                 df = extract_csv_from_zip(zip_bytes, PASSWORD)
-                js.console.log(f"✅ Aerodromes loaded for {country}: {len(df)} rows.")
-                print(f"✅ Successfully loaded {len(df)} aerodromes for {country}")
+                js.console.log(f"   >✅ Aerodromes loaded for {country}: {len(df)} rows.")
+                print(f"   >✅ Successfully loaded {len(df)} aerodromes for {country}")
 
                 # For now, just show the first few entries
                 # print(df.head().to_string())
@@ -3644,35 +3454,33 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                 # Populate the dropdown with aerodrome data
                 if 'city_icao' in df.columns:
                     icao_codes = df['city_icao'].dropna().unique().tolist()
-                    print(f"📍 Found {len(icao_codes)} unique ICAO cities")
+                    print(f"   >📍 Found {len(icao_codes)} unique ICAO cities")
 
                     # Clear and populate the dropdown
                     select = js.document.getElementById(f'{fname}_ICAO_CITY')
-                    if select:
-                        # Clear existing options except the first placeholder
-                        select.innerHTML = '<option value="">Select ICAO</option>'
 
-                        # Add each ICAO city as an option
-                        for icao in sorted(icao_codes):
-                            option = js.document.createElement('option')
-                            option.value = icao
-                            option.textContent = icao
-                            select.appendChild(option)
+                    # Clear existing options except the first placeholder
+                    select.innerHTML = '<option value="">Select ICAO</option>'
 
-                        print(f"✅ Populated {fname}_ICAO_CITY dropdown with {len(icao_codes)} cities")
-                    else:
-                        print(f"⚠️ {fname}_ICAO_CITY dropdown not found")
+                    # Add each ICAO city as an option
+                    for icao in sorted(icao_codes):
+                        option = js.document.createElement('option')
+                        option.value = icao
+                        option.textContent = icao
+                        select.appendChild(option)
+
+                    print(f"   >✅ Populated {fname}_ICAO_CITY dropdown with {len(icao_codes)} cities")
                 else:
-                    print(f"⚠️ '{fname}_city_icao' column not found in dataframe")
-                    print(f"Available columns: {df.columns.tolist()}")
+                    print(f"   >⚠️ '{fname}_city_icao' column not found in dataframe")
+                    print(f"   >Available columns: {df.columns.tolist()}")
         except Exception as e:
-            error_msg = f"⚠️ No airspace data available for {country}: {str(e)}"
+            error_msg = f"   >⚠️ No airspace data available for {country}: {str(e)}"
             print(f"❌ {error_msg}")
             js.window.alert(error_msg)
             js.document.getElementById('loading-spinner').style.display = 'none'
             return
 
-        # Concat airspaces
+        # Get and then concat airspaces
         concat_airspaces(country)
 
         # Hide loading spinner when done
@@ -3820,6 +3628,9 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         remove_metar_widget(fname)
         # remove wind envelope plot
         remove_wind_envelope_plot(fname)
+
+        # Retrieve METAR
+        await window.retrieve_metar(fname)
 
     # ================================================
     # GUI HELPERS
@@ -3974,7 +3785,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                     # Clear the field if no value
                     element.value = ''
             else:
-                print(f"  ⚠️ Element not found: {field_id}")
+                print(f"  >⚠️ Element not found: {field_id}")
 
         # For the ICAO field: also sync its mirror
         icao_element = js.document.getElementById(f'{fname}_ICAO')
@@ -3989,7 +3800,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         # print(js.window.flight_plan_data.get(f'{fname}_ATC_TOWER'))
         # print(js.window.flight_plan_data.get(f'{fname}_ATC_TOWER'))
 
-        print(f"✅ Updated {updated_count} GUI fields")
+        print(f"   >✅ Updated {updated_count} GUI fields")
 
 
     async def clear_enroute_fields():
@@ -4019,7 +3830,8 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
     async def clear_aerodrome_fields(fname):
         """Clear all aerodrome GUI fields and flight_plan_data"""
-        print(f"🧹 Clearing all {fname} fields...")
+        print(f'> func: clear_aerodrome_fields({fname})')
+        print(f"   >🧹 Clearing all {fname} fields...")
 
         # List of all departure/arrival fields to clear - ensure critical fields are included
         field_ids = [
@@ -4062,7 +3874,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         for field_id in field_ids:
             element = js.document.getElementById(field_id)
             if element:
-                print(f"  Clearing {field_id}")
+                print(f"   >🧹 Clearing {field_id}")
                 element.value = ''
                 # Trigger change event to update any dependent fields
                 if field_id.endswith('_CTR'):
@@ -4096,6 +3908,13 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
         # Reset to default image
         await clear_aerodrome_image(fname)
+        # Remove METAR widget
+        remove_metar_widget(fname)
+        # Remove wind envelope
+        remove_wind_envelope_plot(fname)
+        # Clear selectionbox (WARNING: CAN NOT BE CLEARED HERE BECAUSE THE ICOA SELECTOINS WILL BE RESET AFTER SELECTION)
+        # select = js.document.getElementById(f'{fname}_ICAO_CITY')
+        # select.innerHTML = '<option value="">Select ICAO</option>'
 
 
     # ================================================
@@ -4273,7 +4092,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
     def expected_runway_number(fname, metar_icao, extra_runways=None):
         """Compute the expected runway based on wind information for a given aerodrome."""
-        print(f'--> func: expected_runway_number({fname})')
+        print(f'> func: expected_runway_number({fname})')
         # Defaults
         expect_runway = ''
 
@@ -4301,7 +4120,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                 expect_runway = runways[np.where(results)[0][0]]
         else:
             # js.window.messages = f'No wind direction: {wind_direction} or wind strength: {wind_strength} or runways: {runways}.'
-            print(f'func: expected_runway_number() > No wind direction {wind_direction} or wind_strength {wind_strength} or runways {runways} found')
+            print(f'   >No wind direction {wind_direction} or wind_strength {wind_strength} or runways {runways} found')
 
         # Return
         print(f'   >Predicted runway: {expect_runway}')
@@ -4646,12 +4465,12 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         await clear_enroute_fields()
 
         # Remove METAR widget
-        remove_metar_widget('DEPARTURE')
-        remove_metar_widget('ARRIVAL')
+        # remove_metar_widget('DEPARTURE')
+        # remove_metar_widget('ARRIVAL')
 
         # Remove wind envelope
-        remove_wind_envelope_plot('DEPARTURE')
-        remove_wind_envelope_plot('ARRIVAL')
+        # remove_wind_envelope_plot('DEPARTURE')
+        # remove_wind_envelope_plot('ARRIVAL')
 
         select = js.document.getElementById('DEPARTURE_ICAO_CITY')
         select.innerHTML = '<option value="">Select ICAO</option>'
@@ -4739,15 +4558,16 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
     async def load_enroute_fic(spinner_name):
         """Load selected FIC from localStorage"""
+        print(f'> func: load_enroute_fic({spinner_name})')
 
         # Get the user selection from the spinner element
         user_selection = js.document.getElementById(spinner_name).value
 
         if not user_selection or user_selection == "":
-            print("⚠️ No Enroute FIC selected")
+            print("   >⚠️ No Enroute FIC selected")
             return
 
-        print(f"📂 Loading Enroute: {user_selection}")
+        print(f"   >📂 Loading Enroute: {user_selection}")
 
         # Clear relevant fields based on spinner
         if spinner_name == 'fic_spinner':
@@ -4761,21 +4581,21 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             js.document.getElementById('OVERHEAD2').value = ''
             js.document.getElementById('SQUAWK2').value = ''
 
-        print(f"📂 Loading Enroute: {user_selection}")
+        print(f"   >📂 Loading Enroute: {user_selection}")
 
         # Load from cache (localStorage)
         storage_key = f"ENROUTE_{user_selection}"
         json_data = js.localStorage.getItem(storage_key)
 
         if not json_data:
-            print(f"⚠️ ENROUTE not found: {user_selection}")
+            print(f"   >⚠️ ENROUTE not found: {user_selection}")
             js.window.alert(f"⚠️ ENROUTE '{user_selection}' not found.")
             return
 
         # Parse JSON
         try:
             enroute_dict = json.loads(json_data)
-            print(f"✅ Loaded ENROUTE: {len(enroute_dict)} fields for {spinner_name}")
+            print(f"   >✅ Loaded ENROUTE: {len(enroute_dict)} fields for {spinner_name}")
 
             # Update the keys in enroute_dict in case of fic_spinner2
             if spinner_name == 'fic_spinner2':
@@ -4786,7 +4606,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
             # Fill the flight_plan_data dictionary
             for key, value in enroute_dict.items():
-                print(f"ENROUTE Key: {key}, Value: {value}")
+                print(f"   >ENROUTE Key: {key}, Value: {value}")
                 js.window.flight_plan_data[key] = value if value not in ('', None, 'None', 'nan') else ''
 
             # Update GUI FIELDS
@@ -4795,10 +4615,10 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             js.window.highlightMissingFields()
 
 
-            print(f"✅ Flightplan '{user_selection}' loaded successfully")
+            print(f"   >✅ Flightplan '{user_selection}' loaded successfully")
         except Exception as e:
-            print(f"❌ Error loading flightplan: {e}")
-            js.window.alert(f"⚠️ Error loading flightplan: {e}")
+            print(f"   >⚠️ Error loading flightplan: {e}")
+            js.window.alert(f"   >⚠️ Error loading flightplan: {e}")
 
 
     async def load_flightplan():
@@ -4823,13 +4643,18 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         # remove wind envelope plot
         remove_wind_envelope_plot('DEPARTURE')
         remove_wind_envelope_plot('ARRIVAL')
+        # Set default values
+        select = js.document.getElementById('DEPARTURE_ICAO_CITY')
+        select.innerHTML = '<option value="">Select ICAO</option>'
+        select = js.document.getElementById('ARRIVAL_ICAO_CITY')
+        select.innerHTML = '<option value="">Select ICAO</option>'
 
         # Load from localStorage
         storage_key = f"flightplan_{plan_name}"
         json_data = js.localStorage.getItem(storage_key)
 
         if not json_data:
-            print(f"⚠️ Flightplan not found: {plan_name}")
+            print(f"   >⚠️ Flightplan not found: {plan_name}")
             js.window.alert(f"⚠️ Flightplan '{plan_name}' not found.")
             return
 
@@ -4837,7 +4662,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         try:
             # Load json data file
             flight_plan_dict = json.loads(json_data)
-            print(f"✅ Loaded {len(flight_plan_dict)} fields")
+            print(f"   >✅ Loaded {len(flight_plan_dict)} fields")
 
             # Initialize empty waypoints array
             js.window.waypoints = []
@@ -4871,9 +4696,9 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                 element.value = flight_plan_dict['ARRIVAL_ICAO_CITY']
 
 
-            print(f"✅ Flightplan '{plan_name}' loaded successfully")
+            print(f"   >✅ Flightplan '{plan_name}' loaded successfully")
         except Exception as e:
-            print(f"❌ Error loading flightplan: {e}")
+            print(f"   >❗ Error loading flightplan: {e}")
             js.window.alert(f"❗ Error loading flightplan: {e}")
 
 
@@ -4912,7 +4737,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
         # Print the saved variables array
         print("-------------SAVE FLIGHTPLAN DATA TO DICT-------------")
-        print(f"  Flightplan Name: {flightplan_name}")
+        print(f"> func: save_flightplan({flightplan_name})")
 
         # Convert flight_plan_data to JSON string
         flight_plan_dict = {}
@@ -4925,12 +4750,12 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                     value = value.to_py()
                 flight_plan_dict[key] = value
             except Exception as e:
-                print(f"⚠️ Failed to save {key}: {e}")
+                print(f"   >⚠️ Failed to save {key}: {e}")
 
         # Print Data
         for key, value in flight_plan_dict.items():
             if value != '' and value != None and value != {} and value != []:
-                print(f"  {key}: '{value}'")
+                print(f"     >{key}: '{value}'")
 
         # Save to cache
         if to_cache and flightplan_name and flightplan_name != "":
@@ -4955,21 +4780,15 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
 
     async def load_aerodrome_from_json(fname, elementId=None):
-        """Load aerodrome data for departure or arrival from localStorage.
+        # Load aerodrome data for departure or arrival from localStorage.
 
-        This function loads cached aerodrome data for either departure or arrival from browser localStorage.
-        It will clear existing fields, load the saved data into flight_plan_data, update GUI fields and images.
-
-        Example:
-            load_aerodrome_from_json('DEPARTURE')
-            load_aerodrome_from_json('ARRIVAL')
-        """
+        print(f'> func: load_aerodrome_from_json({fname})')
         # Get element ID for ICAO
         if elementId is None: elementId = f'{fname}_ICAO'
         selected_icao = js.document.getElementById(elementId).value.strip().upper() or ''
 
         if selected_icao == '':
-            print(f"⚠️ The input ICAO is not valid or empty. Please set it first before continuing.")
+            print(f"   >⚠️ The input ICAO is not valid or empty. Please set it first before continuing.")
             js.window.alert(f"⚠️ The input ICAO is not valid or empty. Please set it first before continuing.");
             return
 
@@ -4988,7 +4807,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         if not json_data:
             # Clean all GUI fields
             await clear_aerodrome_fields(fname)
-            print(f"⚠️ Aerodrome data not found: {cache_key}")
+            print(f"   >⚠️ Aerodrome data not found: {cache_key}")
             js.window.alert(f"ℹ️ The aerodrome {selected_icao} is not ready yet. You need to load, check and save it first at the {fname.lower()} tab.")
             return
 
@@ -4997,7 +4816,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             fname_dict = json.loads(json_data)
             fname_dict[f'{fname}_RUNWAY'] = ''
 
-            print(f"✅ Loaded {len(fname_dict)} fields")
+            print(f"   >✅ Loaded {len(fname_dict)} fields")
 
             # Clear aerodrome fields
             await clear_aerodrome_fields(fname)
@@ -5031,10 +4850,14 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             # Remove wind envelope
             remove_wind_envelope_plot(fname)
 
-            print(f"✅ Aerodrome {selected_icao} successfully loaded for {fname.lower()}")
+            # Retrieve METAR data during loading of the aerodrome
+            # window.toggleCollapsibleMenu(f'COLLAPSIBLE_MENU_METAR_{fname}')
+            window.retrieve_metar(fname)
+
+            print(f"   >✅ Aerodrome {selected_icao} successfully loaded for {fname.lower()}")
             # js.window.alert(f"✅ Aerodrome {selected_icao} successfully loaded for {fname.lower()}")
         except Exception as e:
-            print(f"⚠️ Error loading aerodrome data: {str(e)}")
+            print(f"   >⚠️ Error loading aerodrome data: {str(e)}")
             js.window.alert(f"❗ Error loading aerodrome {selected_icao}: {str(e)}")
 
 
@@ -5212,7 +5035,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
     def update_dropdown_enroute_FIC():
         """Update the FICS dropdowns with cached FICs"""
-        print("🔄 Updating FICS in ENROUTE...")
+        print(f"> func: update_dropdown_enroute_FIC()")
 
         # Get all keys from localStorage
         storage_length = js.localStorage.length
@@ -5241,9 +5064,9 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                     option.textContent = name
                     select.appendChild(option)
 
-                print(f"✅ Updated {spinner_id} with {len(FIC_names)} FICs")
+                print(f"   >✅ Updated {spinner_id} with {len(FIC_names)} FICs")
             else:
-                print(f"⚠️ FICs dropdown not found: {spinner_id}")
+                print(f"   >⚠️ FICs dropdown not found: {spinner_id}")
 
     # ================================================
     # ATC HELPERS
@@ -6463,7 +6286,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         // Update missing fields
         highlightMissingFields();
         // Show success message to user
-        alert("✅ New flightplan created successfully!\nAll fields have been cleared and reset to default values.");
+        alert("✅ All fields have been cleared and reset to default values!");
 
       } catch (error) {
         console.error("⚠️ Error creating new flightplan:", error);
@@ -7229,7 +7052,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
     // Function to check for missing fields and update highlighting
     function highlightMissingFields() {
-      console.log("---> highlightMissingFields()");
+      console.log("> func: highlightMissingFields()");
         const inputs = getGUIfields();
         const missing = [];
         // Loop through and highlight empty fields
@@ -7621,10 +7444,16 @@ const COUNTRIES_DATA = [
           results.message += ` Crosswind (${crosswindX}kt) is from the right.`;
       }
 
-      // console.log(windDirectionField.value)
-      // if windDirectionField.value.trim().toLowerCase() === 'vrb') {
-      //   results.message = `Wind direction is variable (VRB) and therefore no runway prediction could be made.`;
-      // }
+      console.log(`   >${windDirection}`)
+      // if (windDirectionField.value.trim().toLowerCase() === 'vrb') {
+      if (windDirection === null ||  isNaN(windDirection)) {
+        results.message = `Wind direction is ${windDirectionField.value} and therefore the wind envelope could not be determined. You can set the wind direction field manually to determine the effect on runway ${runwayDirection}.`;
+        element = document.getElementById(`${prefix}_WIND_ENVELOPE_TEXT`)
+        element.value = results.message
+        element = document.getElementById(`${prefix}_WIND_ENVELOPE_PLOT`)
+        element.innerHTML = ''
+        return null
+      }
 
       // Create plot data
       const traces = [
@@ -7726,26 +7555,31 @@ const COUNTRIES_DATA = [
       results.traces = traces;
       results.runwayDirection = runwayDirection;
 
+      // MAKE PLOT
       if (results.traces) {
         // const title = `Wind Envelope for runway ${results.runwayDirection}<br>${results.message.replace(/\./g, '.<br>')}`;
+        const xlim = [-maxCrosswind-2, maxCrosswind+2];
+        const ylim = [-5, maxHeadwind * 1.3];
+
+        // maxHeadwind = 25, maxCrosswind=15
 
         const layout = {
-          xaxis: { title: 'Crosswind Component (knots)' },
-          yaxis: { title: 'Headwind Component (knots)' },
+          xaxis: { title: 'Crosswind Component (knots)', range: xlim },
+          yaxis: { title: 'Headwind Component (knots)', range: ylim },
           showlegend: false,
           // height: 350,
           // width: 350,
           margin: { t: 20, l: 30, r: 10, b: 30 },
-          font: { size: 8 }  // Makes all text 10px
+          font: { size: 8 }
         };
 
-        console.log('   >Create plotly plot!');
+        console.log('   >Create plotly plot for wind envelope!');
         Plotly.newPlot(`${prefix}_WIND_ENVELOPE_PLOT`, results.traces, layout, {responsive: true});
       }
 
       // Update headwind and crosswind values
       if (update_gui_fields) {
-        console.log('Update headwind and crosswind values')
+        console.log('   >Update headwind and crosswind values')
         windHeadwindField.value = headwindY;
         windCrosswindField.value = crosswindX;
       }
