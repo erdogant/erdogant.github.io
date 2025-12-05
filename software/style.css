@@ -166,14 +166,14 @@ h1 {
     -webkit-overflow-scrolling: touch; /* nice momentum scroll on iOS */
 }
 /* Output box */
-.output-box {
+/*.output-box {
     margin-top: 10px;
     padding: 8px;
     background: #f0f2f6;
     border-radius: 8px;
     min-height: 30px;
     color: #333;
-}
+}*/
 
 /* Button row for horizontal alignment */
 .button-row {
@@ -325,7 +325,7 @@ input[type="text"]:hover {
     position: relative;
 }
 
-#bottom-container {
+/*#bottom-container {
     margin-top: auto;
     display: flex;
     flex-direction: column;
@@ -343,16 +343,16 @@ input[type="text"]:hover {
 #bottom-buttons button {
     flex: 1;
     margin: 0;
-    padding: 10px; /* same unified padding */
+    padding: 10px;
     font-size: 12px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
+}*/
 
-#UPPERCASE_input {
+/*.UPPERCASE_input {
     text-transform: uppercase;
-}
+}*/
 
 /*SPINNER*/
 .spinner-overlay {
@@ -542,7 +542,7 @@ body.no-scroll {
     touch-action: none;
 }
 
-.dropdown-content {
+/*.dropdown-content {
     display: none;
     position: absolute;
     background-color: #f9f9f9;
@@ -562,7 +562,7 @@ body.no-scroll {
 
 .dropdown-content button:hover {
     background-color: #f1f1f1;
-}
+}*/
 
 /* Fullscreen enter/exit icon styling */
 #fullscreen-btn svg {
@@ -579,12 +579,12 @@ body.no-scroll {
 }
 
 /* When fullscreen mode is active */
-body.mobile-fullscreen #fullscreen-btn .fullscreen-enter {
+/*body.mobile-fullscreen #fullscreen-btn .fullscreen-enter {
     display: none !important;
 }
 body.mobile-fullscreen #fullscreen-btn .fullscreen-exit {
     display: block !important;
-}
+}*/
 
 body.mobile-fullscreen #bottom-container,
 body.mobile-fullscreen #bottom-buttons,

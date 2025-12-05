@@ -60,6 +60,15 @@
 	<div id="Menu" class="tabcontent">
         <button class="tablinks" data-tab="MAP" style="cursor: pointer;">🗺️ Map</button>
         <button class="tablinks" data-tab="Config" style="cursor: pointer;">⚙️ Config</button>
+        <button class="tablinks" data-tab="Checklist" style="cursor: pointer;">📋 Checklist</button>
+        <div class="button-row">
+            <button id="BTN-WEIGHTBALANCE"
+                type="button"
+                onclick="window.open('https://www.vliegclubrotterdam.nl/wb/', '_blank')"
+                title="Weight and Balance calculator vliegclub Rotterdam">
+                    ⚖️ Weight & Balance vliegclub Rotterdam
+            </button>
+        </div>
 	</div>
 
 
@@ -884,33 +893,6 @@
                 </div>
             </div>
 
-
-
-        <!--</div>-->
-        <!--<div style="border: 1px solid lightgrey; border-radius: 10px; padding: 10px;">
-            <div class="button-row">
-                <div style="display:flex; flex-direction:column; flex:1; margin-right:10px;">
-                    <label for="atc_fontsize">Choose Font Size</label>
-                    <select id="atc_fontsize">
-                        <option value="small">Small</option>
-                        <option value="medium">Medium</option>
-                        <option value="large" selected>Large</option>
-                        <option value="xl">Extra Large</option>
-                        <option value="xxl">XXL</option>
-                    </select>
-                </div>
-
-                <div style="display:flex; flex-direction:column; flex:1;">
-                    <label for="atc_columns">Columns</label>
-                    <select id="atc_columns">
-                        <option value="1">1</option>
-                        <option value="2" selected>2</option>
-                        <option value="3">3</option>
-                    </select>
-                </div>
-            </div>
-        </div>-->
-
         <label_h1>Required Fields</label_h1>
         <div style="border: 1px solid lightgrey; border-radius: 10px; padding: 10px;">
             <div id="bottom-container">
@@ -1033,6 +1015,110 @@
          <div class="disclaimer" style="margin-bottom: 20px; border: 2px solid red; border-radius: 10px; padding: 10px;">SkyWalk is provided “as is,” without any warranties, express or implied. SkyWalk is intended for educational use. The developers assume no liability for any damages arising from using this application.</div>
 
     </div>
+
+
+    <div id="Checklist" class="tabcontent">
+        <label_h1>Checklist</label_h1>
+        <div class="info" style="margin-bottom: 20px;">Flight preparations requires doing many tasks carefully. Here we seperate them into catagories to keep it organized. Create a new checklist or load an existing one!</div>
+
+        <div class="button-row">
+            <button id="checklist_create"
+                    type="button"
+                    title="Create new checklist"
+                    aria-label="Create new checklist"
+                    onclick="checklist_create()"
+                    style="background-color: #006280; border: 1px solid #333333; color: #ffffff; padding: 8px 12px; border-radius: 8px; cursor: pointer;">
+                ➕ Create Checklist
+            </button>
+            <button id="checklist_save"
+                    type="button"
+                    title="Save checklist"
+                    aria-label="Save checklist"
+                      onclick="checklist_save(window.CHECKLIST)"
+                    style="background-color: #006280; border: 1px solid #333333; color: #ffffff; padding: 8px 12px; border-radius: 8px; cursor: pointer;">
+                    Save Checklist
+            </button>
+
+        </div>
+
+
+
+
+        <!-- Personal items -->
+        <div class="collapsible" data-title="Personal checklist">
+        <div class="collapsible-header"></div>
+        <div class="collapsible-content" style="text-align: left;">
+            <!-- JavaScript will fill this automatically in  window.populateChecklist("Personal")-->
+        </div>
+        </div>
+
+
+    </div>
+
+
+<script>
+// Function to populate a collapsible section from window.CHECKLIST
+function populateChecklist(category) {
+  console.log('Attempting to populate:', category);
+  console.log('window.CHECKLIST:', window.CHECKLIST);
+
+  // if (typeof window.CHECKLIST === 'undefined' || !window.CHECKLIST) {
+  //   console.warn('window.CHECKLIST is not available. Aborting populateChecklist.');
+  //   return;
+  // }
+
+  const collapsible = document.querySelector(`[data-title="${category} checklist"]`);
+
+  if (!collapsible) {
+    console.warn(`Collapsible with title "${category} checklist" not found`);
+    return;
+  }
+
+  const content = collapsible.querySelector('.collapsible-content');
+  const items = window.CHECKLIST[category.toLowerCase()];
+  console.log(items)
+
+  if (!items) {
+    console.warn(`No data found for ${category} in window.CHECKLIST`);
+    return;
+  }
+
+  // Generate checkbox HTML for each item
+  content.innerHTML = Object.entries(items)
+    .map(([label, checked]) =>
+      `<label><input type="checkbox" ${checked ? 'checked' : ''} data-label="${label}"> ${label}</label>`
+    ).join('\n');
+
+  // Add event listeners to update window.CHECKLIST when checkboxes change
+  content.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+    checkbox.addEventListener('change', function(e) {
+      const label = e.target.getAttribute('data-label');
+      const checked = e.target.checked;
+
+      // Update window.CHECKLIST
+      window.CHECKLIST[category.toLowerCase()][label] = checked;
+
+      console.log(`Updated ${category}.${label} to ${checked}`);
+      console.log('Current CHECKLIST:', window.CHECKLIST);
+    });
+  });
+
+  console.log('Successfully populated:', category);
+}
+
+// populateChecklist("Personal");
+
+// Wait for window.CHECKLIST to be available
+// document.addEventListener('DOMContentLoaded', function() {
+//   setTimeout(function() {
+//     populateChecklist("Personal");
+//   }, 100);
+// });
+
+</script>
+
+
+
 
 
 <script>
@@ -2332,6 +2418,7 @@
         updateColors('arrival');
     }
 
+
     function createAirportWeatherWidget(icao, prefix) {
         if (icao) {
             const awContainer = document.getElementById(`CONTAINER-AIRPORTWEATHER-${prefix}`);
@@ -2942,6 +3029,72 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
     import logging
     logger = logging.getLogger('SKYWALK')
 
+    def get_default_checklist():
+        print('> func: default_checklist()')
+        checklist = {
+                "NAME": '',
+
+                "personal": {
+                    'Paper, Pen, Watch, Sunglasses, Hat': False,
+                    'Medical papers': False,
+                    'Pilot Licence': False,
+                    'Passport/ identity card': False,
+                    'Passport/ identity card Passenger(s)': False,
+                    'Flight Logbook': False,
+                    },
+
+                "navigation": {
+                    'Navigation Plan (which includes the alternate aerodrome': False,
+                    'Flight levels and Airspaces enroute': False,
+                    'NOTAMS enroute': False,
+                    'ATC frequencies enroute (FIR/FIS)': False,
+                    'AIP/AIC information': False,
+                    },
+
+                "flightplan": {'Submit Flight Plan/ Flight Notification': False},
+
+                "aerodrome": {},
+
+                "technical": {'Weight and Balance': False,
+                              'Fuel Computations': False,
+                              },
+
+                "departure": {
+                    'Official Aircraft Papers (The bag or suitcase)': False,
+                    'Checklist aircraft': False,
+                    'Check outstanding complaints and become aware of known issues': False,
+                    'Check the journal for available flight hours': False,
+                    'Check the journal for available flight hours': False,
+                    'Dinghy/swimming suit for overwater flight': False,
+                    'Fuel draining (remove water at lowest point)': False,
+                    'Prior Permission Required (PPR) by phone': False,
+                    },
+
+                "arrival": {
+                    'Take out personal valuable items': False,
+                    'Take out keys, journal, bag or suitcase': False,
+                    'Secure the wings with the strap': False,
+                    'Lock the doors/ canopy': False,
+                    'Close flightplan': False,
+                    'Register and pay landing fee (C)': False,
+                    },
+
+                "various": {
+                    'Activate flight plan after takeoff': False,
+                    },
+
+                "final": {
+                    'Flight plan/ Flight Notification is approved': False,
+                    'Brief the Passenger(s)': False,
+                    },
+
+                }
+
+        # Populate the personal checklist
+        js.window.CHECKLIST = checklist
+        js.window.populateChecklist("Personal")
+
+        return checklist
 
     def get_default_settings():
         """Get default settings"""
@@ -2984,7 +3137,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
     def get_default_data():
         """Get default flightplan data structure - copied from utils_skywalk.py"""
         print('> func: get_default_data()')
-        data = {
+        return {
             # General Flightplan
             'FLIGHTPLAN': '',           # Name of the flightplan
             'DATETIME': datetime.now().strftime('%d-%m-%Y %H:%M'),
@@ -3072,7 +3225,81 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             # NOTAM data
             'NOTAM': {'data': {}},      # NOTAM data
         }
-        return data
+
+    # ================================================
+    # CHECKLIST
+    # ================================================
+    def checklist_get_cache_key(flightplan_name=None):
+        # Get flightplan name
+        if flightplan_name is None:
+            flightplan_name = js.window.flight_plan_data['FLIGHTPLAN']
+
+        # Check key
+        if flightplan_name is None or flightplan_name == '':
+            return None
+        else:
+            return f"checklist_{flightplan_name}"
+
+    def checklist_save(CHECKLIST):
+        logger.info('> func: checklist_save()')
+
+        # Get key
+        cache_key = checklist_get_cache_key()
+
+        # Check if flightplan name exists
+        if cache_key is None:
+            js.window.alert('⚠️ Checklist can not be saved without flightplan name.')
+            print('   >Checklist can not be saved; No flightplan name.')
+            return False
+
+        # Save for later usage
+        if hasattr(js.window, 'CHECKLIST'):
+            js.window.CHECKLIST['NAME'] = cache_key
+            # Convert to JSON string
+            json_data = json.dumps(js.window.CHECKLIST)
+            # Save to cache
+            js.localStorage.setItem(cache_key, json_data)
+            # save_to_cache(cache_key, json_data)
+            print(f'   >Saved checklist: {cache_key}')
+            print(js.window.CHECKLIST)
+            return True
+        else:
+            return False
+
+    def checklist_load_from_cache(plan_name):
+        logger.info('> func: checklist_load_from_cache()')
+        # Get key
+        cache_key = checklist_get_cache_key(plan_name)
+
+        # Check if cache key exists
+        if is_cached(cache_key):
+            print(f'   >Loading checklist: [{cache_key}]')
+            json_data = js.localStorage.getItem(cache_key)
+            js.window.CHECKLIST = json.loads(json_data)
+            return True
+        else:
+            print(f'   >No saved checklist found with name {cache_key}')
+            return False
+
+    def checklist_create():
+        logger.info('> func: checklist_create()')
+        # Create new default checklist
+        get_default_checklist()
+
+
+    def check_items_complete(listname):
+        if not hasattr(js.window, 'CHECKLIST'):
+            return '⚠️'
+        else:
+            check_items = js.window.CHECKLIST[listname]
+
+        # Check if all items are True
+        if all(check_items.values()):
+            icon = 'ℹ️'
+        else:
+            icon = '⚠️'
+        return icon
+
 
 
     # ================================================
@@ -3146,7 +3373,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                 data = base64.b64decode(cached_data)
                 print(f"📦 Loaded {len(data)} bytes from cache")
                 return data
-            print("⚠️ Cache returned null, downloading...")
+            print("⚠️ Cache returned null")
             return None
         except Exception as e:
             print(f"⚠️ Error decoding cached data: {e}")
@@ -3686,6 +3913,9 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             else:
                 js.window.flight_plan_data[key] = ''
 
+        # Clear checklist
+        get_default_checklist()
+
 
     def update_general_gui_fields(flight_plan_dict):
         """Update GENERAL GUI fields from js.window.flight_plan_data"""
@@ -3700,7 +3930,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
     def update_enroute_gui_fields(enroute_dict, spinner_name):
         """Update ENROUTE GUI fields from js.window.flight_plan_data"""
-        print('----> update_enroute_gui_fields()')
+        print('>func: update_enroute_gui_fields()')
         print("🔄 Updating ENROUTE GUI fields...")
 
         # Get all fields that need updating
@@ -3794,7 +4024,10 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
         # Set a check for the loaded ICAO
         icao_label = js.document.getElementById(f'{fname}_ICAO_2_LABEL')
-        icao_label.textContent = f'✅ {fname.title()} (ICAO)'
+        if element_icao_2.value == '':
+            icao_label.textContent = f'{fname.title()} (ICAO)'
+        else:
+            icao_label.textContent = f'✅ {fname.title()} (ICAO)'
 
         # print(js.window.flight_plan_data.get(f'{fname}_CTR'))
         # print(js.window.flight_plan_data.get(f'{fname}_ATC_TOWER'))
@@ -4518,6 +4751,9 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         await clear_aerodrome_fields('ARRIVAL')
         await clear_enroute_fields()
 
+        # Clean all fields from checklist
+        get_default_checklist()
+
 
     async def delete_enroute_fic(spinner_name):
         """Delete selected enroute FIC from localStorage"""
@@ -4640,10 +4876,12 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         # Remove METAR widget
         remove_metar_widget('DEPARTURE')
         remove_metar_widget('ARRIVAL')
+
         # remove wind envelope plot
         remove_wind_envelope_plot('DEPARTURE')
         remove_wind_envelope_plot('ARRIVAL')
-        # Set default values
+
+        # Set default values for dropdown elements
         select = js.document.getElementById('DEPARTURE_ICAO_CITY')
         select.innerHTML = '<option value="">Select ICAO</option>'
         select = js.document.getElementById('ARRIVAL_ICAO_CITY')
@@ -4689,11 +4927,20 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                 # Update spinner
                 element = js.document.getElementById('DEPARTURE_ICAO_CITY')
                 element.value = flight_plan_dict['DEPARTURE_ICAO_CITY']
+
             if flight_plan_dict['ARRIVAL_COUNTRY'] != '':
                 await import_country_selected('ARRIVAL', flight_plan_dict['ARRIVAL_COUNTRY'])
                 # Update spinner
                 element = js.document.getElementById('ARRIVAL_ICAO_CITY')
                 element.value = flight_plan_dict['ARRIVAL_ICAO_CITY']
+
+            # Load checklist data if any
+            # flightplan_name = js.window.flight_plan_data['FLIGHTPLAN']
+            if checklist_load_from_cache(plan_name):
+                # Populate the personal checklist
+                print(window.CHECKLIST)
+                window.populateChecklist("Personal")
+
 
 
             print(f"   >✅ Flightplan '{plan_name}' loaded successfully")
@@ -4774,6 +5021,9 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             # Update the list of saved flightplans
             update_dropdown_flightplans()
             update_dropdown_enroute_FIC()
+
+            # Save checklist
+            checklist_save(js.window.CHECKLIST)
 
             print("---------------DATA SAVED-------------------")
             return True
@@ -5447,7 +5697,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         return fontsizes
 
 
-    async def load_template(template_name):
+    async def load_template_from_url(template_name):
         """Fetch from URL, store in localStorage, and return text content."""
         template_key = f"template_{template_name}"
         base_url = js.window.settings['html_templates']
@@ -5480,7 +5730,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
     async def personalize_content(content, template_name):
         # Load template
-        template_content = await load_template(template_name)
+        template_content = await load_template_from_url(template_name)
 
         # Use DictLoader to store template
         jinja_env = Environment(loader=DictLoader({template_name: template_content}))
@@ -6000,14 +6250,24 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
     js.window.load_flightplan = load_flightplan
     js.window.delete_flightplan = delete_flightplan
     js.window.save_flightplan = save_flightplan
+
     js.window.load_enroute_fic = load_enroute_fic
     js.window.delete_enroute_fic = delete_enroute_fic
     js.window.save_enroute_to_json = save_enroute_to_json
+
     js.window.save_aerodrome_to_json = save_aerodrome_to_json
     js.window.load_aerodrome_from_json = load_aerodrome_from_json
+
     js.window.clear_cache = clear_cache
     # js.window.get_core_js = get_core_js
     js.window.get_top_metar_stations = get_top_metar_stations
+
+    # Checklist
+    js.window.checklist_create = checklist_create
+    js.window.checklist_save = checklist_save
+    js.window.check_items_complete = check_items_complete
+
+
 
     # ATC
     js.window.create_summary_atc = create_proxy(create_summary_atc)
@@ -6041,6 +6301,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
     # DATA FUNCTIONS
     js.window.get_default_data = get_default_data
     js.window.get_default_settings = get_default_settings
+    js.window.default_checklist = get_default_checklist
 
     # FLIGHTPLAN LIST IN CACHE
     update_dropdown_flightplans()
@@ -7586,6 +7847,7 @@ const COUNTRIES_DATA = [
       windEnvelopeField.value = results.message;
       return results;
     }
+
 
 
 </script>
