@@ -1019,16 +1019,16 @@
 
     <div id="Checklist" class="tabcontent">
         <label_h1>Checklist</label_h1>
-        <div class="info" style="margin-bottom: 20px;">Flight preparations requires doing many tasks carefully. Here we seperate them into catagories to keep it organized. Create a new checklist or load an existing one!</div>
+        <div class="info" style="margin-bottom: 20px;">Flight preparations requires doing many tasks carefully. Here we seperate them into catagories to keep it organized.</div>
 
         <div class="button-row">
             <button id="checklist_create"
                     type="button"
-                    title="Create new checklist"
+                    title="Clean checklist"
                     aria-label="Create new checklist"
                     onclick="checklist_create()"
                     style="background-color: #006280; border: 1px solid #333333; color: #ffffff; padding: 8px 12px; border-radius: 8px; cursor: pointer;">
-                ➕ Create Checklist
+                🧹 Clean Checklist
             </button>
             <button id="checklist_save"
                     type="button"
@@ -1036,75 +1036,137 @@
                     aria-label="Save checklist"
                       onclick="checklist_save(window.CHECKLIST)"
                     style="background-color: #006280; border: 1px solid #333333; color: #ffffff; padding: 8px 12px; border-radius: 8px; cursor: pointer;">
-                    Save Checklist
+                    💾 Save Checklist
             </button>
 
         </div>
 
 
-
-
         <!-- Personal items -->
         <div class="collapsible" data-title="Personal checklist">
         <div class="collapsible-header"></div>
-        <div class="collapsible-content" style="text-align: left;">
-            <!-- JavaScript will fill this automatically in  window.populateChecklist("Personal")-->
+        <div class="collapsible-content">
+            <!-- JavaScript will fill this automatically in  window.populateChecklist("Personal checklist")-->
         </div>
         </div>
 
+        <div class="collapsible" data-title="Navigation checklist">
+        <div class="collapsible-header"></div>
+        <div class="collapsible-content">
+            <!-- JavaScript will fill this automatically in  window.populateChecklist("Navigation checklist")-->
+        </div>
+        </div>
+
+        <div class="collapsible" data-title="Flightplan checklist">
+        <div class="collapsible-header"></div>
+        <div class="collapsible-content">
+            <!-- JavaScript will fill this automatically in  window.populateChecklist("Flightplan checklist")-->
+        </div>
+        </div>
+
+        <div class="collapsible" data-title="Technical checklist">
+        <div class="collapsible-header"></div>
+        <div class="collapsible-content">
+            <!-- JavaScript will fill this automatically in  window.populateChecklist("Technical checklist")-->
+        </div>
+        </div>
+
+        <div class="collapsible" data-title="Departure checklist">
+        <div class="collapsible-header"></div>
+        <div class="collapsible-content">
+            <!-- JavaScript will fill this automatically in  window.populateChecklist("Departure checklist")-->
+        </div>
+        </div>
+
+        <div class="collapsible" data-title="Arrival checklist">
+        <div class="collapsible-header"></div>
+        <div class="collapsible-content">
+            <!-- JavaScript will fill this automatically in  window.populateChecklist("Arrival checklist")-->
+        </div>
+        </div>
+
+        <div class="collapsible" data-title="Various checklist">
+        <div class="collapsible-header"></div>
+        <div class="collapsible-content">
+            <!-- JavaScript will fill this automatically in  window.populateChecklist("Various checklist")-->
+        </div>
+        </div>
+
+        <div class="collapsible" data-title="Final checklist">
+        <div class="collapsible-header"></div>
+        <div class="collapsible-content">
+            <!-- JavaScript will fill this automatically in  window.populateChecklist("Final checklist")-->
+        </div>
+        </div>
 
     </div>
 
 
 <script>
-// Function to populate a collapsible section from window.CHECKLIST
-function populateChecklist(category) {
-  console.log('Attempting to populate:', category);
-  console.log('window.CHECKLIST:', window.CHECKLIST);
+    // Function to populate a collapsible section from window.CHECKLIST
+    function colorChecklist(header, trueCount, total) {
+      console.log(`Total entries: ${total}. Nr checked: ${trueCount}`)
+      // Set color
+      if (trueCount === total) {
+          header.style.backgroundColor = 'green';
+          header.style.color = 'white';
+      } else {
+        header.style.backgroundColor = '';
+        header.style.color = '';
+      }
 
-  // if (typeof window.CHECKLIST === 'undefined' || !window.CHECKLIST) {
-  //   console.warn('window.CHECKLIST is not available. Aborting populateChecklist.');
-  //   return;
-  // }
+    }
+    function populateChecklist(category) {
+      console.log('Attempting to populate:', category);
 
-  const collapsible = document.querySelector(`[data-title="${category} checklist"]`);
+      const collapsible = document.querySelector(`[data-title="${category}"]`);
+      // Normalize category string by removing the word "checklist" (case-insensitive) and trimming whitespace
+      category = category.toLowerCase().replace(/checklist/gi, '').trim();
 
-  if (!collapsible) {
-    console.warn(`Collapsible with title "${category} checklist" not found`);
-    return;
-  }
+      if (!collapsible) {
+        console.warn(`Collapsible with title "${category} checklist" not found`);
+        return;
+      }
 
-  const content = collapsible.querySelector('.collapsible-content');
-  const items = window.CHECKLIST[category.toLowerCase()];
-  console.log(items)
+      const header = collapsible.querySelector('.collapsible-header');
+      const content = collapsible.querySelector('.collapsible-content');
+      const items = window.CHECKLIST[category];
+      console.log(items)
 
-  if (!items) {
-    console.warn(`No data found for ${category} in window.CHECKLIST`);
-    return;
-  }
+      if (!items) {
+        console.warn(`No data found for ${category} in window.CHECKLIST`);
+        return;
+      }
 
-  // Generate checkbox HTML for each item
-  content.innerHTML = Object.entries(items)
-    .map(([label, checked]) =>
-      `<label><input type="checkbox" ${checked ? 'checked' : ''} data-label="${label}"> ${label}</label>`
-    ).join('\n');
+      // Generate checkbox HTML for each item
+      content.innerHTML = Object.entries(items)
+        .map(([label, checked]) =>
+          `<label style="display: block; text-align: left;"><input type="checkbox" ${checked ? 'checked' : ''} data-label="${label}"> ${label}</label>`
+        ).join('\n');
 
-  // Add event listeners to update window.CHECKLIST when checkboxes change
-  content.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-    checkbox.addEventListener('change', function(e) {
-      const label = e.target.getAttribute('data-label');
-      const checked = e.target.checked;
+      // Set color of the menu
+      const entries = Object.entries(items || {});
+      const total = entries.length;
+      let trueCount = Object.values(window.CHECKLIST[category]).filter(value => value === true).length;
+      colorChecklist(header, trueCount, total)
 
-      // Update window.CHECKLIST
-      window.CHECKLIST[category.toLowerCase()][label] = checked;
+      // Add event listeners to update window.CHECKLIST when checkboxes change
+      content.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', function(e) {
+          const label = e.target.getAttribute('data-label');
+          const checked = e.target.checked;
+          window.CHECKLIST[category][label] = checked;
+          console.log(`   >Updated ${category}.${label} to ${checked}`);
 
-      console.log(`Updated ${category}.${label} to ${checked}`);
-      console.log('Current CHECKLIST:', window.CHECKLIST);
-    });
-  });
+          // Count how many are checked
+          trueCount = Object.values(window.CHECKLIST[category]).filter(value => value === true).length;
+          // Set color of the menu
+          colorChecklist(header, trueCount, total)
+        });
+      });
 
-  console.log('Successfully populated:', category);
-}
+      console.log('Successfully populated:', category);
+    }
 
 // populateChecklist("Personal");
 
@@ -3044,11 +3106,12 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                     },
 
                 "navigation": {
-                    'Navigation Plan (which includes the alternate aerodrome': False,
+                    'Navigation Plan': False,
+                    'Alternate aerodrome': False,
                     'Flight levels and Airspaces enroute': False,
                     'NOTAMS enroute': False,
                     'ATC frequencies enroute (FIR/FIS)': False,
-                    'AIP/AIC information': False,
+                    'AIP/AIC information printed': False,
                     },
 
                 "flightplan": {'Submit Flight Plan/ Flight Notification': False},
@@ -3090,9 +3153,11 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
                 }
 
-        # Populate the personal checklist
+        # Store as javascript accesible
         js.window.CHECKLIST = checklist
-        js.window.populateChecklist("Personal")
+        # Populate the menus
+        checklist_populate()
+
 
         return checklist
 
@@ -3229,6 +3294,19 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
     # ================================================
     # CHECKLIST
     # ================================================
+
+    def checklist_populate(plan_name=None):
+        # Load specified checklist from flightplan
+        if plan_name is not None:
+            checklist_load_from_cache(plan_name)
+
+        # Populate the personal checklist
+        if hasattr(js.window, 'CHECKLIST'):
+            for key in js.window.CHECKLIST.keys():
+                if isinstance(js.window.CHECKLIST[key], dict):
+                    js.window.populateChecklist(f"{key.title()} checklist")
+
+
     def checklist_get_cache_key(flightplan_name=None):
         # Get flightplan name
         if flightplan_name is None:
@@ -4934,20 +5012,13 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                 element = js.document.getElementById('ARRIVAL_ICAO_CITY')
                 element.value = flight_plan_dict['ARRIVAL_ICAO_CITY']
 
-            # Load checklist data if any
-            # flightplan_name = js.window.flight_plan_data['FLIGHTPLAN']
-            if checklist_load_from_cache(plan_name):
-                # Populate the personal checklist
-                print(window.CHECKLIST)
-                window.populateChecklist("Personal")
-
-
+            # Populate checklist
+            checklist_populate(plan_name)
 
             print(f"   >✅ Flightplan '{plan_name}' loaded successfully")
         except Exception as e:
             print(f"   >❗ Error loading flightplan: {e}")
             js.window.alert(f"❗ Error loading flightplan: {e}")
-
 
 
     def save_flightplan(to_cache=True):
@@ -7819,14 +7890,16 @@ const COUNTRIES_DATA = [
       // MAKE PLOT
       if (results.traces) {
         // const title = `Wind Envelope for runway ${results.runwayDirection}<br>${results.message.replace(/\./g, '.<br>')}`;
-        const xlim = [-maxCrosswind-2, maxCrosswind+2];
-        const ylim = [-5, maxHeadwind * 1.3];
+        // const xlim = [-maxCrosswind-2, maxCrosswind+2];
+        // const ylim = [-5, maxHeadwind * 1.3];
 
         // maxHeadwind = 25, maxCrosswind=15
 
         const layout = {
-          xaxis: { title: 'Crosswind Component (knots)', range: xlim },
-          yaxis: { title: 'Headwind Component (knots)', range: ylim },
+          // xaxis: { title: 'Crosswind Component (knots)', range: xlim },
+          // yaxis: { title: 'Headwind Component (knots)', range: ylim },
+          xaxis: { title: 'Crosswind Component (knots)' },
+          yaxis: { title: 'Headwind Component (knots)' },
           showlegend: false,
           // height: 350,
           // width: 350,
