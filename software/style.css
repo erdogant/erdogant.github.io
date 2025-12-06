@@ -291,6 +291,31 @@ input[type="text"]:hover {
     transform: scale(1.05);
 }
 
+.button-style {
+    font-size: 12px;
+    margin: 4px 0;
+    text-align: center;
+    z-index: 1;
+    background-color: lightsteelblue;
+    border: 1px solid #333333;
+    color: #333333;
+    cursor: pointer;
+}
+
+/* Subtle lift + color change on hover */
+.button-style:hover {
+    background-color: #6ea0cd; /* slightly deeper blue */
+    color: black;
+    border: 1px solid #333333;
+    box-shadow: 0 6px 18px rgba(42, 63, 84, 0.12);
+    transform: translateY(-2px);
+}
+
+/*.button-style:focus {
+    outline: black;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.18);
+}*/
+
 /* Warning styling */
 .warning {
     font-size: 12px;

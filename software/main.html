@@ -194,10 +194,93 @@
 
 
             <div class="button-row">
+                <!--<img id="DEPARTURE_FLAG">-->
+                <img id="DEPARTURE_FLAG" src="" alt="" style="width:30px; height:auto; vertical-align:middle; margin-left:6px;">
+                <!--<img id="DEPARTURE_FLAG" src="https://flagcdn.com/nl.svg" alt="" style="display:none; width:30px; height:auto; vertical-align:middle; margin-left:6px;">-->
                 <input type="text" id="DEPARTURE_ICAO" class="tile-value UPPERCASE_input sync-departure" onchange="window.load_aerodrome_from_json('DEPARTURE')" placeholder="ICAO">
                 <button id="DEPARTURE_USE_CACHED" onclick="window.load_aerodrome_from_json('DEPARTURE')" title="Load custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>
-                <button id="save_fields_btn_departure" onclick="window.save_aerodrome_to_json('DEPARTURE')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">💾</button>
+                <!--ADD HERE FLAG ICON FOR THE COUNTRY THAT IS SELECTED-->
+                <!--<button id="save_fields_btn_departure" onclick="window.save_aerodrome_to_json('DEPARTURE')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">💾</button>-->
                 <!--<button id="BTN-METAR-ICON-DEPARTURE_1" onclick="window.retrieve_metar('DEPARTURE')" title="Load METAR data for aerodrome and automatically predict the runway number based on the wind direction" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🌤</button>-->
+            </div>
+
+
+            <div class="wind-grid">
+
+                 <div class="tile">
+                    <input id="DEPARTURE_WIND_DIRECTION" type="text" class="tile-value">
+                    <span class="tile-label">Direction (°)</span>
+                </div>
+
+                <div class="tile">
+                    <input id="DEPARTURE_WIND_SPEED" type="text" class="tile-value">
+                    <span class="tile-label">Speed (kt)</span>
+                </div>
+
+                <div class="tile">
+                    <input id="DEPARTURE_WIND_GUST" type="text" class="tile-value">
+                    <span class="tile-label">Gust (kt)</span>
+                </div>
+            </div>
+
+            <div class="grid-one-third-two-thirds">
+
+                <div class="tile">
+                    <input id="DEPARTURE_WIND_VARIATION" type="text" class="tile-value">
+                    <span class="tile-label">Variation (°)</span>
+                </div>
+
+                <div class="button-row">
+                    <textarea id="METAR-FIELD-DEPARTURE"
+                        placeholder="METAR Information"
+                        style="font-size:11px; background-color 0.3s; width: 100%; min-height: 80px; max-height: 120px; resize: vertical; padding: 8px; box-sizing: border-box; border-radius: 10px"
+                        title="METAR information for the departure aerodrome is shown here after automatically retrieved."
+                        aria-label="METAR Information">
+                    </textarea>
+                </div>
+
+
+                <!--<div class="tile">
+                    <input id="DEPARTURE_WIND_HEADWIND" readonly type="text" class="tile-value" title="Headwind is calculated based on the wind speed and direction relative to the runway. This value can not be changed." style="background-color: transparent;">
+                    <span class="tile-label">Headwind (kt)</span>
+                </div>
+
+                <div class="tile">
+                    <input id="DEPARTURE_WIND_CROSSWIND" readonly type="text" class="tile-value" title="Crosswind is calculated based on the wind speed and direction relative to the runway. This value can not be changed." style="background-color: transparent;">
+                    <span class="tile-label">Crosswind (kt)</span>
+                </div>-->
+
+                <!--<input type="text" id="DATETIME-METAR-DEPARTURE" readonly
+                    title="The UTC date/time for the retrieved METAR data."
+                    style="transition: background-color 0.3s; width: 30%;
+                           padding: 0; box-sizing: border-box; font-size: 10px;
+                           border: none; background-color: transparent;
+                           color: #333333; outline: none;">-->
+
+            </div>
+
+            <!--<div style="display: flex; gap: 1px; margin-top: 1px; display: flex; justify-content: center; align-items: center">
+                <input type="text" id="METAR-TEXT-DEPARTURE" readonly
+                    style="transition: background-color 0.3s; width: 70%;
+                        padding: 0; box-sizing: border-box; font-size: 10px;
+                        border: none; background-color: transparent;
+                        color: #333333; outline: none;">
+            </div>-->
+
+
+            <div style="display: flex; gap: 1px; margin-top: 1px;">
+                <input type="text" id="METAR-TEXT-DEPARTURE" readonly
+                    style="transition: background-color 0.3s; width: 70%;
+                           padding: 0; box-sizing: border-box; font-size: 10px;
+                           border: none; background-color: transparent;
+                           color: #333333; outline: none;">
+
+                <input type="text" id="DATETIME-METAR-DEPARTURE" readonly
+                    title="The UTC date/time for the retrieved METAR data."
+                    style="transition: background-color 0.3s; width: 30%;
+                           padding: 0; box-sizing: border-box; font-size: 10px;
+                           border: none; background-color: transparent;
+                           color: #333333; outline: none;">
             </div>
 
         </div>
@@ -258,8 +341,13 @@
                 <span class="tile-label">Route altitude (ft)</span>
             </div>
         </div>
+
+        <button id="save_fields_btn_departure" onclick="window.save_aerodrome_to_json('DEPARTURE')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 4px 8px 0; flex: 0 0 auto; cursor: pointer; float: right;">💾</button>
+
     </div>
     </div>
+
+
 
 	  <!--<label_h1>Contact</label_h1>-->
     <div class="collapsible" data-title="CONTACT">
@@ -300,15 +388,26 @@
    <label_h1>METAR WIDGETS</label_h1>
 
    <!-- METAR Information -->
-       <div class="collapsible" data-title="METAR INFORMATION">
-       <div class="collapsible-header"></div>
-       <div class="collapsible-content">
+        <div class="collapsible" data-title="WIND ENVELOPE">
+        <div class="collapsible-header"></div>
+        <div class="collapsible-content">
 
-           <div class="button-row">
+            <div class="info" style="margin-bottom: 20px; border: 1.5px solid lightgray; border-radius: 10px; padding: 10px;">
+                This wind envelope shows how wind direction and strength relate to the selected runway, and marks the maximum permitted headwind and crosswind components.
+                Use it only as an educational aid. Always check current METAR/TAF, official aerodrome sources, and your aircraft’s operating limitations.
+            </div>
+
+            <div class="button-row">
+                <button id="BTN-PLOT-WIND-DEPARTURE" class="button-style" onclick="window.windEnvelope_js('DEPARTURE')">
+                    Compute Wind Envelope
+                </button>
+            </div>
+
+           <!--<div class="button-row">
                 <button id="BTN-METAR-DEPARTURE" onclick="window.retrieve_metar('DEPARTURE')" style="transition: background-color 0.3s; z-index: 1; background-color: #006280; border: 1px solid #333333; color: #ffffff; cursor: pointer;" title="Retrieve METAR information.">Retrieve METAR Information 🌤</button>
-           </div>
+           </div>-->
 
-           <div style="display: flex; gap: 1px; margin-top: 1px;">
+           <!--<div style="display: flex; gap: 1px; margin-top: 1px;">
                <input type="text" id="METAR-TEXT-DEPARTURE" readonly
                    style="transition: background-color 0.3s; width: 70%;
                           padding: 0; box-sizing: border-box; font-size: 10px;
@@ -321,20 +420,20 @@
                           padding: 0; box-sizing: border-box; font-size: 10px;
                           border: none; background-color: transparent;
                           color: #333333; outline: none;">
-           </div>
+           </div>-->
 
-           <div class="button-row">
+           <!--<div class="button-row">
                <textarea id="METAR-FIELD-DEPARTURE"
                    placeholder="METAR Information"
                    style="transition: background-color 0.3s; width: 100%; min-height: 80px; max-height: 120px; resize: vertical; padding: 8px; box-sizing: border-box; border-radius: 10px"
                    title="METAR information for the departure aerodrome is shown here after automatically retrieved."
                    aria-label="METAR Information"></textarea>
-           </div>
+           </div>-->
 
            <!-- WIND INFORMATION -->
            <div class="wind-grid">
 
-                <div class="tile">
+                <!--<div class="tile">
                    <input id="DEPARTURE_WIND_DIRECTION" type="text" class="tile-value">
                    <span class="tile-label">Direction (°)</span>
                </div>
@@ -352,7 +451,7 @@
                <div class="tile">
                    <input id="DEPARTURE_WIND_VARIATION" type="text" class="tile-value">
                    <span class="tile-label">Variation (°)</span>
-               </div>
+               </div>-->
 
                <div class="tile">
                    <input id="DEPARTURE_WIND_HEADWIND" readonly type="text" class="tile-value" title="Headwind is calculated based on the wind speed and direction relative to the runway. This value can not be changed." style="background-color: transparent;">
@@ -366,20 +465,20 @@
 
            </div>
 
-           <div class="button-row">
-               <button id="BTN-PLOT-WIND-DEPARTURE"
-                   onclick="window.windEnvelope_js('DEPARTURE')">
-                       Compute Wind Envelope
-                   </button>
-               </div>
+            <!--<div class="button-row">
+                <button id="BTN-PLOT-WIND-DEPARTURE"
+                    onclick="window.windEnvelope_js('DEPARTURE')">
+                    Compute Wind Envelope
+                </button>
+            </div>-->
 
-           <div class="tile">
+           <div class="button-row">
                <div id="DEPARTURE_WIND_ENVELOPE_PLOT" style="width: 100%; box-sizing: border-box;"></div>
            </div>
 
            <div class="button-row">
-               <textarea id="DEPARTURE_WIND_ENVELOPE_TEXT"
-                   placeholder="..."
+               <textarea id="DEPARTURE_WIND_ENVELOPE_TEXT" readonly aria-readonly="true"
+                   placeholder="Compute the wind envelope to see here information."
                    style="transition: background-color 0.3s; width: 100%; min-height: 80px; max-height: 120px; resize: vertical; padding: 8px; box-sizing: border-box; border-radius: 10px">
                 </textarea>
            </div>
@@ -486,9 +585,10 @@
             </div>
 
             <div class="button-row">
+                <img id="ARRIVAL_FLAG" src="" alt="" style="width:30px; height:auto; vertical-align:middle; margin-left:6px;">
                 <input type="text" id="ARRIVAL_ICAO" class="tile-value UPPERCASE_input sync-arrival" onchange="window.load_aerodrome_from_json('ARRIVAL')" placeholder="ICAO">
                 <button id="ARRIVAL_USE_CACHED" onclick="window.load_aerodrome_from_json('ARRIVAL')" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>
-                <button id="save_fields_btn_arrival" onclick="window.save_aerodrome_to_json('ARRIVAL')" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">💾</button>
+                <!--<button id="save_fields_btn_arrival" onclick="window.save_aerodrome_to_json('ARRIVAL')" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">💾</button>-->
                 <!--<button id="BTN-METAR-ICON-ARRIVAL_1" onclick="window.retrieve_metar('ARRIVAL')" title="Load METAR data for aerodrome and automatically predict the runway number based on the wind direction" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🌤</button>-->
             </div>
         </div>
@@ -1105,7 +1205,7 @@
 <script>
     // Function to populate a collapsible section from window.CHECKLIST
     function colorChecklist(header, trueCount, total) {
-      console.log(`Total entries: ${total}. Nr checked: ${trueCount}`)
+      // console.log(`   >Total entries: ${total}. Nr checked: ${trueCount}`)
       // Set color
       if (trueCount === total) {
           header.style.backgroundColor = 'green';
@@ -1117,21 +1217,20 @@
 
     }
     function populateChecklist(category) {
-      console.log('Attempting to populate:', category);
+      console.log(`> func: populateChecklist(${category})`);
 
       const collapsible = document.querySelector(`[data-title="${category}"]`);
       // Normalize category string by removing the word "checklist" (case-insensitive) and trimming whitespace
       category = category.toLowerCase().replace(/checklist/gi, '').trim();
 
       if (!collapsible) {
-        console.warn(`Collapsible with title "${category} checklist" not found`);
+        // console.log(`   >Collapsible with title "${category} checklist" not found`);
         return;
       }
 
       const header = collapsible.querySelector('.collapsible-header');
       const content = collapsible.querySelector('.collapsible-content');
       const items = window.CHECKLIST[category];
-      console.log(items)
 
       if (!items) {
         console.warn(`No data found for ${category} in window.CHECKLIST`);
@@ -1164,18 +1263,8 @@
           colorChecklist(header, trueCount, total)
         });
       });
-
-      console.log('Successfully populated:', category);
     }
 
-// populateChecklist("Personal");
-
-// Wait for window.CHECKLIST to be available
-// document.addEventListener('DOMContentLoaded', function() {
-//   setTimeout(function() {
-//     populateChecklist("Personal");
-//   }, 100);
-// });
 
 </script>
 
@@ -1206,18 +1295,18 @@
         });
     });
 
-    function toggleCollapsibleMenu(fieldId) {
-        const block = document.getElementById(fieldId);
-        if (!block) return;
-        const content = block.querySelector('.collapsible-content');
-        block.classList.toggle('open');
-        if (block.classList.contains('open')) {
-            content.style.maxHeight = content.scrollHeight + "px";
-        } else {
-            content.style.maxHeight = null;
-        }
-    }
-    window.toggleCollapsibleMenu = toggleCollapsibleMenu;
+    // function toggleCollapsibleMenu(fieldId) {
+    //     const block = document.getElementById(fieldId);
+    //     if (!block) return;
+    //     const content = block.querySelector('.collapsible-content');
+    //     block.classList.toggle('open');
+    //     if (block.classList.contains('open')) {
+    //         content.style.maxHeight = content.scrollHeight + "px";
+    //     } else {
+    //         content.style.maxHeight = null;
+    //     }
+    // }
+    // window.toggleCollapsibleMenu = toggleCollapsibleMenu;
 
 
     function syncFields(className) {
@@ -2453,7 +2542,7 @@
        */
         function updateColors(prefix) {
             const dateField = document.getElementById(`DATETIME-METAR-${prefix}`);
-            const button = document.getElementById(`BTN-METAR-${prefix}`);
+            // const button = document.getElementById(`BTN-METAR-${prefix}`);
             const metarField = document.getElementById(`METAR-FIELD-${prefix}`);
             if (!dateField?.value) return;
 
@@ -2472,7 +2561,7 @@
             const isOld = diff > 10 * 60 * 1000; // 10 minutes in milliseconds
 
             dateField.style.backgroundColor = isOld ? '#ffebee' : '';
-            button.style.backgroundColor = isOld ? '#ffebee' : '';
+            // button.style.backgroundColor = isOld ? '#ffebee' : '';
             metarField.style.backgroundColor = isOld ? '#ffebee' : '';
         }
 
@@ -2749,7 +2838,7 @@
 
 
     async function setMetarButton(prefix, enable=true) {
-        const buttonMetar = document.getElementById('BTN-METAR-' + prefix);
+        // const buttonMetar = document.getElementById('BTN-METAR-' + prefix);
         // const buttonMetarIcon1 = document.getElementById('BTN-METAR-ICON-' + prefix + '_1');
         const buttonMetarIcon2 = document.getElementById('BTN-METAR-ICON-' + prefix + '_2');
         const dateField = document.getElementById('DATETIME-METAR-' + prefix);
@@ -2766,13 +2855,14 @@
         if (enable) {
           // buttonMetarIcon1.disabled = false;
           // buttonMetarIcon1.style.cursor = 'pointer';
-          buttonMetarIcon2.disabled = false;
-          buttonMetarIcon2.style.cursor = 'pointer';
-          buttonMetar.disabled = false;
-          buttonMetar.style.cursor = 'pointer';
-          buttonMetar.setAttribute('aria-disabled', 'false');
-          buttonMetar.style.opacity = '1';
-          buttonMetar.style.backgroundColor = '#80B0C0';
+
+          // buttonMetarIcon2.disabled = false;
+          // buttonMetarIcon2.style.cursor = 'pointer';
+          // buttonMetar.disabled = false;
+          // buttonMetar.style.cursor = 'pointer';
+          // buttonMetar.setAttribute('aria-disabled', 'false');
+          // buttonMetar.style.opacity = '1';
+          // buttonMetar.style.backgroundColor = '#80B0C0';
 
           metarField.style.backgroundColor = 'transparent';
           dateField.style.backgroundColor = 'transparent';
@@ -2788,18 +2878,19 @@
         } else {
           // buttonMetarIcon1.disabled = true;
           // buttonMetarIcon1.style.cursor = "not-allowed";
-          buttonMetarIcon2.disabled = true;
-          buttonMetarIcon2.style.cursor = "not-allowed";
-          buttonMetar.disabled = true;
-          buttonMetar.style.cursor = "not-allowed";
-          buttonMetar.setAttribute('aria-disabled', 'true');
-          buttonMetar.style.opacity = '0.6';
+
+          // buttonMetarIcon2.disabled = true;
+          // buttonMetarIcon2.style.cursor = "not-allowed";
+          // buttonMetar.disabled = true;
+          // buttonMetar.style.cursor = "not-allowed";
+          // buttonMetar.setAttribute('aria-disabled', 'true');
+          // buttonMetar.style.opacity = '0.6';
 
           metarText.value = ' ';
           metarField.value = 'Be patient, fetching METAR data...';
 
           // Change background color to light red
-          buttonMetar.style.backgroundColor = '#ffebee';
+          // buttonMetar.style.backgroundColor = '#ffebee';
           metarField.style.backgroundColor = '#ffebee';
           dateField.style.backgroundColor = '#ffebee';
           metarText.style.backgroundColor = '#ffebee';
@@ -2853,7 +2944,7 @@
         const country = document.getElementById(prefix + '_COUNTRY').value || '';
 
         // Get the button element that we can fill with METAR data
-        const button = document.getElementById('BTN-METAR-' + prefix);
+        // const button = document.getElementById('BTN-METAR-' + prefix);
         const dateField = document.getElementById('DATETIME-METAR-' + prefix);
         const metarField = document.getElementById('METAR-FIELD-' + prefix);
         const metarText = document.getElementById('METAR-TEXT-' + prefix);
@@ -3025,6 +3116,120 @@
     cacheAndSetImage(DEFAULT_ICAO_IMAGE, 'DEPARTURE_image_cache');
     cacheAndSetImage(DEFAULT_ICAO_IMAGE, 'ARRIVAL_image_cache');
   });
+
+
+  /**
+   * Update a flag image element by country code (2-letter ISO).
+   * - imgId: id of the <img> element
+   * - countryCode: two-letter ISO country code (e.g. 'ua', 'nl'). Can be uppercase; function lower-cases it.
+   *
+   * This function is exposed on window as updateFlag so it can be called from PyScript:
+   *   js.window.updateFlag('DEPARTURE', 'ua')
+   */
+  function updateFlag(prefix, countryCode) {
+    try {
+      console.log(`>func: updateFlag(${prefix}, ${countryCode})`);
+
+      if (countryCode == null || countryCode === '') {
+          countryCode = window.flight_plan_data?.[`${prefix}_COUNTRY_CODE`];
+          console.log(countryCode);
+      }
+
+      const img = document.getElementById(`${prefix}_FLAG`);
+      if (!img){
+          console.log(`   >Warning: img element not found: ${img}`)
+          return;
+      }
+
+      if (!countryCode || String(countryCode).trim() === '' || countryCode==='remove') {
+        console.log(`   >Warning: no Country code`)
+        img.style.display = 'none';
+        img.alt = '';
+        img.src = '';
+        return;
+      }
+
+      // Normalize
+      const code = String(countryCode).trim().toLowerCase();
+
+      // Only accept two-letter codes (basic check); if not 2 letters, hide
+      if (!/^[a-z]{2}$/.test(code)) {
+        console.log(`   >Warning: Country code has more then 2 chars`)
+        img.style.display = 'none';
+        img.alt = '';
+        img.src = '';
+        return;
+      }
+
+      // Build SVG URL (flagcdn). Use svg first; fallback to PNG if error.
+      const svgUrl = `https://flagcdn.com/${code}.svg`;
+      // const pngUrl = `https://flagcdn.com/w80/${code}.png`;
+
+      // Set up onerror fallback once
+      // img.onerror = function () {
+      //   // avoid infinite loop: if svg failed, try png; if png fails, hide
+      //   if (img.src && img.src.endsWith('.svg')) {
+      //     img.src = pngUrl;
+      //     img.onerror = function () {
+      //       img.style.display = 'none';
+      //     };
+      //   } else {
+      //     img.style.display = 'none';
+      //   }
+      // };
+
+      console.log(`   >Set Flag to: ${svgUrl}`)
+      img.src = svgUrl;
+      img.alt = countryCode.toUpperCase();
+      img.style.display = 'inline-block';
+    } catch (e) {
+      console.warn('updateFlag error', e);
+    }
+  }
+
+  // async function retrieve_flag(prefix) {
+
+  //   updateFlag(imgId, countryCode, prefix)
+
+  // }
+
+  // If the DEPARTURE_COUNTRY select exists, update flag on change.
+  // const departureCountrySelect = document.getElementById(`${prefix}_COUNTRY`);
+  // if (departureCountrySelect) {
+  //   departureCountrySelect.addEventListener('change', (e) => {
+  //     // Expect the select value to be a two-letter country code. If not, you will need a mapping.
+  //     const code = e.target.value ? String(e.target.value).trim().toLowerCase() : '';
+  //     updateFlag('DEPARTURE_FLAG', code);
+  //   });
+  // }
+
+  // If flight plan data already contains a departure country code on load, try to show it.
+  // document.addEventListener("DOMContentLoaded", () => {
+  //   try {
+  //     const possibleKeys = [window.AERODROME_DEPARTURE_DATA['country_code']
+  //     // Try common property names that might contain the country code.
+  //     const possibleKeys = [
+  //       window.flight_plan_data && window.flight_plan_data['DEPARTURE_COUNTRY_CODE'],
+  //       window.AERODROME_DEPARTURE_DATA && window.AERODROME_DEPARTURE_DATA['country_code'],
+  //       window.flight_plan_data && window.flight_plan_data['DEPARTURE_COUNTRY']
+  //     ];
+  //     for (const val of possibleKeys) {
+  //       if (val && typeof val === 'string' && val.trim() !== '') {
+  //         // If the value contains a full country name rather than a code, leave it to callers to map it.
+  //         const maybeCode = String(val).trim().toLowerCase();
+  //         if (/^[a-z]{2}$/.test(maybeCode)) {
+  //           updateFlag('DEPARTURE_FLAG', maybeCode);
+  //           break;
+  //         }
+  //       }
+  //     }
+  //   } catch (err) {
+  //     // ignore
+  //   }
+  // });
+
+
+
 </script>
 
 
@@ -3227,6 +3432,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             'DEPARTURE_CIRCUIT_ALTITUDE': '',   # Departure circuit altitude
             'DEPARTURE_CTR': False,             # CTR checkbox state
             'DEPARTURE_COUNTRY': '',            # Country selection
+            'DEPARTURE_COUNTRY_CODE': '',       # Country code selection
             'DEPARTURE_IMAGE': None,            # Image of the departure
             'DEPARTURE_URL_WEBSITE': None,      # Website of the Aerodrome
             'DEPARTURE_URL_WIKIPEDIA': None,    # Website of the Aerodrome
@@ -3259,6 +3465,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             'ARRIVAL_CIRCUIT_ALTITUDE': '',       # Arrival circuit altitude
             'ARRIVAL_CTR': False,                 # CTR checkbox state
             'ARRIVAL_COUNTRY': '',                # Country selection
+            'ARRIVAL_COUNTRY_CODE': '',           # Country code selection
             'ARRIVAL_IMAGE': None,                # Image of the departure
             'ARRIVAL_URL_WEBSITE': None,          # Website of the Aerodrome
             'ARRIVAL_URL_WIKIPEDIA': None,        # Website of the Aerodrome
@@ -3635,7 +3842,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         #     print(f"🧹 Cleared airportweather widget for {fname}")
 
         datetime_field = js.document.getElementById(f'DATETIME-METAR-{fname}')
-        button = js.document.getElementById(f'BTN-METAR-{fname}')
+        # button = js.document.getElementById(f'BTN-METAR-{fname}')
         metarField = js.document.getElementById(f'METAR-FIELD-{fname}')
         metarText = js.document.getElementById(f'METAR-TEXT-{fname}')
 
@@ -3646,7 +3853,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         windHeadwindField = js.document.getElementById(fname + '_WIND_HEADWIND');
         windCrosswindField = js.document.getElementById(fname + '_WIND_CROSSWIND');
 
-        button.style.backgroundColor = '#006280';
+        # button.style.backgroundColor = '#006280';
         datetime_field.style.backgroundColor = 'transparent';
         metarField.style.backgroundColor = 'transparent';
         metarText.style.backgroundColor = 'transparent';
@@ -3735,10 +3942,15 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                 df = extract_csv_from_zip(zip_bytes, PASSWORD)
                 js.console.log(f"   >✅ Aerodromes loaded for {country}: {len(df)} rows.")
                 print(f"   >✅ Successfully loaded {len(df)} aerodromes for {country}")
+                # print(df['country_code'])
 
                 # For now, just show the first few entries
                 # print(df.head().to_string())
                 # print(f"Available columns: {df.columns.tolist()}")
+
+                country_code = np.unique(df.get('country_code', ['']))
+                country_code = country_code[0]
+                print(country_code)
 
                 try:
                     # Store data in global variable
@@ -3749,6 +3961,9 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
                     # Combine departure and arrival data when possible and store in global variable
                     concat_country_aerodromes()
+
+                    # Update flag
+                    window.updateFlag(fname, country_code)
 
                 except AttributeError as e:
                     error_msg = f"⚠️ Error processing aerodrome data: {str(e)}"
@@ -3893,6 +4108,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         js.document.getElementById(f'{fname}_CTR').dispatchEvent(js.Event.new('change'))
 
         js.window.flight_plan_data[f"{fname}_COUNTRY"] = row_dict['country']
+        js.window.flight_plan_data[f"{fname}_COUNTRY_CODE"] = row_dict['country_code']
         js.window.flight_plan_data[f"{fname}_IMAGE"] = row_dict.get('url.wikipedia.aerodrome.image', None)
         js.window.flight_plan_data[f"{fname}_URL_WEBSITE"] = row_dict.get('url.website', '')
         js.window.flight_plan_data[f"{fname}_URL_WIKIPEDIA"] = row_dict.get('url.wikipedia', '')
@@ -3927,10 +4143,13 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
         # Update GUI fields for aerodrome
         update_aerodrome_gui_fields(fname)
+
         # Update images for aerodrome
         await update_aerodrome_image(fname)
+
         # Remove METAR widget
         remove_metar_widget(fname)
+
         # remove wind envelope plot
         remove_wind_envelope_plot(fname)
 
@@ -4191,9 +4410,9 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                 if field_id.endswith('_CTR'):
                     js.document.getElementById(field_id).dispatchEvent(js.Event.new('change'))
 
-        # Clear flight_plan_data for departure fields
+        # Clear flight_plan_data for aerodrome fields
         keys = [
-            f'{fname}_COUNTRY', f'{fname}_ICAO_CITY',
+            f'{fname}_COUNTRY', f'{fname}_COUNTRY_CODE', f'{fname}_ICAO_CITY',
             f'{fname}_ICAO', f'{fname}_ICAO_CITY', f'{fname}_NAME',
             f'{fname}_POSITION', f'{fname}_RUNWAY', f'{fname}_ELEVATION',
             f'{fname}_RUNWAYS', f'{fname}_ROUTE_NAME', f'{fname}_ROUTE_ALTITUDE',
@@ -4223,7 +4442,10 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         remove_metar_widget(fname)
         # Remove wind envelope
         remove_wind_envelope_plot(fname)
-        # Clear selectionbox (WARNING: CAN NOT BE CLEARED HERE BECAUSE THE ICOA SELECTOINS WILL BE RESET AFTER SELECTION)
+        # Remove flag
+        # js.window.updateFlag(fname, 'remove')
+
+        # Clear selectionbox (WARNING: CAN NOT BE CLEARED HERE BECAUSE THE ICOA SELECTIONS WILL BE RESET AFTER SELECTION)
         # select = js.document.getElementById(f'{fname}_ICAO_CITY')
         # select.innerHTML = '<option value="">Select ICAO</option>'
 
@@ -4234,7 +4456,10 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
     async def update_aerodrome_image(fname):
         """Update image from DEPARTURE_IMAGE or ARRIVAL_IMAGE or use default"""
-        print(f"🖼️ Updating {fname} image...")
+        print(f"> func: update_aerodrome_image({fname})")
+
+        # Update flag
+        window.updateFlag(fname)
 
         # Get the image URL from flight_plan_data
         # 1. from GitHub
@@ -4249,11 +4474,12 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                 print(f"  📋 {fname}_IMAGE from flight_plan_data: {image_url}")
                 break
 
-
     async def clear_aerodrome_image(fname):
         """Reset aerodrome image to default"""
         print("🔄 Resetting to default image...")
         await cache_and_display_image(js.DEFAULT_ICAO_IMAGE, f'{fname}_image_cache')
+        # Update flag
+        js.window.updateFlag(fname, 'remove')
 
 
     async def cache_and_display_image(url, img_element_id):
@@ -4766,7 +4992,9 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             'DEPARTURE_LATLON': [None, None],
             'ARRIVAL_LATLON': [None, None],
             'DEPARTURE_COUNTRY': '',
-            'ARRIVAL_COUNTRY': ''
+            'ARRIVAL_COUNTRY': '',
+            # 'DEPARTURE_COUNTRY_CODE': '',
+            # 'ARRIVAL_COUNTRY_CODE': '',
         }
 
         # Clear fields
@@ -4831,6 +5059,10 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
         # Clean all fields from checklist
         get_default_checklist()
+
+        # Clean flag
+        # updateFlag('DEPARTURE', 'remove')
+        # updateFlag('ARRIVAL', 'remove')
 
 
     async def delete_enroute_fic(spinner_name):
@@ -4988,6 +5220,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             for key, value in flight_plan_dict.items():
                 js.window.flight_plan_data[key] = value
 
+            # print(js.window.flight_plan_data)
             # js.window.waypoints = window.flight_plan_data['WAYPOINTS']
 
             # Update GUI FIELDS
@@ -4998,6 +5231,10 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             # Update IMAGES
             await update_aerodrome_image('DEPARTURE')
             await update_aerodrome_image('ARRIVAL')
+
+            # Update Flag
+            js.window.updateFlag('DEPARTURE', 'remove')
+            js.window.updateFlag('ARRIVAL', 'remove')
 
             # Add data to javascript global cache. This is needed for the aerodrome selection and plotting on the map
             if flight_plan_dict['DEPARTURE_COUNTRY'] != '':
@@ -5129,7 +5366,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             # Clean all GUI fields
             await clear_aerodrome_fields(fname)
             print(f"   >⚠️ Aerodrome data not found: {cache_key}")
-            js.window.alert(f"ℹ️ The aerodrome {selected_icao} is not ready yet. You need to load, check and save it first at the {fname.lower()} tab.")
+            js.window.alert(f"ℹ️ The aerodrome {selected_icao} is not ready yet. You need to select, manually check hte input fields and save it first at the {fname.lower()} tab.")
             return
 
         # Parse JSON
@@ -5172,8 +5409,10 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             remove_wind_envelope_plot(fname)
 
             # Retrieve METAR data during loading of the aerodrome
-            # window.toggleCollapsibleMenu(f'COLLAPSIBLE_MENU_METAR_{fname}')
             window.retrieve_metar(fname)
+
+            # Update flag
+            # window.updateFlag(fname)
 
             print(f"   >✅ Aerodrome {selected_icao} successfully loaded for {fname.lower()}")
             # js.window.alert(f"✅ Aerodrome {selected_icao} successfully loaded for {fname.lower()}")
@@ -6333,11 +6572,14 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
     # js.window.get_core_js = get_core_js
     js.window.get_top_metar_stations = get_top_metar_stations
 
-    # Checklist
+    # CHECKLIST
     js.window.checklist_create = checklist_create
     js.window.checklist_save = checklist_save
     js.window.check_items_complete = check_items_complete
 
+    # FLAG
+    # js.window.retrieve_flag = retrieve_flag
+    # js.window.updateFlag = updateFlag;
 
 
     # ATC
