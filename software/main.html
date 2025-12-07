@@ -1850,7 +1850,7 @@
         if (window.airspaces) {
             return window.airspaces;
         } else {
-            console.error("No airspace data available");
+            console.error("⚠️ No airspace data is available for this region.");
             js.window.alert('⚠️ No airspace data is available for this region.');
             return null;
         }
@@ -3795,7 +3795,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         except Exception as e:
             error_msg = f"   >⚠️ No airspace data available for {country}: {str(e)}"
             print(f"{error_msg}")
-            js.window.alert(`⚠️ No airspace data is available for the selected country: ${country}.`);
+            js.window.alert(f"⚠️ No airspace data is available for the selected country: {country}.")
             js.document.getElementById('loading-spinner').style.display = 'none'
             return
 
@@ -5151,7 +5151,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         if elementIcao == '':
             message = f'⚠️ No aerodrome (ICAO) selected. Please choose the aerodrome using the selection box first.'
             print(message)
-            js.window.alert(message);
+            js.window.alert(message)
             return
 
         # Get cached data
