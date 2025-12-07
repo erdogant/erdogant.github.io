@@ -46,7 +46,7 @@
         <button class="tablinks" data-tab="Departure">🛫 Departure</button>
         <button class="tablinks" data-tab="Arrival">🛬 Arrival</button>
         <button class="tablinks" data-tab="Enroute">✈️ Enroute</button>
-        <button class="tablinks" data-tab="ATC">📢 ATC</button>
+        <button class="tablinks" data-tab="ATC">🎙️ ATC</button>
         <button class="tablinks" data-tab="Menu">☰ More</button>
     </div>
 
@@ -1093,6 +1093,16 @@
             <!-- JavaScript will fill this automatically in  window.populateChecklist("Final checklist")-->
         </div>
         </div>
+
+        <div class="button-row">
+            <button id="checklist_print"
+                    type="button"
+                    title="Print checklist"
+                    aria-label="Print checklist"
+                    onclick="checklist_print()"
+                    style="background-color: #006280; border: 1px solid #333333; color: #ffffff; padding: 8px 12px; border-radius: 8px; cursor: pointer;">
+                    🖨️ Print Checklist
+            </button>
 
     </div>
 
@@ -3098,7 +3108,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
     def get_default_checklist():
         print('> func: default_checklist()')
         checklist = {
-                "NAME": '',
+                "NAME": 'default',
 
                 "personal": {
                     'Paper, Pen, Watch, Sunglasses, Hat': False,
@@ -3384,6 +3394,200 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             icon = '⚠️'
         return icon
 
+
+    def checklist_print():
+        print(f'> func: checklist_print()')
+        html_content = generate_checklist_html(include_badges=False)
+        # print(html_content)
+        open_html(html_content)
+        return
+
+    def create_badge_html(badges):
+        html = '<div style="margin-left: 20px; display: flex; flex-wrap: wrap; gap: 6px;">'
+        html += ''.join([f'<img src="{url}" alt="badge">' for url in badges])
+        html += '</div>'
+        return html
+
+    def create_status_html(item, classtype='note', width='80'):
+        return f"""
+        <div class="{classtype}" style="background-color:{item['color']}; padding: 6px 10px; margin: 6px 0 6px 20px; border-radius: 4px; width: {width}%;">
+            <strong>{item['message']}</strong>
+        </div>
+        """
+
+    def badge_color(badge):
+        # Get colors matched to state
+        if 'error' in str(badge):
+            return 'red'
+        elif 'warning' in str(badge):
+            return 'orange'
+        elif 'success' in str(badge):
+            return 'green'
+        elif 'info' in str(badge):
+            return 'blue'
+
+    def weight_balance(fname, return_type='badge'):
+        status = 'OK'
+        message = 'Weight & Balance Inside Envelope'
+        badge = 'success'
+        return {'status': status, 'message': message, 'badge': badge, 'color': badge_color(badge)}
+
+    def aircraft_weight(fname, return_type='badge'):
+        status = 'OK'
+        message = 'Weight within MTOW'
+        badge = 'success'
+        return {'status': status, 'message': message, 'badge': badge, 'color': badge_color(badge)}
+
+    def fuel(fname, return_type='badge'):
+        status = 'OK'
+        message = 'Fuel within range'
+        badge = 'success'
+        return {'status': status, 'message': message, 'badge': badge, 'color': badge_color(badge)}
+
+    def generate_checklist_html(include_badges=False):
+        # from badges import weight_balance, aircraft_weight, fuel
+        # from badges import create_ATC_badges
+        # from badges import flight_rules, wind_envelope, crosswind, headwind, cloud_ceiling, visibility
+        # from badges import RWY_required, runway_direction, route
+        from collections import defaultdict
+
+        if not hasattr(js.window, 'CHECKLIST'):
+            js.window.alert('⚠️ Create a new checklist before printing.')
+            return None
+
+        data = js.window.CHECKLIST
+
+        weight_status = weight_balance('DEPARTURE', return_type='dict')
+        aircraft_status = aircraft_weight('DEPARTURE', return_type='dict')
+        fuel_status = fuel('ARRIVAL', return_type='dict')
+
+        section_order = [
+            "personal", "navigation", "flightplan", "technical", "aerodrome",
+            "departure", "arrival", "various", "final"]
+
+        html = """
+        <html>
+        <head>
+            <style>
+                body { font-family: Arial, sans-serif; font-size: 13px; padding: 20px; margin: 0; }
+                h2 { border-bottom: 1px solid #ccc; margin-top: 30px; }
+                .section { margin-bottom: 20px; }
+                .item { display: flex; align-items: flex-start; margin: 6px 0; }
+                .item label { display: flex; align-items: flex-start; }
+                .item input[type="checkbox"] { margin-right: 10px; margin-top: 2px; transform: scale(1.2); flex-shrink: 0; }
+                .label-text { display: inline-block; max-width: 90%; word-wrap: break-word; }
+                .name-tag { font-size: 14px; font-weight: bold; padding: 6px 0 20px; display: block; }
+                .note { background-color: #f8f9fa; border-left: 4px solid #888; padding: 10px; margin-bottom: 10px; font-size: 12px; }
+                .columns { display: flex; flex-wrap: wrap; gap: 20px; }
+                .column { flex: 1 1 45%; min-width: 300px; }
+            </style>
+        </head>
+        <body>
+        """
+
+        if "NAME" in data:
+            html += f"<class='name-tag'><h1>Checklist {data['NAME']}</h1>"
+
+        for section in section_order:
+            if section in data:
+                if section == "aerodrome":
+                    continue
+
+                    # FOR THE MOMENT, DO NOT DO THE THINGS BELOW
+                    items = list(data[section].items())
+                    grouped_items = defaultdict(list)
+
+                    for label, checked in items:
+                        if ' - ' in label:
+                            labelname, labelitem = label.split(' - ', 1)
+                            grouped_items[labelname].append((labelitem, checked, label))
+                        else:
+                            grouped_items[""].append((label, checked, label))
+
+                    for labelname, group in grouped_items.items():
+                        html += "<div style='border-top: 2px solid #333; margin: 30px 0; width: 100%;'></div>"
+                        html += f"<div class='section'><h3>{labelname}</h3><div class='columns'>"
+
+                        half = len(group) // 2
+                        left_items = group[:half]
+                        right_items = group[half:]
+
+                        for col_items in [left_items, right_items]:
+                            html += "<div class='column'>"
+                            for labelitem, checked, full_label in col_items:
+                                checked_html = "checked" if checked else ""
+                                html += f"<div class='item'><label><input type='checkbox' {checked_html}><span class='label-text'>{labelitem}</span></label></div>"
+
+                                fname = None
+                                for key in ['DEPARTURE', 'ARRIVAL', 'ALTERNATE']:
+                                    if st.session_state['DATA'][key]['AERODROME']['ICAO'] in full_label:
+                                        fname = key
+                                        break
+
+                                if fname:
+                                    if 'metar' in full_label.lower() and include_badges:
+                                        html += create_status_html(flight_rules(fname, return_type='dict'), classtype='note')
+                                        html += create_status_html(wind_envelope(fname, return_type='dict'), classtype='note')
+                                        html += create_status_html(crosswind(fname, return_type='dict'), classtype='note')
+                                        html += create_status_html(headwind(fname, return_type='dict'), classtype='note')
+                                        html += create_status_html(cloud_ceiling(fname, return_type='dict'), classtype='note')
+                                        html += create_status_html(visibility(fname, return_type='dict'), classtype='note')
+
+                                    if 'circuit' in full_label.lower() and include_badges:
+                                        html += create_status_html(route(fname, 'CIRCUIT_ALTITUDE', return_type='dict'), classtype='note')
+                                        html += create_status_html(route(fname, 'ALTITUDE', return_type='dict'), classtype='note')
+                                        html += create_status_html(route(fname, 'ROUTE_NAME', return_type='dict'), classtype='note')
+
+                                    if 'ATC' in full_label and include_badges:
+                                        html += create_badge_html(create_ATC_badges(fname, return_type='dict'))
+
+                                    if 'distance' in full_label.lower() and include_badges:
+                                        html += create_status_html(runway_direction(fname, return_type='dict'), classtype='note')
+                                        html += create_status_html(RWY_required(fname, 'DISTANCE_REQUIRED', return_type='dict'), classtype='note')
+                                        html += create_status_html(RWY_required(fname, 'DISTANCE_REQUIRED_50ft', return_type='dict'), classtype='note')
+
+                            html += "</div>"
+                        html += "</div></div>"
+
+                else:
+                    html += f"<div class='section'><h2>{section.capitalize()}</h2><div class='columns'>"
+                    items = list(data[section].items())
+                    half = len(items) // 2
+                    left_items = items[:half]
+                    right_items = items[half:]
+
+                    for col_items in [left_items, right_items]:
+                        html += "<div class='column'>"
+                        for label, checked in col_items:
+                            checked_html = "checked" if checked else ""
+                            html += f"<div class='item'><label><input type='checkbox' {checked_html}><span class='label-text'>{label}</span></label></div>"
+
+                            if section == "technical" and include_badges:
+                                if 'weight' in label.lower():
+                                    html += create_status_html(weight_status)
+                                    html += create_status_html(aircraft_status)
+                                if 'fuel' in label.lower():
+                                    html += create_status_html(fuel_status)
+
+                        html += "</div>"
+                    html += "</div></div>"
+
+        html += "</body></html>"
+
+        print_button = """
+            <button onclick=\"window.print()\" style=\"
+                margin-bottom: 10px;
+                padding: 6px 12px;
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            \">🖨️ Print Checklist</button>
+        """
+
+        html = f"{print_button}{html}"
+        return html
 
 
     # ================================================
@@ -5868,7 +6072,9 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
 
     def open_html(html_content, pagename="_blank"):
-        logger.info('open_in_browser(html_content)')
+        print('> func: open_html(html_content)')
+        if html_content is None:
+            return None
 
         # Inject viewport for mobile if not present
         if "<head>" in html_content and 'name="viewport"' not in html_content:
@@ -6390,6 +6596,8 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
     js.window.checklist_create = checklist_create
     js.window.checklist_save = checklist_save
     js.window.check_items_complete = check_items_complete
+    js.window.checklist_print = checklist_print
+
 
     # FLAG
     # js.window.retrieve_flag = retrieve_flag
