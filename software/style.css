@@ -165,15 +165,6 @@ h1 {
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch; /* nice momentum scroll on iOS */
 }
-/* Output box */
-/*.output-box {
-    margin-top: 10px;
-    padding: 8px;
-    background: #f0f2f6;
-    border-radius: 8px;
-    min-height: 30px;
-    color: #333;
-}*/
 
 /* Button row for horizontal alignment */
 .button-row {
@@ -350,31 +341,6 @@ input[type="text"]:hover {
     position: relative;
 }
 
-/*#bottom-container {
-    margin-top: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1px;
-    padding: 10px 0;
-}
-
-#bottom-buttons {
-    display: flex;
-    gap: 6px;
-    width: 100%;
-}
-
-#bottom-buttons button {
-    flex: 1;
-    margin: 0;
-    padding: 10px;
-    font-size: 12px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}*/
-
 /*.UPPERCASE_input {
     text-transform: uppercase;
 }*/
@@ -467,19 +433,6 @@ input[type="text"]:hover {
     background: #fff;
 }
 
-/* When in fullscreen, remove border radius and ensure full coverage */
-/*.mobile-fullscreen #route-map {
-    border-radius: 0 !important;
-    height: 100vh !important;
-    height: 100dvh !important;
-}
-
-.leaflet-container {
-    background: #fff !important;
-    width: 100% !important;
-    height: 100% !important;
-}*/
-
 .leaflet-control-container .leaflet-top {
     z-index: 1000;
 }
@@ -529,19 +482,6 @@ input[type="text"]:hover {
     }
 }
 
-/*#fullscreen-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 10000;
-    background-color: rgba(255, 255, 255, 0.9);
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    padding: 6px 10px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: all 0.2s ease-in-out;
-}*/
 /* Ensure fullscreen button ALWAYS stays visible above the map */
 #fullscreen-btn {
     position: fixed !important;
@@ -567,28 +507,6 @@ body.no-scroll {
     touch-action: none;
 }
 
-/*.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-    z-index: 1;
-}
-
-.dropdown-content button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    text-align: left;
-    border: none;
-    background: none;
-    cursor: pointer;
-}
-
-.dropdown-content button:hover {
-    background-color: #f1f1f1;
-}*/
-
 /* Fullscreen enter/exit icon styling */
 #fullscreen-btn svg {
     width: 24px;
@@ -602,14 +520,6 @@ body.no-scroll {
 #fullscreen-btn .fullscreen-exit {
     display: none;
 }
-
-/* When fullscreen mode is active */
-/*body.mobile-fullscreen #fullscreen-btn .fullscreen-enter {
-    display: none !important;
-}
-body.mobile-fullscreen #fullscreen-btn .fullscreen-exit {
-    display: block !important;
-}*/
 
 body.mobile-fullscreen #bottom-container,
 body.mobile-fullscreen #bottom-buttons,

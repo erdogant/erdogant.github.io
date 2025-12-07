@@ -9,42 +9,36 @@
     -->
 
 <head>
-  <meta charset="UTF-8">
+    <meta charset="UTF-8">
+
     <!--RUN FULL SCREEN-->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="theme-color" content="#2A3F54">
-  <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
-  <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#2A3F54">
+    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
+    <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
 
-  <title>Skywalk Flightplan</title>
+    <title>Skywalk Flightplan</title>
 
-  <!--<link rel="shortcut icon" type="image/x-icon" href="https://erdogant.github.io/datasets/skywalk/figs/favicon.ico">
-  <link rel="icon" type="image/png" sizes="32x32" href="https://erdogant.github.io/datasets/skywalk/figs/icon32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="https://erdogant.github.io/datasets/skywalk/figs/icon16.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="https://erdogant.github.io/datasets/skywalk/figs/icon180.png">-->
+    <link rel="shortcut icon" type="image/x-icon" href="https://erdogant.github.io/datasets/skywalk/figs/icons/airplane_gray.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://erdogant.github.io/datasets/skywalk/figs/icons/airplane_gray.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://erdogant.github.io/datasets/skywalk/figs/icons/airplane_gray.png">
 
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://pyscript.net/releases/2025.8.1/core.css">
     <script type="module" src="https://pyscript.net/releases/2025.8.1/core.js"></script>
-    <!--<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>-->
     <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
-
 </head>
 
 
 <body>
-
     <div id="app">
         <div id="loading-spinner" class="spinner-overlay" style="display: flex;">
             <div class="spinner-container">
                 <div class="spinner"></div>
                 <div class="spinner-text">Loading SkyWalk. Please wait..</div>
             </div>
-        </div>
-
-
-
+    </div>
 
     <!-- Tab links -->
     <div class="tab">
@@ -56,19 +50,18 @@
         <button class="tablinks" data-tab="Menu">☰ More</button>
     </div>
 
-
 	<div id="Menu" class="tabcontent">
-        <button class="tablinks" data-tab="MAP" style="cursor: pointer;">🗺️ Map</button>
-        <button class="tablinks" data-tab="Config" style="cursor: pointer;">⚙️ Config</button>
-        <button class="tablinks" data-tab="Checklist" style="cursor: pointer;">📋 Checklist</button>
-        <div class="button-row">
-            <button id="BTN-WEIGHTBALANCE"
-                type="button"
-                onclick="window.open('https://www.vliegclubrotterdam.nl/wb/', '_blank')"
-                title="Weight and Balance calculator vliegclub Rotterdam">
-                    ⚖️ Weight & Balance vliegclub Rotterdam
-            </button>
-        </div>
+    	<button class="tablinks" data-tab="Config" style="cursor: pointer;">⚙️ Config</button>
+            <button class="tablinks" data-tab="MAP" style="cursor: pointer;">🗺️ Map</button>
+            <button class="tablinks" data-tab="Checklist" style="cursor: pointer;">📋 Checklist</button>
+            <div class="button-row">
+                <button id="BTN-WEIGHTBALANCE"
+                    type="button"
+                    onclick="window.open('https://www.vliegclubrotterdam.nl/wb/', '_blank')"
+                    title="Weight and Balance calculator vliegclub Rotterdam">
+                        ⚖️ Weight & Balance vliegclub Rotterdam
+                </button>
+            </div>
 	</div>
 
 
@@ -90,7 +83,6 @@
             </div>
         </div>
 
-
         <!--<label_h1>Aircraft</label_h1>-->
         <div class="border-round-eged">
             <div class="wind-grid">
@@ -103,7 +95,6 @@
                     <span class="tile-label">Aircraft name</span>
                 </div>
             </div>
-
 
             <div class="wind-grid">
                 <div class="tile">
@@ -129,36 +120,33 @@
             </div>
         </div>
 
-            <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
-                <!-- Delete Button -->
-                <button id="delete_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete Flightplan">🗑️</button>
+        <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
+            <!-- Delete Button -->
+            <button id="delete_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete Flightplan">🗑️</button>
+            <!-- New Plan Button -->
+            <button id="new_plan_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Create New Flightplan">🧹</button>
 
-                <!-- Plan Spinner -->
-                <select id="plan_spinner" class="tile-value-dropdown" onchange="this.value && window.load_flightplan()" style="flex: 1; font-size: 12px; font-weight: normal;">
-                    <option value=""></option>
-                </select>
+            <!-- Plan Spinner -->
+            <select id="plan_spinner" class="tile-value-dropdown" onchange="this.value && window.load_flightplan()" style="flex: 1; font-size: 12px; font-weight: normal;">
+                <option value=""></option>
+            </select>
 
-                <!-- New Plan Button -->
-                <button id="new_plan_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Create New Flightplan">🧹</button>
-                <!-- Save button -->
-                <button id="save_fields_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Flightplan">💾</button>
-            </div>
+            <!-- Save button -->
+            <button id="save_fields_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Flightplan">💾</button>
+        </div>
 
         <!-- Bottom Buttons Container -->
         <div id="bottom-container">
-        <div class="coffee-container">
-        <a href="https://www.buymeacoffee.com/erdogant" target="_blank">
-     	  <img id="coffee_image" alt="Coffee Donation">
-        </a>
-        </div>
+            <div class="coffee-container">
+                <a href="https://www.buymeacoffee.com/erdogant" target="_blank">
+                    <img id="coffee_image" alt="Coffee Donation">
+                </a>
+            </div>
 
-        <!--<div class="bottom-ad">-->
            	<center>
           		<script async src="https://media.ethicalads.io/media/client/ethicalads.min.js"></script>
           		<div data-ea-publisher="erdogantgithubio" data-ea-type="text"></div>
            	</center>
-        <!--</div>-->
-
         </div>
 
 	</div>
@@ -194,14 +182,9 @@
 
 
             <div class="button-row">
-                <!--<img id="DEPARTURE_FLAG">-->
                 <img id="DEPARTURE_FLAG" src="" alt="" style="width:30px; height:auto; vertical-align:middle; margin-left:6px;">
-                <!--<img id="DEPARTURE_FLAG" src="https://flagcdn.com/nl.svg" alt="" style="display:none; width:30px; height:auto; vertical-align:middle; margin-left:6px;">-->
                 <input type="text" id="DEPARTURE_ICAO" class="tile-value UPPERCASE_input sync-departure" onchange="window.load_aerodrome_from_json('DEPARTURE')" placeholder="ICAO">
-                <button id="DEPARTURE_USE_CACHED" onclick="window.load_aerodrome_from_json('DEPARTURE')" title="Load custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>
-                <!--ADD HERE FLAG ICON FOR THE COUNTRY THAT IS SELECTED-->
-                <!--<button id="save_fields_btn_departure" onclick="window.save_aerodrome_to_json('DEPARTURE')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">💾</button>-->
-                <!--<button id="BTN-METAR-ICON-DEPARTURE_1" onclick="window.retrieve_metar('DEPARTURE')" title="Load METAR data for aerodrome and automatically predict the runway number based on the wind direction" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🌤</button>-->
+                <button id="DEPARTURE_USE_CACHED" onclick="window.retrieve_metar('DEPARTURE')" title="Retrieve METAR weather information for the selected aerodrome" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>
             </div>
 
 
@@ -209,12 +192,12 @@
 
                  <div class="tile">
                     <input id="DEPARTURE_WIND_DIRECTION" type="text" class="tile-value">
-                    <span class="tile-label">Direction (°)</span>
+                    <span class="tile-label">Wind angle (°)</span>
                 </div>
 
                 <div class="tile">
                     <input id="DEPARTURE_WIND_SPEED" type="text" class="tile-value">
-                    <span class="tile-label">Speed (kt)</span>
+                    <span class="tile-label">Strength (kt)</span>
                 </div>
 
                 <div class="tile">
@@ -224,7 +207,6 @@
             </div>
 
             <div class="grid-one-third-two-thirds">
-
                 <div class="tile">
                     <input id="DEPARTURE_WIND_VARIATION" type="text" class="tile-value">
                     <span class="tile-label">Variation (°)</span>
@@ -233,40 +215,12 @@
                 <div class="button-row">
                     <textarea id="METAR-FIELD-DEPARTURE"
                         placeholder="METAR Information"
-                        style="font-size:11px; background-color 0.3s; width: 100%; min-height: 80px; max-height: 120px; resize: vertical; padding: 8px; box-sizing: border-box; border-radius: 10px"
-                        title="METAR information for the departure aerodrome is shown here after automatically retrieved."
+                        title="METAR weather information"
+                        style="font-size:11px; background-color: transparent; width: 100%; min-height: 80px; max-height: 120px; resize: vertical; padding: 8px; box-sizing: border-box; border-radius: 10px"
                         aria-label="METAR Information">
                     </textarea>
                 </div>
-
-
-                <!--<div class="tile">
-                    <input id="DEPARTURE_WIND_HEADWIND" readonly type="text" class="tile-value" title="Headwind is calculated based on the wind speed and direction relative to the runway. This value can not be changed." style="background-color: transparent;">
-                    <span class="tile-label">Headwind (kt)</span>
-                </div>
-
-                <div class="tile">
-                    <input id="DEPARTURE_WIND_CROSSWIND" readonly type="text" class="tile-value" title="Crosswind is calculated based on the wind speed and direction relative to the runway. This value can not be changed." style="background-color: transparent;">
-                    <span class="tile-label">Crosswind (kt)</span>
-                </div>-->
-
-                <!--<input type="text" id="DATETIME-METAR-DEPARTURE" readonly
-                    title="The UTC date/time for the retrieved METAR data."
-                    style="transition: background-color 0.3s; width: 30%;
-                           padding: 0; box-sizing: border-box; font-size: 10px;
-                           border: none; background-color: transparent;
-                           color: #333333; outline: none;">-->
-
             </div>
-
-            <!--<div style="display: flex; gap: 1px; margin-top: 1px; display: flex; justify-content: center; align-items: center">
-                <input type="text" id="METAR-TEXT-DEPARTURE" readonly
-                    style="transition: background-color 0.3s; width: 70%;
-                        padding: 0; box-sizing: border-box; font-size: 10px;
-                        border: none; background-color: transparent;
-                        color: #333333; outline: none;">
-            </div>-->
-
 
             <div style="display: flex; gap: 1px; margin-top: 1px;">
                 <input type="text" id="METAR-TEXT-DEPARTURE" readonly
@@ -276,118 +230,120 @@
                            color: #333333; outline: none;">
 
                 <input type="text" id="DATETIME-METAR-DEPARTURE" readonly
-                    title="The UTC date/time for the retrieved METAR data."
                     style="transition: background-color 0.3s; width: 30%;
                            padding: 0; box-sizing: border-box; font-size: 10px;
                            border: none; background-color: transparent;
                            color: #333333; outline: none;">
             </div>
-
         </div>
 
 
-    <label_h1>Aerodrome Information</label_h1>
+        <label_h1>Aerodrome Information</label_h1>
 
-    <div class="collapsible" data-title="AERODROME">
-    <div class="collapsible-header"></div>
-    <div class="collapsible-content">
+        <div class="collapsible" data-title="AERODROME">
+        <div class="collapsible-header"></div>
+        <div class="collapsible-content">
 
-        <div class="wind-grid">
-            <div class="tile">
-                <input id="DEPARTURE_NAME" type="text" class="tile-value" title="Name of the aerodrome how it is known on the radio">
-                <span class="tile-label">Aerodrome</span>
+            <div class="wind-grid">
+                <div class="tile">
+                    <input id="DEPARTURE_NAME" type="text" class="tile-value" title="Name of the aerodrome how it is known on the radio">
+                    <span class="tile-label">Aerodrome</span>
+                </div>
             </div>
+
+            <div class="grid-two-thirds-one-third">
+                <div class="tile">
+                    <input id="DEPARTURE_POSITION" type="text" class="tile-value" title="Position of the Aircraft (at the apron)">
+                    <span class="tile-label">Position of the aircraft</span>
+                </div>
+
+                <select id="DEPARTURE_CTR" class="tile-value-dropdown" onchange="highlightMissingFields()" style="text-align: center;">
+                    <option value=""></option>
+                    <option value="CTR">CTR</option>
+                </select>
+            </div>
+
+            <div class="wind-grid">
+                <div class="tile">
+                    <input id="DEPARTURE_RUNWAY" type="text" class="tile-value" title="Fill here the runway that is in use.">
+                    <span class="tile-label">
+                        Runway Nr.
+                        <button id="BTN-METAR-ICON-DEPARTURE_2" onclick="window.retrieve_metar('DEPARTURE')"
+                            title="Use METAR weather information to automatically predict the runway. Add multiple runways seperated by / or comma. The most optimal runway will be picked automatically."
+                            style="background-color: transparent; border: none; width: 10px; padding: 1px; cursor: pointer;">
+                                🔄
+                        </button>
+                    </span>
+                </div>
+                <div class="tile">
+                    <input id="DEPARTURE_ELEVATION" type="text" class="tile-value" title="Elevation of the field in feet.">
+                    <span class="tile-label">Field elevation (ft)</span>
+                </div>
+                <div class="tile">
+                    <input id="DEPARTURE_CIRCUIT_ALTITUDE" type="text" class="tile-value" title="The altitude of the circuit in feet.">
+                    <span class="tile-label">Circuit altitude (ft)</span>
+                </div>
+            </div>
+
+            <div class="grid-two-thirds-one-third">
+                <!-- This takes 1/3 of the width -->
+                <div class="tile">
+                    <input id="DEPARTURE_ROUTE_NAME" type="text" class="tile-value UPPERCASE_input" title="The name of the route (e.g., MIKE/ROMEO) for departure.">
+                    <span class="tile-label">Route name</span>
+                </div>
+                <!-- This takes 2/3 of the width -->
+                <div class="tile">
+                    <input id="DEPARTURE_ROUTE_ALTITUDE" type="text" class="tile-value" title="The altitude of the route in feet.">
+                    <span class="tile-label">Route altitude (ft)</span>
+                </div>
+            </div>
+
+            <button onclick="window.save_aerodrome_to_json('DEPARTURE')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 4px 8px 0; flex: 0 0 auto; cursor: pointer; float: right;">💾</button>
+
+        </div>
         </div>
 
-        <div class="grid-two-thirds-one-third">
-            <div class="tile">
-                <input id="DEPARTURE_POSITION" type="text" class="tile-value" title="Position of the Aircraft (at the apron)">
-                <span class="tile-label">Position of the aircraft</span>
+
+    	  <!--<label_h1>Contact</label_h1>-->
+        <div class="collapsible" data-title="CONTACT">
+        <div class="collapsible-header"></div>
+        <div class="collapsible-content">
+
+            <div class="wind-grid">
+                <div class="tile">
+                    <input id="DEPARTURE_ATC_GROUND" type="text" class="tile-value">
+                    <span class="tile-label">Ground/ delivery (MHz)</span>
+                </div>
+                <div class="tile">
+                    <input id="DEPARTURE_ATC_TOWER" type="text" class="tile-value">
+                    <span class="tile-label">Tower/ Radio (MHz)</span>
+                </div>
+                <div class="tile">
+                    <input id="DEPARTURE_ATC_ATIS_FREQ" type="text" class="tile-value">
+                    <span class="tile-label">ATIS (MHz)</span>
+                </div>
             </div>
 
-            <select id="DEPARTURE_CTR" class="tile-value-dropdown" onchange="highlightMissingFields()" style="text-align: center;">
-                <option value=""></option>
-                <option value="CTR">CTR</option>
-            </select>
+            <div class="grid-two-thirds-one-third">
+                <div class="tile">
+                    <input id="DEPARTURE_ATC_TELEPHONE" type="text" class="tile-value">
+                    <span class="tile-label">Telephone Number</span>
+                </div>
+                <div class="tile">
+                    <input id="DEPARTURE_ATC_APPROACH" type="text" class="tile-value">
+                    <span class="tile-label">Approach (MHz)</span>
+                </div>
+            </div>
+
+            <button onclick="window.save_aerodrome_to_json('DEPARTURE')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 4px 8px 0; flex: 0 0 auto; cursor: pointer; float: right;">💾</button>
+        </div>
         </div>
 
-        <div class="wind-grid">
-            <div class="tile">
-                <input id="DEPARTURE_RUNWAY" type="text" class="tile-value" title="The runway will be automatically determined when retrieving the METAR information.">
-                <span class="tile-label">
-                    Runway nr.
-                    <button id="BTN-METAR-ICON-DEPARTURE_2" onclick="window.retrieve_metar('DEPARTURE')" title="Load METAR data for aerodrome and automatically predict the runway number based on the wind direction" style="background-color: transparent; border: none; width: 10px; padding: 1px; cursor: pointer;">🌤</button>
-                </span>
-            </div>
-            <div class="tile">
-                <input id="DEPARTURE_ELEVATION" type="text" class="tile-value" title="Elevation of the field in feet.">
-                <span class="tile-label">Field elevation (ft)</span>
-            </div>
-            <div class="tile">
-                <input id="DEPARTURE_CIRCUIT_ALTITUDE" type="text" class="tile-value" title="The altitude of the circuit in feet.">
-                <span class="tile-label">Circuit altitude (ft)</span>
-            </div>
-        </div>
-
-        <div class="grid-two-thirds-one-third">
-            <!-- This takes 1/3 of the width -->
-            <div class="tile">
-                <input id="DEPARTURE_ROUTE_NAME" type="text" class="tile-value UPPERCASE_input" title="The name of the route (e.g., MIKE/ROMEO) for departure.">
-                <span class="tile-label">Route name</span>
-            </div>
-            <!-- This takes 2/3 of the width -->
-            <div class="tile">
-                <input id="DEPARTURE_ROUTE_ALTITUDE" type="text" class="tile-value" title="The altitude of the route in feet.">
-                <span class="tile-label">Route altitude (ft)</span>
-            </div>
-        </div>
-
-        <button id="save_fields_btn_departure" onclick="window.save_aerodrome_to_json('DEPARTURE')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 4px 8px 0; flex: 0 0 auto; cursor: pointer; float: right;">💾</button>
-
-    </div>
-    </div>
 
 
+        <label_h1>METAR WIDGETS</label_h1>
 
-	  <!--<label_h1>Contact</label_h1>-->
-    <div class="collapsible" data-title="CONTACT">
-    <div class="collapsible-header"></div>
-    <div class="collapsible-content">
-
-        <div class="wind-grid">
-            <div class="tile">
-                <input id="DEPARTURE_ATC_GROUND" type="text" class="tile-value">
-                <span class="tile-label">Ground/ delivery (MHz)</span>
-            </div>
-            <div class="tile">
-                <input id="DEPARTURE_ATC_TOWER" type="text" class="tile-value">
-                <span class="tile-label">Tower/ Radio (MHz)</span>
-            </div>
-            <div class="tile">
-                <input id="DEPARTURE_ATC_ATIS_FREQ" type="text" class="tile-value">
-                <span class="tile-label">ATIS (MHz)</span>
-            </div>
-        </div>
-
-        <div class="grid-two-thirds-one-third">
-            <div class="tile">
-                <input id="DEPARTURE_ATC_TELEPHONE" type="text" class="tile-value">
-                <span class="tile-label">Telephone Number</span>
-            </div>
-            <div class="tile">
-                <input id="DEPARTURE_ATC_APPROACH" type="text" class="tile-value">
-                <span class="tile-label">Approach (MHz)</span>
-            </div>
-        </div>
-
-    </div>
-    </div>
-
-
-
-   <label_h1>METAR WIDGETS</label_h1>
-
-   <!-- METAR Information -->
+        <!-- METAR Information -->
         <div class="collapsible" data-title="WIND ENVELOPE">
         <div class="collapsible-header"></div>
         <div class="collapsible-content">
@@ -403,56 +359,8 @@
                 </button>
             </div>
 
-           <!--<div class="button-row">
-                <button id="BTN-METAR-DEPARTURE" onclick="window.retrieve_metar('DEPARTURE')" style="transition: background-color 0.3s; z-index: 1; background-color: #006280; border: 1px solid #333333; color: #ffffff; cursor: pointer;" title="Retrieve METAR information.">Retrieve METAR Information 🌤</button>
-           </div>-->
-
-           <!--<div style="display: flex; gap: 1px; margin-top: 1px;">
-               <input type="text" id="METAR-TEXT-DEPARTURE" readonly
-                   style="transition: background-color 0.3s; width: 70%;
-                          padding: 0; box-sizing: border-box; font-size: 10px;
-                          border: none; background-color: transparent;
-                          color: #333333; outline: none;">
-
-               <input type="text" id="DATETIME-METAR-DEPARTURE" readonly
-                   title="The UTC date/time for the retrieved METAR data."
-                   style="transition: background-color 0.3s; width: 30%;
-                          padding: 0; box-sizing: border-box; font-size: 10px;
-                          border: none; background-color: transparent;
-                          color: #333333; outline: none;">
-           </div>-->
-
-           <!--<div class="button-row">
-               <textarea id="METAR-FIELD-DEPARTURE"
-                   placeholder="METAR Information"
-                   style="transition: background-color 0.3s; width: 100%; min-height: 80px; max-height: 120px; resize: vertical; padding: 8px; box-sizing: border-box; border-radius: 10px"
-                   title="METAR information for the departure aerodrome is shown here after automatically retrieved."
-                   aria-label="METAR Information"></textarea>
-           </div>-->
-
            <!-- WIND INFORMATION -->
            <div class="wind-grid">
-
-                <!--<div class="tile">
-                   <input id="DEPARTURE_WIND_DIRECTION" type="text" class="tile-value">
-                   <span class="tile-label">Direction (°)</span>
-               </div>
-
-               <div class="tile">
-                   <input id="DEPARTURE_WIND_SPEED" type="text" class="tile-value">
-                   <span class="tile-label">Speed (kt)</span>
-               </div>
-
-               <div class="tile">
-                   <input id="DEPARTURE_WIND_GUST" type="text" class="tile-value">
-                   <span class="tile-label">Gust (kt)</span>
-               </div>
-
-               <div class="tile">
-                   <input id="DEPARTURE_WIND_VARIATION" type="text" class="tile-value">
-                   <span class="tile-label">Variation (°)</span>
-               </div>-->
-
                <div class="tile">
                    <input id="DEPARTURE_WIND_HEADWIND" readonly type="text" class="tile-value" title="Headwind is calculated based on the wind speed and direction relative to the runway. This value can not be changed." style="background-color: transparent;">
                    <span class="tile-label">Headwind (kt)</span>
@@ -462,15 +370,7 @@
                    <input id="DEPARTURE_WIND_CROSSWIND" readonly type="text" class="tile-value" title="Crosswind is calculated based on the wind speed and direction relative to the runway. This value can not be changed." style="background-color: transparent;">
                    <span class="tile-label">Crosswind (kt)</span>
                </div>
-
            </div>
-
-            <!--<div class="button-row">
-                <button id="BTN-PLOT-WIND-DEPARTURE"
-                    onclick="window.windEnvelope_js('DEPARTURE')">
-                    Compute Wind Envelope
-                </button>
-            </div>-->
 
            <div class="button-row">
                <div id="DEPARTURE_WIND_ENVELOPE_PLOT" style="width: 100%; box-sizing: border-box;"></div>
@@ -487,12 +387,10 @@
        </div>
 
 
-   <!-- METAR-TAF WIDGET -->
-   <div class="collapsible" data-title="METAR-TAF">
-   <div class="collapsible-header"></div>
-   <div class="collapsible-content">
-       <!--<div id="CONTAINER-METARTAF-DEPARTURE" style="display: flex; justify-content: center; align-items: center;">
-       </div>-->
+        <!-- METAR-TAF WIDGET -->
+        <div class="collapsible" data-title="METAR-TAF">
+        <div class="collapsible-header"></div>
+        <div class="collapsible-content">
             <div class="button-row">
                 <button id="BTN-METARTAF-DEPARTURE"
                     onclick="window.set_widget('DEPARTURE', 'METARTAF')"
@@ -511,49 +409,45 @@
                         title="METAR-TAF"
                         allowfullscreen
                         scrolling="no">
-               </iframe>
+            </iframe>
+            </div>
+        </div>
+        </div>
+
+        <!-- AIRPORT-WEATHER WIDGET -->
+        <div class="collapsible" data-title="AIRPORTWEATHER">
+        <div class="collapsible-header"></div>
+        <div class="collapsible-content">
+            <div class="button-row">
+                <button id="BTN-AIRPORTWEATHER-DEPARTURE"
+                    onclick="window.set_widget('DEPARTURE', 'AIRPORTWEATHER')"
+                    style="transition: background-color 0.3s; z-index: 1; background-color: #006280; border: 1px solid #333333; color: #ffffff;">
+                    Retrieve AirportWeather
+                </button>
             </div>
 
-   </div>
-   </div>
+            <!--
+            1. make the iframe large enough =4000 the put the commercial stuff at the bottom.
+            2. Remove the top 125px of the website and hte bottom 1500px.
+            3. Do not allow scroll
+            -->
+            <div id="CONTAINER-AIRPORTWEATHER-DEPARTURE" style="display: flex; justify-content: center; align-items: center;">
+                <iframe id="DEPARTURE-airportweather-iframe"
+                        src=""
+                        width="100%"
+                        height="4000"
+                        frameborder="0"
+                        style="border:0; min-height:1000px; overflow:hidden; margin-top:-125px; margin-bottom:-1500px; display:block;"
+                        title="AirportWeather"
+                        allowfullscreen
+                        scrolling="no">
+                </iframe>
+            </div>
 
-    <!-- AIRPORT-WEATHER WIDGET -->
-    <div class="collapsible" data-title="AIRPORTWEATHER">
-    <div class="collapsible-header"></div>
-    <div class="collapsible-content">
-        <div class="button-row">
-
-            <button id="BTN-AIRPORTWEATHER-DEPARTURE"
-                onclick="window.set_widget('DEPARTURE', 'AIRPORTWEATHER')"
-                style="transition: background-color 0.3s; z-index: 1; background-color: #006280; border: 1px solid #333333; color: #ffffff;">
-                Retrieve AirportWeather
-            </button>
+        </div>
         </div>
 
-        <!--
-        1. make the iframe large enough =4000 the put the commercial stuff at the bottom.
-        2. Remove the top 125px of the website and hte bottom 1500px.
-        3. Do not allow scroll
-        -->
-        <div id="CONTAINER-AIRPORTWEATHER-DEPARTURE" style="display: flex; justify-content: center; align-items: center;">
-            <iframe id="DEPARTURE-airportweather-iframe"
-                    src=""
-                    width="100%"
-                    height="4000"
-                    frameborder="0"
-                    style="border:0; min-height:1000px; overflow:hidden; margin-top:-125px; margin-bottom:-1500px; display:block;"
-                    title="AirportWeather"
-                    allowfullscreen
-                    scrolling="no">
-            </iframe>
-        </div>
-
-    </div>
-    </div>
-
-
-
-</div>
+	</div>
 
 
 
@@ -566,13 +460,14 @@
         <!-- Arrival Information Label -->
         <label_h1>Arrival Information</label_h1>
 
-        <!-- ARRIVAL Image -->
+        <!-- Arrival Image -->
         <div class="logo-container" style="margin-top: 20px;">
             <img id="ARRIVAL_image_cache" alt="Arrival Aerodrome" style="max-width: 100%; height: auto; border-radius: 10px; cursor: pointer;" onclick="openAerodromeMap('ARRIVAL')">
         </div>
 
 
         <label_h1>Select Arrival</label_h1>
+
         <div class="border-round-eged" id="ARRIVAL_SELECT_AERODROME_BORDER">
             <div class="wind-grid">
                 <select id="ARRIVAL_COUNTRY" class="tile-value-dropdown" style="font-weight: normal;">
@@ -584,21 +479,68 @@
                 </select>
             </div>
 
+
             <div class="button-row">
                 <img id="ARRIVAL_FLAG" src="" alt="" style="width:30px; height:auto; vertical-align:middle; margin-left:6px;">
                 <input type="text" id="ARRIVAL_ICAO" class="tile-value UPPERCASE_input sync-arrival" onchange="window.load_aerodrome_from_json('ARRIVAL')" placeholder="ICAO">
-                <button id="ARRIVAL_USE_CACHED" onclick="window.load_aerodrome_from_json('ARRIVAL')" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>
-                <!--<button id="save_fields_btn_arrival" onclick="window.save_aerodrome_to_json('ARRIVAL')" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">💾</button>-->
-                <!--<button id="BTN-METAR-ICON-ARRIVAL_1" onclick="window.retrieve_metar('ARRIVAL')" title="Load METAR data for aerodrome and automatically predict the runway number based on the wind direction" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🌤</button>-->
+                <button id="ARRIVAL_USE_CACHED" onclick="window.retrieve_metar('ARRIVAL')" title="Retrieve METAR weather information for the selected aerodrome" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>
+            </div>
+
+
+            <div class="wind-grid">
+
+                 <div class="tile">
+                    <input id="ARRIVAL_WIND_DIRECTION" type="text" class="tile-value">
+                    <span class="tile-label">Wind angle (°)</span>
+                </div>
+
+                <div class="tile">
+                    <input id="ARRIVAL_WIND_SPEED" type="text" class="tile-value">
+                    <span class="tile-label">Strength (kt)</span>
+                </div>
+
+                <div class="tile">
+                    <input id="ARRIVAL_WIND_GUST" type="text" class="tile-value">
+                    <span class="tile-label">Gust (kt)</span>
+                </div>
+            </div>
+
+            <div class="grid-one-third-two-thirds">
+                <div class="tile">
+                    <input id="ARRIVAL_WIND_VARIATION" type="text" class="tile-value">
+                    <span class="tile-label">Variation (°)</span>
+                </div>
+
+                <div class="button-row">
+                    <textarea id="METAR-FIELD-ARRIVAL"
+                        placeholder="METAR Information"
+                        title="METAR weather information"
+                        style="font-size:11px; background-color: transparent; width: 100%; min-height: 80px; max-height: 120px; resize: vertical; padding: 8px; box-sizing: border-box; border-radius: 10px"
+                        aria-label="METAR Information">
+                    </textarea>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 1px; margin-top: 1px;">
+                <input type="text" id="METAR-TEXT-ARRIVAL" readonly
+                    style="transition: background-color 0.3s; width: 70%;
+                           padding: 0; box-sizing: border-box; font-size: 10px;
+                           border: none; background-color: transparent;
+                           color: #333333; outline: none;">
+
+                <input type="text" id="DATETIME-METAR-ARRIVAL" readonly
+                    style="transition: background-color 0.3s; width: 30%;
+                           padding: 0; box-sizing: border-box; font-size: 10px;
+                           border: none; background-color: transparent;
+                           color: #333333; outline: none;">
             </div>
         </div>
-
 
 
         <label_h1>Aerodrome Information</label_h1>
 
         <div class="collapsible" data-title="AERODROME">
-        <div class="collapsible-header" id="COLLAPSIBLE_MENU"></div>
+        <div class="collapsible-header"></div>
         <div class="collapsible-content">
 
             <div class="wind-grid">
@@ -614,7 +556,7 @@
                     <span class="tile-label">Position of the aircraft</span>
                 </div>
 
-                <select id="ARRIVAL_CTR", class="tile-value-dropdown" onchange="highlightMissingFields()">
+                <select id="ARRIVAL_CTR" class="tile-value-dropdown" onchange="highlightMissingFields()" style="text-align: center;">
                     <option value=""></option>
                     <option value="CTR">CTR</option>
                 </select>
@@ -622,52 +564,58 @@
 
             <div class="wind-grid">
                 <div class="tile">
-                    <input id="ARRIVAL_RUNWAY" type="text", class="tile-value", title="The runway will be automatically determined when retrieving the METAR information.">
+                    <input id="ARRIVAL_RUNWAY" type="text" class="tile-value" title="Fill here the runway that is in use.">
                     <span class="tile-label">
-                        Runway nr.
-                        <button id="BTN-METAR-ICON-ARRIVAL_2" onclick="window.retrieve_metar('ARRIVAL')" title="Load METAR data for aerodrome and automatically predict the runway number based on the wind direction" style="background-color: transparent; border: none; width: 10px; padding: 1px; cursor: pointer;">🌤</button>
+                        Runway Nr.
+                        <button id="BTN-METAR-ICON-ARRIVAL_2" onclick="window.retrieve_metar('ARRIVAL')"
+                            title="Use METAR weather information to automatically predict the runway. Add multiple runways seperated by / or comma. The most optimal runway will be picked automatically."
+                            style="background-color: transparent; border: none; width: 10px; padding: 1px; cursor: pointer;">
+                                🔄
+                        </button>
                     </span>
                 </div>
                 <div class="tile">
-                    <input id="ARRIVAL_ELEVATION" type="text", class="tile-value", title="Elevation of the field in feet.">
+                    <input id="ARRIVAL_ELEVATION" type="text" class="tile-value" title="Elevation of the field in feet.">
                     <span class="tile-label">Field elevation (ft)</span>
                 </div>
                 <div class="tile">
-                    <input id="ARRIVAL_CIRCUIT_ALTITUDE" type="text", class="tile-value", title="The altitude of the circuit in feet.">
+                    <input id="ARRIVAL_CIRCUIT_ALTITUDE" type="text" class="tile-value" title="The altitude of the circuit in feet.">
                     <span class="tile-label">Circuit altitude (ft)</span>
                 </div>
             </div>
 
             <div class="grid-two-thirds-one-third">
-                <!-- This takes 2/3 of the width -->
-                <div class="tile">
-                    <input id="ARRIVAL_ROUTE_NAME" type="text", class="tile-value UPPERCASE_input", title="The name of the route (e.g., MIKE/ROMEO) for departure.">
-                    <span class="tile-label">Route name</span>
-                </div>
                 <!-- This takes 1/3 of the width -->
                 <div class="tile">
-                    <input id="ARRIVAL_ROUTE_ALTITUDE" type="text", class="tile-value", title="The altitude of the route in feet.">
+                    <input id="ARRIVAL_ROUTE_NAME" type="text" class="tile-value UPPERCASE_input" title="The name of the route (e.g., MIKE/ROMEO) for arrival.">
+                    <span class="tile-label">Route name</span>
+                </div>
+                <!-- This takes 2/3 of the width -->
+                <div class="tile">
+                    <input id="ARRIVAL_ROUTE_ALTITUDE" type="text" class="tile-value" title="The altitude of the route in feet.">
                     <span class="tile-label">Route altitude (ft)</span>
                 </div>
             </div>
 
+            <button onclick="window.save_aerodrome_to_json('ARRIVAL')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 4px 8px 0; flex: 0 0 auto; cursor: pointer; float: right;">💾</button>
+
         </div>
         </div>
 
 
-        <!--<label_h1>Contact</label_h1>-->
+    	  <!--<label_h1>Contact</label_h1>-->
         <div class="collapsible" data-title="CONTACT">
         <div class="collapsible-header"></div>
         <div class="collapsible-content">
 
             <div class="wind-grid">
-                    <div class="tile">
-                        <input id="ARRIVAL_ATC_GROUND" type="text" class="tile-value">
-                        <span class="tile-label">Ground/ delivery (MHz)</span>
-                    </div>
+                <div class="tile">
+                    <input id="ARRIVAL_ATC_GROUND" type="text" class="tile-value">
+                    <span class="tile-label">Ground/ delivery (MHz)</span>
+                </div>
                 <div class="tile">
                     <input id="ARRIVAL_ATC_TOWER" type="text" class="tile-value">
-                    <span class="tile-label">Tower/ radio (MHz)</span>
+                    <span class="tile-label">Tower/ Radio (MHz)</span>
                 </div>
                 <div class="tile">
                     <input id="ARRIVAL_ATC_ATIS_FREQ" type="text" class="tile-value">
@@ -675,10 +623,10 @@
                 </div>
             </div>
 
-                <div class="grid-two-thirds-one-third">
+            <div class="grid-two-thirds-one-third">
                 <div class="tile">
                     <input id="ARRIVAL_ATC_TELEPHONE" type="text" class="tile-value">
-                    <span class="tile-label">Telephone number</span>
+                    <span class="tile-label">Telephone Number</span>
                 </div>
                 <div class="tile">
                     <input id="ARRIVAL_ATC_APPROACH" type="text" class="tile-value">
@@ -686,112 +634,62 @@
                 </div>
             </div>
 
+            <button onclick="window.save_aerodrome_to_json('ARRIVAL')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 4px 8px 0; flex: 0 0 auto; cursor: pointer; float: right;">💾</button>
         </div>
         </div>
+
 
 
         <label_h1>METAR WIDGETS</label_h1>
 
         <!-- METAR Information -->
-        <div class="collapsible" id="COLLAPSIBLE_MENU_METAR_ARRIVAL" data-title="METAR INFORMATION">
-        <!--<div class="collapsible" data-title="METAR INFORMATION">-->
+        <div class="collapsible" data-title="WIND ENVELOPE">
         <div class="collapsible-header"></div>
         <div class="collapsible-content">
-            <!--window.toggleCollapsibleMenu('COLLAPSIBLE_MENU_METAR_ARRIVAL');-->
-            <div class="button-row">
-                <button id="BTN-METAR-ARRIVAL" onclick="window.retrieve_metar('ARRIVAL');" style="transition: background-color 0.3s; z-index: 1; background-color: #006280; border: 1px solid #333333; color: #ffffff; cursor: pointer;" title="Retrieve METAR information.">Retrieve METAR Information 🌤</button>
-            </div>
 
-            <div style="display: flex; gap: 1px; margin-top: 1px;">
-                <input type="text" id="METAR-TEXT-ARRIVAL" readonly
-                    style="transition: background-color 0.3s; width: 70%;
-                            padding: 0; box-sizing: border-box; font-size: 10px;
-                            border: none; background-color: transparent;
-                            color: #333333; outline: none;">
-
-                <input type="text" id="DATETIME-METAR-ARRIVAL" readonly
-                    title="The UTC date/time for the retrieved METAR data."
-                    style="transition: background-color 0.3s; width: 30%;
-                            padding: 0; box-sizing: border-box; font-size: 10px;
-                            border: none; background-color: transparent;
-                            color: #333333; outline: none;">
+            <div class="info" style="margin-bottom: 20px; border: 1.5px solid lightgray; border-radius: 10px; padding: 10px;">
+                This wind envelope shows how wind direction and strength relate to the selected runway, and marks the maximum permitted headwind and crosswind components.
+                Use it only as an educational aid. Always check current METAR/TAF, official aerodrome sources, and your aircraft’s operating limitations.
             </div>
 
             <div class="button-row">
-                <textarea id="METAR-FIELD-ARRIVAL"
-                    placeholder="METAR Information"
-                    style="transition: background-color 0.3s; width: 100%; min-height: 80px; max-height: 120px; resize: vertical; padding: 8px; box-sizing: border-box; border-radius: 10px"
-                    title="METAR information for the arrival aerodrome is shown here after automatically retrieved."
-                    aria-label="METAR Information"></textarea>
-            </div>
-
-            <!-- WIND INFORMATION -->
-            <div class="wind-grid">
-
-                <div class="tile">
-                    <input id="ARRIVAL_WIND_DIRECTION" type="text" class="tile-value">
-                    <span class="tile-label">Direction (°)</span>
-                </div>
-
-                <div class="tile">
-                    <input id="ARRIVAL_WIND_SPEED" type="text" class="tile-value">
-                    <span class="tile-label">Speed (kt)</span>
-                </div>
-
-                <div class="tile">
-                    <input id="ARRIVAL_WIND_GUST" type="text" class="tile-value">
-                    <span class="tile-label">Gust (kt)</span>
-                </div>
-
-                <div class="tile">
-                    <input id="ARRIVAL_WIND_VARIATION" type="text" class="tile-value">
-                    <span class="tile-label">Variation (°)</span>
-                </div>
-
-                <div class="tile">
-                    <input id="ARRIVAL_WIND_HEADWIND" type="text" class="tile-value">
-                    <span class="tile-label">Headwind</span>
-                </div>
-
-                <div class="tile">
-                    <input id="ARRIVAL_WIND_CROSSWIND" type="text" class="tile-value">
-                    <span class="tile-label">Crosswind</span>
-                </div>
-
-            </div>
-
-            <!--onclick="window.windEnvelope_js('ARRIVAL'); window.toggleCollapsibleMenu('COLLAPSIBLE_MENU_METAR_ARRIVAL');">-->
-            <div class="button-row">
-               <button id="BTN-PLOT-WIND-ARRIVAL"
-                    onclick="window.windEnvelope_js('ARRIVAL');">
+                <button id="BTN-PLOT-WIND-ARRIVAL" class="button-style" onclick="window.windEnvelope_js('ARRIVAL')">
                     Compute Wind Envelope
-               </button>
-
+                </button>
             </div>
 
-            <div class="tile">
-                <div id="ARRIVAL_WIND_ENVELOPE_PLOT" style="width: 100%; box-sizing: border-box;"></div>
-            </div>
+           <!-- WIND INFORMATION -->
+           <div class="wind-grid">
+               <div class="tile">
+                   <input id="ARRIVAL_WIND_HEADWIND" readonly type="text" class="tile-value" title="Headwind is calculated based on the wind speed and direction relative to the runway. This value can not be changed." style="background-color: transparent;">
+                   <span class="tile-label">Headwind (kt)</span>
+               </div>
 
-            <div class="button-row">
-                <textarea id="ARRIVAL_WIND_ENVELOPE_TEXT"
-                    placeholder="..."
-                    style="transition: background-color 0.3s; width: 100%; min-height: 140px; max-height: 150px; resize: vertical; padding: 8px; box-sizing: border-box; border-radius: 10px"
-                    title="Wind envelope message is shown here.">
+               <div class="tile">
+                   <input id="ARRIVAL_WIND_CROSSWIND" readonly type="text" class="tile-value" title="Crosswind is calculated based on the wind speed and direction relative to the runway. This value can not be changed." style="background-color: transparent;">
+                   <span class="tile-label">Crosswind (kt)</span>
+               </div>
+           </div>
+
+           <div class="button-row">
+               <div id="ARRIVAL_WIND_ENVELOPE_PLOT" style="width: 100%; box-sizing: border-box;"></div>
+           </div>
+
+           <div class="button-row">
+               <textarea id="ARRIVAL_WIND_ENVELOPE_TEXT" readonly aria-readonly="true"
+                   placeholder="Compute the wind envelope to see here information."
+                   style="transition: background-color 0.3s; width: 100%; min-height: 80px; max-height: 120px; resize: vertical; padding: 8px; box-sizing: border-box; border-radius: 10px">
                 </textarea>
-            </div>
+           </div>
 
-        </div>
-        </div>
+       </div>
+       </div>
 
 
         <!-- METAR-TAF WIDGET -->
         <div class="collapsible" data-title="METAR-TAF">
         <div class="collapsible-header"></div>
         <div class="collapsible-content">
-            <!--<div id="CONTAINER-METARTAF-ARRIVAL" style="display: flex; justify-content: center; align-items: center;">
-            </div>-->
-
             <div class="button-row">
                 <button id="BTN-METARTAF-ARRIVAL"
                     onclick="window.set_widget('ARRIVAL', 'METARTAF')"
@@ -810,49 +708,46 @@
                         title="METAR-TAF"
                         allowfullscreen
                         scrolling="no">
-               </iframe>
+            </iframe>
             </div>
-
         </div>
         </div>
 
-         <!-- AIRPORT-WEATHER WIDGET -->
-         <div class="collapsible" data-title="AIRPORTWEATHER">
-         <div class="collapsible-header"></div>
-         <div class="collapsible-content">
-
-             <div class="button-row">
+        <!-- AIRPORT-WEATHER WIDGET -->
+        <div class="collapsible" data-title="AIRPORTWEATHER">
+        <div class="collapsible-header"></div>
+        <div class="collapsible-content">
+            <div class="button-row">
                 <button id="BTN-AIRPORTWEATHER-ARRIVAL"
                     onclick="window.set_widget('ARRIVAL', 'AIRPORTWEATHER')"
                     style="transition: background-color 0.3s; z-index: 1; background-color: #006280; border: 1px solid #333333; color: #ffffff;">
                     Retrieve AirportWeather
                 </button>
-             </div>
+            </div>
 
-             <!--
-             1. make the iframe large enough =4000 the put the commercial stuff at the bottom.
-             2. Remove the top 125px of the website and hte bottom 1500px.
-             3. Do not allow scroll
-             -->
-             <div id="CONTAINER-AIRPORTWEATHER-ARRIVAL" style="display: flex; justify-content: center; align-items: center;">
-                 <iframe id="ARRIVAL-airportweather-iframe"
-                         src=""
-                         width="100%"
-                         height="4000"
-                         frameborder="0"
-                         style="border:0; min-height:1000px; overflow:hidden; margin-top:-125px; margin-bottom:-1500px; display:block;"
-                         title="AirportWeather"
-                         allowfullscreen
-                         scrolling="no">
+            <!--
+            1. make the iframe large enough =4000 the put the commercial stuff at the bottom.
+            2. Remove the top 125px of the website and hte bottom 1500px.
+            3. Do not allow scroll
+            -->
+            <div id="CONTAINER-AIRPORTWEATHER-ARRIVAL" style="display: flex; justify-content: center; align-items: center;">
+                <iframe id="ARRIVAL-airportweather-iframe"
+                        src=""
+                        width="100%"
+                        height="4000"
+                        frameborder="0"
+                        style="border:0; min-height:1000px; overflow:hidden; margin-top:-125px; margin-bottom:-1500px; display:block;"
+                        title="AirportWeather"
+                        allowfullscreen
+                        scrolling="no">
                 </iframe>
-             </div>
+            </div>
 
-         </div>
-         </div>
+        </div>
+        </div>
 
+	</div>
 
-
-</div>
 
 
 
@@ -1782,29 +1677,6 @@
     }
 
 
-
-    // function extractRunwayNumbers(runwaysString) {
-    //     if (typeof runwaysString !== "string") return [];
-
-    //     // 1. Find the `'number': [...]` part
-    //     const match = runwaysString.match(/'number'\s*:\s*\[([^\]]*)\]/);
-
-    //     if (!match) return [];
-
-    //     // 2. Extract the inside of the brackets
-    //     const inside = match[1];
-
-    //     // 3. Split values between quotes
-    //     const numbers = inside.match(/'([^']+)'/g);
-
-    //     if (!numbers) return [45, 315];
-
-    //     // 4. Strip quotes + convert to integers
-    //     return numbers
-    //         .map(n => n.replace(/'/g, "").trim())
-    //         .map(n => parseInt(n, 10));  // Remove invalid values
-    // }
-
     function extractRunwayNumbers(runwaysString) {
         if (typeof runwaysString !== "string") return [];
 
@@ -1979,7 +1851,7 @@
             return window.airspaces;
         } else {
             console.error("No airspace data available");
-            js.window.alert('⚠️ No airspace data available for this region');
+            js.window.alert('⚠️ No airspace data is available for this region.');
             return null;
         }
     }
@@ -2436,11 +2308,6 @@
 
 
 <script>
-    // Set datetime field in the GENERAL TAB
-    // document.getElementById('set_datetime_btn').addEventListener('click', () => {
-    //   document.getElementById('DATETIME').value = nowtime(false);
-    // });
-
 
     function createDateTime() {
       console.log("---> createDateTime()");
@@ -2453,20 +2320,13 @@
         try {
           // Get flightplan name
           const flightplanName = document.getElementById('FLIGHTPLAN')?.value;
-          if (!flightplanName) { window.alert("ℹ️ Please enter a Flightplan name before saving");
+          if (!flightplanName) { window.alert("ℹ️ Please enter a flight plan name before saving.");
             return;
           }
 
           // Save flightplan data to JSON files
           window.save_flightplan();
-
-          // Save aerodrome data to JSON files
-          // window.save_aerodrome_to_json('DEPARTURE');
-          // window.save_aerodrome_to_json('ARRIVAL');
-          // window.save_enroute_to_json('ENROUTE1');
-          // window.save_enroute_to_json('ENROUTE2');
-
-          window.alert("✅ Flightplan is saved!");
+          window.alert("✅ Flight plan saved successfully!");
 
         } catch (error) {
           console.error("Error saving flightplan data:", error);
@@ -2474,45 +2334,6 @@
       }
     });
 
-    // Add save button functionality
-    document.getElementById('save_fields_btn_departure')?.addEventListener('click', () => {
-      // Check if the departure ICAO is set
-      const selected_icao = document.getElementById('DEPARTURE_ICAO').value;
-      if (selected_icao === '') {
-        window.alert("⚠️ Nothing to save. Please set the departure aerodrome (ICAO) first.");
-        return;
-      }
-
-      if (pyscriptReady && window.save_flightplan) {
-        try {
-            // Save aerodrome data to JSON files
-            window.save_aerodrome_to_json('DEPARTURE');
-            window.alert(`✅ Departure aerodrome ${selected_icao} is saved! You can now load it.`);
-        } catch (error) {
-          console.error("⚠️ Error saving Aerodrome data:", error);
-        }
-      }
-    });
-
-    // Add save button functionality
-    document.getElementById('save_fields_btn_arrival')?.addEventListener('click', () => {
-      // Check if the departure ICAO is set
-      const selected_icao = document.getElementById('ARRIVAL_ICAO').value;
-      if (selected_icao === '') {
-        window.alert("⚠️ Nothing to save. Please set the arrival aerodrome (ICAO) first.");
-        return;
-      }
-
-      if (pyscriptReady && window.save_flightplan) {
-        try {
-            // Save aerodrome data to JSON files
-            window.save_aerodrome_to_json('ARRIVAL');
-            window.alert(`✅ Arrival aerodrome ${selected_icao} is saved! You can now load it.`);
-        } catch (error) {
-          console.error("⚠️ Error saving Aerodrome data:", error);
-        }
-      }
-    });
 
     function openAerodromeMap(fname) {
         const latlon = window.flight_plan_data[`${fname}_LATLON`];
@@ -2540,33 +2361,63 @@
        * - Sets elements' background to light red
        * Used to visually alert user that METAR data should be refreshed.
        */
-        function updateColors(prefix) {
-            const dateField = document.getElementById(`DATETIME-METAR-${prefix}`);
-            // const button = document.getElementById(`BTN-METAR-${prefix}`);
-            const metarField = document.getElementById(`METAR-FIELD-${prefix}`);
-            if (!dateField?.value) return;
-
+        function createTimeObject(dateField){
             // Parse the date parts
-            const [datePart, timePart] = dateField.value.split(' ');
+            const [datePart, timePart] = dateField.split(' ');
             const [day, month, year] = datePart.split('-');
             const [hours, minutes] = timePart.split(':');
 
             // Create date objects with the same timezone
-            const metarTime = new Date();
-            metarTime.setFullYear(parseInt(year), parseInt(month) - 1, parseInt(day));
-            metarTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
-
-            const now = nowtime(utc=true);
-            const diff = now - metarTime;
-            const isOld = diff > 10 * 60 * 1000; // 10 minutes in milliseconds
-
-            dateField.style.backgroundColor = isOld ? '#ffebee' : '';
-            // button.style.backgroundColor = isOld ? '#ffebee' : '';
-            metarField.style.backgroundColor = isOld ? '#ffebee' : '';
+            const timeObject = new Date();
+            timeObject.setFullYear(parseInt(year), parseInt(month) - 1, parseInt(day));
+            timeObject.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+            return timeObject
         }
 
-        updateColors('departure');
-        updateColors('arrival');
+        function compareTime(prefix) {
+            const dateField = document.getElementById(`DATETIME-METAR-${prefix}`);
+            const metarField = document.getElementById(`METAR-FIELD-${prefix}`);
+            // const metarText = document.getElementById('METAR-TEXT-' + prefix);
+
+            if (!dateField?.value) {
+              console.log(`   >No METAR date is found for ${prefix}.`)
+              return;
+            }
+
+            // Parse the METAR date parts
+            const dateFieldClean = formatDateDMY(dateField.value, format='dd/mm/yyyy');
+            const metarTime = createTimeObject(dateFieldClean);
+
+            // Parse the NOW date parts
+            const now = nowtime(utc=true);
+            const currenTime = createTimeObject(now);
+
+            // Compute difference
+            const diff = currenTime - metarTime;
+            const isOld = diff > 35 * 60 * 1000; // 35 minutes in milliseconds
+            const minutesOld = Math.round(diff / 1000 / 60);
+
+            console.log(`   >${prefix}\n   >currenTime: ${currenTime}.\n   >Metar time: ${metarTime}\n   >Diff: ${minutesOld}min\n   >isOld: ${isOld}`)
+
+            if (isOld) {
+                // colorMetarFields(prefix, enable=false);
+                message = `METAR weather info is ${minutesOld} minutes old. Reload the METAR information to retrieve the latest one.`;
+                dateField.title = message;
+                metarField.title = message;
+                dateField.style.backgroundColor = '#ffebee';
+                metarField.style.backgroundColor = '#ffebee';
+            } else {
+                // colorMetarFields(prefix, enable=true);
+                dateField.title = 'The UTC date/time for the retrieved METAR data';
+                metarField.title = `METAR information for the ${prefix.toLowerCase()} aerodrome.`;
+                dateField.style.backgroundColor = '';
+                metarField.style.backgroundColor = '';
+            }
+        }
+
+        console.log(`> func: checkMetarAge()`)
+        compareTime('DEPARTURE');
+        compareTime('ARRIVAL');
     }
 
 
@@ -2612,7 +2463,7 @@
 
         console.log(`🛫 Creating METAR widget for ${icao}`);
         if (icao === 'unknown') {
-            window.alert("ℹ️ Please fill in ICAO field first before loading METAR information.");
+            window.alert("ℹ️ Please enter the ICAO code before loading METAR information.");
             return false;
         }
 
@@ -2671,7 +2522,7 @@
     }
 
 
-    function formatDateDMY(datetimeString) {
+    function formatDateDMY(datetimeString, format='dd/mm/yyyy') {
         // Expecting: "16/11/2025 11:18"
 
         // Not in expected DD/MM/YYYY format — bail out early
@@ -2679,7 +2530,15 @@
             return datetimeString;
         }
         const [datePart, timePart] = datetimeString.split(" ");
-        const [day, month, year] = datePart.split("/");
+        let day, month, year;
+        if (format === 'dd/mm/yyyy') {
+            [day, month, year] = datePart.split("/");
+        } else if (format === 'yyyy/mm/dd') {
+            [year, month, day] = datePart.split("/");
+        } else {
+            console.log('formatDateDMY: format unknown, returning original string');
+            return datetimeString;
+        }
 
         // console.log("datePart:", datePart);
         // console.log("timePart:", timePart);
@@ -2695,35 +2554,31 @@
         return `${dd}-${mm}-${yyyy} ${timePart}`;
     }
 
-    async function fetchMetar(icao) {
-        const url = `https://tgftp.nws.noaa.gov/data/observations/metar/stations/${icao}.TXT`;
-        const response = await fetch(url);
-        const text = await response.text();
+    // async function fetchMetar(icao) {
+    //     const url = `https://tgftp.nws.noaa.gov/data/observations/metar/stations/${icao}.TXT`;
+    //     const response = await fetch(url);
+    //     const text = await response.text();
 
-        const lines = text.trim().split('\n');
-        // const lines = splitlines ? text.contents.split("\n") : text.contents;
-        return [
-            formatDateDMY(lines[0]),
-            lines[1],
-            icao,
-        ];
-    }
+    //     const lines = text.trim().split('\n');
+    //     // const lines = splitlines ? text.contents.split("\n") : text.contents;
+    //     return [
+    //         formatDateDMY(lines[0], format='yyyy/mm/dd'),
+    //         lines[1],
+    //         icao,
+    //     ];
+    // }
 
-    async function fetch_metar(metar_stations, splitlines = true, decoded = false) {
+    async function fetch_metar(metar_stations, splitlines = true, decoded = false, prefix) {
         console.log(`>Func: fetch_metar(${metar_stations})`);
-
         // Make a function that runs over the list of metar_stations
+        const metarField = document.getElementById('METAR-FIELD-' + prefix);
         const stations = Array.isArray(metar_stations) ? metar_stations : [metar_stations];
-        // const metarField = document.getElementById('METAR-FIELD-' + prefix);
-
 
         for (const icao of stations) {
             console.log(`  >Fetching METAR report of ${icao}`);
-            // if (metarField) {
-            //     metarField.value = 'Attempting to fetch the report of METAR station: ' + icao;
-            // } else {
-            //     // optional debug: console.log('metarField not found for prefix:', prefix);
-            // }
+            if (metarField) {
+                metarField.value = `Be patient while fetching METAR weather information from closest station: ${icao}`;
+            }
 
             const url = decoded
                 ? `https://tgftp.nws.noaa.gov/data/observations/metar/decoded/${icao}.TXT`
@@ -2746,7 +2601,7 @@
                     metar_date = metar_data[0];
                 }
                 if (metar_date !== '') {
-                    metar_date = formatDateDMY(metar_date);
+                    metar_date = formatDateDMY(metar_date, format='yyyy/mm/dd');
                 }
 
                 // console.log(metar_icao);
@@ -2756,12 +2611,11 @@
                     return [metar_icao, metar_date, icao];
                 }
 
-                // Wait 0.5 seconds before continuing to next station to be polite to the server
+                // Wait 0.5 seconds before continuing to next station to be nice to the server
                 await new Promise(resolve => setTimeout(resolve, 500));
 
             } catch (err) {
-                // return null, null;
-                console.log(`  >${icao}: Could not fetch the report: ${url}`);
+                console.log(`  >${icao}: Could not fetch the METAR report: ${url}`);
             }
         }
         // Return when empty and nothing found
@@ -2787,12 +2641,12 @@
 
         // Runway number is required
         if (runwayField == '') {
-            alert("⚠️ No valid runway information available. The wind envelope cannot be computed.");
+            alert("⚠️ No valid runway information available. Unable to compute the wind envelope.");
             return;
         }
         // METAR information is required
         if (metar_icao == '' || metar_icao == null) {
-            alert("⚠️ METAR data was not retrieved. Please try retrieving METAR information again.");
+            alert("⚠️ METAR data was not retrieved. Please try to retrieve METAR information again.");
             return;
         }
 
@@ -2837,7 +2691,7 @@
     }
 
 
-    async function setMetarButton(prefix, enable=true) {
+    async function colorMetarFields(prefix, enable=true) {
         // const buttonMetar = document.getElementById('BTN-METAR-' + prefix);
         // const buttonMetarIcon1 = document.getElementById('BTN-METAR-ICON-' + prefix + '_1');
         const buttonMetarIcon2 = document.getElementById('BTN-METAR-ICON-' + prefix + '_2');
@@ -2873,8 +2727,7 @@
           windVariationField.style.backgroundColor = 'transparent';
           windHeadwindField.style.backgroundColor = 'transparent';
           windCrosswindField.style.backgroundColor = 'transparent';
-
-          borderFieldAerodrome.style.backgroundColor = '';
+          // borderFieldAerodrome.style.backgroundColor = '';
         } else {
           // buttonMetarIcon1.disabled = true;
           // buttonMetarIcon1.style.cursor = "not-allowed";
@@ -2887,7 +2740,7 @@
           // buttonMetar.style.opacity = '0.6';
 
           metarText.value = ' ';
-          metarField.value = 'Be patient, fetching METAR data...';
+          metarField.value = 'Be patient while fetching METAR weather information...';
 
           // Change background color to light red
           // buttonMetar.style.backgroundColor = '#ffebee';
@@ -2900,7 +2753,7 @@
           windVariationField.style.backgroundColor = '#ffebee';
           windHeadwindField.style.backgroundColor = '#ffebee';
           windCrosswindField.style.backgroundColor = '#ffebee';
-          borderFieldAerodrome.style.backgroundColor = '#ffebee';
+          // borderFieldAerodrome.style.backgroundColor = '#ffebee';
 
         }
     }
@@ -2915,7 +2768,7 @@
         button.disabled = true;
         button.setAttribute('aria-disabled', 'true');
         button.style.opacity = '0.6';
-        button.style.cursor = 'Be patient, fetching widgets...';
+        button.style.cursor = 'Be patient while fetching widgets...';
 
         // Create the METAR-TAF widget
         if (widgetname === 'AIRPORTWEATHER') {
@@ -2963,12 +2816,12 @@
 
         // If ICAO is empty or not provided, notify the user and return early
         if (!icao || !country) {
-            alert("ℹ️ To retrieve the METAR information, please select country and load aerodrome (ICAO) first.");
+            alert("ℹ️ To retrieve METAR information, please select a country and load the aerodrome (ICAO) first.");
             return;
         }
 
         // Update button: Disable
-        setMetarButton(prefix, enable=false);
+        colorMetarFields(prefix, enable=false);
 
         // Fetch METAR data from URL
         try {
@@ -2978,7 +2831,7 @@
             console.log(`   >${icao_stations}`);
 
             // Fetch the METAR data for the closest station (pass decoded flag)
-            metar = await fetch_metar(icao_stations, true, false);
+            metar = await fetch_metar(icao_stations, true, false, prefix);
             // metar = await fetchMetar(icao_stations[0]);
             // console.log('Fetched METAR:', metar);
 
@@ -2997,13 +2850,13 @@
             console.log(`   >Error retrieving METAR data. ${prefix} has likely no weather station. Error:`, error);
             metar_message = 'No METAR weather station available for ' + icao;
             // Update button: Enable
-            setMetarButton(prefix, enable=true);
+            colorMetarFields(prefix, enable=true);
         }
 
         // Update GUI elements
         dateField.value = datetimeStr;
         metarField.value = metar_icao || metar_message;
-        setMetarButton(prefix, enable=true);
+        colorMetarFields(prefix, enable=true);
 
         // Update the expected runway based on wind direction and runway orientation
         if (metar_icao !== '' && metar_icao != null) {
@@ -3033,6 +2886,7 @@
             // window.alert(`✅ METAR information is loaded from the closest station: ${stationName}.\n✅ The predicted runway is: ${runway_predicted}`);
         }
 
+        checkMetarAge();
         console.log(`   >✅ METAR information is loaded from the closest station: ${stationName}.\n   >✅ The predicted runway is: ${runway_predicted}`);
 
     }
@@ -3165,19 +3019,6 @@
       const svgUrl = `https://flagcdn.com/${code}.svg`;
       // const pngUrl = `https://flagcdn.com/w80/${code}.png`;
 
-      // Set up onerror fallback once
-      // img.onerror = function () {
-      //   // avoid infinite loop: if svg failed, try png; if png fails, hide
-      //   if (img.src && img.src.endsWith('.svg')) {
-      //     img.src = pngUrl;
-      //     img.onerror = function () {
-      //       img.style.display = 'none';
-      //     };
-      //   } else {
-      //     img.style.display = 'none';
-      //   }
-      // };
-
       console.log(`   >Set Flag to: ${svgUrl}`)
       img.src = svgUrl;
       img.alt = countryCode.toUpperCase();
@@ -3186,48 +3027,6 @@
       console.warn('updateFlag error', e);
     }
   }
-
-  // async function retrieve_flag(prefix) {
-
-  //   updateFlag(imgId, countryCode, prefix)
-
-  // }
-
-  // If the DEPARTURE_COUNTRY select exists, update flag on change.
-  // const departureCountrySelect = document.getElementById(`${prefix}_COUNTRY`);
-  // if (departureCountrySelect) {
-  //   departureCountrySelect.addEventListener('change', (e) => {
-  //     // Expect the select value to be a two-letter country code. If not, you will need a mapping.
-  //     const code = e.target.value ? String(e.target.value).trim().toLowerCase() : '';
-  //     updateFlag('DEPARTURE_FLAG', code);
-  //   });
-  // }
-
-  // If flight plan data already contains a departure country code on load, try to show it.
-  // document.addEventListener("DOMContentLoaded", () => {
-  //   try {
-  //     const possibleKeys = [window.AERODROME_DEPARTURE_DATA['country_code']
-  //     // Try common property names that might contain the country code.
-  //     const possibleKeys = [
-  //       window.flight_plan_data && window.flight_plan_data['DEPARTURE_COUNTRY_CODE'],
-  //       window.AERODROME_DEPARTURE_DATA && window.AERODROME_DEPARTURE_DATA['country_code'],
-  //       window.flight_plan_data && window.flight_plan_data['DEPARTURE_COUNTRY']
-  //     ];
-  //     for (const val of possibleKeys) {
-  //       if (val && typeof val === 'string' && val.trim() !== '') {
-  //         // If the value contains a full country name rather than a code, leave it to callers to map it.
-  //         const maybeCode = String(val).trim().toLowerCase();
-  //         if (/^[a-z]{2}$/.test(maybeCode)) {
-  //           updateFlag('DEPARTURE_FLAG', maybeCode);
-  //           break;
-  //         }
-  //       }
-  //     }
-  //   } catch (err) {
-  //     // ignore
-  //   }
-  // });
-
 
 
 </script>
@@ -3533,7 +3332,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
         # Check if flightplan name exists
         if cache_key is None:
-            js.window.alert('⚠️ Checklist can not be saved without flightplan name.')
+            js.window.alert('⚠️ Checklist cannot be saved without a flight plan name.')
             print('   >Checklist can not be saved; No flightplan name.')
             return False
 
@@ -3968,7 +3767,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                 except AttributeError as e:
                     error_msg = f"⚠️ Error processing aerodrome data: {str(e)}"
                     print(f"❌ {error_msg}")
-                    js.window.alert(error_msg)
+                    js.window.alert("⚠️ Error processing aerodrome data. Please check your input and try again.");
                     return
 
                 # Populate the dropdown with aerodrome data
@@ -3995,8 +3794,8 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                     print(f"   >Available columns: {df.columns.tolist()}")
         except Exception as e:
             error_msg = f"   >⚠️ No airspace data available for {country}: {str(e)}"
-            print(f"❌ {error_msg}")
-            js.window.alert(error_msg)
+            print(f"{error_msg}")
+            js.window.alert(`⚠️ No airspace data is available for the selected country: ${country}.`);
             js.document.getElementById('loading-spinner').style.display = 'none'
             return
 
@@ -4097,7 +3896,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         js.window.flight_plan_data[f"{fname}_RUNWAYS"] = rwy_list
         js.window.flight_plan_data[f"{fname}_RUNWAY"] = clean_string(rwy_ids)
         js.window.flight_plan_data[f"{fname}_NAME"] = row_dict['name']
-        js.window.flight_plan_data[f"{fname}_ELEVATION"] = str(row_dict['elevation_aerodrome'])
+        js.window.flight_plan_data[f"{fname}_ELEVATION"] = str(row_dict['elevation_aerodrome']).split('.')[0]
         js.window.flight_plan_data[f"{fname}_METAR"] = ''
         js.window.flight_plan_data[f"{fname}_METAR_ICAO"] = ''
         js.window.flight_plan_data[f"{fname}_WIND_ENVELOPE"] = ''
@@ -4444,6 +4243,8 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         remove_wind_envelope_plot(fname)
         # Remove flag
         # js.window.updateFlag(fname, 'remove')
+        # Update missing fields colors
+        js.window.highlightMissingFields()
 
         # Clear selectionbox (WARNING: CAN NOT BE CLEARED HERE BECAUSE THE ICOA SELECTIONS WILL BE RESET AFTER SELECTION)
         # select = js.document.getElementById(f'{fname}_ICAO_CITY')
@@ -5135,7 +4936,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
         if not json_data:
             print(f"   >⚠️ ENROUTE not found: {user_selection}")
-            js.window.alert(f"⚠️ ENROUTE '{user_selection}' not found.")
+            js.window.alert(f"⚠️ ENROUTE '{user_selection}' was not found.")
             return
 
         # Parse JSON
@@ -5164,7 +4965,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             print(f"   >✅ Flightplan '{user_selection}' loaded successfully")
         except Exception as e:
             print(f"   >⚠️ Error loading flightplan: {e}")
-            js.window.alert(f"   >⚠️ Error loading flightplan: {e}")
+            js.window.alert(f"❗ Error loading flight plan: {e}")
 
 
     async def load_flightplan():
@@ -5255,7 +5056,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             print(f"   >✅ Flightplan '{plan_name}' loaded successfully")
         except Exception as e:
             print(f"   >❗ Error loading flightplan: {e}")
-            js.window.alert(f"❗ Error loading flightplan: {e}")
+            js.window.alert(f"❗ Error loading flight plan: {e}")
 
 
     def save_flightplan(to_cache=True):
@@ -5344,30 +5145,40 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         print(f'> func: load_aerodrome_from_json({fname})')
         # Get element ID for ICAO
         if elementId is None: elementId = f'{fname}_ICAO'
-        selected_icao = js.document.getElementById(elementId).value.strip().upper() or ''
+        element = js.document.getElementById(elementId)
+        elementIcao = element.value.strip().upper() or ''
 
-        if selected_icao == '':
-            print(f"   >⚠️ The input ICAO is not valid or empty. Please set it first before continuing.")
-            js.window.alert(f"⚠️ The input ICAO is not valid or empty. Please set it first before continuing.");
+        if elementIcao == '':
+            message = f'⚠️ No aerodrome (ICAO) selected. Please choose the aerodrome using the selection box first.'
+            print(message)
+            js.window.alert(message);
             return
 
-        # Load cached data
-        cache_key = fname + '_' + selected_icao
+        # Get cached data
+        cache_key = fname + '_' + elementIcao
         json_data = js.localStorage.getItem(cache_key)
 
+        # Check whether the cached data for the other (departure or arrival) aerdrome exists
         if not json_data:
-            # Check whether the opposite data exists
             fname_opposite = 'DEPARTURE' if fname == 'ARRIVAL' else 'ARRIVAL'
-            json_data = js.localStorage.getItem(fname_opposite + '_' + selected_icao)
+            json_data = js.localStorage.getItem(fname_opposite + '_' + elementIcao)
             if json_data:
-                # This is a quark where I will replace the name of DEPARTURE into ARRIVAL or the otherway arround.
+                # This is a hack where I need to replace the name of DEPARTURE into ARRIVAL or the otherway arround. The reason is that I want to re-use departure and arrival aerodromes for each other if none exists.
                 json_data = json_data.replace(fname_opposite, fname)
 
         if not json_data:
             # Clean all GUI fields
+            message = f"ℹ️ No custom saved aerodrome found for {elementIcao}. Please select the aerodrome in the {fname.lower()} tab and check the input fields before saving."
+            print(message)
+            js.window.alert(message)
             await clear_aerodrome_fields(fname)
-            print(f"   >⚠️ Aerodrome data not found: {cache_key}")
-            js.window.alert(f"ℹ️ The aerodrome {selected_icao} is not ready yet. You need to select, manually check hte input fields and save it first at the {fname.lower()} tab.")
+
+            # Clear the ICAO element fields
+            # element = js.document.getElementById(f'{fname}_ICAO')
+            # element.value = ''
+            # element = js.document.getElementById(f'{fname}_ICAO_2')
+            # element.value = ''
+
             return
 
         # Parse JSON
@@ -5415,11 +5226,11 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             # Update flag
             # window.updateFlag(fname)
 
-            print(f"   >✅ Aerodrome {selected_icao} successfully loaded for {fname.lower()}")
-            # js.window.alert(f"✅ Aerodrome {selected_icao} successfully loaded for {fname.lower()}")
+            print(f"   >✅ Aerodrome {elementIcao} successfully loaded for {fname.lower()}")
+            # js.window.alert(f"✅ Aerodrome {elementIcao} successfully loaded for {fname.lower()}")
         except Exception as e:
             print(f"   >⚠️ Error loading aerodrome data: {str(e)}")
-            js.window.alert(f"❗ Error loading aerodrome {selected_icao}: {str(e)}")
+            js.window.alert(f"❗ Error loading aerodrome data for {elementIcao}: {str(e)}")
 
 
     def save_aerodrome_to_json(fname):
@@ -5467,7 +5278,9 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             return
 
         # Save to cache
-        print(f'----> AERODROME SAVED: {cache_key}')
+        message = f"✅ Custom {fname.lower()} field information for {flight_data.get(f'{fname}_ICAO', '')} is saved."
+        print(f'   >{message}')
+        window.alert(message)
         # Convert to JSON string
         json_data = json.dumps(dict_fname)
         # Save to cache
@@ -6073,7 +5886,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         new_win = window.open("", pagename)
         if not new_win:
             # blocked
-            window.alert("⚠️ Popup blocked. Allow popups to view the ATC communication.")
+            window.alert("⚠️ Popup blocked. Please allow popups to view the ATC communication.")
             return
         new_win.document.write(html_content)
         new_win.document.close()
@@ -6836,7 +6649,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
     new_plan_btn.onclick = async () => {
       try {
         // Check if PyScript is ready
-        if (!pyscriptReady) return alert("⚠️ Please wait, SkyWalk is initializing..");
+        if (!pyscriptReady) return alert("⚠️ Please wait, SkyWalk is initializing...");
 
         // Uncheck the airspace toggle
         const airspaceToggle = document.getElementById('airspace-toggle');
@@ -6861,11 +6674,11 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         // Update missing fields
         highlightMissingFields();
         // Show success message to user
-        alert("✅ All fields have been cleared and reset to default values!");
+        alert("✅ All fields have been cleared and reset to their default values!");
 
       } catch (error) {
         console.error("⚠️ Error creating new flightplan:", error);
-        alert("⚠️ Error creating new flightplan. Please try again.");
+        alert("⚠️ An error occurred while creating the flight plan. Please try again.");
       }
     };
 
@@ -6879,7 +6692,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
           highlightMissingFields();
         } catch (error) {
           console.error("⚠️ Error loading flightplan:", error);
-          alert("⚠️ Error loading flightplan: " + error);
+          alert("⚠️ Error loading flight plan: " + error);
         }
       }
     });
@@ -6908,7 +6721,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         try {
             // Save FIC data to JSON files
             window.save_enroute_to_json('ENROUTE1');
-            window.alert("✅ Flight Information Center (FIC) is saved!");
+            window.alert("✅ Flight Information Center (FIC) data saved successfully!");
         } catch (error) {
           console.error("⚠️ Error saving Flight Information Center (FIC) data:", error);
         }
@@ -6921,7 +6734,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         try {
             // Save FIC data to JSON files
             window.save_enroute_to_json('ENROUTE2');
-            window.alert("✅ Flight Information Center (FIC) is saved!");
+            window.alert("✅ Flight Information Center (FIC) data saved successfully!");
         } catch (error) {
           console.error("⚠️ Error saving Flight Information Center (FIC) data:", error);
         }
@@ -7021,11 +6834,11 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
         try {
             if (await window.clear_cache()) {
-                alert('✅ Cache cleared successfully! SkwyWalk will now reload.');
+                alert('✅ Cache cleared successfully! SkyWalk will now reload.');
                 location.reload();
-            } else { alert('⚠️ Error clearing cache. Please try again.'); }
+            } else { alert('⚠️ Error clearing the cache. Please try again.'); }
         } catch (error) {
-            alert('Error clearing cache: ' + error);
+            alert('⚠️ An error occurred while clearing the cache: ' + error);
         } finally {
             spinner.style.display = 'none';
         }
@@ -7896,7 +7709,7 @@ const COUNTRIES_DATA = [
 
       // Runway direction is required
       if (runwayDirection == '') {
-          alert("⚠️ No valid runway information available. The wind envelope cannot be computed.");
+          alert("⚠️ No valid runway information available. Unable to compute the wind envelope.");
           return results;
       }
 
@@ -8019,8 +7832,6 @@ const COUNTRIES_DATA = [
           results.message += ` Crosswind (${crosswindX}kt) is from the right.`;
       }
 
-      console.log(`   >${windDirection}`)
-      // if (windDirectionField.value.trim().toLowerCase() === 'vrb') {
       if (windDirection === null ||  isNaN(windDirection)) {
         results.message = `Wind direction is ${windDirectionField.value} and therefore the wind envelope could not be determined. You can set the wind direction field manually to determine the effect on runway ${runwayDirection}.`;
         element = document.getElementById(`${prefix}_WIND_ENVELOPE_TEXT`)
