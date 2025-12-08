@@ -78,7 +78,7 @@
 
         <div>
             <div class="tile" style="text-align: center; border: none;">
-                <input id="FLIGHTPLAN" type="text" onchange="createDateTime()" class="tile-value" title="Name your flightplan" placeholder="My Flightplan name" style="flex: 1;font-size: 18px;">
+                <input id="FLIGHTPLAN" type="text" onchange="createDateTime()" class="tile-value" title="Name your flightplan" placeholder="My flight plan" style="flex: 1;font-size: 18px;">
                 <input id="DATETIME" type="label" style="text-align: center; font-size: 12px; background-color: transparent; color: #777; border: none;" disabled>
             </div>
         </div>
@@ -122,17 +122,17 @@
 
         <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
             <!-- Delete Button -->
-            <button id="delete_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete Flightplan">🗑️</button>
+            <button id="delete_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete Flight Plan">🗑️</button>
             <!-- New Plan Button -->
-            <button id="new_plan_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Create New Flightplan">🧹</button>
+            <button id="new_plan_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Create New Flight Plan">🧹</button>
 
             <!-- Plan Spinner -->
             <select id="plan_spinner" class="tile-value-dropdown" onchange="this.value && window.load_flightplan()" style="flex: 1; font-size: 12px; font-weight: normal;">
-                <option value=""></option>
+                <option value="">Select and Load</option>
             </select>
 
             <!-- Save button -->
-            <button id="save_fields_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Flightplan">💾</button>
+            <button id="save_fields_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Flight Plan">💾</button>
         </div>
 
         <!-- Bottom Buttons Container -->
@@ -173,10 +173,11 @@
             <div class="wind-grid">
                 <select id="DEPARTURE_COUNTRY" class="tile-value-dropdown" style="font-weight: normal;">
                     <option value="">Select Country</option>
+                    <!-- ICAO City options will be populated dynamically IN import_country_selected()-->
                 </select>
                 <select id="DEPARTURE_ICAO_CITY" class="tile-value-dropdown" style="font-weight: normal;">
                     <option value="">Select ICAO</option>
-                    <!-- ICAO City options will be populated dynamically IN import_country_selected()-->
+                    <!-- ICAO City options will be populated dynamically IN populate_aerodrome_fields_from_icao()-->
                 </select>
             </div>
 
@@ -472,10 +473,11 @@
             <div class="wind-grid">
                 <select id="ARRIVAL_COUNTRY" class="tile-value-dropdown" style="font-weight: normal;">
                     <option value="">Select Country</option>
+                    <!-- ICAO City options will be populated dynamically IN import_country_selected()-->
                 </select>
                 <select id="ARRIVAL_ICAO_CITY" class="tile-value-dropdown" style="font-weight: normal;">
                     <option value="">Select ICAO</option>
-                    <!-- ICAO City options will be populated dynamically IN import_country_selected()-->
+                    <!-- ICAO City options will be populated dynamically IN populate_aerodrome_fields_from_icao()-->
                 </select>
             </div>
 
@@ -781,31 +783,22 @@
                 </div>
             </div>
 
-           	<!--Create selectionbox that is populated with previously cached FICs-->
-           	<!--<div class="button-row">
-                <select id="fic_spinner" class="tile-value-dropdown">
-                    <option value="">Select saved FIC</option>
-                </select>
-                <button id="fic_save_btn" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">💾</button>
-                <button id="fic_delete_btn" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">🗑️</button>
-           	</div>-->
-
             <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
                 <!-- Delete Button -->
-                <button id="fic_delete_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete Flightplan">🗑️</button>
+                <button id="fic_delete_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete Flight Plan">🗑️</button>
                 <!-- Spinner -->
                 <select id="fic_spinner" class="tile-value-dropdown" style="flex: 1; font-size: 12px; font-weight: normal;">
-                    <option value="">Select saved FIC</option>
+                    <option value="">Select and Load</option>
                 </select>
                 <!-- Save button -->
-                <button id="fic_save_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Flightplan">💾</button>
+                <button id="fic_save_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Flight Plan">💾</button>
             </div>
 
         </div>
 
 
         <div class="border-round-eged">
-            <label_h2>Secondary Flight Information Centre (FIC)</label_h2>
+            <label_h2>Second Flight Information Centre (FIC)</label_h2>
 
             <div class="grid-two-thirds-one-third">
                 <div class="tile">
@@ -828,28 +821,17 @@
                 </div>
             </div>
 
-           	<!--Create selectionbox that is populated with previously cached FICs-->
-            <!--<div class="wind-grid">
-                <select id="fic_spinner2" class="tile-value-dropdown">
-                    <option value="">Select saved FIC</option>
-                </select>
-
-                <button id="fic_save_btn2" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">💾</button>
-                <button id="fic_delete_btn2" style="background-color: transparent; border: none; color: #666; cursor: grab; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto;">🗑️</button>
-            </div>
-            -->
-
             <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
                 <!-- Delete Button -->
-                <button id="fic_delete_btn2" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete Flightplan">🗑️</button>
+                <button id="fic_delete_btn2" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete Flight Plan">🗑️</button>
 
                 <!-- Spinner -->
                 <select id="fic_spinner2" class="tile-value-dropdown" style="flex: 1; font-size: 12px; font-weight: normal;">
-                    <option value="">Select saved FIC</option>
+                    <option value="">Select and Load</option>
                 </select>
 
                 <!-- Save button -->
-                <button id="fic_save_btn2" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Flightplan">💾</button>
+                <button id="fic_save_btn2" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Flight Plan">💾</button>
             </div>
 
         </div>
@@ -891,7 +873,7 @@
         <label_h1>Required Fields</label_h1>
         <div style="border: 1px solid lightgrey; border-radius: 10px; padding: 10px;">
             <div id="bottom-container">
-                <div class="warning" id="missing_label">Missing: Flightplan Name, CALLSIGN, Aircraft Type</div>
+                <div class="warning" id="missing_label">Missing: Flight plan name, CALLSIGN, Aircraft Type</div>
             </div>
         </div>
 
@@ -1017,22 +999,22 @@
         <div class="info" style="margin-bottom: 20px;">Flight preparations requires doing many tasks carefully. Here we seperate them into catagories to keep it organized.</div>
 
         <div class="button-row">
-            <button id="checklist_create"
+            <!--<button id="checklist_create"
                     type="button"
                     title="Clean checklist"
                     aria-label="Create new checklist"
                     onclick="checklist_create()"
                     style="background-color: #006280; border: 1px solid #333333; color: #ffffff; padding: 8px 12px; border-radius: 8px; cursor: pointer;">
                 🧹 Clean Checklist
-            </button>
-            <button id="checklist_save"
+            </button>-->
+            <!--<button id="checklist_save"
                     type="button"
                     title="Save checklist"
                     aria-label="Save checklist"
-                      onclick="checklist_save(window.CHECKLIST)"
+                    onclick="checklist_save(window.CHECKLIST)"
                     style="background-color: #006280; border: 1px solid #333333; color: #ffffff; padding: 8px 12px; border-radius: 8px; cursor: pointer;">
                     💾 Save Checklist
-            </button>
+            </button>-->
 
         </div>
 
@@ -1103,8 +1085,22 @@
                     style="background-color: #006280; border: 1px solid #333333; color: #ffffff; padding: 8px 12px; border-radius: 8px; cursor: pointer;">
                     🖨️ Print Checklist
             </button>
+        </div>
 
+        <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
+            <!-- Delete Button -->
+            <button id="checklist_delete_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete Checklist">🗑️</button>
+            <!-- New Plan Button -->
+            <button id="checklist_clear_btn" onclick="checklist_create()" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Create New Checklist">🧹</button>
+            <!-- Spinner -->
+            <select id="checklist_spinner" class="tile-value-dropdown" style="flex: 1; font-size: 12px; font-weight: normal;">
+                <option value="">Select and Load</option>
+            </select>
+            <!-- Save button -->
+            <button id="checklist_save_btn" onclick="checklist_save(window.CHECKLIST)" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Checklist">💾</button>
+        </div>
     </div>
+
 
 
 <script>
@@ -2390,7 +2386,7 @@
             // const metarText = document.getElementById('METAR-TEXT-' + prefix);
 
             if (!dateField?.value) {
-              console.log(`   >No METAR date is found for ${prefix}.`)
+              console.log(`   >No METAR date is found for ${prefix}.This is checked every minute.`)
               return;
             }
 
@@ -2873,8 +2869,8 @@
             console.log(`   >All data is READY to compute the RUNWAY with the METAR data`);
             // Compute expected runway number based on wind direction and runway orientation
             runway_predicted = expected_runway_number(prefix, metar_icao, extra_runways=runwayField.value);
-            // Change RUNWAY field color to pink to show that it is predicted
-            runwayField.style.backgroundColor = '#ffebee';
+            // Change RUNWAY field color to blue to show that it is predicted
+            runwayField.style.backgroundColor = '#e6f0ff';
             // metarText.value = js.window.messages;
             // Change value of RUNWAY field in the the predicted runway
             if (runway_predicted !== null && runway_predicted !== undefined && String(runway_predicted).trim() !== '') {
@@ -2996,7 +2992,6 @@
 
       if (countryCode == null || countryCode === '') {
           countryCode = window.flight_plan_data?.[`${prefix}_COUNTRY_CODE`];
-          console.log(countryCode);
       }
 
       const img = document.getElementById(`${prefix}_FLAG`);
@@ -3108,7 +3103,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
     def get_default_checklist():
         print('> func: default_checklist()')
         checklist = {
-                "NAME": 'default',
+                "NAME": '',
 
                 "personal": {
                     'Paper, Pen, Watch, Sunglasses, Hat': False,
@@ -3130,7 +3125,17 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
                 "flightplan": {'Submit Flight Plan/ Flight Notification': False},
 
-                "aerodrome": {},
+                "aerodrome": {'DEPARTURE': {
+                              'Circuit, Approach, Altitudes': False,
+                              'Weather Information (METAR/ TAF)': False,
+                              'Take-off/ Landing Distance': False,
+                              'ATC frequencies': False},
+                              'ARRIVAL': {
+                              'Circuit, Approach, Altitudes': False,
+                              'Weather Information (METAR/ TAF)': False,
+                              'Take-off/ Landing Distance': False,
+                              'ATC frequencies': False},
+                              },
 
                 "technical": {'Weight and Balance': False,
                               'Fuel Computations': False,
@@ -3171,8 +3176,6 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         js.window.CHECKLIST = checklist
         # Populate the menus
         checklist_populate()
-
-
         return checklist
 
     def get_default_settings():
@@ -3355,7 +3358,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             js.localStorage.setItem(cache_key, json_data)
             # save_to_cache(cache_key, json_data)
             print(f'   >Saved checklist: {cache_key}')
-            print(js.window.CHECKLIST)
+            # print(js.window.CHECKLIST)
             return True
         else:
             return False
@@ -3492,8 +3495,8 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             if section in data:
                 if section == "aerodrome":
                     continue
+                    # FOR THE MOMENT, LETS NOT DO THE THINGS BELOW
 
-                    # FOR THE MOMENT, DO NOT DO THE THINGS BELOW
                     items = list(data[section].items())
                     grouped_items = defaultdict(list)
 
@@ -3589,6 +3592,52 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         html = f"{print_button}{html}"
         return html
 
+    def update_dropdown(elementId, cacheName, keepSelection=True, elementId2=None):
+        """Update the CHECKLIST dropdown with cached checklists"""
+        print(f"> func: update_dropdown_CHECKLIST()")
+
+        print([js.localStorage.key(i) for i in range(js.localStorage.length)])
+
+
+        # Get all keys from localStorage
+        storage_length = js.localStorage.length
+        cName = cacheName.upper() + '_'
+        cached_names = set()
+
+        for i in range(storage_length):
+            key = js.localStorage.key(i)
+            if key and key.upper().startswith(cName):
+                cached_names.add(str(key).replace(cName, ''))
+
+        # Convert to list and sort alphabetically
+        cached_names = sorted(list(cached_names))
+
+        # Update both dropdowns
+        select = js.document.getElementById(elementId)
+        user_selection = select.value
+
+        # Set user_selection with the value elementId2 name if user selection is empty
+        if keepSelection and elementId2 and user_selection == '':
+            user_selection = js.document.getElementById(elementId2).value
+
+        if select:
+            # Clear existing options except the first placeholder
+            select.innerHTML = f'<option value="">Select and Load</option>'
+
+            # Add each CHECKLIST name as an option
+            for name in cached_names:
+                option = js.document.createElement('option')
+                option.value = name
+                option.textContent = name
+                select.appendChild(option)
+
+            # Set to user selection:
+            if keepSelection:
+                select.value = user_selection
+
+            print(f"   >✅ Updated {elementId} with {len(cached_names)} {cacheName.lower()}s")
+        else:
+            print(f"   >⚠️ Dropdown {elementId} not found for {cacheName.lower()}.")
 
     # ================================================
     # CACHE HELPERS
@@ -4070,6 +4119,12 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         """Populate aerodrome fields when ICAO city is selected."""
         print(f'> func: populate_aerodrome_fields_from_icao({fname}, {city_icao})')
 
+        # Load from cache if available
+        isLoaded = await load_aerodrome_from_json(fname.upper(), icao=city_icao, verbose='silent')
+        if isLoaded:
+            print(f"   >✅ Aerodrome is loaded from cache! <do not retrieve any other data>")
+            return
+
         # Get the stored dataframe
         if not hasattr(js.window, f'AERODROME_{fname}_DATA'):
             print(f"   >⚠️ No aerodrome data available:'AERODROME_{fname}_DATA'")
@@ -4254,8 +4309,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
     def update_aerodrome_gui_fields(fname):
         """Update GENERAL GUI fields from js.window.flight_plan_data"""
-        print('----> update_aerodrome_gui_fields()')
-        print(f"🔄 Updating {fname} GUI fields...")
+        print('> func: update_aerodrome_gui_fields()')
 
         # List of field IDs to update
         field_ids = [
@@ -4445,8 +4499,6 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         remove_metar_widget(fname)
         # Remove wind envelope
         remove_wind_envelope_plot(fname)
-        # Remove flag
-        # js.window.updateFlag(fname, 'remove')
         # Update missing fields colors
         js.window.highlightMissingFields()
 
@@ -4483,7 +4535,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         """Reset aerodrome image to default"""
         print("🔄 Resetting to default image...")
         await cache_and_display_image(js.DEFAULT_ICAO_IMAGE, f'{fname}_image_cache')
-        # Update flag
+        # Clear flag
         js.window.updateFlag(fname, 'remove')
 
 
@@ -5046,7 +5098,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             return
 
         # Delete from localStorage
-        storage_key = f"flightplan_{plan_name}"
+        storage_key = f"FLIGHTPLAN_{plan_name}"
         js.localStorage.removeItem(storage_key)
         print(f"✅ Flightplan '{plan_name}' deleted")
 
@@ -5054,7 +5106,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         js.document.getElementById('plan_spinner').value = ""
 
         # Update the flightplan list
-        update_dropdown_flightplans()
+        update_dropdown('plan_spinner', cacheName='FLIGHTPLAN', keepSelection=False, elementId2='FLIGHTPLAN')
 
         """Create new flightplan with current timestamp"""
         await clear_general_fields()
@@ -5104,7 +5156,8 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             js.document.getElementById('SQUAWK2').value = ''
 
         # Update the enroute list
-        update_dropdown_enroute_FIC()
+        update_dropdown('fic_spinner', cacheName='enroute', keepSelection=False)
+        update_dropdown('fic_spinner2', cacheName='enroute', keepSelection=False)
 
 
     async def load_enroute_fic(spinner_name):
@@ -5203,7 +5256,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         select.innerHTML = '<option value="">Select ICAO</option>'
 
         # Load from localStorage
-        storage_key = f"flightplan_{plan_name}"
+        storage_key = f"FLIGHTPLAN_{plan_name}"
         json_data = js.localStorage.getItem(storage_key)
 
         if not json_data:
@@ -5324,16 +5377,19 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             # Convert to JSON string
             json_data = json.dumps(flight_plan_dict)
 
-            # Save to localStorage with key "flightplan_[name]"
-            storage_key = f"flightplan_{flightplan_name}"
+            # Save to localStorage with key "FLIGHTPLAN_"
+            storage_key = f"FLIGHTPLAN_{flightplan_name}"
             js.localStorage.setItem(storage_key, json_data)
 
             # Get localStorage info
             # print_local_storage()
 
             # Update the list of saved flightplans
-            update_dropdown_flightplans()
-            update_dropdown_enroute_FIC()
+            update_dropdown('plan_spinner', cacheName='FLIGHTPLAN', keepSelection=True, elementId2='FLIGHTPLAN')
+
+            # Update the enroute list
+            update_dropdown('fic_spinner', cacheName='enroute', keepSelection=True)
+            update_dropdown('fic_spinner2', cacheName='enroute', keepSelection=True)
 
             # Save checklist
             if hasattr(js.window, 'CHECKLIST'):
@@ -5343,23 +5399,26 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             return True
 
 
-    async def load_aerodrome_from_json(fname, elementId=None):
+    async def load_aerodrome_from_json(fname, elementId=None, icao=None, verbose='info'):
         # Load aerodrome data for departure or arrival from localStorage.
         print(f'> func: load_aerodrome_from_json({fname})')
 
         # Get element ID for ICAO
         if elementId is None: elementId = f'{fname}_ICAO'
         element = js.document.getElementById(elementId)
-        elementIcao = element.value.strip().upper() or ''
+        icaoName = element.value.strip().upper() or ''
+        if icao is not None:
+            icaoName = re.search(r'\(([^)]+)\)', icao).group(1)
+            icaoName = icaoName.strip().upper()
 
         # Get cached data
-        cache_key = fname + '_' + elementIcao
+        cache_key = fname + '_' + icaoName
         json_data = js.localStorage.getItem(cache_key)
 
         # Check whether the cached data for the other (departure or arrival) aerdrome exists
         if not json_data:
             fname_opposite = 'DEPARTURE' if fname == 'ARRIVAL' else 'ARRIVAL'
-            json_data = js.localStorage.getItem(fname_opposite + '_' + elementIcao)
+            json_data = js.localStorage.getItem(fname_opposite + '_' + icaoName)
             if json_data:
                 # This is a hack where I need to replace the name of DEPARTURE into ARRIVAL or the otherway arround. The reason is that I want to re-use departure and arrival aerodromes for each other if none exists.
                 json_data = json_data.replace(fname_opposite, fname)
@@ -5370,16 +5429,16 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         elif not json_data and js.window.flight_plan_data[f'{fname}_ICAO_CITY'] == '':
             # No saved aerodrome but I nothing selected
             # Clean all GUI fields
-            message = f"ℹ️ No custom saved aerodrome found for {elementIcao}. Please select the aerodrome in the {fname.lower()} tab and check the input fields before saving."
+            message = f"ℹ️ No custom saved aerodrome found for {icaoName}. Please select the aerodrome in the {fname.lower()} tab and check the input fields before saving."
             print(message)
-            js.window.alert(message)
+            if verbose == 'info': js.window.alert(message)
             await clear_aerodrome_fields(fname)
-            return
+            return False
         else:
             # No saved aerodrome and nothing selected
-            message = f'⚠️ {fname.title()} aerodrome ({elementIcao}) not valid or previously saved. Please choose the aerodrome using the selection box first.'
+            message = f'⚠️ {fname.title()} aerodrome ({icaoName}) not valid or previously saved. Please choose the aerodrome using the selection box first.'
             print(message)
-            js.window.alert(message)
+            if verbose == 'info': js.window.alert(message)
 
             # Get the original selected ICAO
             icaoSelected = js.document.getElementById(f'{fname}_ICAO_CITY')
@@ -5392,7 +5451,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             # Update missing fields colors
             js.window.highlightMissingFields()
             # Return
-            return
+            return False
 
 
         # Parse JSON
@@ -5440,11 +5499,13 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             # Update flag
             # window.updateFlag(fname)
 
-            print(f"   >✅ Aerodrome {elementIcao} successfully loaded for {fname.lower()}")
-            # js.window.alert(f"✅ Aerodrome {elementIcao} successfully loaded for {fname.lower()}")
+            print(f"   >✅ Aerodrome {icaoName} successfully loaded from cache: {fname.lower()}")
+            # js.window.alert(f"✅ Aerodrome {icaoName} successfully loaded for {fname.lower()}")
+            return True
         except Exception as e:
             print(f"   >⚠️ Error loading aerodrome data: {str(e)}")
-            js.window.alert(f"❗ Error loading aerodrome data for {elementIcao}: {str(e)}")
+            js.window.alert(f"❗ Error loading aerodrome data for {icaoName}: {str(e)}")
+            return False
 
 
     def save_aerodrome_to_json(fname):
@@ -5556,8 +5617,9 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         json_data = json.dumps(dict_enroute)
         # Save to cache
         js.localStorage.setItem(cache_key, json_data)
-        # Update FIC dropdown after saving
-        update_dropdown_enroute_FIC()
+        # Update the enroute list
+        update_dropdown('fic_spinner', cacheName='enroute', keepSelection=True)
+        update_dropdown('fic_spinner2', cacheName='enroute', keepSelection=True)
         print(f"   >✅ FIC data saved and dropdown updated")
 
 
@@ -5584,77 +5646,6 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             print(f"   - Chrome: ~/.config/google-chrome/Default/Local Storage")
             print(f"   - Firefox: ~/.mozilla/firefox/<profile>/storage/default")
 
-
-    def update_dropdown_flightplans():
-        """Update the flightplan dropdown with saved plans from localStorage"""
-        print("🔄 Updating flightplan list...")
-
-        # Get all keys from localStorage
-        storage_length = js.localStorage.length
-        flightplan_names = []
-
-        for i in range(storage_length):
-            key = js.localStorage.key(i)
-            if key and str(key).startswith('flightplan_'):
-                # Extract flightplan name from key
-                plan_name = str(key).replace('flightplan_', '')
-                flightplan_names.append(plan_name)
-
-        # Sort alphabetically
-        flightplan_names.sort()
-
-        # Update dropdown
-        select = js.document.getElementById('plan_spinner')
-        if select:
-            # Clear existing options except the first placeholder
-            select.innerHTML = '<option value="">Select and load Flightplan</option>'
-
-            # Add each flightplan as an option
-            for plan_name in flightplan_names:
-                option = js.document.createElement('option')
-                option.value = plan_name
-                option.textContent = plan_name
-                select.appendChild(option)
-
-            print(f"✅ Found {len(flightplan_names)} saved flightplans")
-        else:
-            print("⚠️ Flightplan dropdown not found")
-
-
-    def update_dropdown_enroute_FIC():
-        """Update the FICS dropdowns with cached FICs"""
-        print(f"> func: update_dropdown_enroute_FIC()")
-
-        # Get all keys from localStorage
-        storage_length = js.localStorage.length
-        FIC_names = []
-
-        for i in range(storage_length):
-            key = js.localStorage.key(i)
-            if key and str(key).startswith('ENROUTE_'):
-                fic_name = str(key).replace('ENROUTE_', '')
-                FIC_names.append(fic_name)
-
-        # Sort alphabetically
-        FIC_names.sort()
-
-        # Update both dropdowns
-        for spinner_id in ['fic_spinner', 'fic_spinner2']:
-            select = js.document.getElementById(spinner_id)
-            if select:
-                # Clear existing options except the first placeholder
-                select.innerHTML = '<option value="">Select FIC</option>'
-
-                # Add each FIC as an option
-                for name in FIC_names:
-                    option = js.document.createElement('option')
-                    option.value = name
-                    option.textContent = name
-                    select.appendChild(option)
-
-                print(f"   >✅ Updated {spinner_id} with {len(FIC_names)} FICs")
-            else:
-                print(f"   >⚠️ FICs dropdown not found: {spinner_id}")
 
     # ================================================
     # ATC HELPERS
@@ -6602,6 +6593,8 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
     # js.window.get_core_js = get_core_js
     js.window.get_top_metar_stations = get_top_metar_stations
 
+    js.window.update_dropdown = update_dropdown
+
     # CHECKLIST
     js.window.checklist_create = checklist_create
     js.window.checklist_save = checklist_save
@@ -6646,13 +6639,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
     # DATA FUNCTIONS
     js.window.get_default_data = get_default_data
     js.window.get_default_settings = get_default_settings
-    js.window.default_checklist = get_default_checklist
-
-    # FLIGHTPLAN LIST IN CACHE
-    update_dropdown_flightplans()
-
-    # FIC LIST IN CACHE
-    update_dropdown_enroute_FIC()
+    js.window.get_default_checklist = get_default_checklist
 
     # AIRSPACE
     js.window.import_airspaces = import_airspaces
@@ -6846,12 +6833,15 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         console.log("   >Default data is initialized.");
         // Get default settings
         window.settings = window.get_default_settings();
+        window.CHECKLIST = window.get_default_checklist();
         console.log("   >Settings data is initialized.");
         // Restore settings from cache
         restoreSettingsFromCache();
         console.log("   >Custom User settings are restored from cache.");
         // Hide loading spinner once everything is ready
         document.getElementById('loading-spinner').style.display = 'none';
+        // Populate the plan_spinner with FLIGHTPLAN_ keys on startup
+        update_dropdown('plan_spinner', cacheName='FLIGHTPLAN', keepSelection=false);
       }
     }
 
@@ -6889,8 +6879,10 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         document.getElementById('plan_spinner').value = "";
         document.getElementById('fic_spinner').value = "";
         document.getElementById('fic_spinner2').value = "";
+
         // Update missing fields
         highlightMissingFields();
+
         // Show success message to user
         alert("✅ All fields have been cleared and reset to their default values!");
 
@@ -6958,20 +6950,6 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         }
       }
     });
-
-    // DEPARTURE_USE_CACHED.onclick = async () => {
-    //   if (pyscriptReady && window.load_aerodrome_from_json) {
-    //     console.log("✅ ---> load_aerodrome_from_json('DEPARTURE')");
-    //     await window.load_aerodrome_from_json('DEPARTURE');
-    //   }
-    // };
-
-    // retrieve_metar_btn.onclick = async () => {
-    //   if (pyscriptReady && window.retrieve_metar) {
-    //     await window.retrieve_metar('DEPARTURE');
-    //   }
-    // };
-
 
 
     document.getElementById('BTN_HTML_SUMMARY')?.addEventListener('click', () => {
