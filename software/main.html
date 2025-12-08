@@ -5345,18 +5345,12 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
     async def load_aerodrome_from_json(fname, elementId=None):
         # Load aerodrome data for departure or arrival from localStorage.
-
         print(f'> func: load_aerodrome_from_json({fname})')
+
         # Get element ID for ICAO
         if elementId is None: elementId = f'{fname}_ICAO'
         element = js.document.getElementById(elementId)
         elementIcao = element.value.strip().upper() or ''
-
-        if elementIcao == '':
-            message = f'⚠️ No aerodrome (ICAO) selected. Please choose the aerodrome using the selection box first.'
-            print(message)
-            js.window.alert(message)
-            return
 
         # Get cached data
         cache_key = fname + '_' + elementIcao
@@ -5370,20 +5364,36 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                 # This is a hack where I need to replace the name of DEPARTURE into ARRIVAL or the otherway arround. The reason is that I want to re-use departure and arrival aerodromes for each other if none exists.
                 json_data = json_data.replace(fname_opposite, fname)
 
-        if not json_data:
+        if json_data:
+            # Use the user saved aerodrome data
+            pass
+        elif not json_data and js.window.flight_plan_data[f'{fname}_ICAO_CITY'] == '':
+            # No saved aerodrome but I nothing selected
             # Clean all GUI fields
             message = f"ℹ️ No custom saved aerodrome found for {elementIcao}. Please select the aerodrome in the {fname.lower()} tab and check the input fields before saving."
             print(message)
             js.window.alert(message)
             await clear_aerodrome_fields(fname)
-
-            # Clear the ICAO element fields
-            # element = js.document.getElementById(f'{fname}_ICAO')
-            # element.value = ''
-            # element = js.document.getElementById(f'{fname}_ICAO_2')
-            # element.value = ''
-
             return
+        else:
+            # No saved aerodrome and nothing selected
+            message = f'⚠️ {fname.title()} aerodrome ({elementIcao}) not valid or previously saved. Please choose the aerodrome using the selection box first.'
+            print(message)
+            js.window.alert(message)
+
+            # Get the original selected ICAO
+            icaoSelected = js.document.getElementById(f'{fname}_ICAO_CITY')
+            # Extract the string that is between parentheses in the alert message (e.g. the ICAO) and set it as the spinner value
+            icao_value = re.search(r'\(([^)]+)\)', icaoSelected.value).group(1)
+            # Store previous value back elements and flight plan
+            js.document.getElementById(f'{fname}_ICAO').value = icao_value
+            js.document.getElementById(f'{fname}_ICAO_2').value = icao_value
+            js.window.flight_plan_data[f'{fname}_ICAO'] = icao_value
+            # Update missing fields colors
+            js.window.highlightMissingFields()
+            # Return
+            return
+
 
         # Parse JSON
         try:
