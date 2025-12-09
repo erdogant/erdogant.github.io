@@ -785,13 +785,13 @@
 
             <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
                 <!-- Delete Button -->
-                <button id="fic_delete_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete Flight Plan">🗑️</button>
+                <button id="fic_delete_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete FIC">🗑️</button>
                 <!-- Spinner -->
                 <select id="fic_spinner" class="tile-value-dropdown" style="flex: 1; font-size: 12px; font-weight: normal;">
                     <option value="">Select and Load</option>
                 </select>
                 <!-- Save button -->
-                <button id="fic_save_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Flight Plan">💾</button>
+                <button id="fic_save_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save FIC">💾</button>
             </div>
 
         </div>
@@ -823,7 +823,7 @@
 
             <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
                 <!-- Delete Button -->
-                <button id="fic_delete_btn2" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete Flight Plan">🗑️</button>
+                <button id="fic_delete_btn2" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete FIC2">🗑️</button>
 
                 <!-- Spinner -->
                 <select id="fic_spinner2" class="tile-value-dropdown" style="flex: 1; font-size: 12px; font-weight: normal;">
@@ -831,7 +831,7 @@
                 </select>
 
                 <!-- Save button -->
-                <button id="fic_save_btn2" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Flight Plan">💾</button>
+                <button id="fic_save_btn2" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save FIC2">💾</button>
             </div>
 
         </div>
@@ -1018,10 +1018,19 @@
 
         </div>-->
 
-        <!--<div class="tile">
-            <input id="checklist_field" type="text" class="tile-value">
-            <span class="tile-label">Checklist name</span>
-        </div>-->
+
+        <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
+            <!-- Delete Button -->
+            <button id="checklist_delete_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete checklist">🗑️</button>
+            <!-- Spinner -->
+            <select id="checklist_spinner" class="tile-value-dropdown" style="flex: 1; font-size: 12px; font-weight: normal;">
+                <option value="">Select and Load</option>
+            </select>
+            <!-- Clean Button -->
+            <button id="checklist_clear_btn" onclick="checklist_clean()" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Create New Checklist">🧹</button>
+        </div>
+
+
 
         <!-- Personal items -->
         <div class="collapsible" data-title="Personal checklist">
@@ -1083,14 +1092,8 @@
 
 
         <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
-            <!-- Delete Button -->
-            <button id="checklist_delete_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete Checklist">🗑️</button>
-            <!-- Clean Button -->
-            <button id="checklist_clear_btn" onclick="checklist_clean()" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Create New Checklist">🧹</button>
-            <!-- Spinner -->
-            <select id="checklist_spinner" class="tile-value-dropdown" style="flex: 1; font-size: 12px; font-weight: normal;">
-                <option value="">Select and Load</option>
-            </select>
+            <!-- Inputfield -->
+            <input id="checklist_field" type="text" class="tile-value">
             <!-- Save button -->
             <button id="checklist_save_btn" onclick="save_flightplan()" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Checklist">💾</button>
         </div>
@@ -3068,6 +3071,14 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         window.load_enroute_fic('fic_spinner2');
     }
 });
+
+// Add event listeners for checklist spinners
+document.getElementById('checklist_spinner')?.addEventListener('change', function() {
+    if (this.value && window.load_spinner_selection) {
+        window.load_spinner_selection('checklist_spinner', 'CHECKLIST');
+    }
+});
+
 </script>
 
 
@@ -3317,6 +3328,94 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             'CHECKLIST': get_default_checklist(),
         }
 
+    # ================================================
+    # GENERIC FUNCTIONS
+    # ================================================
+    def update_dropdown(elementId, cacheName, keepSelection=True, elementId2=None):
+        """Update the dropdown with cached info"""
+        print(f"> func: update_dropdown_CHECKLIST()")
+
+        # Get all keys from localStorage
+        storage_length = js.localStorage.length
+        cName = cacheName.upper() + '_'
+        cached_names = set()
+
+        for i in range(storage_length):
+            key = js.localStorage.key(i)
+            if key and key.upper().startswith(cName):
+                cached_names.add(str(key).replace(cName, ''))
+
+        # Convert to list and sort alphabetically
+        cached_names = sorted(list(cached_names))
+
+        # Update dropdown
+        select = js.document.getElementById(elementId)
+        user_selection = select.value
+
+        # Set user_selection with the value elementId2 name if user selection is empty
+        if keepSelection and elementId2 and user_selection == '':
+            user_selection = js.document.getElementById(elementId2).value
+
+        if select:
+            # Clear existing options except the first placeholder
+            select.innerHTML = f'<option value="">Select and Load</option>'
+
+            # Add each CHECKLIST name as an option
+            for name in cached_names:
+                option = js.document.createElement('option')
+                option.value = name
+                option.textContent = name
+                select.appendChild(option)
+
+            # Set to user selection:
+            if keepSelection:
+                select.value = user_selection
+
+            print(f"   >✅ Updated {elementId} with {len(cached_names)} {cacheName.lower()}s")
+        else:
+            print(f"   >⚠️ Dropdown {elementId} not found for {cacheName.lower()}.")
+
+
+
+    async def load_spinner_selection(elementId, cacheName):
+        """Load selected from localStorage"""
+        print(f'> func: load_spinner_selection({elementId})')
+
+        # Get the user selection from the spinner element
+        user_selection = js.document.getElementById(elementId).value
+
+        if not user_selection or user_selection == "":
+            print("   >⚠️ No {cacheName} FIC selected")
+            return
+
+        print(f"   >📂 Loading {cacheName}: {user_selection}")
+
+        # Load from cache (localStorage)
+        storage_key = f"{cacheName}_{user_selection}"
+        json_data = js.localStorage.getItem(storage_key)
+
+        if not json_data:
+            print(f"   >⚠️ {cacheName} not found: {user_selection}")
+            js.window.alert(f"⚠️ {cacheName} '{user_selection}' was not found.")
+            return
+
+        # Parse JSON
+        try:
+            data_dict = json.loads(json_data)
+            print(f"   >✅ Loaded ENROUTE: {len(enroute_dict)} fields for {spinner_name}")
+
+            # Do stuff for the spinner
+            if spinner_name == 'checklist_spinner':
+                js.window.flight_plan_data['CHECKLIST'] = data_dict
+                js.document.getElementById('checklist_field').value = user_selection
+                checklist_populate()
+
+            print(f"   >✅ [elementId] '{user_selection}' loaded successfully")
+        except Exception as e:
+            print(f"   >⚠️ Error loading {user_selection}: {e}")
+            js.window.alert(f"❗ Error loading {user_selection}: {e}")
+
+
 
     # ================================================
     # CHECKLIST
@@ -3333,17 +3432,6 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             if isinstance(js.window.flight_plan_data['CHECKLIST'][key], dict):
                 js.window.populateChecklist(f"{key.title()} checklist")
 
-
-    def checklist_get_cache_key(flightplan_name=None):
-        # Get flightplan name
-        if flightplan_name is None:
-            flightplan_name = js.window.flight_plan_data['FLIGHTPLAN']
-
-        # Check key
-        if flightplan_name is None or flightplan_name == '':
-            return None
-        else:
-            return f"checklist_{flightplan_name}"
 
     def checklist_save():
         print('> func: checklist_save()')
@@ -3371,28 +3459,12 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         else:
             return False
 
-    def checklist_load_from_cache(plan_name):
-        print('> func: checklist_load_from_cache()')
-        # Get key
-        cache_key = checklist_get_cache_key(plan_name)
-
-        # Check if cache key exists
-        if is_cached(cache_key):
-            print(f'   >Loading checklist: [{cache_key}]')
-            json_data = js.localStorage.getItem(cache_key)
-            js.window.CHECKLIST = json.loads(json_data)
-            return True
-        else:
-            print(f'   >No saved checklist found with name {cache_key}')
-            return False
-
     def checklist_clean():
         print('> func: checklist_clean()')
         # Create new default checklist
         js.window.flight_plan_data['CHECKLIST'] = get_default_checklist()
         # Populate checklist
         checklist_populate()
-
 
     def check_items_complete(listname):
         # Get items from checklist
@@ -3404,7 +3476,6 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         else:
             icon = '⚠️'
         return icon
-
 
     def checklist_print():
         print(f'> func: checklist_print()')
@@ -3600,52 +3671,6 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         html = f"{print_button}{html}"
         return html
 
-    def update_dropdown(elementId, cacheName, keepSelection=True, elementId2=None):
-        """Update the CHECKLIST dropdown with cached checklists"""
-        print(f"> func: update_dropdown_CHECKLIST()")
-
-        print([js.localStorage.key(i) for i in range(js.localStorage.length)])
-
-
-        # Get all keys from localStorage
-        storage_length = js.localStorage.length
-        cName = cacheName.upper() + '_'
-        cached_names = set()
-
-        for i in range(storage_length):
-            key = js.localStorage.key(i)
-            if key and key.upper().startswith(cName):
-                cached_names.add(str(key).replace(cName, ''))
-
-        # Convert to list and sort alphabetically
-        cached_names = sorted(list(cached_names))
-
-        # Update both dropdowns
-        select = js.document.getElementById(elementId)
-        user_selection = select.value
-
-        # Set user_selection with the value elementId2 name if user selection is empty
-        if keepSelection and elementId2 and user_selection == '':
-            user_selection = js.document.getElementById(elementId2).value
-
-        if select:
-            # Clear existing options except the first placeholder
-            select.innerHTML = f'<option value="">Select and Load</option>'
-
-            # Add each CHECKLIST name as an option
-            for name in cached_names:
-                option = js.document.createElement('option')
-                option.value = name
-                option.textContent = name
-                select.appendChild(option)
-
-            # Set to user selection:
-            if keepSelection:
-                select.value = user_selection
-
-            print(f"   >✅ Updated {elementId} with {len(cached_names)} {cacheName.lower()}s")
-        else:
-            print(f"   >⚠️ Dropdown {elementId} not found for {cacheName.lower()}.")
 
     # ================================================
     # CACHE HELPERS
@@ -5330,11 +5355,6 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
     def save_flightplan(to_cache=True):
         """Save current flightplan data to localStorage"""
-        # GET FLIGHTPLAN NAME
-        flightplan_name = js.window.flight_plan_data.get("FLIGHTPLAN", "")
-
-        if flightplan_name is None or flightplan_name == '':
-            js.window.alert("ℹ️ Please enter a flight plan name before saving.")
 
         # STORE FIELDS FROM GENERAL IN FLIGHTPLAN
         js.window.flight_plan_data["FLIGHTPLAN"] = js.document.getElementById('FLIGHTPLAN').value;
@@ -5361,6 +5381,11 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         # STORE WAYPOINTS
         # js.window.flight_plan_data['WAYPOINTS'] = js.window.waypoints
         # ALL OTHER FIELDS SHOULD BE STORE ALREADY IN THE FLIGHTPLAN DATA
+
+        # GET FLIGHTPLAN NAME
+        flightplan_name = js.window.flight_plan_data["FLIGHTPLAN"]
+        if flightplan_name is None or flightplan_name == '':
+            js.window.alert("ℹ️ Please enter a flight plan name before saving.")
 
         # Print the saved variables array
         print("-------------SAVE FLIGHTPLAN DATA TO DICT-------------")
@@ -6613,6 +6638,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
     js.window.checklist_print = checklist_print
     js.window.checklist_populate = checklist_populate
     js.window.get_default_checklist = get_default_checklist
+    js.window.load_spinner_selection = load_spinner_selection
 
 
     # FLAG
@@ -6848,6 +6874,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         // Populate the menus
         console.log("   >Populate the checklist.");
         checklist_populate()
+        update_dropdown('checklist_spinner', cacheName='CHECKLIST', keepSelection=false, elementId2='checklist_field');
         console.log("   >Settings data is initialized.");
         // Restore settings from cache
         restoreSettingsFromCache();
