@@ -132,7 +132,7 @@
             </select>
 
             <!-- Save button -->
-            <button id="save_fields_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Flight Plan">💾</button>
+            <button id="save_fields_btn" onclick="window.save_flightplan()" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Flight Plan">💾</button>
         </div>
 
         <!-- Bottom Buttons Container -->
@@ -998,26 +998,30 @@
         <label_h1>Checklist</label_h1>
         <div class="info" style="margin-bottom: 20px;">Flight preparations requires doing many tasks carefully. Here we seperate them into catagories to keep it organized.</div>
 
-        <div class="button-row">
-            <!--<button id="checklist_create"
+        <!--<div class="button-row">
+            <button id="checklist_clean"
                     type="button"
                     title="Clean checklist"
                     aria-label="Create new checklist"
-                    onclick="checklist_create()"
+                    onclick="checklist_clean()"
                     style="background-color: #006280; border: 1px solid #333333; color: #ffffff; padding: 8px 12px; border-radius: 8px; cursor: pointer;">
                 🧹 Clean Checklist
-            </button>-->
-            <!--<button id="checklist_save"
+            </button>
+            <button id="checklist_save"
                     type="button"
                     title="Save checklist"
                     aria-label="Save checklist"
                     onclick="checklist_save(window.CHECKLIST)"
                     style="background-color: #006280; border: 1px solid #333333; color: #ffffff; padding: 8px 12px; border-radius: 8px; cursor: pointer;">
                     💾 Save Checklist
-            </button>-->
+            </button>
 
-        </div>
+        </div>-->
 
+        <!--<div class="tile">
+            <input id="checklist_field" type="text" class="tile-value">
+            <span class="tile-label">Checklist name</span>
+        </div>-->
 
         <!-- Personal items -->
         <div class="collapsible" data-title="Personal checklist">
@@ -1076,6 +1080,21 @@
         </div>
         </div>
 
+
+
+        <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
+            <!-- Delete Button -->
+            <button id="checklist_delete_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete Checklist">🗑️</button>
+            <!-- Clean Button -->
+            <button id="checklist_clear_btn" onclick="checklist_clean()" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Create New Checklist">🧹</button>
+            <!-- Spinner -->
+            <select id="checklist_spinner" class="tile-value-dropdown" style="flex: 1; font-size: 12px; font-weight: normal;">
+                <option value="">Select and Load</option>
+            </select>
+            <!-- Save button -->
+            <button id="checklist_save_btn" onclick="save_flightplan()" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Checklist">💾</button>
+        </div>
+
         <div class="button-row">
             <button id="checklist_print"
                     type="button"
@@ -1087,18 +1106,6 @@
             </button>
         </div>
 
-        <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
-            <!-- Delete Button -->
-            <button id="checklist_delete_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete Checklist">🗑️</button>
-            <!-- New Plan Button -->
-            <button id="checklist_clear_btn" onclick="checklist_create()" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Create New Checklist">🧹</button>
-            <!-- Spinner -->
-            <select id="checklist_spinner" class="tile-value-dropdown" style="flex: 1; font-size: 12px; font-weight: normal;">
-                <option value="">Select and Load</option>
-            </select>
-            <!-- Save button -->
-            <button id="checklist_save_btn" onclick="checklist_save(window.CHECKLIST)" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Checklist">💾</button>
-        </div>
     </div>
 
 
@@ -1131,7 +1138,8 @@
 
       const header = collapsible.querySelector('.collapsible-header');
       const content = collapsible.querySelector('.collapsible-content');
-      const items = window.CHECKLIST[category];
+      // const items = window.CHECKLIST[category];
+      const items = window.flight_plan_data['CHECKLIST'][category];
 
       if (!items) {
         console.warn(`No data found for ${category} in window.CHECKLIST`);
@@ -1147,19 +1155,19 @@
       // Set color of the menu
       const entries = Object.entries(items || {});
       const total = entries.length;
-      let trueCount = Object.values(window.CHECKLIST[category]).filter(value => value === true).length;
+      let trueCount = Object.values(window.flight_plan_data['CHECKLIST'][category]).filter(value => value === true).length;
       colorChecklist(header, trueCount, total)
 
-      // Add event listeners to update window.CHECKLIST when checkboxes change
+      // Add event listeners to update window.flight_plan_data['CHECKLIST'] when checkboxes change
       content.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
         checkbox.addEventListener('change', function(e) {
           const label = e.target.getAttribute('data-label');
           const checked = e.target.checked;
-          window.CHECKLIST[category][label] = checked;
+          window.flight_plan_data['CHECKLIST'][category][label] = checked;
           console.log(`   >Updated ${category}.${label} to ${checked}`);
 
           // Count how many are checked
-          trueCount = Object.values(window.CHECKLIST[category]).filter(value => value === true).length;
+          trueCount = Object.values(window.flight_plan_data['CHECKLIST'][category]).filter(value => value === true).length;
           // Set color of the menu
           colorChecklist(header, trueCount, total)
         });
@@ -2321,24 +2329,24 @@
     }
 
     // Add save button functionality
-    document.getElementById('save_fields_btn')?.addEventListener('click', () => {
-      if (pyscriptReady && window.save_flightplan) {
-        try {
-          // Get flightplan name
-          const flightplanName = document.getElementById('FLIGHTPLAN')?.value;
-          if (!flightplanName) { window.alert("ℹ️ Please enter a flight plan name before saving.");
-            return;
-          }
+    // document.getElementById('save_fields_btn')?.addEventListener('click', () => {
+    //   if (pyscriptReady && window.save_flightplan) {
+    //     try {
+    //       // Get flightplan name
+    //       const flightplanName = document.getElementById('FLIGHTPLAN')?.value;
+    //       if (!flightplanName) { window.alert("ℹ️ Please enter a flight plan name before saving.");
+    //         return;
+    //       }
 
-          // Save flightplan data to JSON files
-          window.save_flightplan();
-          window.alert("✅ Flight plan saved successfully!");
+    //       // Save flightplan data to JSON files
+    //       window.save_flightplan();
+    //       window.alert("✅ Flight plan saved successfully!");
 
-        } catch (error) {
-          console.error("Error saving flightplan data:", error);
-        }
-      }
-    });
+    //     } catch (error) {
+    //       console.error("Error saving flightplan data:", error);
+    //     }
+    //   }
+    // });
 
 
     function openAerodromeMap(fname) {
@@ -3172,16 +3180,12 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
                 }
 
-        # Store as javascript accesible
-        js.window.CHECKLIST = checklist
-        # Populate the menus
-        checklist_populate()
         return checklist
 
     def get_default_settings():
         """Get default settings"""
         print('> func: get_default_settings()')
-        data = {
+        return {
             'DEPARTURE_COUNTRY': '',
             'DEPARTURE_ICAO': '',
             'DEPARTURE_ICAO_CITY': '',
@@ -3214,7 +3218,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
             'html_templates': 'https://erdogant.github.io/datasets/skywalk/html_templates/',
         }
-        return data
+
 
     def get_default_data():
         """Get default flightplan data structure - copied from utils_skywalk.py"""
@@ -3308,22 +3312,26 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
             # NOTAM data
             'NOTAM': {'data': {}},      # NOTAM data
+
+            # CHECKLIST
+            'CHECKLIST': get_default_checklist(),
         }
+
 
     # ================================================
     # CHECKLIST
     # ================================================
 
-    def checklist_populate(plan_name=None):
-        # Load specified checklist from flightplan
-        if plan_name is not None:
-            checklist_load_from_cache(plan_name)
+    def checklist_populate():
+        print('> func: checklist_populate()')
+        if not js.window.flight_plan_data.get('CHECKLIST'):
+            print('   > ⚠️ CHECKLIST not found in [js.window.flight_plan_data]')
+            return
 
-        # Populate the personal checklist
-        if hasattr(js.window, 'CHECKLIST'):
-            for key in js.window.CHECKLIST.keys():
-                if isinstance(js.window.CHECKLIST[key], dict):
-                    js.window.populateChecklist(f"{key.title()} checklist")
+        # Populate the checklist
+        for key in js.window.flight_plan_data['CHECKLIST'].keys():
+            if isinstance(js.window.flight_plan_data['CHECKLIST'][key], dict):
+                js.window.populateChecklist(f"{key.title()} checklist")
 
 
     def checklist_get_cache_key(flightplan_name=None):
@@ -3337,8 +3345,8 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         else:
             return f"checklist_{flightplan_name}"
 
-    def checklist_save(CHECKLIST):
-        logger.info('> func: checklist_save()')
+    def checklist_save():
+        print('> func: checklist_save()')
 
         # Get key
         cache_key = checklist_get_cache_key()
@@ -3351,20 +3359,20 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
         # Save for later usage
         if hasattr(js.window, 'CHECKLIST'):
-            js.window.CHECKLIST['NAME'] = cache_key
+            js.window.flight_plan_data['CHECKLIST']['NAME'] = cache_key
             # Convert to JSON string
-            json_data = json.dumps(js.window.CHECKLIST)
+            json_data = json.dumps(js.window.flight_plan_data['CHECKLIST'])
             # Save to cache
             js.localStorage.setItem(cache_key, json_data)
             # save_to_cache(cache_key, json_data)
             print(f'   >Saved checklist: {cache_key}')
-            # print(js.window.CHECKLIST)
+            # print(js.window.flight_plan_data['CHECKLIST'])
             return True
         else:
             return False
 
     def checklist_load_from_cache(plan_name):
-        logger.info('> func: checklist_load_from_cache()')
+        print('> func: checklist_load_from_cache()')
         # Get key
         cache_key = checklist_get_cache_key(plan_name)
 
@@ -3378,17 +3386,17 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             print(f'   >No saved checklist found with name {cache_key}')
             return False
 
-    def checklist_create():
-        logger.info('> func: checklist_create()')
+    def checklist_clean():
+        print('> func: checklist_clean()')
         # Create new default checklist
-        get_default_checklist()
+        js.window.flight_plan_data['CHECKLIST'] = get_default_checklist()
+        # Populate checklist
+        checklist_populate()
 
 
     def check_items_complete(listname):
-        if not hasattr(js.window, 'CHECKLIST'):
-            return '⚠️'
-        else:
-            check_items = js.window.CHECKLIST[listname]
+        # Get items from checklist
+        check_items = js.window.flight_plan_data['CHECKLIST'][listname]
 
         # Check if all items are True
         if all(check_items.values()):
@@ -3454,11 +3462,11 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         # from badges import RWY_required, runway_direction, route
         from collections import defaultdict
 
-        if not hasattr(js.window, 'CHECKLIST'):
+        if not js.window.flight_plan_data.get('CHECKLIST'):
             js.window.alert('⚠️ Create a new checklist before printing.')
             return None
 
-        data = js.window.CHECKLIST
+        data = js.window.flight_plan_data['CHECKLIST']
 
         weight_status = weight_balance('DEPARTURE', return_type='dict')
         aircraft_status = aircraft_weight('DEPARTURE', return_type='dict')
@@ -5050,9 +5058,10 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             'ARRIVAL_LATLON': [None, None],
             'DEPARTURE_COUNTRY': '',
             'ARRIVAL_COUNTRY': '',
-            # 'DEPARTURE_COUNTRY_CODE': '',
-            # 'ARRIVAL_COUNTRY_CODE': '',
         }
+        js.window.flight_plan_data['CHECKLIST'] = get_default_checklist()
+        # populate checklist items
+        checklist_populate()
 
         # Clear fields
         await clear_general_fields()
@@ -5115,7 +5124,10 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         await clear_enroute_fields()
 
         # Clean all fields from checklist
-        get_default_checklist()
+        # get_default_checklist()
+        js.window.flight_plan_data['CHECKLIST'] = get_default_checklist()
+        # populate checklist items
+        checklist_populate()
 
         # Clean flag
         # updateFlag('DEPARTURE', 'remove')
@@ -5308,7 +5320,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
                 element.value = flight_plan_dict['ARRIVAL_ICAO_CITY']
 
             # Populate checklist
-            checklist_populate(plan_name)
+            checklist_populate()
 
             print(f"   >✅ Flightplan '{plan_name}' loaded successfully")
         except Exception as e:
@@ -5318,6 +5330,11 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 
     def save_flightplan(to_cache=True):
         """Save current flightplan data to localStorage"""
+        # GET FLIGHTPLAN NAME
+        flightplan_name = js.window.flight_plan_data.get("FLIGHTPLAN", "")
+
+        if flightplan_name is None or flightplan_name == '':
+            js.window.alert("ℹ️ Please enter a flight plan name before saving.")
 
         # STORE FIELDS FROM GENERAL IN FLIGHTPLAN
         js.window.flight_plan_data["FLIGHTPLAN"] = js.document.getElementById('FLIGHTPLAN').value;
@@ -5344,9 +5361,6 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         # STORE WAYPOINTS
         # js.window.flight_plan_data['WAYPOINTS'] = js.window.waypoints
         # ALL OTHER FIELDS SHOULD BE STORE ALREADY IN THE FLIGHTPLAN DATA
-
-        # GET FLIGHTPLAN NAME
-        flightplan_name = js.window.flight_plan_data.get("FLIGHTPLAN", "")
 
         # Print the saved variables array
         print("-------------SAVE FLIGHTPLAN DATA TO DICT-------------")
@@ -5391,11 +5405,8 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
             update_dropdown('fic_spinner', cacheName='enroute', keepSelection=True)
             update_dropdown('fic_spinner2', cacheName='enroute', keepSelection=True)
 
-            # Save checklist
-            if hasattr(js.window, 'CHECKLIST'):
-                checklist_save(js.window.CHECKLIST)
-
             print("---------------DATA SAVED-------------------")
+            js.window.alert("✅ Flight plan saved successfully!");
             return True
 
 
@@ -6596,10 +6607,12 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
     js.window.update_dropdown = update_dropdown
 
     # CHECKLIST
-    js.window.checklist_create = checklist_create
-    js.window.checklist_save = checklist_save
+    js.window.checklist_clean = checklist_clean
+    # js.window.checklist_save = checklist_save
     js.window.check_items_complete = check_items_complete
     js.window.checklist_print = checklist_print
+    js.window.checklist_populate = checklist_populate
+    js.window.get_default_checklist = get_default_checklist
 
 
     # FLAG
@@ -6639,7 +6652,6 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
     # DATA FUNCTIONS
     js.window.get_default_data = get_default_data
     js.window.get_default_settings = get_default_settings
-    js.window.get_default_checklist = get_default_checklist
 
     # AIRSPACE
     js.window.import_airspaces = import_airspaces
@@ -6812,7 +6824,7 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         }
     }
 
-    // INITIALIZATOIN WHEN PYSCRIPT IS READY
+    // INITIALIZATION WHEN PYSCRIPT IS READY
     function checkPyScriptReady() {
       /**
        * Checks if PyScript is finished loading by testing if key functions are available.
@@ -6833,7 +6845,9 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
         console.log("   >Default data is initialized.");
         // Get default settings
         window.settings = window.get_default_settings();
-        window.CHECKLIST = window.get_default_checklist();
+        // Populate the menus
+        console.log("   >Populate the checklist.");
+        checklist_populate()
         console.log("   >Settings data is initialized.");
         // Restore settings from cache
         restoreSettingsFromCache();
