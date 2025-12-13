@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 
     <!--
@@ -993,44 +992,30 @@
 
     </div>
 
-
     <div id="Checklist" class="tabcontent">
-        <label_h1>Checklist</label_h1>
-        <div class="info" style="margin-bottom: 20px;">Flight preparations requires doing many tasks carefully. Here we seperate them into catagories to keep it organized.</div>
 
-        <!--<div class="button-row">
-            <button id="checklist_clean"
-                    type="button"
-                    title="Clean checklist"
-                    aria-label="Create new checklist"
-                    onclick="checklist_clean()"
-                    style="background-color: #006280; border: 1px solid #333333; color: #ffffff; padding: 8px 12px; border-radius: 8px; cursor: pointer;">
-                🧹 Clean Checklist
-            </button>
-            <button id="checklist_save"
-                    type="button"
-                    title="Save checklist"
-                    aria-label="Save checklist"
-                    onclick="checklist_save(window.CHECKLIST)"
-                    style="background-color: #006280; border: 1px solid #333333; color: #ffffff; padding: 8px 12px; border-radius: 8px; cursor: pointer;">
-                    💾 Save Checklist
-            </button>
+        <div class="border-round-eged">
+            <label_h1>Checklist</label_h1>
+            <div class="info" style="margin-bottom: 20px;">Flight preparations requires doing many tasks carefully. Here we seperate them into catagories to keep it organized.</div>
 
-        </div>-->
+            <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
+                <!-- Delete Button -->
+                <button id="checklist_delete_btn" onclick="window.delete_item_from_spinner('checklist_spinner', 'CHECKLIST', 'checklist_field')" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete checklist">🗑️</button>
+                <!-- Spinner -->
+                <select id="checklist_spinner" class="tile-value-dropdown" style="flex: 1; font-size: 12px; font-weight: normal;">
+                    <option value="">Select and Load</option>
+                </select>
+            </div>
 
-
-        <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
-            <!-- Delete Button -->
-            <button id="checklist_delete_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete checklist">🗑️</button>
-            <!-- Spinner -->
-            <select id="checklist_spinner" class="tile-value-dropdown" style="flex: 1; font-size: 12px; font-weight: normal;">
-                <option value="">Select and Load</option>
-            </select>
-            <!-- Clean Button -->
-            <button id="checklist_clear_btn" onclick="checklist_clean()" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Create New Checklist">🧹</button>
+            <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
+                <!-- Clean Button -->
+                <button id="checklist_clear_btn" onclick="checklist_clean()" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Create New Checklist">🧹</button>
+                <!-- Inputfield -->
+                <input id="checklist_field" type="text" class="tile-value">
+                <!-- Save button -->
+                <button id="checklist_save_btn" onclick="window.save_checklist_to_json('checklist_field')" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Checklist">💾</button>
+            </div>
         </div>
-
-
 
         <!-- Personal items -->
         <div class="collapsible" data-title="Personal checklist">
@@ -1090,12 +1075,20 @@
         </div>
 
 
-
-        <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
-            <!-- Inputfield -->
-            <input id="checklist_field" type="text" class="tile-value">
-            <!-- Save button -->
-            <button id="checklist_save_btn" onclick="save_flightplan()" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Checklist">💾</button>
+        <div class="border-round-eged">
+            <div class="info" style="margin-bottom: 14px;">Personalize your checklist by adding or removing items here.</div>
+            <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
+                <!-- Remove Button -->
+                <button id="checklist_item_del_btn" onclick="window.checklist_update_catagories('drop')" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px; margin-left: 4px;" title="Check the items then click this remove button to remove the items from the checklist.">➖</button>
+                <!-- Catagories -->
+                <select id="checklist_catagory_field" class="tile-value-dropdown">
+                    <option value="">Catagories</option>
+                </select>
+                <!-- Inputfield -->
+                <input id="checklist_item_field" type="text" class="tile-value" style="background-color: #ffffff;">
+                <!-- Save button -->
+                <button id="checklist_item_add_btn" onclick="window.checklist_update_catagories('add')" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Add item to checklist">➕</button>
+            </div>
         </div>
 
         <div class="button-row">
@@ -1114,16 +1107,48 @@
 
 
 <script>
+
+    function populateChecklistCatagories() {
+      console.log(`> func: populateChecklistCatagories()`);
+      // Get a reference to the checklist_key_field select element
+      const select = document.getElementById("checklist_catagory_field");
+
+      // Clear any existing options (except for the first placeholder)
+      select.innerHTML = '<option value="">Categories</option>';
+
+      // Iterate over each key in window.flight_plan_data['CHECKLIST']
+      for (const key in window.flight_plan_data['CHECKLIST']) {
+        // Get the dictionary associated with the key
+        const data = window.flight_plan_data['CHECKLIST'][key];
+
+        // Only append an option if there is at least one item in the dictionary
+        if (typeof data === 'object' && data !== null && Object.keys(data).length > 0) {
+          // Create a new option element for the key
+          const option = document.createElement("option");
+          option.value = key;
+          option.textContent = key;
+
+          // Append the new option to the select element
+          select.appendChild(option);
+        }
+      }
+    }
+
+
     // Function to populate a collapsible section from window.CHECKLIST
-    function colorChecklist(header, trueCount, total) {
+    function colorChecklistMenu(header, trueCount, total) {
       // console.log(`   >Total entries: ${total}. Nr checked: ${trueCount}`)
       // Set color
-      if (trueCount === total) {
+      if (total === 0 && trueCount === 0) {
+          // No items present — mark with light orange
+          header.style.backgroundColor = '#FFDAB9';
+          header.style.color = '#333333';
+      } else if (trueCount === total) {
           header.style.backgroundColor = 'green';
           header.style.color = 'white';
       } else {
-        header.style.backgroundColor = '';
-        header.style.color = '';
+          header.style.backgroundColor = '';
+          header.style.color = '';
       }
 
     }
@@ -1144,10 +1169,26 @@
       // const items = window.CHECKLIST[category];
       const items = window.flight_plan_data['CHECKLIST'][category];
 
+      // If items is an empty object, hide the entire collapsible/menu and exit early
+      if (typeof items === 'object' && items !== null && Object.keys(items).length === 0) {
+        // Hide the collapsible so empty categories don't appear in the UI
+        collapsible.style.display = 'none';
+        if (header) header.style.display = 'none';
+        return;
+      } else {
+        // Ensure visible if there are items (in case it was previously hidden)
+        collapsible.style.display = '';
+        if (header) header.style.display = '';
+      }
+
       if (!items) {
         console.warn(`No data found for ${category} in window.CHECKLIST`);
         return;
       }
+      // if (!items || (typeof items === 'object' && Object.keys(items).length === 0)) {
+      //   console.warn(`No data found for ${category} in window.CHECKLIST`);
+      //   return;
+      // }
 
       // Generate checkbox HTML for each item
       content.innerHTML = Object.entries(items)
@@ -1159,7 +1200,7 @@
       const entries = Object.entries(items || {});
       const total = entries.length;
       let trueCount = Object.values(window.flight_plan_data['CHECKLIST'][category]).filter(value => value === true).length;
-      colorChecklist(header, trueCount, total)
+      colorChecklistMenu(header, trueCount, total)
 
       // Add event listeners to update window.flight_plan_data['CHECKLIST'] when checkboxes change
       content.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
@@ -1172,7 +1213,7 @@
           // Count how many are checked
           trueCount = Object.values(window.flight_plan_data['CHECKLIST'][category]).filter(value => value === true).length;
           // Set color of the menu
-          colorChecklist(header, trueCount, total)
+          colorChecklistMenu(header, trueCount, total)
         });
       });
     }
@@ -1945,8 +1986,6 @@
             toggleProhibitedLayer();
         }
     }
-
-
 
     async function toggleCTATMALayer() {
         const checkbox = document.getElementById('CTA_TMA-toggle');
@@ -2916,7 +2955,6 @@
 
 <script>
 
-
     document.getElementById('atc_fontsize').addEventListener('change', (e) => {
         if (window.settings) {
             window.settings.atc_fontsize = e.target.value;
@@ -2935,7 +2973,6 @@
             localStorage.setItem('atc_columns', e.target.value);
         }
     });
-
 
 </script>
 
@@ -3075,7 +3112,11 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 // Add event listeners for checklist spinners
 document.getElementById('checklist_spinner')?.addEventListener('change', function() {
     if (this.value && window.load_spinner_selection) {
+        console.log(`> addEventListener: checklist_spinner`);
+        // Update the checklist using the selection from cache
         window.load_spinner_selection('checklist_spinner', 'CHECKLIST');
+        // Now populate the checklist catagories
+        populateChecklistCatagories();
     }
 });
 
@@ -3331,9 +3372,23 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
     # ================================================
     # GENERIC FUNCTIONS
     # ================================================
+
     def update_dropdown(elementId, cacheName, keepSelection=True, elementId2=None):
-        """Update the dropdown with cached info"""
-        print(f"> func: update_dropdown_CHECKLIST()")
+        """Update the dropdown with cached info.
+
+        Parameters
+        ----------
+        elementId : str
+            The ID of the HTML element to be updated.
+        cacheName : str
+            The name of the cache from which the data will be fetched.
+        keepSelection : bool, optional
+            Whether to keep the current selection in the dropdown (default is True).
+        elementId2 : str, optional
+            An alternative ID to use if `keepSelection` is True and the current
+            selection is empty.
+        """
+        print(f"> func: update_dropdown()")
 
         # Get all keys from localStorage
         storage_length = js.localStorage.length
@@ -3360,7 +3415,7 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
             # Clear existing options except the first placeholder
             select.innerHTML = f'<option value="">Select and Load</option>'
 
-            # Add each CHECKLIST name as an option
+            # Add each detected item as an option
             for name in cached_names:
                 option = js.document.createElement('option')
                 option.value = name
@@ -3385,7 +3440,7 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
         user_selection = js.document.getElementById(elementId).value
 
         if not user_selection or user_selection == "":
-            print("   >⚠️ No {cacheName} FIC selected")
+            print("   >⚠️ No {cacheName} selected")
             return
 
         print(f"   >📂 Loading {cacheName}: {user_selection}")
@@ -3402,10 +3457,10 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
         # Parse JSON
         try:
             data_dict = json.loads(json_data)
-            print(f"   >✅ Loaded ENROUTE: {len(enroute_dict)} fields for {spinner_name}")
+            print(f"   >✅ Loaded {cacheName}: {len(data_dict)} fields for {elementId}")
 
             # Do stuff for the spinner
-            if spinner_name == 'checklist_spinner':
+            if elementId == 'checklist_spinner':
                 js.window.flight_plan_data['CHECKLIST'] = data_dict
                 js.document.getElementById('checklist_field').value = user_selection
                 checklist_populate()
@@ -3416,12 +3471,101 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
             js.window.alert(f"❗ Error loading {user_selection}: {e}")
 
 
-
     # ================================================
     # CHECKLIST
     # ================================================
 
+    def checklist_update_catagories(operation):
+        """Update the categories of the checklist.
+
+        This function safely adds or removes items from the CHECKLIST structure
+        stored in `js.window.flight_plan_data`. It validates that the checklist
+        and the selected category exist and are dictionaries to avoid
+        TypeError: 'builtin_function_or_method' object is not subscriptable and
+        other indexing errors.
+
+        Parameters
+        ----------
+        operation : str
+            Either 'add' to add an item or 'drop' to remove an item.
+        """
+
+        if not js.window.flight_plan_data.get('CHECKLIST'):
+            print('   > ⚠️ CHECKLIST not found in [js.window.flight_plan_data]')
+            return
+
+        # Get item name and category (normalize)
+        itemName = js.document.getElementById('checklist_item_field').value.strip()
+        catName = js.document.getElementById('checklist_catagory_field').value.lower()
+
+        # Shortcut to the checklist dict
+        checklist = js.window.flight_plan_data['CHECKLIST']
+        blacklist = ['NAME', 'aerodrome']
+
+        if operation == 'add':
+            # Validate category exists and is a dict
+            if (catName not in checklist) or not isinstance(checklist[catName], dict):
+                js.window.alert(f"⚠️ Category '{catName}' does not exist or is not a valid category.")
+                print(f"   > ⚠️ Category '{catName}' missing or invalid in CHECKLIST")
+                return
+
+            if itemName == '':
+                js.window.alert(f"⚠️ Input name is required to {operation} an item.")
+                return
+
+            # Only add if not already present
+            if itemName in checklist[catName]:
+                print(f'    > Item "{itemName}" already exists in category: {catName}')
+                js.window.alert(f'⚠️ Item "{itemName}" already exists in category: {catName}')
+            else:
+                checklist[catName][itemName] = False
+                print(f'    > Added "{itemName}" to category: {catName}')
+        elif operation == 'drop':
+            # Check whether any checkboxes are marked for deletion
+            isdel = False
+            for key in checklist.keys():
+                # Skip the ones in blacklist
+                if key not in blacklist:
+                    if isinstance(checklist[key], dict):
+                        # Collect items to delete first
+                        items_to_delete = []
+                        for item in checklist[key].keys():
+                            print(f'{key}-{item}: {checklist[key][item]}')
+                            if checklist[key][item]:
+                                # Confirm deletion
+                                if js.window.confirm(f"Delete: [{item}] from the [{key}] category?"):
+                                    items_to_delete.append(item)
+
+                        # Now delete the collected items
+                        for item in items_to_delete:
+                            checklist[key].pop(item, None)
+                            isdel = True
+
+            if not isdel:
+                js.window.alert(f'⚠️ No items are marked to be removed. Please check the items first.')
+        else:
+            print(f'    > ⚠️ Unknown operation: {operation}')
+            return
+
+        # Update checklist UI
+        checklist_populate()
+
+
     def checklist_populate():
+        """Populate the checklist with data from js.window.flight_plan_data['CHECKLIST'].
+
+        This function iterates over each key in `js.window.flight_plan_data['CHECKLIST']`.
+        If the value associated with a key is a dictionary, it calls `js.window.populateChecklist()`
+        to populate the checklist with that data.
+
+        Returns
+        -------
+        None
+            This function does not return anything. It only updates the checklist in place.
+            If `js.window.flight_plan_data['CHECKLIST']` is not found or does not contain any dictionaries,
+            it prints a warning message and returns early.
+
+        """
         print('> func: checklist_populate()')
         if not js.window.flight_plan_data.get('CHECKLIST'):
             print('   > ⚠️ CHECKLIST not found in [js.window.flight_plan_data]')
@@ -3432,39 +3576,51 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
             if isinstance(js.window.flight_plan_data['CHECKLIST'][key], dict):
                 js.window.populateChecklist(f"{key.title()} checklist")
 
+    def save_checklist_to_json(elementId):
+        """Save custom checklist data to localStorage. """
+        print(f'> func: save_checklist_to_json()')
 
-    def checklist_save():
-        print('> func: checklist_save()')
 
-        # Get key
-        cache_key = checklist_get_cache_key()
+        # Store the CHECKLIST to localStorage
+        listname = js.document.getElementById(elementId).value.strip()
+        if listname == '':
+            print('Name is required. Nothing saved. <return>')
+            js.window.alert(f"⚠️ Please provide a checklist name before saving.")
+            return
 
-        # Check if flightplan name exists
-        if cache_key is None:
-            js.window.alert('⚠️ Checklist cannot be saved without a flight plan name.')
-            print('   >Checklist can not be saved; No flightplan name.')
-            return False
+        cache_key = 'CHECKLIST_' + listname
+        # Store Cache key in flightplan
+        js.window.flight_plan_data['CHECKLIST']['NAME'] = cache_key
+        # Convert to JSON string
+        json_data = json.dumps(js.window.flight_plan_data['CHECKLIST'])
+        # Save to cache
+        js.localStorage.setItem(cache_key, json_data)
 
-        # Save for later usage
-        if hasattr(js.window, 'CHECKLIST'):
-            js.window.flight_plan_data['CHECKLIST']['NAME'] = cache_key
-            # Convert to JSON string
-            json_data = json.dumps(js.window.flight_plan_data['CHECKLIST'])
-            # Save to cache
-            js.localStorage.setItem(cache_key, json_data)
-            # save_to_cache(cache_key, json_data)
-            print(f'   >Saved checklist: {cache_key}')
-            # print(js.window.flight_plan_data['CHECKLIST'])
-            return True
-        else:
-            return False
+        # Update the checklist list
+        update_dropdown('checklist_spinner', cacheName='CHECKLIST', keepSelection=True);
+        message = f"✅ Checklist {listname} is saved with the catagories and items."
+        print(message)
+        js.window.alert(message)
 
-    def checklist_clean():
+        # Return
+        return True
+
+
+    def checklist_clean(verbose='info'):
         print('> func: checklist_clean()')
-        # Create new default checklist
+        # Clean the fields
+        js.document.getElementById('checklist_field').value = 'Default checklist'
+        select = js.document.getElementById('checklist_spinner')
+        select.value = 'Select and Load'
+
+        # Set the default checklist
         js.window.flight_plan_data['CHECKLIST'] = get_default_checklist()
-        # Populate checklist
+        # Populate checklist with defaults
         checklist_populate()
+
+        if verbose=='info':
+            js.window.alert(f"ℹ️ Default checklist catagories and items are loaded.")
+
 
     def check_items_complete(listname):
         # Get items from checklist
@@ -3543,9 +3699,13 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
         aircraft_status = aircraft_weight('DEPARTURE', return_type='dict')
         fuel_status = fuel('ARRIVAL', return_type='dict')
 
-        section_order = [
-            "personal", "navigation", "flightplan", "technical", "aerodrome",
-            "departure", "arrival", "various", "final"]
+        # section_order = [
+        #     "personal", "navigation", "flightplan", "technical", "aerodrome",
+        #     "departure", "arrival", "various", "final"]
+
+        # Only print those with at least one item
+        counts = {k: len(v) for k, v in data.items() if isinstance(v, dict) and len(v) > 0}
+        section_order = list(counts.keys())
 
         html = """
         <html>
@@ -3634,25 +3794,26 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
                 else:
                     html += f"<div class='section'><h2>{section.capitalize()}</h2><div class='columns'>"
                     items = list(data[section].items())
-                    half = len(items) // 2
-                    left_items = items[:half]
-                    right_items = items[half:]
+                    if len(items) > 0:
+                        half = len(items) // 2
+                        left_items = items[:half]
+                        right_items = items[half:]
 
-                    for col_items in [left_items, right_items]:
-                        html += "<div class='column'>"
-                        for label, checked in col_items:
-                            checked_html = "checked" if checked else ""
-                            html += f"<div class='item'><label><input type='checkbox' {checked_html}><span class='label-text'>{label}</span></label></div>"
+                        for col_items in [left_items, right_items]:
+                            html += "<div class='column'>"
+                            for label, checked in col_items:
+                                checked_html = "checked" if checked else ""
+                                html += f"<div class='item'><label><input type='checkbox' {checked_html}><span class='label-text'>{label}</span></label></div>"
 
-                            if section == "technical" and include_badges:
-                                if 'weight' in label.lower():
-                                    html += create_status_html(weight_status)
-                                    html += create_status_html(aircraft_status)
-                                if 'fuel' in label.lower():
-                                    html += create_status_html(fuel_status)
+                                if section == "technical" and include_badges:
+                                    if 'weight' in label.lower():
+                                        html += create_status_html(weight_status)
+                                        html += create_status_html(aircraft_status)
+                                    if 'fuel' in label.lower():
+                                        html += create_status_html(fuel_status)
 
-                        html += "</div>"
-                    html += "</div></div>"
+                            html += "</div>"
+                        html += "</div></div>"
 
         html += "</body></html>"
 
@@ -5093,6 +5254,7 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
         await clear_aerodrome_fields('DEPARTURE')
         await clear_aerodrome_fields('ARRIVAL')
         await clear_enroute_fields()
+        checklist_clean(verbose='silent')
 
         # Remove METAR widget
         # remove_metar_widget('DEPARTURE')
@@ -5159,12 +5321,13 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
         # updateFlag('ARRIVAL', 'remove')
 
 
-    async def delete_enroute_fic(spinner_name):
-        """Delete selected enroute FIC from localStorage"""
+    async def delete_item_from_spinner(spinner_name, cacheName, elementId2=None):
+        """Delete selected dropdown item in local cache"""
+        # Get dropdown selection
         user_selection = js.document.getElementById(spinner_name).value
 
         if not user_selection or user_selection == "":
-            print("⚠️ No Enroute FIC selected")
+            print(f"⚠️ No {cacheName} in {spinner_name} selected")
             return
 
         # Confirm deletion
@@ -5172,10 +5335,12 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
             print("❌ Deletion cancelled")
             return
 
+        # Create cache key
+        cache_key = f"{cacheName}_{user_selection}"
+
         # Delete from localStorage
-        storage_key = f"ENROUTE_{user_selection}"
-        js.localStorage.removeItem(storage_key)
-        print(f"✅ ENROUTE FIC '{user_selection}' deleted")
+        js.localStorage.removeItem(cache_key)
+        print(f"✅ {cacheName} '{user_selection}' deleted")
 
         # Clear the GUI dropdown selection
         js.document.getElementById(spinner_name).value = ""
@@ -5192,9 +5357,15 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
             js.document.getElementById('OVERHEAD2').value = ''
             js.document.getElementById('SQUAWK2').value = ''
 
-        # Update the enroute list
-        update_dropdown('fic_spinner', cacheName='enroute', keepSelection=False)
-        update_dropdown('fic_spinner2', cacheName='enroute', keepSelection=False)
+        if elementId2 is not None:
+            js.document.getElementById(elementId2).value = ''
+
+        # Update the spinner-dropdown list
+        if spinner_name == 'fic_spinner' or spinner_name == 'fic_spinner2':
+            update_dropdown('fic_spinner', cacheName='enroute', keepSelection=False)
+            update_dropdown('fic_spinner2', cacheName='enroute', keepSelection=False)
+        else:
+            update_dropdown(spinner_name, cacheName=cacheName, keepSelection=False)
 
 
     async def load_enroute_fic(spinner_name):
@@ -5425,7 +5596,6 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
 
             # Update the list of saved flightplans
             update_dropdown('plan_spinner', cacheName='FLIGHTPLAN', keepSelection=True, elementId2='FLIGHTPLAN')
-
             # Update the enroute list
             update_dropdown('fic_spinner', cacheName='enroute', keepSelection=True)
             update_dropdown('fic_spinner2', cacheName='enroute', keepSelection=True)
@@ -6619,7 +6789,7 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
     js.window.save_flightplan = save_flightplan
 
     js.window.load_enroute_fic = load_enroute_fic
-    js.window.delete_enroute_fic = delete_enroute_fic
+    js.window.delete_item_from_spinner = delete_item_from_spinner
     js.window.save_enroute_to_json = save_enroute_to_json
 
     js.window.save_aerodrome_to_json = save_aerodrome_to_json
@@ -6633,12 +6803,13 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
 
     # CHECKLIST
     js.window.checklist_clean = checklist_clean
-    # js.window.checklist_save = checklist_save
+    js.window.save_checklist_to_json = save_checklist_to_json
     js.window.check_items_complete = check_items_complete
     js.window.checklist_print = checklist_print
     js.window.checklist_populate = checklist_populate
     js.window.get_default_checklist = get_default_checklist
     js.window.load_spinner_selection = load_spinner_selection
+    js.window.checklist_update_catagories = checklist_update_catagories
 
 
     # FLAG
@@ -6883,6 +7054,12 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
         document.getElementById('loading-spinner').style.display = 'none';
         // Populate the plan_spinner with FLIGHTPLAN_ keys on startup
         update_dropdown('plan_spinner', cacheName='FLIGHTPLAN', keepSelection=false);
+        // Add the catagories for the spinner in checklist
+        populateChecklistCatagories()
+        // Update dropdown for the enroute spinners
+        update_dropdown('fic_spinner', cacheName='enroute', keepSelection=false)
+        update_dropdown('fic_spinner2', cacheName='enroute', keepSelection=false)
+
       }
     }
 
@@ -6955,33 +7132,30 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
     };
 
     document.getElementById('fic_delete_btn')?.addEventListener('click', async () => {
-      if (pyscriptReady && window.delete_enroute_fic) {
-        await window.delete_enroute_fic('fic_spinner');
+      if (pyscriptReady && window.delete_item_from_spinner) {
+        await window.delete_item_from_spinner('fic_spinner', 'ENROUTE');
       }
     });
 
     document.getElementById('fic_delete_btn2')?.addEventListener('click', async () => {
-      if (pyscriptReady && window.delete_enroute_fic) {
-        await window.delete_enroute_fic('fic_spinner2');
+      if (pyscriptReady && window.delete_item_from_spinner) {
+        await window.delete_item_from_spinner('fic_spinner2', 'ENROUTE');
       }
     });
 
     // Add save button functionality
     document.getElementById('fic_save_btn')?.addEventListener('click', () => {
-      if (pyscriptReady && window.save_flightplan) {
-        try {
-            // Save FIC data to JSON files
-            window.save_enroute_to_json('ENROUTE1');
-            window.alert("✅ Flight Information Center (FIC) data saved successfully!");
-        } catch (error) {
-          console.error("⚠️ Error saving Flight Information Center (FIC) data:", error);
-        }
+      try {
+          // Save FIC data to JSON files
+          window.save_enroute_to_json('ENROUTE1');
+          window.alert("✅ Flight Information Center (FIC) data saved successfully!");
+      } catch (error) {
+        console.error("⚠️ Error saving Flight Information Center (FIC) data:", error);
       }
     });
 
     // Add save button functionality
     document.getElementById('fic_save_btn2')?.addEventListener('click', () => {
-      if (pyscriptReady && window.save_flightplan) {
         try {
             // Save FIC data to JSON files
             window.save_enroute_to_json('ENROUTE2');
@@ -6989,9 +7163,7 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
         } catch (error) {
           console.error("⚠️ Error saving Flight Information Center (FIC) data:", error);
         }
-      }
     });
-
 
     document.getElementById('BTN_HTML_SUMMARY')?.addEventListener('click', () => {
       if (window.create_summary_atc) {
