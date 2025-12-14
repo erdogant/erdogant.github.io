@@ -69,6 +69,10 @@
                         ⚖️ Weight & Balance vliegclub Rotterdam
                 </button>
             </div>
+            <!--CHECK FOR UPDATES-->
+            <button id="updateBtn" onclick="updateApp()">Check for updates</button>
+            <script src="app.js"></script>
+
 	</div>
 
 
@@ -85,9 +89,6 @@
 
         <div>
             <div class="tile" style="text-align: center; border: none;">
-                <button id="updateBtn" onclick="updateApp()">Check for updates</button>
-                <script src="app.js"></script>
-
                 <input id="FLIGHTPLAN" type="text" onchange="createDateTime()" class="tile-value" title="Name your flightplan" placeholder="My flight plan" style="flex: 1;font-size: 18px;">
                 <input id="DATETIME" type="label" style="text-align: center; font-size: 12px; background-color: transparent; color: #777; border: none;" disabled>
             </div>
@@ -1154,7 +1155,7 @@
 
 
 <script>
-
+    // MAKE REAL OFFLINE APP WITH SERVICEWORK AND SW.JS
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js')
         .then(() => console.log('Service Worker registered'))
