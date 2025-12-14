@@ -5,6 +5,15 @@ const FILES_TO_CACHE = [
   "./app.js",
   "./style.css",
   "./manifest.json",
+  // "./libs/core.css",
+  // "./libs/core.js",
+  "./libs/leaflet.css",
+  "./libs/leaflet.js",
+  "./libs/plotly-2.35.2.min.js",
+  "./figs/buy_me_a_coffee.png",
+  "./figs/default_aerodrome.jpg",
+  "./figs/logo_skywalk.png",
+  "./figs/logo_skywalk_dark.png",
 ];
 
 self.addEventListener("install", (event) => {

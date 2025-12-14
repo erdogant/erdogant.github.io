@@ -9,6 +9,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <title>Skywalk Flightplan</title>
 
     <!--RUN FULL SCREEN-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -17,21 +18,29 @@
     <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
     <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
 
-    <title>Skywalk Flightplan</title>
-
+    <!--ICON-->
     <link rel="shortcut icon" type="image/x-icon" href="https://erdogant.github.io/datasets/skywalk/figs/icons/airplane_gray.png">
     <link rel="icon" type="image/png" sizes="16x16" href="https://erdogant.github.io/datasets/skywalk/figs/icons/airplane_gray.png">
     <link rel="apple-touch-icon" sizes="180x180" href="https://erdogant.github.io/datasets/skywalk/figs/icons/airplane_gray.png">
 
+    <!--STYLESHEETS-->
     <link rel="stylesheet" href="style.css">
+
+    <!--CORE FILES-->
     <link rel="stylesheet" href="https://pyscript.net/releases/2025.8.1/core.css">
     <script type="module" src="https://pyscript.net/releases/2025.8.1/core.js"></script>
-    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <!--<link rel="stylesheet" href="./libs/core.css">-->
+    <!--<script type="module" src="./libs/core.js"></script>-->
+    <!--<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>-->
+    <script src="./libs/plotly-2.35.2.min.js"></script>
 
     <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />-->
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>-->
+    <link rel="stylesheet" href="./libs/leaflet.css">
+    <script src="./libs/leaflet.js"></script>
 
+    <!--MANIFEST-->
     <link rel="manifest" href="/manifest.json">
 
 
@@ -39,13 +48,14 @@
 
 
 <body>
-    <div id="app">
-        <div id="loading-spinner" class="spinner-overlay" style="display: flex;">
+
+<div id="app">
+        <!--<div id="loading-spinner" class="spinner-overlay" style="display: flex;">
             <div class="spinner-container">
                 <div class="spinner"></div>
                 <div class="spinner-text">Loading SkyWalk. Please wait..</div>
             </div>
-    </div>
+        </div>-->
 
     <!-- Tab links -->
     <div class="tab">
@@ -82,7 +92,7 @@
         <!-- Logo -->
         <div class="logo-container">
             <a href="https://erdogant.github.io/skywalk-docs/pages/html/index.html" target="_blank">
-                <img id="skywalk_logo" alt="SkyWalk">
+                <img id="skywalk_logo" alt="SkyWalk" src="./figs/logo_skywalk.png">
             </a>
             <div class="version" style="margin-bottom: 5px; ">version: 0.6.0</div>
         </div>
@@ -150,7 +160,7 @@
         <div id="bottom-container">
             <div class="coffee-container">
                 <a href="https://www.buymeacoffee.com/erdogant" target="_blank">
-                    <img id="coffee_logo" alt="Coffee Donation">
+                    <img id="coffee_logo" alt="Coffee Donation" src="./figs/buy_me_a_coffee.png">
                 </a>
             </div>
 
@@ -174,7 +184,11 @@
 
         <!-- Departure Image -->
         <div class="logo-container" style="margin-top: 20px;">
-            <img id="DEPARTURE_image_cache" alt="Departure Aerodrome" style="max-width: 100%; height: auto; border-radius: 10px; cursor: pointer;" onclick="openAerodromeMap('DEPARTURE')">
+            <img id="DEPARTURE_image_cache" alt="Departure Aerodrome"
+                style="max-width: 100%; height: auto; border-radius: 10px; cursor: pointer;"
+                onclick="openAerodromeMap('DEPARTURE')"
+                src="./figs/default_aerodrome.jpg"
+            >
         </div>
 
 
@@ -479,7 +493,11 @@
 
         <!-- Arrival Image -->
         <div class="logo-container" style="margin-top: 20px;">
-            <img id="ARRIVAL_image_cache" alt="Arrival Aerodrome" style="max-width: 100%; height: auto; border-radius: 10px; cursor: pointer;" onclick="openAerodromeMap('ARRIVAL')">
+            <img id="ARRIVAL_image_cache" alt="Arrival Aerodrome"
+                style="max-width: 100%; height: auto; border-radius: 10px; cursor: pointer;"
+                onclick="openAerodromeMap('ARRIVAL')"
+                src="./figs/default_aerodrome.jpg"
+            >
         </div>
 
 
@@ -3380,6 +3398,11 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
     def get_default_settings():
         """Get default settings"""
         print('> func: get_default_settings()')
+
+        # 'coffee_logo': 'https://erdogant.github.io/datasets/skywalk/figs/buy_me_a_coffee.png',
+        # 'skywalk_logo': 'https://erdogant.github.io/datasets/skywalk/figs/Slide1.PNG',
+        # 'img_default_icao': 'https://erdogant.github.io/datasets/skywalk/figs/oskar-kadaksoo-f_rLDn5m2XQ-unsplash.jpg',
+
         return {
             'DEPARTURE_COUNTRY': '',
             'DEPARTURE_ICAO': '',
@@ -3397,10 +3420,11 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
             'link_skywalk': 'http://erdogant.github.io/skywalk-docs/',
 
             'FIG_DIR': 'https://erdogant.github.io/datasets/skywalk/figs/',
-            'coffee_logo': 'https://erdogant.github.io/datasets/skywalk/figs/buy_me_a_coffee.png',
-            'skywalk_logo': 'https://erdogant.github.io/datasets/skywalk/figs/Slide1.PNG',
 
-            'img_default_icao': 'https://erdogant.github.io/datasets/skywalk/figs/oskar-kadaksoo-f_rLDn5m2XQ-unsplash.jpg',
+            'coffee_logo': './figs/buy_me_a_coffee.png',
+            'skywalk_logo': './figs/logo_skywalk.png',
+            'img_default_icao': './figs/default_aerodrome.jpg',
+
             'img_default_wind_envelope': 'https://erdogant.github.io/datasets/skywalk/figs/windsock_mark-konig-OsYYPaPgIjw-unsplash.jpg',
             'url_default_wind_envelope': 'https://erdogant.github.io/skywalk-docs/pages/html/Departure_Arrival.html#cloud-plot',
             'img_default_cloud_plot': 'https://erdogant.github.io/datasets/skywalk/figs/dylan-mcleod-vY7GkgvTj-k-unsplash.jpg',
@@ -4079,7 +4103,7 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
             return zip_bytes
         else:
             print(f"❌ Failed to download {url} - Status: {response.status}")
-            js.document.getElementById('loading-spinner').style.display = 'none'
+            # js.document.getElementById('loading-spinner').style.display = 'none'
             return None
 
 
@@ -4107,7 +4131,7 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
             raise
         except Exception as e:
             print(f"❌ Error extracting CSV: {type(e).__name__}: {e}")
-            js.document.getElementById('loading-spinner').style.display = 'none'
+            # js.document.getElementById('loading-spinner').style.display = 'none'
             raise
 
 
@@ -4396,14 +4420,14 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
             error_msg = f"   >⚠️ No airspace data available for {country}: {str(e)}"
             print(f"{error_msg}")
             js.window.alert(f"⚠️ No airspace data is available for the selected country: {country}.")
-            js.document.getElementById('loading-spinner').style.display = 'none'
+            # js.document.getElementById('loading-spinner').style.display = 'none'
             return
 
         # Get and then concat airspaces
         concat_airspaces(country)
 
         # Hide loading spinner when done
-        js.document.getElementById('loading-spinner').style.display = 'none'
+        # js.document.getElementById('loading-spinner').style.display = 'none'
 
 
     def concat_airspaces(country):
@@ -7230,7 +7254,7 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
         window.updateFlag('ARRIVAL', 'remove');
 
         // Hide loading spinner once everything is ready
-        document.getElementById('loading-spinner').style.display = 'none';
+        // document.getElementById('loading-spinner').style.display = 'none';
 
       }
     }
@@ -7409,10 +7433,10 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
       */
         if (!confirm('This will clear all saved (cached) data. Are you sure?')) return;
 
-        const spinner = document.getElementById('loading-spinner');
-        const spinnerText = spinner.querySelector('.spinner-text');
-        spinnerText.textContent = 'Clearing cache...';
-        spinner.style.display = 'flex';
+        // const spinner = document.getElementById('loading-spinner');
+        // const spinnerText = spinner.querySelector('.spinner-text');
+        // spinnerText.textContent = 'Clearing cache...';
+        // spinner.style.display = 'flex';
 
         try {
             if (await window.clear_cache()) {
@@ -8091,10 +8115,12 @@ const COUNTRIES_DATA = [
         document.getElementById(`${fname}_COUNTRY`).addEventListener("change", async function() {
             const country = this.value;
             if (country && window.import_country_selected) {
-                const spinner = document.getElementById('loading-spinner');
-                const spinnerText = spinner.querySelector('.spinner-text');
-                spinnerText.textContent = `Loading aerodrome data for ${country}...`;
-                spinner.style.display = 'flex';
+
+                // const spinner = document.getElementById('loading-spinner');
+                // const spinnerText = spinner.querySelector('.spinner-text');
+                // spinnerText.textContent = `Loading aerodrome data for ${country}...`;
+                // spinner.style.display = 'flex';
+
                 document.body.style.cursor = 'wait';
                 document.body.style.overflow = 'hidden';  // Prevent scrolling while loading
                 try {
