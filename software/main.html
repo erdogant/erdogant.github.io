@@ -5705,8 +5705,8 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
             checklist_populate()
 
             # Update METAR
-            await js.window.retrieve_metar('DEPARTURE', verbose='silent')
-            await js.window.retrieve_metar('ARRIVAL', verbose='silent')
+            js.window.retrieve_metar('DEPARTURE', verbose='silent')
+            js.window.retrieve_metar('ARRIVAL', verbose='silent')
 
             print(f"   >✅ Flightplan '{plan_name}' loaded successfully")
         except Exception as e:
@@ -5890,7 +5890,7 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
             remove_wind_envelope_plot(fname)
 
             # Retrieve METAR data during loading of the aerodrome
-            await window.retrieve_metar(fname, verbose=verbose)
+            window.retrieve_metar(fname, verbose=verbose)
 
             # Update flag
             # window.updateFlag(fname)
