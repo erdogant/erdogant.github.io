@@ -20,7 +20,7 @@ function updateApp() {
 
 navigator.serviceWorker.addEventListener("controllerchange", () => {
   console.log("New version activated");
-  alert("New version available. Reload to update.");
+  alert("New SkyWalk version available. Reload or refresh screen to update.");
 });
 
 const updateBtn = document.getElementById("updateBtn");
