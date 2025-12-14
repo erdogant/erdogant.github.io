@@ -27,6 +27,14 @@
     <link rel="stylesheet" href="https://pyscript.net/releases/2025.8.1/core.css">
     <script type="module" src="https://pyscript.net/releases/2025.8.1/core.js"></script>
     <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+
+    <link rel="manifest" href="/manifest.json">
+
+
 </head>
 
 
@@ -77,6 +85,9 @@
 
         <div>
             <div class="tile" style="text-align: center; border: none;">
+                <button id="updateBtn" onclick="updateApp()">Check for updates</button>
+                <script src="app.js"></script>
+
                 <input id="FLIGHTPLAN" type="text" onchange="createDateTime()" class="tile-value" title="Name your flightplan" placeholder="My flight plan" style="flex: 1;font-size: 18px;">
                 <input id="DATETIME" type="label" style="text-align: center; font-size: 12px; background-color: transparent; color: #777; border: none;" disabled>
             </div>
@@ -138,7 +149,7 @@
         <div id="bottom-container">
             <div class="coffee-container">
                 <a href="https://www.buymeacoffee.com/erdogant" target="_blank">
-                    <img id="coffee_image" alt="Coffee Donation">
+                    <img id="coffee_logo" alt="Coffee Donation">
                 </a>
             </div>
 
@@ -235,6 +246,7 @@
                            border: none; background-color: transparent;
                            color: #333333; outline: none;">
             </div>
+
         </div>
 
 
@@ -348,9 +360,13 @@
         <div class="collapsible-header"></div>
         <div class="collapsible-content">
 
-            <div class="info" style="margin-bottom: 20px; border: 1.5px solid lightgray; border-radius: 10px; padding: 10px;">
-                This wind envelope shows how wind direction and strength relate to the selected runway, and marks the maximum permitted headwind and crosswind components.
-                Use it only as an educational aid. Always check current METAR/TAF, official aerodrome sources, and your aircraft’s operating limitations.
+            <div style="border: 1px solid lightgrey; border-radius: 10px; padding: 10px;">
+                <div id="bottom-container">
+                    <div class="warning">
+                        The wind envelope shows how wind direction and strength relate to the selected runway, and marks the maximum permitted headwind and crosswind components.
+                        Use it only as an educational aid. Always do your own research, check the METAR/TAF from official aerodrome sources, and check your aircraft’s operating limitations.
+                    </div>
+                </div>
             </div>
 
             <div class="button-row">
@@ -378,7 +394,7 @@
 
            <div class="button-row">
                <textarea id="DEPARTURE_WIND_ENVELOPE_TEXT" readonly aria-readonly="true"
-                   placeholder="Compute the wind envelope to see here information."
+                   placeholder="Information about the wind envelope will be shown here."
                    style="transition: background-color 0.3s; width: 100%; min-height: 80px; max-height: 120px; resize: vertical; padding: 8px; box-sizing: border-box; border-radius: 10px">
                 </textarea>
            </div>
@@ -648,9 +664,13 @@
         <div class="collapsible-header"></div>
         <div class="collapsible-content">
 
-            <div class="info" style="margin-bottom: 20px; border: 1.5px solid lightgray; border-radius: 10px; padding: 10px;">
-                This wind envelope shows how wind direction and strength relate to the selected runway, and marks the maximum permitted headwind and crosswind components.
-                Use it only as an educational aid. Always check current METAR/TAF, official aerodrome sources, and your aircraft’s operating limitations.
+            <div style="border: 1px solid lightgrey; border-radius: 10px; padding: 10px;">
+                <div id="bottom-container">
+                    <div class="warning">
+                        The wind envelope shows how wind direction and strength relate to the selected runway, and marks the maximum permitted headwind and crosswind components.
+                        Use it only as an educational aid. Always do your own research, check the METAR/TAF from official aerodrome sources, and check your aircraft’s operating limitations.
+                    </div>
+                </div>
             </div>
 
             <div class="button-row">
@@ -964,8 +984,8 @@
 
 
         <!-- Leaflet CSS -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+        <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>-->
 
         <label_h1>Warning</label_h1>
         <div class="warning" style="margin-bottom: 20px; border: 2px solid orange; border-radius: 10px; padding: 10px;">The airspace projections on the map are based on data that can be outdated or inaccurate. Do not navigate using the map but only use it for educational purposes.</div>
@@ -994,80 +1014,106 @@
 
     <div id="Checklist" class="tabcontent">
 
+        <label_h1>Checklist</label_h1>
+        <div style="border: 0px solid lightgrey; border-radius: 10px; padding: 10px;">
+            <div id="bottom-container">
+                <div class="info">
+                    Flight preparations requires doing many tasks carefully. Here we seperate them into catagories to keep it organized.                </div>
+            </div>
+        </div>
+
         <div class="border-round-eged">
-            <label_h1>Checklist</label_h1>
-            <div class="info" style="margin-bottom: 20px;">Flight preparations requires doing many tasks carefully. Here we seperate them into catagories to keep it organized.</div>
+            <div class="wind-grid" style="display: flex; align-items: center; gap: 1px;">
+                <!-- Inputfield -->
+                <input id="checklist_field" type="text" class="tile-value" placeholder="My checklist" style="background-color:transparent; font-size: 18px; padding: 0.5px;">
+            </div>
 
             <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
+                <!-- Clean Button -->
+                <button id="checklist_clear_btn" onclick="checklist_clean()" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Create New Checklist">🧹</button>
                 <!-- Delete Button -->
                 <button id="checklist_delete_btn" onclick="window.delete_item_from_spinner('checklist_spinner', 'CHECKLIST', 'checklist_field')" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete checklist">🗑️</button>
                 <!-- Spinner -->
                 <select id="checklist_spinner" class="tile-value-dropdown" style="flex: 1; font-size: 12px; font-weight: normal;">
                     <option value="">Select and Load</option>
                 </select>
-            </div>
-
-            <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
-                <!-- Clean Button -->
-                <button id="checklist_clear_btn" onclick="checklist_clean()" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Create New Checklist">🧹</button>
-                <!-- Inputfield -->
-                <input id="checklist_field" type="text" class="tile-value">
                 <!-- Save button -->
                 <button id="checklist_save_btn" onclick="window.save_checklist_to_json('checklist_field')" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Checklist">💾</button>
             </div>
         </div>
 
         <!-- Personal items -->
-        <div class="collapsible" data-title="Personal checklist">
+        <div class="collapsible" data-title="Personal">
         <div class="collapsible-header"></div>
         <div class="collapsible-content">
             <!-- JavaScript will fill this automatically in  window.populateChecklist("Personal checklist")-->
         </div>
         </div>
 
-        <div class="collapsible" data-title="Navigation checklist">
+        <div class="collapsible" data-title="Passengers">
         <div class="collapsible-header"></div>
         <div class="collapsible-content">
             <!-- JavaScript will fill this automatically in  window.populateChecklist("Navigation checklist")-->
         </div>
         </div>
 
-        <div class="collapsible" data-title="Flightplan checklist">
+        <div class="collapsible" data-title="Flightplan">
         <div class="collapsible-header"></div>
         <div class="collapsible-content">
             <!-- JavaScript will fill this automatically in  window.populateChecklist("Flightplan checklist")-->
         </div>
         </div>
 
-        <div class="collapsible" data-title="Technical checklist">
+        <div class="collapsible" data-title="Technical">
         <div class="collapsible-header"></div>
         <div class="collapsible-content">
             <!-- JavaScript will fill this automatically in  window.populateChecklist("Technical checklist")-->
         </div>
         </div>
 
-        <div class="collapsible" data-title="Departure checklist">
+        <div class="collapsible" data-title="Departure (Aircraft)">
         <div class="collapsible-header"></div>
         <div class="collapsible-content">
             <!-- JavaScript will fill this automatically in  window.populateChecklist("Departure checklist")-->
         </div>
         </div>
 
-        <div class="collapsible" data-title="Arrival checklist">
+        <div class="collapsible" data-title="Departure (Aerodrome)">
+        <div class="collapsible-header"></div>
+        <div class="collapsible-content">
+            <!-- JavaScript will fill this automatically in  window.populateChecklist("Departure checklist")-->
+        </div>
+        </div>
+
+        <div class="collapsible" data-title="Arrival (Aircraft)">
         <div class="collapsible-header"></div>
         <div class="collapsible-content">
             <!-- JavaScript will fill this automatically in  window.populateChecklist("Arrival checklist")-->
         </div>
         </div>
 
-        <div class="collapsible" data-title="Various checklist">
+        <div class="collapsible" data-title="Arrival (Aerodrome)">
+        <div class="collapsible-header"></div>
+        <div class="collapsible-content">
+            <!-- JavaScript will fill this automatically in  window.populateChecklist("Arrival checklist")-->
+        </div>
+        </div>
+
+        <div class="collapsible" data-title="Enroute">
+        <div class="collapsible-header"></div>
+        <div class="collapsible-content">
+            <!-- JavaScript will fill this automatically in  window.populateChecklist("Arrival checklist")-->
+        </div>
+        </div>
+
+        <div class="collapsible" data-title="Various">
         <div class="collapsible-header"></div>
         <div class="collapsible-content">
             <!-- JavaScript will fill this automatically in  window.populateChecklist("Various checklist")-->
         </div>
         </div>
 
-        <div class="collapsible" data-title="Final checklist">
+        <div class="collapsible" data-title="Final">
         <div class="collapsible-header"></div>
         <div class="collapsible-content">
             <!-- JavaScript will fill this automatically in  window.populateChecklist("Final checklist")-->
@@ -1076,7 +1122,7 @@
 
 
         <div class="border-round-eged">
-            <div class="info" style="margin-bottom: 14px;">Personalize your checklist by adding or removing items here.</div>
+            <div class="info" style="margin-bottom: 14px; font-size: 12px;">Personalize your checklist by adding or removing items.</div>
             <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
                 <!-- Remove Button -->
                 <button id="checklist_item_del_btn" onclick="window.checklist_update_catagories('drop')" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px; margin-left: 4px;" title="Check the items then click this remove button to remove the items from the checklist.">➖</button>
@@ -1106,7 +1152,72 @@
 
 
 
+
 <script>
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(() => console.log('Service Worker registered'))
+        .catch(err => console.error('SW registration failed', err));
+    }
+
+    // // Create collapsible sections for each checklist category and wire up lazy population
+    // function createChecklistSections(containerId = 'checklist_sections') {
+    //   console.log('> func: createChecklistSections()');
+    //   const container = document.getElementById(containerId);
+    //   if (!container) {
+    //     console.warn(`Checklist container "${containerId}" not found`);
+    //     return;
+    //   }
+
+    //   // Clear any existing dynamic content
+    //   container.innerHTML = '';
+
+    //   const checklist = (window.flight_plan_data && window.flight_plan_data.CHECKLIST) ? window.flight_plan_data.CHECKLIST : {};
+
+    //   Object.keys(checklist).forEach((rawKey) => {
+    //     // Build a human-friendly title (e.g. "personal" -> "Personal checklist")
+    //     const capitalized = rawKey.charAt(0).toUpperCase() + rawKey.slice(1);
+    //     const title = `${capitalized}`;
+
+    //     // Create collapsible block
+    //     const block = document.createElement('div');
+    //     block.className = 'collapsible';
+    //     block.dataset.title = title;
+
+    //     // Header
+    //     const header = document.createElement('div');
+    //     header.className = 'collapsible-header';
+    //     header.textContent = title;
+
+    //     // Content
+    //     const content = document.createElement('div');
+    //     content.className = 'collapsible-content';
+    //     content.innerHTML = ''; // will be filled by populateChecklist when opened
+
+    //     // Append
+    //     block.appendChild(header);
+    //     block.appendChild(content);
+    //     container.appendChild(block);
+
+    //     // Toggle behavior + lazy populate on open
+    //     header.addEventListener('click', () => {
+    //       block.classList.toggle('open');
+
+    //       if (block.classList.contains('open')) {
+    //         // Ensure content height animates
+    //         content.style.maxHeight = content.scrollHeight + 'px';
+    //         // Fill checkboxes for this category now (lazy)
+    //         if (typeof populateChecklist === 'function') {
+    //           // Use the same data-title string populateChecklist expects
+    //           populateChecklist(title);
+    //         }
+    //       } else {
+    //         content.style.maxHeight = null;
+    //       }
+    //     });
+    //   });
+    // }
 
     function populateChecklistCatagories() {
       console.log(`> func: populateChecklistCatagories()`);
@@ -2979,52 +3090,70 @@
 
 <!-- Javascript functionality -->
 <script>
-  // List of images to cache
-  const IMAGES_TO_CACHE = {
-    skywalk_logo: "https://erdogant.github.io/datasets/skywalk/figs/Slide1.PNG",
-    coffee_image: "https://erdogant.github.io/datasets/skywalk/figs/buy_me_a_coffee.png"
-  };
-  // Default ICAO image URL (not cached with others since it's used differently)
-  const DEFAULT_ICAO_IMAGE = "https://erdogant.github.io/datasets/skywalk/figs/oskar-kadaksoo-f_rLDn5m2XQ-unsplash.jpg";
-  window.DEFAULT_ICAO_IMAGE = DEFAULT_ICAO_IMAGE
+    // const DEFAULT_ICAO_IMAGE = "https://erdogant.github.io/datasets/skywalk/figs/oskar-kadaksoo-f_rLDn5m2XQ-unsplash.jpg";
 
-  const CACHE_NAME = "skywalk-cache-v1";
+    // Function to cache and set image source
+    async function cacheAndSetImage(url, imgElementId) {
+      // Import/save and then load cached image
+      if (pyscriptReady) {
+        await cache_and_display_image(url, imgElementId);
+      }
 
-  // Function to cache and set image source
-  async function cacheAndSetImage(url, imgElementId) {
-    const cache = await caches.open(CACHE_NAME);
-
-    // Try loading from cache
-    let response = await cache.match(url);
-    if (!response) {
-      console.log(`Image not cached yet. Downloading: ${url}`);
-      response = await fetch(url);
-      await cache.put(url, response.clone());
-    } else {
-      console.log(`Loaded from cache: ${url}`);
-    }
-
-    const blob = await response.blob();
-    const objectURL = URL.createObjectURL(blob);
-    const imgElement = document.getElementById(imgElementId);
-    if (imgElement) {
-      imgElement.src = objectURL;
-    } else {
-      console.warn(`Image element not found: ${imgElementId}`);
-    }
-  }
-
-  // Initialize caching on page load
-  document.addEventListener("DOMContentLoaded", () => {
-    for (const [elementId, url] of Object.entries(IMAGES_TO_CACHE)) {
-      cacheAndSetImage(url, elementId);
     }
 
     // Load default departure image on page load
-    cacheAndSetImage(DEFAULT_ICAO_IMAGE, 'DEPARTURE_image_cache');
-    cacheAndSetImage(DEFAULT_ICAO_IMAGE, 'ARRIVAL_image_cache');
-  });
+    // document.addEventListener("DOMContentLoaded", () => {
+    //   cacheAndSetImage(DEFAULT_ICAO_IMAGE, 'DEPARTURE_image_cache');
+    //   cacheAndSetImage(DEFAULT_ICAO_IMAGE, 'ARRIVAL_image_cache');
+    // });
 
+  // // List of images to cache
+  // const IMAGES_TO_CACHE = {
+  //   skywalk_logo: "https://erdogant.github.io/datasets/skywalk/figs/Slide1.PNG",
+  //   coffee_logo: "https://erdogant.github.io/datasets/skywalk/figs/buy_me_a_coffee.png"
+  // };
+  // // Default ICAO image URL (not cached with others since it's used differently)
+  // const DEFAULT_ICAO_IMAGE = "https://erdogant.github.io/datasets/skywalk/figs/oskar-kadaksoo-f_rLDn5m2XQ-unsplash.jpg";
+  // window.DEFAULT_ICAO_IMAGE = DEFAULT_ICAO_IMAGE
+  // const CACHE_NAME = "skywalk-cache-v1";
+
+  // // Function to cache and set image source
+  // async function cacheAndSetImage(url, imgElementId) {
+  //   const cache = await caches.open(CACHE_NAME);
+
+  //   // Try loading from cache
+  //   let response = await cache.match(url);
+  //   if (!response) {
+  //     console.log(`Image not cached yet. Downloading: ${url}`);
+  //     response = await fetch(url);
+  //     await cache.put(url, response.clone());
+  //   } else {
+  //     console.log(`Loaded from cache: ${url}`);
+  //   }
+
+  //   const blob = await response.blob();
+  //   const objectURL = URL.createObjectURL(blob);
+  //   const imgElement = document.getElementById(imgElementId);
+  //   if (imgElement) {
+  //     imgElement.src = objectURL;
+  //   } else {
+  //     console.warn(`Image element not found: ${imgElementId}`);
+  //   }
+  // }
+
+  // // Initialize caching on page load
+  // document.addEventListener("DOMContentLoaded", () => {
+  //   for (const [elementId, url] of Object.entries(IMAGES_TO_CACHE)) {
+  //     cacheAndSetImage(url, elementId);
+  //   }
+
+  //   // Load default departure image on page load
+  //   cacheAndSetImage(DEFAULT_ICAO_IMAGE, 'DEPARTURE_image_cache');
+  //   cacheAndSetImage(DEFAULT_ICAO_IMAGE, 'ARRIVAL_image_cache');
+  // });
+</script>
+
+<script>
 
   /**
    * Update a flag image element by country code (2-letter ISO).
@@ -3071,9 +3200,10 @@
       // Build SVG URL (flagcdn). Use svg first; fallback to PNG if error.
       const svgUrl = `https://flagcdn.com/${code}.svg`;
       // const pngUrl = `https://flagcdn.com/w80/${code}.png`;
+      cache_and_display_image(svgUrl, `${prefix}_FLAG`)
 
       console.log(`   >Set Flag to: ${svgUrl}`)
-      img.src = svgUrl;
+      // img.src = svgUrl;
       img.alt = countryCode.toUpperCase();
       img.style.display = 'inline-block';
     } catch (e) {
@@ -3110,13 +3240,15 @@ document.getElementById('fic_spinner2')?.addEventListener('change', function() {
 });
 
 // Add event listeners for checklist spinners
-document.getElementById('checklist_spinner')?.addEventListener('change', function() {
+document.getElementById('checklist_spinner')?.addEventListener('change', async function() {
     if (this.value && window.load_spinner_selection) {
         console.log(`> addEventListener: checklist_spinner`);
-        // Update the checklist using the selection from cache
-        window.load_spinner_selection('checklist_spinner', 'CHECKLIST');
-        // Now populate the checklist catagories
+        // Update the checklist using the selection from cache (Python async)
+        await window.load_spinner_selection('checklist_spinner', 'CHECKLIST');
+        // Rebuild sections and categories after loading
+        // createChecklistSections();
         populateChecklistCatagories();
+        // checklist_populate();
     }
 });
 
@@ -3163,62 +3295,73 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
     def get_default_checklist():
         print('> func: default_checklist()')
         checklist = {
-                "NAME": '',
-
                 "personal": {
                     'Paper, Pen, Watch, Sunglasses, Hat': False,
                     'Medical papers': False,
                     'Pilot Licence': False,
                     'Passport/ identity card': False,
-                    'Passport/ identity card Passenger(s)': False,
                     'Flight Logbook': False,
                     },
 
-                "navigation": {
-                    'Navigation Plan': False,
-                    'Alternate aerodrome': False,
-                    'Flight levels and Airspaces enroute': False,
-                    'NOTAMS enroute': False,
-                    'ATC frequencies enroute (FIR/FIS)': False,
-                    'AIP/AIC information printed': False,
+                "passengers": {
+                    'Brief the Passenger(s)': False,
+                    'Passport/ identity card Passenger(s)': False,
                     },
 
                 "flightplan": {'Submit Flight Plan/ Flight Notification': False},
-
-                "aerodrome": {'DEPARTURE': {
-                              'Circuit, Approach, Altitudes': False,
-                              'Weather Information (METAR/ TAF)': False,
-                              'Take-off/ Landing Distance': False,
-                              'ATC frequencies': False},
-                              'ARRIVAL': {
-                              'Circuit, Approach, Altitudes': False,
-                              'Weather Information (METAR/ TAF)': False,
-                              'Take-off/ Landing Distance': False,
-                              'ATC frequencies': False},
-                              },
 
                 "technical": {'Weight and Balance': False,
                               'Fuel Computations': False,
                               },
 
-                "departure": {
+                "departure (aircraft)": {
                     'Official Aircraft Papers (The bag or suitcase)': False,
-                    'Checklist aircraft': False,
-                    'Check outstanding complaints and become aware of known issues': False,
-                    'Check the journal for available flight hours': False,
+                    'Checklist Aircraft': False,
+                    'Check outstanding complaints; become aware of known issues': False,
                     'Check the journal for available flight hours': False,
                     'Dinghy/swimming suit for overwater flight': False,
-                    'Fuel draining (remove water at lowest point)': False,
-                    'Prior Permission Required (PPR) by phone': False,
+                    'Fuel draining (remove water at lowest point before moving the aircraft)': False,
                     },
 
-                "arrival": {
+                "departure (aerodrome)": {
+                  'Departure Name': False,
+                  'Departure Altitude': False,
+                  'Circuit Altitude': False,
+                  'Runway number (expected)': False,
+                  'NOTAMS': False,
+                  'Weather Information (METAR/ TAF)': False,
+                  'Take-off/ Landing Distance': False,
+                  'ATC frequencies': False,
+                  },
+
+                "arrival (aircraft)": {
                     'Take out personal valuable items': False,
                     'Take out keys, journal, bag or suitcase': False,
                     'Secure the wings with the strap': False,
                     'Lock the doors/ canopy': False,
                     'Close flightplan': False,
                     'Register and pay landing fee (C)': False,
+                    'Prior Permission Required (PPR) by phone': False,
+                    },
+
+                "arrival (aerodrome)": {
+                  'Arrival Name': False,
+                  'Arrival Altitude': False,
+                  'Circuit Altitude': False,
+                  'Runway number (expected)': False,
+                  'NOTAMS': False,
+                  'Weather Information (METAR/ TAF)': False,
+                  'Take-off/ Landing Distance': False,
+                  'ATC frequencies': False,
+                  },
+
+                "enroute": {
+                    'Navigation Plan': False,
+                    'Alternate aerodrome': False,
+                    'Flight levels and airspaces': False,
+                    'Weather Information (METAR/ TAF)': False,
+                    'AIP/AIC information printed': False,
+                    'ATC frequencies (FIR/FIS)': False,
                     },
 
                 "various": {
@@ -3227,7 +3370,6 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
 
                 "final": {
                     'Flight plan/ Flight Notification is approved': False,
-                    'Brief the Passenger(s)': False,
                     },
 
                 }
@@ -3254,8 +3396,8 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
             'link_skywalk': 'http://erdogant.github.io/skywalk-docs/',
 
             'FIG_DIR': 'https://erdogant.github.io/datasets/skywalk/figs/',
-            'logo_coffee': 'https://erdogant.github.io/datasets/skywalk/figs/buy_me_a_coffee.png',
-            'logo_skywalk': 'https://erdogant.github.io/datasets/skywalk/figs/Slide3.PNG',
+            'coffee_logo': 'https://erdogant.github.io/datasets/skywalk/figs/buy_me_a_coffee.png',
+            'skywalk_logo': 'https://erdogant.github.io/datasets/skywalk/figs/Slide1.PNG',
 
             'img_default_icao': 'https://erdogant.github.io/datasets/skywalk/figs/oskar-kadaksoo-f_rLDn5m2XQ-unsplash.jpg',
             'img_default_wind_envelope': 'https://erdogant.github.io/datasets/skywalk/figs/windsock_mark-konig-OsYYPaPgIjw-unsplash.jpg',
@@ -3263,7 +3405,7 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
             'img_default_cloud_plot': 'https://erdogant.github.io/datasets/skywalk/figs/dylan-mcleod-vY7GkgvTj-k-unsplash.jpg',
             'url_default_cloud_plot': 'https://erdogant.github.io/skywalk-docs/pages/html/Departure_Arrival.html#cloud-plot',
 
-            'key_aerodromes': "GpZzcnXiLleytOr5Y7WC@",
+            'unzipKey': "GpZzcnXiLleytOr5Y7WC@",
             'url_aerodromes': 'https://erdogant.github.io/datasets/skywalk/aerodromes/',
             'url_aerodromes_images': 'https://erdogant.github.io/datasets/skywalk/aerodromes_images/',
             'url_airspaces': 'https://erdogant.github.io/datasets/skywalk/airspaces/',
@@ -3518,8 +3660,10 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
                 print(f'    > Item "{itemName}" already exists in category: {catName}')
                 js.window.alert(f'⚠️ Item "{itemName}" already exists in category: {catName}')
             else:
+                # Add item to catagory
                 checklist[catName][itemName] = False
                 print(f'    > Added "{itemName}" to category: {catName}')
+                js.document.getElementById('checklist_item_field').value = ''
         elif operation == 'drop':
             # Check whether any checkboxes are marked for deletion
             isdel = False
@@ -3574,7 +3718,12 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
         # Populate the checklist
         for key in js.window.flight_plan_data['CHECKLIST'].keys():
             if isinstance(js.window.flight_plan_data['CHECKLIST'][key], dict):
-                js.window.populateChecklist(f"{key.title()} checklist")
+                # A match is created for the data-title to fill the right elements
+                js.window.populateChecklist(f"{key.title()}")
+
+        # Automatically create the checklists
+        # window.createChecklistSections()
+        # window.populateChecklistCatagories()
 
     def save_checklist_to_json(elementId):
         """Save custom checklist data to localStorage. """
@@ -3597,7 +3746,7 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
         js.localStorage.setItem(cache_key, json_data)
 
         # Update the checklist list
-        update_dropdown('checklist_spinner', cacheName='CHECKLIST', keepSelection=True);
+        update_dropdown('checklist_spinner', cacheName='CHECKLIST', keepSelection=True, elementId2='checklist_field');
         message = f"✅ Checklist {listname} is saved with the catagories and items."
         print(message)
         js.window.alert(message)
@@ -3609,12 +3758,13 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
     def checklist_clean(verbose='info'):
         print('> func: checklist_clean()')
         # Clean the fields
-        js.document.getElementById('checklist_field').value = 'Default checklist'
+        js.document.getElementById('checklist_field').value = ''
         select = js.document.getElementById('checklist_spinner')
         select.value = 'Select and Load'
 
         # Set the default checklist
         js.window.flight_plan_data['CHECKLIST'] = get_default_checklist()
+
         # Populate checklist with defaults
         checklist_populate()
 
@@ -3727,7 +3877,9 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
         <body>
         """
 
-        if "NAME" in data:
+        # Get checklist name from gui
+        checklist_name = js.document.getElementById('checklist_field').value
+        if checklist_name != '':
             html += f"<class='name-tag'><h1>Checklist {data['NAME']}</h1>"
 
         for section in section_order:
@@ -3958,27 +4110,27 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
             raise
 
 
-    async def get_core_js():
-        """
-        Load https://pyscript.net/releases/2025.8.1/core.js
-        either from cache or from download.
-        """
-        cache_key = "pyscript_core_js_2025_8_1"
-        url = "https://pyscript.net/releases/2025.8.1/core.js"
+    # async def get_core_js():
+    #     """
+    #     Load https://pyscript.net/releases/2025.8.1/core.js
+    #     either from cache or from download.
+    #     """
+    #     cache_key = "pyscript_core_js_2025_8_1"
+    #     url = "https://pyscript.net/releases/2025.8.1/core.js"
 
-        # Try cache first
-        data = load_from_cache(cache_key)
-        if data is not None:
-            return data
+    #     # Try cache first
+    #     data = load_from_cache(cache_key)
+    #     if data is not None:
+    #         return data
 
-        # Otherwise: download it
-        data = await download_file(url)
+    #     # Otherwise: download it
+    #     data = await download_file(url)
 
-        # Save to cache in base64
-        # encode_base64=True is required when storing binary data in localStorage. Otherwise it will be corrupted.
-        save_to_cache(cache_key, data, encode_base64=True)
+    #     # Save to cache in base64
+    #     # encode_base64=True is required when storing binary data in localStorage. Otherwise it will be corrupted.
+    #     save_to_cache(cache_key, data, encode_base64=True)
 
-        return data
+    #     return data
 
     # ================================================
     # METAR HELPERS
@@ -4184,8 +4336,8 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
             zip_bytes = await load_cached_zip(f"aerodrome_{country}", url)
 
             if zip_bytes:
-                PASSWORD = js.window.settings['key_aerodromes']
-                df = extract_csv_from_zip(zip_bytes, PASSWORD)
+                unzipKey = js.window.settings['unzipKey']
+                df = extract_csv_from_zip(zip_bytes, unzipKey)
                 js.console.log(f"   >✅ Aerodromes loaded for {country}: {len(df)} rows.")
                 print(f"   >✅ Successfully loaded {len(df)} aerodromes for {country}")
                 # print(df['country_code'])
@@ -4693,6 +4845,8 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
         remove_metar_widget(fname)
         # Remove wind envelope
         remove_wind_envelope_plot(fname)
+        # Remove flag
+        window.updateFlag(fname, 'remove')
         # Update missing fields colors
         js.window.highlightMissingFields()
 
@@ -4718,7 +4872,7 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
         # 3. from default
         image_url1 = os.path.join(js.window.settings['url_aerodromes_images'], js.window.flight_plan_data[f'{fname}_ICAO']) + '.png' if js.window.flight_plan_data[f'{fname}_ICAO'] != '' else None
         image_url2 = js.window.flight_plan_data.get(f'{fname}_IMAGE')
-        image_url3 = js.DEFAULT_ICAO_IMAGE
+        image_url3 = js.window.settings['img_default_icao']
 
         for image_url in [image_url1, image_url2, image_url3]:
             if await cache_and_display_image(image_url, f'{fname}_image_cache'):
@@ -4728,7 +4882,7 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
     async def clear_aerodrome_image(fname):
         """Reset aerodrome image to default"""
         print("🔄 Resetting to default image...")
-        await cache_and_display_image(js.DEFAULT_ICAO_IMAGE, f'{fname}_image_cache')
+        await cache_and_display_image(js.window.settings['img_default_icao'], f'{fname}_image_cache')
         # Clear flag
         js.window.updateFlag(fname, 'remove')
 
@@ -5246,7 +5400,8 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
             'ARRIVAL_COUNTRY': '',
         }
         js.window.flight_plan_data['CHECKLIST'] = get_default_checklist()
-        # populate checklist items
+
+        # Populate checklist items
         checklist_populate()
 
         # Clear fields
@@ -5364,6 +5519,10 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
         if spinner_name == 'fic_spinner' or spinner_name == 'fic_spinner2':
             update_dropdown('fic_spinner', cacheName='enroute', keepSelection=False)
             update_dropdown('fic_spinner2', cacheName='enroute', keepSelection=False)
+        elif spinner_name == 'checklist_spinner':
+            update_dropdown(spinner_name, cacheName=cacheName, keepSelection=False)
+            # Set the default checklist
+            checklist_clean(verbose='silent')
         else:
             update_dropdown(spinner_name, cacheName=cacheName, keepSelection=False)
 
@@ -7037,28 +7196,40 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
       if (typeof window.create_new_flightplan === 'function') {
         pyscriptReady = true;
         console.log("> func: checkPyScriptReady()");
-        // Get default flight plan data
-        window.flight_plan_data = window.get_default_data();
         console.log("   >Default data is initialized.");
+
         // Get default settings
         window.settings = window.get_default_settings();
+        // Set default images
+        cacheAndSetImage(window.settings['img_default_icao'], 'DEPARTURE_image_cache')
+        cacheAndSetImage(window.settings['img_default_icao'], 'ARRIVAL_image_cache')
+        cacheAndSetImage(window.settings['coffee_logo'], 'coffee_logo')
+        cacheAndSetImage(window.settings['skywalk_logo'], 'skywalk_logo')
+        console.log("   >Logos are loaded..");
+
+        // Get default flight plan data
+        window.flight_plan_data = window.get_default_data();
         // Populate the menus
-        console.log("   >Populate the checklist.");
         checklist_populate()
+        console.log("   >Checklist is populated..");
         update_dropdown('checklist_spinner', cacheName='CHECKLIST', keepSelection=false, elementId2='checklist_field');
         console.log("   >Settings data is initialized.");
         // Restore settings from cache
         restoreSettingsFromCache();
         console.log("   >Custom User settings are restored from cache.");
-        // Hide loading spinner once everything is ready
-        document.getElementById('loading-spinner').style.display = 'none';
         // Populate the plan_spinner with FLIGHTPLAN_ keys on startup
         update_dropdown('plan_spinner', cacheName='FLIGHTPLAN', keepSelection=false);
         // Add the catagories for the spinner in checklist
-        populateChecklistCatagories()
+        populateChecklistCatagories();
         // Update dropdown for the enroute spinners
-        update_dropdown('fic_spinner', cacheName='enroute', keepSelection=false)
-        update_dropdown('fic_spinner2', cacheName='enroute', keepSelection=false)
+        update_dropdown('fic_spinner', cacheName='enroute', keepSelection=false);
+        update_dropdown('fic_spinner2', cacheName='enroute', keepSelection=false);
+        // Clear the Flags
+        window.updateFlag('DEPARTURE', 'remove');
+        window.updateFlag('ARRIVAL', 'remove');
+
+        // Hide loading spinner once everything is ready
+        document.getElementById('loading-spinner').style.display = 'none';
 
       }
     }
@@ -7088,6 +7259,7 @@ document.getElementById('checklist_spinner')?.addEventListener('change', functio
         // Clear all input fields and departure fields
         await clear_general_fields();
 
+        // Set datetime
         DATETIME.value = await window.create_new_flightplan();
 
         // Store default flight plan data
@@ -8118,7 +8290,7 @@ const COUNTRIES_DATA = [
 
       // Runway direction is required
       if (runwayDirection == '') {
-          alert("⚠️ No valid runway information available. Unable to compute the wind envelope.");
+          alert("⚠️ No valid runway information available. Set the runway number manually to compute the wind envelope.");
           return results;
       }
 
