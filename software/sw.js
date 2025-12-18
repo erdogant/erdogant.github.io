@@ -1,4 +1,4 @@
-const CACHE_NAME = "skywalk-v0.6";
+const CACHE_NAME = "skywalk-v0.7";
 
 const FILES_TO_CACHE = [
   "./main.html",
@@ -7,6 +7,9 @@ const FILES_TO_CACHE = [
   "./manifest.json",
   // "./libs/core.css",
   // "./libs/core.js",
+  // JAVASCRIPTS
+  "./metar.js",
+  // FIGS
   "./libs/leaflet.css",
   "./libs/leaflet.js",
   "./libs/plotly-2.35.2.min.js",
@@ -14,6 +17,8 @@ const FILES_TO_CACHE = [
   "./figs/default_aerodrome.jpg",
   "./figs/logo_skywalk.png",
   "./figs/logo_skywalk_dark.png",
+  // ICONS
+  "./icons/airplane_gray.png",
 ];
 
 self.addEventListener("install", (event) => {
