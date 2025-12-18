@@ -213,6 +213,7 @@
 
             <div class="button-row">
                 <img id="DEPARTURE_FLAG" src="" alt="" style="width:30px; height:auto; vertical-align:middle; margin-left:6px;">
+                <img id="DEPARTURE_VFR_ICON" src="" alt="" style="width:30px; height:auto; vertical-align:middle; margin-left:6px;">
                 <input type="text" id="DEPARTURE_ICAO" class="tile-value UPPERCASE_input sync-departure" onchange="window.load_aerodrome_from_json('DEPARTURE')" placeholder="ICAO">
                 <button id="DEPARTURE_USE_CACHED" onclick="window.retrieve_metar('DEPARTURE')" title="Retrieve METAR weather information for the selected aerodrome" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>
             </div>
@@ -522,6 +523,7 @@
 
             <div class="button-row">
                 <img id="ARRIVAL_FLAG" src="" alt="" style="width:30px; height:auto; vertical-align:middle; margin-left:6px;">
+                <img id="ARRIVAL_VFR_ICON" src="" alt="" style="width:30px; height:auto; vertical-align:middle; margin-left:6px;">
                 <input type="text" id="ARRIVAL_ICAO" class="tile-value UPPERCASE_input sync-arrival" onchange="window.load_aerodrome_from_json('ARRIVAL')" placeholder="ICAO">
                 <button id="ARRIVAL_USE_CACHED" onclick="window.retrieve_metar('ARRIVAL')" title="Retrieve METAR weather information for the selected aerodrome" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>
             </div>
@@ -1237,7 +1239,7 @@
   //     console.log('🌡️  Temp/Dewpoint:', metar.temperatures);
   //     console.log('🔽 QNH:', metar.qnh);
   //     console.log('☀️  CAVOK:', metar.cavok);
-  //     console.log('✈️  VMC Status:', metar.vmc);
+  //     console.log('✈️  VMC Status:', metar.flightCategory);
   //     console.log('📊 Flight Category:', metar.flightCategory);
   //     console.log('🔄 Changements:', metar.changements);
   //   });
@@ -3047,7 +3049,7 @@
           windVariationField.style.backgroundColor = 'transparent';
           windHeadwindField.style.backgroundColor = 'transparent';
           windCrosswindField.style.backgroundColor = 'transparent';
-          // borderFieldAerodrome.style.backgroundColor = '';
+          borderFieldAerodrome.style.backgroundColor = '#f5f5f5';
         } else {
           // buttonMetarIcon1.disabled = true;
           // buttonMetarIcon1.style.cursor = "not-allowed";
@@ -3309,7 +3311,6 @@
 </script>
 
 <script>
-
   /**
    * Update a flag image element by country code (2-letter ISO).
    * - imgId: id of the <img> element
@@ -3456,11 +3457,14 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
                     'Pilot Licence': False,
                     'Passport/ identity card': False,
                     'Flight Logbook': False,
+                    'Accu pack': False,
+                    'Headset': False,
                     },
 
                 "passengers": {
-                    'Brief the Passenger(s)': False,
+                  'Brief the Passenger(s)': False,
                     'Passport/ identity card Passenger(s)': False,
+                    'Headset': False,
                     },
 
                 "flightplan": {'Submit Flight Plan/ Flight Notification': False},
@@ -4493,7 +4497,7 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
         zip_bytes = None
 
         try:
-            url = js.window.settings['url_aerodromes'] + country + ".zip"
+            url = js.window.settings['url_aerodromes'] + country.replace(' ', '_') + ".zip"
             zip_bytes = await load_cached_zip(f"aerodrome_{country}", url)
 
             if zip_bytes:
@@ -5007,7 +5011,9 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
         # Remove wind envelope
         remove_wind_envelope_plot(fname)
         # Remove flag
-        window.updateFlag(fname, 'remove')
+        js.window.updateFlag(fname, 'remove')
+        # Remove VFR icon
+        js.window.updateFlightCatagoryIcon(fname, remove=True)
         # Update missing fields colors
         js.window.highlightMissingFields()
 
@@ -5193,15 +5199,15 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
         return runways
 
 
-    def JsToPy(js_object):
-        """Convert javascript dictionary object to python.
-          Example
-          -------
-          >>> js_object = {'test': true}
-          >>> JsToPy(js_object)
-        """
-        # return json.loads(js_string)
-        return js_object.to_py()
+    # def JsToPy(js_object):
+    #     """Convert javascript dictionary object to python.
+    #       Example
+    #       -------
+    #       >>> js_object = {'test': true}
+    #       >>> JsToPy(js_object)
+    #     """
+    #     # return json.loads(js_string)
+    #     return js_object.to_py()
 
 
     def expected_runway_number(fname, wind_direction='', wind_strength='', extra_runways=None):
@@ -5600,7 +5606,8 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
         js.window.AERODROME_DATA = {}
         js.window.airspaces = {}
         js.window.waypoints = []
-        # js.window.messages = ''
+        js.window.METAR_DEPARTURE = ''
+        js.window.METAR_ARRIVAL = ''
 
         print("✅ New flightplan initialized - all fields cleared")
         return current_time
@@ -5831,6 +5838,9 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
             # Update Flag
             js.window.updateFlag('DEPARTURE', 'remove')
             js.window.updateFlag('ARRIVAL', 'remove')
+            # Update VFR icon
+            js.window.updateFlightCatagoryIcon('DEPARTURE', remove=True)
+            js.window.updateFlightCatagoryIcon('ARRIVAL', remove=True)
 
             # Add data to javascript global cache. This is needed for the aerodrome selection and plotting on the map
             if flight_plan_dict['DEPARTURE_COUNTRY'] != '':
@@ -6072,25 +6082,21 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
         # Get flightplan data from dictionary
         flight_data = js.window.flight_plan_data
 
-        if fname == 'DEPARTURE' or fname == 'ARRIVAL':
-            # Create Cache key
-            cache_key = fname + '_' + flight_data[f"{fname}_ICAO"]
-            # Retrieve keys for dictionary
-            dict_fname = {k: v for k, v in flight_data.items() if k.startswith(fname)}
+        # Create Cache key
+        cache_key = fname + '_' + flight_data[f"{fname}_ICAO"]
+        # Retrieve keys for dictionary
+        dict_fname = {k: v for k, v in flight_data.items() if k.startswith(fname)}
 
-            # Update the dictionary with data from GUI
-            for key in dict_fname.keys():
-                # Do not store RUNWAY keys because runways are determined by the weather conditions
-                element = js.document.getElementById(key)
-                # Check whether field GUI exists using truthiness check which handles JsNull
-                if element and hasattr(element, 'value'):
-                    field_value = element.value
-                    if field_value and str(field_value) not in ('nan', 'None', ''):
-                        print(f'Saving to {cache_key} dictionary: {key}: {field_value}')
-                        dict_fname[key] = field_value
-        else:
-            print(f'   >{fname} not valid to save to JSON')
-            return
+        # Update the dictionary with data from GUI
+        for key in dict_fname.keys():
+            # Do not store RUNWAY keys because runways are determined by the weather conditions
+            element = js.document.getElementById(key)
+            # Check whether field GUI exists using truthiness check which handles JsNull
+            if element and hasattr(element, 'value'):
+                field_value = element.value
+                if field_value and str(field_value) not in ('nan', 'None', ''):
+                    print(f'Saving to {cache_key} dictionary: {key}: {field_value}')
+                    dict_fname[key] = field_value
 
         # Save to cache
         message = f"✅ Custom {fname.lower()} field information for {flight_data.get(f'{fname}_ICAO', '')} is saved."
@@ -7193,7 +7199,7 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
     # METAR HELPERS
     js.window.expected_runway_number = expected_runway_number
     # js.window.analyzeWind = analyzeWind
-    js.window.JsToPy = JsToPy
+    # js.window.JsToPy = JsToPy
     js.window.headwind = headwind
     js.window.crosswind = crosswind
     js.window.correctRunwayNumber = correctRunwayNumber
@@ -7401,9 +7407,14 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
         update_dropdown('fic_spinner', cacheName='enroute', keepSelection=false);
         update_dropdown('fic_spinner2', cacheName='enroute', keepSelection=false);
         // Clear the Flags
-        window.updateFlag('DEPARTURE', 'remove');
-        window.updateFlag('ARRIVAL', 'remove');
-
+        updateFlag('DEPARTURE', 'remove');
+        updateFlag('ARRIVAL', 'remove');
+        // Clear the VFR icon
+        updateFlightCatagoryIcon('DEPARTURE', remove=true);
+        updateFlightCatagoryIcon('ARRIVAL', remove=true);
+        // METAR defaults
+        window.METAR_DEPARTURE = '';
+        window.METAR_ARRIVAL = '';
         // Hide loading spinner once everything is ready
         // document.getElementById('loading-spinner').style.display = 'none';
 
@@ -8257,7 +8268,7 @@ const COUNTRIES_DATA = [
 
 <script>
     function initializeAerodromeFields(fname) {
-        // Populate dropdown on page load
+        // Populate ICAO dropdown on page load
         window.addEventListener('DOMContentLoaded', () => {
             populateDropdown(`${fname}_COUNTRY`, COUNTRIES_DATA);
         });
@@ -8280,7 +8291,7 @@ const COUNTRIES_DATA = [
                     console.error("⚠️ Error importing aerodrome data:", error);
                     alert("⚠️ Error loading aerodrome data. Please try again.");
                 } finally {
-                    spinner.style.display = 'none';
+                    // spinner.style.display = 'none';
                     document.body.style.cursor = '';
                     document.body.style.overflow = '';  // Restore scrolling
                 }

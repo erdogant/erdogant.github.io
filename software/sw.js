@@ -19,6 +19,20 @@ const FILES_TO_CACHE = [
   "./figs/logo_skywalk_dark.png",
   // ICONS
   "./icons/airplane_gray.png",
+  // VFR FIGS
+  "./icons/sun_VFR.png",
+  "./icons/clouds_VFR.png",
+  "./icons/clouds_sun_VFR.png",
+  "./icons/clouds_rain_VFR.png",
+  "./icons/moon_VFR.png",
+  "./icons/clouds_moon_VFR.png",
+  "./icons/clouds_rain_MVFR.png",
+  "./icons/clouds_MVFR.png",
+  "./icons/clouds_IFR.png",
+  "./icons/clouds_rain_IFR.png",
+  "./icons/clouds_LIFR.png",
+  "./icons/clouds_rain_LIFR.png",
+  "./icons/clouds_unknown.png",
 ];
 
 self.addEventListener("install", (event) => {
@@ -40,11 +54,7 @@ self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
   if (!event.request.url.startsWith(self.location.origin)) return;
 
-  event.respondWith(
-    caches
-      .match(event.request)
-      .then((cached) => cached || fetch(event.request)),
-  );
+  event.respondWith(caches.match(event.request).then((cached) => cached || fetch(event.request)));
 });
 
 self.addEventListener("message", (event) => {
@@ -54,13 +64,5 @@ self.addEventListener("message", (event) => {
 });
 
 self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    caches
-      .keys()
-      .then((keys) =>
-        Promise.all(
-          keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)),
-        ),
-      ),
-  );
+  event.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))));
 });

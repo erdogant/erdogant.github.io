@@ -22,6 +22,9 @@ class Metar {
     this.cavok = this.analyzeCAVOK();
     this.vmc = this.verifyVMC();
     this.flightCategory = this.determineFlightCategory();
+    this.rain_or_snow = this.determineRainOrSnow();
+    this.icon = this.determineMetarIcon();
+    this.color = this.determineColor();
 
     this.properties = {
       airport: this.airport,
@@ -38,6 +41,9 @@ class Metar {
       cavok: this.cavok,
       vmc: this.vmc,
       flightCategory: this.flightCategory,
+      rain_or_snow: this.rain_or_snow,
+      icon: this.icon,
+      color: this.color,
       changements: this.changements,
     };
   }
@@ -48,10 +54,7 @@ class Metar {
       const search = this.metar.match(regex);
       if (search) {
         const portion = search[0].replace(marker + " ", "");
-        this.metarWithoutChangements = this.metarWithoutChangements.replace(
-          regex,
-          "",
-        );
+        this.metarWithoutChangements = this.metarWithoutChangements.replace(regex, "");
         return portion;
       }
       return null;
@@ -119,16 +122,11 @@ class Metar {
     }
 
     const speed = parseInt(windTot.substring(3, 5));
-    const gustSpeed = windTot.includes("G")
-      ? parseInt(windTot.substring(6, 8))
-      : null;
+    const gustSpeed = windTot.includes("G") ? parseInt(windTot.substring(6, 8)) : null;
 
     // Check for variations
-    const variationMatch =
-      this.metarWithoutChangements.match(/(\d{3})V(\d{3})/);
-    const variation = variationMatch
-      ? [parseInt(variationMatch[1]), parseInt(variationMatch[2])]
-      : null;
+    const variationMatch = this.metarWithoutChangements.match(/(\d{3})V(\d{3})/);
+    const variation = variationMatch ? [parseInt(variationMatch[1]), parseInt(variationMatch[2])] : null;
 
     return {
       direction,
@@ -217,23 +215,13 @@ class Metar {
 
     // Find intensity
     const intensityMatches = this.metarWithoutChangements.match(/[-+]/g);
-    const intensity = intensityMatches
-      ? intensityMatches.map((i) => (i === "+" ? true : false))
-      : null;
+    const intensity = intensityMatches ? intensityMatches.map((i) => (i === "+" ? true : false)) : null;
 
     // Find prefixes
-    const foundPrefixes = prefixes
-      .filter((p) =>
-        new RegExp(p.code + "+").test(this.metarWithoutChangements),
-      )
-      .map((p) => p.meaning);
+    const foundPrefixes = prefixes.filter((p) => new RegExp(p.code + "+").test(this.metarWithoutChangements)).map((p) => p.meaning);
 
     // Find weather phenomena
-    const foundWeather = weathers
-      .filter((w) =>
-        new RegExp(w.code + "+").test(this.metarWithoutChangements),
-      )
-      .map((w) => w.meaning);
+    const foundWeather = weathers.filter((w) => new RegExp(w.code + "+").test(this.metarWithoutChangements)).map((w) => w.meaning);
 
     if (!intensity && foundPrefixes.length === 0 && foundWeather.length === 0) {
       return null;
@@ -370,15 +358,194 @@ class Metar {
     };
   }
 
+  determineRainOrSnow(weather) {
+    if (!weather || !weather.weather) return false;
+
+    return weather.weather.some((w) => ["Rain", "Snow", "Drizzle", "Hail", "Ice Pellets", "Snow Grains"].includes(w));
+  }
+
+  determineColor() {
+    const category = this.flightCategory; // "VFR", "MVFR", "IFR", "LIFR"
+    const cloud = this.cloud;
+    const rainOrSnow = !!this.rain_or_snow;
+
+    // Base colors by flight category
+    const baseColors = {
+      VFR: "#D4E0D2", // green
+      MVFR: "#D3DBE2", // blue
+      IFR: "#F4D5C7", // reddish
+      LIFR: "#C0ACD3", // purple
+    };
+
+    // Lightness adjustments for clouds/rain
+    // returns slightly lighter shades
+    function lighten(hex, factor = 0.2) {
+      // Convert hex to RGB
+      const r = parseInt(hex.slice(1, 3), 16);
+      const g = parseInt(hex.slice(3, 5), 16);
+      const b = parseInt(hex.slice(5, 7), 16);
+
+      if (factor >= 0) {
+        // Blend with white to make lighter
+        const newR = Math.round(r + (255 - r) * factor);
+        const newG = Math.round(g + (255 - g) * factor);
+        const newB = Math.round(b + (255 - b) * factor);
+        return `rgb(${newR}, ${newG}, ${newB})`;
+      } else {
+        // Negative factor -> blend with black to make darker
+        const f = Math.min(1, Math.abs(factor));
+        const newR = Math.round(r * (1 - f));
+        const newG = Math.round(g * (1 - f));
+        const newB = Math.round(b * (1 - f));
+        return `rgb(${newR}, ${newG}, ${newB})`;
+      }
+
+      return `rgb(${newR}, ${newG}, ${newB})`;
+    }
+
+    // Determine color
+    let color = baseColors[category] ?? "#6c757d"; // fallback grey
+    const make_very_light = 0.5;
+    const make_light = 0.3;
+
+    if (category === "VFR") {
+      if (cloud && rainOrSnow) {
+        color = lighten(color, make_very_light); // very light green
+      } else if (cloud) {
+        color = lighten(color, make_light); // light green
+      }
+    }
+
+    if (category === "MVFR") {
+      if (cloud && rainOrSnow) {
+        color = lighten(color, make_very_light);
+      } else if (cloud) {
+        color = lighten(color, make_light);
+      }
+    }
+
+    if (category === "IFR") {
+      if (cloud && rainOrSnow) {
+        color = lighten(color, make_very_light);
+      } else if (cloud) {
+        color = lighten(color, make_light);
+      }
+    }
+
+    if (category === "LIFR") {
+      if (cloud && rainOrSnow) {
+        color = lighten(color, make_very_light);
+      } else if (cloud) {
+        color = lighten(color, make_light);
+      }
+    }
+
+    return color;
+  }
+
+  determineMetarIcon() {
+    // Determine the icon
+    const flightCategory = this.flightCategory;
+    const cloud = this.cloud;
+    const cavok = this.cavok;
+    const weather = this.weather;
+    const rainOrSnow = !!this.rain_or_snow;
+    const sunset_flag = false;
+    const iconDir = "./icons";
+
+    // Compute cloud ceiling locally (safe)
+    let cloud_ceiling = null;
+    if (cloud) {
+      for (const layer of cloud) {
+        if (["BKN", "OVC", "VV"].includes(layer.code) && layer.altitude !== null) {
+          if (cloud_ceiling === null || layer.altitude < cloud_ceiling) {
+            cloud_ceiling = layer.altitude;
+          }
+        }
+      }
+    }
+
+    // Normalize
+    if (cloud_ceiling === null) cloud_ceiling = 99999;
+
+    // ---- LIFR ----
+    if (flightCategory === "LIFR" && rainOrSnow) {
+      return `${iconDir}/clouds_rain_LIFR.png`;
+    }
+    if (flightCategory === "LIFR") {
+      return `${iconDir}/clouds_LIFR.png`;
+    }
+
+    // ---- IFR ----
+    if (flightCategory === "IFR" && rainOrSnow) {
+      return `${iconDir}/clouds_rain_IFR.png`;
+    }
+    if (flightCategory === "IFR") {
+      return `${iconDir}/clouds_IFR.png`;
+    }
+
+    // ---- MVFR ----
+    if (flightCategory === "MVFR" && rainOrSnow) {
+      return `${iconDir}/clouds_rain_MVFR.png`;
+    }
+    if (flightCategory === "MVFR") {
+      return `${iconDir}/clouds_MVFR.png`;
+    }
+
+    // ---- VFR + rain/snow ----
+    if (flightCategory === "VFR" && rainOrSnow) {
+      return `${iconDir}/clouds_rain_VFR.png`;
+    }
+
+    // ---- Day VFR ----
+    if (flightCategory === "VFR" && !sunset_flag) {
+      if (cavok) {
+        return `${iconDir}/CAVOK_sun.png`;
+      }
+      if (cloud_ceiling >= 10000 && !cloud) {
+        return `${iconDir}/sun_VFR.png`;
+      }
+      if (cloud_ceiling > 5000 && cloud) {
+        return `${iconDir}/clouds_sun_VFR.png`;
+      }
+    }
+
+    // ---- Night VFR ----
+    if (flightCategory === "VFR" && sunset_flag) {
+      if (cavok) {
+        return `${iconDir}/moon_VFR.png`;
+      }
+      if (cloud_ceiling >= 10000 && !cloud) {
+        return `${iconDir}/moon_VFR.png`;
+      }
+      if (cloud_ceiling > 5000 && cloud) {
+        return `${iconDir}/clouds_moon_VFR.png`;
+      }
+    }
+
+    // ---- Default VFR ----
+    if (flightCategory === "VFR") {
+      return `${iconDir}/clouds_VFR.png`;
+    }
+
+    // ---- Fallback ----
+    return `${iconDir}/clouds_unknown.png`;
+  }
+
   determineFlightCategory() {
     // Get ceiling (lowest BKN, OVC, or VV layer)
+
+    // | Category | Ceiling (ft) | Visibility (SM) |
+    // | -------- | ------------ | --------------- |
+    // | **LIFR** | < 500        | < 1             |
+    // | **IFR**  | 500–999      | 1–<3            |
+    // | **MVFR** | 1000–3000    | 3–5             |
+    // | **VFR**  | > 3000       | > 5             |
+
     let ceiling = null;
     if (this.cloud) {
       for (const layer of this.cloud) {
-        if (
-          ["BKN", "OVC", "VV"].includes(layer.code) &&
-          layer.altitude !== null
-        ) {
+        if (["BKN", "OVC", "VV"].includes(layer.code) && layer.altitude !== null) {
           if (ceiling === null || layer.altitude < ceiling) {
             ceiling = layer.altitude;
           }
@@ -401,24 +568,16 @@ class Metar {
     }
 
     // Determine category based on FAA definitions
-    if (
-      (ceiling !== null && ceiling < 500) ||
-      (visMiles !== null && visMiles < 1)
-    ) {
+    // https://wiki.ivao.aero/en/home/flightoperations/Procedures/LMML/VFR
+    if ((ceiling !== null && ceiling < 500) || (visMiles !== null && visMiles < 1)) {
       return "LIFR";
     }
 
-    if (
-      (ceiling !== null && ceiling >= 500 && ceiling < 1000) ||
-      (visMiles !== null && visMiles >= 1 && visMiles < 3)
-    ) {
+    if ((ceiling !== null && ceiling >= 500 && ceiling < 1000) || (visMiles !== null && visMiles >= 1 && visMiles < 3)) {
       return "IFR";
     }
 
-    if (
-      (ceiling !== null && ceiling >= 1000 && ceiling <= 3000) ||
-      (visMiles !== null && visMiles >= 3 && visMiles <= 5)
-    ) {
+    if ((ceiling !== null && ceiling >= 1000 && ceiling <= 3000) || (visMiles !== null && visMiles >= 3 && visMiles <= 5)) {
       return "MVFR";
     }
 
@@ -581,17 +740,12 @@ function checkMetarAge() {
     // const metarText = document.getElementById('METAR-TEXT-' + prefix);
 
     if (!dateField?.value) {
-      console.log(
-        `   >No METAR date is found for ${prefix}.This is checked every minute.`,
-      );
+      console.log(`   >No METAR date is found for ${prefix}.This is checked every minute.`);
       return;
     }
 
     // Parse the METAR date parts
-    const dateFieldClean = formatDateDMY(
-      dateField.value,
-      (format = "dd/mm/yyyy"),
-    );
+    const dateFieldClean = formatDateDMY(dateField.value, (format = "dd/mm/yyyy"));
     const metarTime = createTimeObject(dateFieldClean);
 
     // Parse the NOW date parts
@@ -603,9 +757,7 @@ function checkMetarAge() {
     const isOld = diff > 35 * 60 * 1000; // 35 minutes in milliseconds
     const minutesOld = Math.round(diff / 1000 / 60);
 
-    console.log(
-      `   >${prefix}\n   >currenTime: ${currenTime}.\n   >Metar time: ${metarTime}\n   >Diff: ${minutesOld}min\n   >isOld: ${isOld}`,
-    );
+    console.log(`   >${prefix}\n   >currenTime: ${currenTime}.\n   >Metar time: ${metarTime}\n   >Diff: ${minutesOld}min\n   >isOld: ${isOld}`);
 
     if (isOld) {
       // colorMetarFields(prefix, enable=false);
@@ -628,18 +780,11 @@ function checkMetarAge() {
   compareTime("ARRIVAL");
 }
 
-async function fetch_metar(
-  metar_stations,
-  splitlines = true,
-  decoded = false,
-  prefix,
-) {
+async function fetch_metar(metar_stations, splitlines = true, decoded = false, prefix) {
   console.log(`>Func: fetch_metar(${metar_stations})`);
   // Make a function that runs over the list of metar_stations
   const metarField = document.getElementById("METAR-FIELD-" + prefix);
-  const stations = Array.isArray(metar_stations)
-    ? metar_stations
-    : [metar_stations];
+  const stations = Array.isArray(metar_stations) ? metar_stations : [metar_stations];
 
   for (const icao of stations) {
     console.log(`  >Fetching METAR report of ${icao}`);
@@ -647,9 +792,7 @@ async function fetch_metar(
       metarField.value = `Be patient while fetching METAR weather information from closest station: ${icao}`;
     }
 
-    const url = decoded
-      ? `https://tgftp.nws.noaa.gov/data/observations/metar/decoded/${icao}.TXT`
-      : `https://tgftp.nws.noaa.gov/data/observations/metar/stations/${icao}.TXT`;
+    const url = decoded ? `https://tgftp.nws.noaa.gov/data/observations/metar/decoded/${icao}.TXT` : `https://tgftp.nws.noaa.gov/data/observations/metar/stations/${icao}.TXT`;
 
     const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
 
@@ -719,9 +862,7 @@ async function retrieve_metar(prefix, verbose = "info") {
   // If ICAO is empty or not provided, notify the user and return early
   if (!icao || !country) {
     if (verbose === "info") {
-      alert(
-        "ℹ️ To retrieve METAR information, please select a country and load the aerodrome (ICAO) first.",
-      );
+      alert("ℹ️ To retrieve METAR information, please select a country and load the aerodrome (ICAO) first.");
     }
     return;
   }
@@ -756,15 +897,10 @@ async function retrieve_metar(prefix, verbose = "info") {
     //   }
     // }
     if (metarText) {
-      metarText.value = stationName
-        ? `Closest available METAR station is ${stationName}`
-        : "No nearby METAR stations found";
+      metarText.value = stationName ? `Closest available METAR station is ${stationName}` : "No nearby METAR stations found";
     }
   } catch (error) {
-    console.log(
-      `   >Error retrieving METAR data. ${prefix} has likely no weather station. Error:`,
-      error,
-    );
+    console.log(`   >Error retrieving METAR data. ${prefix} has likely no weather station. Error:`, error);
     metar_message = "No METAR weather station available for " + icao;
     // Update button: Enable
     colorMetarFields(prefix, (enable = true));
@@ -782,6 +918,7 @@ async function retrieve_metar(prefix, verbose = "info") {
       metar_obj = new Metar(stationName, metar_icao);
       // Convert metar object to plain so that it can be used in pyton dictionary for later usage
       metar_plain = metar_obj.getAll();
+      // metar_plain = JSON.stringify(metar_details.getAll());
 
       // Show the details on screen
       console.log("\n   >📅 Date/Time:", metar_obj.dateTime);
@@ -795,28 +932,22 @@ async function retrieve_metar(prefix, verbose = "info") {
       console.log("   >☀️  CAVOK:", metar_obj.cavok);
       console.log("   >✈️  VMC Status:", metar_obj.vmc);
       console.log("   >📊 Flight Category:", metar_obj.flightCategory);
+      console.log("   >🌦️ Rain or Snow:", metar_obj.rain_or_snow);
+      console.log("   >👁️ Icon:", metar_obj.icon);
+      console.log("   >🤖 Color:", metar_obj.color);
       console.log("   >🔄 Changements:", metar_obj.changements);
     } catch (error) {
       console.log(`   >Error: Metar details could not be comptued`);
     }
 
     // Compute expected runway number based on wind direction and runway orientation
-    runway_predicted = expected_runway_number(
-      prefix,
-      (wind_direction = metar_obj.wind.direction),
-      (wind_strength = metar_obj.wind.speed),
-      (extra_runways = runwayField.value),
-    );
+    runway_predicted = expected_runway_number(prefix, (wind_direction = metar_obj.wind.direction), (wind_strength = metar_obj.wind.speed), (extra_runways = runwayField.value));
 
     // Change RUNWAY field color to blue to show that it is predicted
     runwayField.style.backgroundColor = "#e6f0ff";
     // metarText.value = js.window.messages;
     // Change value of RUNWAY field in the the predicted runway
-    if (
-      runway_predicted !== null &&
-      runway_predicted !== undefined &&
-      String(runway_predicted).trim() !== ""
-    ) {
+    if (runway_predicted !== null && runway_predicted !== undefined && String(runway_predicted).trim() !== "") {
       runwayField.value = runway_predicted;
     }
 
@@ -832,15 +963,56 @@ async function retrieve_metar(prefix, verbose = "info") {
     window.flight_plan_data[`${prefix}_RUNWAY`] = runway_predicted;
     // Store METAR in flight plan data
     window.flight_plan_data[`${prefix}_METAR_ICAO`] = metar_icao;
-    // Store METAR in flight plan data. In the pyton script use metar_plain.to_py() or the JsToPy() function
-    window.flight_plan_data[`${prefix}_METAR`] = metar_plain;
+    // Store METAR in flight plan data. This will break the saving functionality!
+    // window.flight_plan_data[`${prefix}_METAR`] = metar_plain;
+    // window.METAR[prefix] = metar_plain;
+    if (prefix === "DEPARTURE") {
+      window.METAR_DEPARTURE = metar_plain;
+    } else {
+      window.METAR_ARRIVAL = metar_plain;
+    }
+    updateFlightCatagoryIcon(prefix);
 
     // Display alert message
     // window.alert(`✅ METAR information is loaded from the closest station: ${stationName}.\n✅ The predicted runway is: ${runway_predicted}`);
   }
 
   checkMetarAge();
-  console.log(
-    `   >✅ METAR information is loaded from the closest station: ${stationName}.\n   >✅ The predicted runway is: ${runway_predicted}`,
-  );
+  console.log(`   >✅ METAR information is loaded from the closest station: ${stationName}.\n   >✅ The predicted runway is: ${runway_predicted}`);
+}
+
+function updateFlightCatagoryIcon(prefix, remove = false) {
+  console.log(`>func: updateFlightCatagory(${prefix})`);
+  // Get elements
+  const img = document.getElementById(`${prefix}_VFR_ICON`);
+  const borderFieldAerodrome = document.getElementById(prefix + "_SELECT_AERODROME_BORDER");
+
+  // Get metar data for aerodrome
+  // metar_obj = window.flight_plan_data[`${prefix}_METAR`];
+  if (prefix === "DEPARTURE") {
+    metar_obj = window.METAR_DEPARTURE;
+  } else {
+    metar_obj = window.METAR_ARRIVAL;
+  }
+
+  // Do not show image when metar data is not present
+  console.log(`Metar object: ${metar_obj}`);
+  if (remove || !metar_obj) {
+    console.log("   >VFR icon removed.");
+    img.style.display = "none";
+    img.alt = "";
+    img.src = "";
+    // Update border color
+    borderFieldAerodrome.style.backgroundColor = "f5f5f5";
+    return;
+  }
+
+  console.log("   >📊 Flight Category:", metar_obj.flightCategory);
+  console.log(metar_obj.icon);
+  // Update to appriorate flight catagory
+  // img.src = "./icons/clouds_rain_VFR.png";
+  img.src = metar_obj.icon;
+  img.alt = metar_obj.flightCategory;
+  img.style.display = "inline-block";
+  borderFieldAerodrome.style.backgroundColor = metar_obj.color;
 }
