@@ -26,9 +26,10 @@
     <!--<link rel="icon" type="image/png" sizes="16x16" href="https://erdogant.github.io/datasets/skywalk/figs/icons/airplane_gray.png">-->
     <!--<link rel="apple-touch-icon" sizes="180x180" href="https://erdogant.github.io/datasets/skywalk/figs/icons/airplane_gray.png">-->
 
-    <!--ANIMATION-->
+    <!--ANIMATION THE ORDE OF IMPORT MATHERS!-->
     <script src="./scripts/rain.js" defer></script>
-    <script src="./scripts/metar.js"></script
+    <script src="./scripts/fog.js" defer></script>
+    <script src="./scripts/metar.js" defer></script
 
 
     <!--STYLESHEETS-->
@@ -210,6 +211,7 @@
             >
             <!--Rain overlay-->
             <canvas class="rain-canvas" data-prefix="DEPARTURE"></canvas>
+            <canvas class="fog-canvas"  data-prefix="DEPARTURE"></canvas>
         </div>
 
 
@@ -232,7 +234,8 @@
 
             <div class="button-row">
                 <img id="DEPARTURE_FLAG" src="" alt="" style="width:30px; height:auto; vertical-align:middle; margin-left:6px;">
-                <img id="DEPARTURE_VFR_ICON" src="" alt="" style="width:30px; height:auto; vertical-align:middle; margin-left:6px;">
+                <img id="DEPARTURE_CATAGORY_ICON" src="" alt="" style="width:35px; height:auto; vertical-align:middle; margin-left:6px;">
+                <img id="DEPARTURE_VFR_ICON" src="" alt="" style="width:70px; height:auto; vertical-align:middle; margin-left:6px;">
                 <input type="text" id="DEPARTURE_ICAO" class="tile-value UPPERCASE_input sync-departure" onchange="window.load_aerodrome_from_json('DEPARTURE')" placeholder="ICAO">
                 <button id="DEPARTURE_USE_CACHED" onclick="window.retrieve_metar('DEPARTURE')" title="Retrieve METAR weather information for the selected aerodrome" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>
             </div>
@@ -534,8 +537,8 @@
             >
 
             <!-- Rain overlay -->
-            <!--<canvas class="rain-canvas"></canvas>-->
             <canvas class="rain-canvas" data-prefix="ARRIVAL"></canvas>
+            <canvas class="fog-canvas"  data-prefix="ARRIVAL"></canvas>
         </div>
 
 
@@ -556,7 +559,8 @@
 
             <div class="button-row">
                 <img id="ARRIVAL_FLAG" src="" alt="" style="width:30px; height:auto; vertical-align:middle; margin-left:6px;">
-                <img id="ARRIVAL_VFR_ICON" src="" alt="" style="width:30px; height:auto; vertical-align:middle; margin-left:6px;">
+                <img id="ARRIVAL_CATAGORY_ICON" src="" alt="" style="width:35px; height:auto; vertical-align:middle; margin-left:6px;">
+                <img id="ARRIVAL_VFR_ICON" src="" alt="" style="width:70px; height:auto; vertical-align:middle; margin-left:6px;">
                 <input type="text" id="ARRIVAL_ICAO" class="tile-value UPPERCASE_input sync-arrival" onchange="window.load_aerodrome_from_json('ARRIVAL')" placeholder="ICAO">
                 <button id="ARRIVAL_USE_CACHED" onclick="window.retrieve_metar('ARRIVAL')" title="Retrieve METAR weather information for the selected aerodrome" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>
             </div>
@@ -2708,75 +2712,7 @@
 </script>
 
 <script>
-    /* THIS PART CONTAINS THE METAR FUNCTIONS */
-
-    // function checkMetarAge() {
-    //   /* Check datetime of METAR data and update UI colors.
-    //    *
-    //    * This function checks the datetime of displayed METAR data and updates the UI to indicate staleness.
-    //    * If METAR data is older than 10 minutes:
-    //    * - Sets elements' background to light red
-    //    * Used to visually alert user that METAR data should be refreshed.
-    //    */
-    //     function createTimeObject(dateField){
-    //         // Parse the date parts
-    //         const [datePart, timePart] = dateField.split(' ');
-    //         const [day, month, year] = datePart.split('-');
-    //         const [hours, minutes] = timePart.split(':');
-
-    //         // Create date objects with the same timezone
-    //         const timeObject = new Date();
-    //         timeObject.setFullYear(parseInt(year), parseInt(month) - 1, parseInt(day));
-    //         timeObject.setHours(parseInt(hours), parseInt(minutes), 0, 0);
-    //         return timeObject
-    //     }
-
-    //     function compareTime(prefix) {
-    //         const dateField = document.getElementById(`DATETIME-METAR-${prefix}`);
-    //         const metarField = document.getElementById(`METAR-FIELD-${prefix}`);
-    //         // const metarText = document.getElementById('METAR-TEXT-' + prefix);
-
-    //         if (!dateField?.value) {
-    //           console.log(`   >No METAR date is found for ${prefix}.This is checked every minute.`)
-    //           return;
-    //         }
-
-    //         // Parse the METAR date parts
-    //         const dateFieldClean = formatDateDMY(dateField.value, format='dd/mm/yyyy');
-    //         const metarTime = createTimeObject(dateFieldClean);
-
-    //         // Parse the NOW date parts
-    //         const now = nowtime(utc=true);
-    //         const currenTime = createTimeObject(now);
-
-    //         // Compute difference
-    //         const diff = currenTime - metarTime;
-    //         const isOld = diff > 35 * 60 * 1000; // 35 minutes in milliseconds
-    //         const minutesOld = Math.round(diff / 1000 / 60);
-
-    //         console.log(`   >${prefix}\n   >currenTime: ${currenTime}.\n   >Metar time: ${metarTime}\n   >Diff: ${minutesOld}min\n   >isOld: ${isOld}`)
-
-    //         if (isOld) {
-    //             // colorMetarFields(prefix, enable=false);
-    //             message = `METAR weather info is ${minutesOld} minutes old. Reload the METAR information to retrieve the latest one.`;
-    //             dateField.title = message;
-    //             metarField.title = message;
-    //             dateField.style.backgroundColor = '#ffebee';
-    //             metarField.style.backgroundColor = '#ffebee';
-    //         } else {
-    //             // colorMetarFields(prefix, enable=true);
-    //             dateField.title = 'The UTC date/time for the retrieved METAR data';
-    //             metarField.title = `METAR information for the ${prefix.toLowerCase()} aerodrome.`;
-    //             dateField.style.backgroundColor = '';
-    //             metarField.style.backgroundColor = '';
-    //         }
-    //     }
-
-    //     console.log(`> func: checkMetarAge()`)
-    //     compareTime('DEPARTURE');
-    //     compareTime('ARRIVAL');
-    // }
-
+    /* THIS PART CONTAINS THE WIDGET FUNCTIONS */
 
     function createAirportWeatherWidget(icao, prefix) {
         if (icao) {
@@ -3053,9 +2989,9 @@
         // const buttonMetar = document.getElementById('BTN-METAR-' + prefix);
         // const buttonMetarIcon1 = document.getElementById('BTN-METAR-ICON-' + prefix + '_1');
         const buttonMetarIcon2 = document.getElementById('BTN-METAR-ICON-' + prefix + '_2');
+        const metarText = document.getElementById('METAR-TEXT-' + prefix);
         const dateField = document.getElementById('DATETIME-METAR-' + prefix);
         const metarField = document.getElementById('METAR-FIELD-' + prefix);
-        const metarText = document.getElementById('METAR-TEXT-' + prefix);
         const windDirectionField = document.getElementById(prefix + '_WIND_DIRECTION');
         const windSpeedField = document.getElementById(prefix + '_WIND_SPEED');
         const windGustField = document.getElementById(prefix + '_WIND_GUST');
@@ -3067,7 +3003,6 @@
         if (enable) {
           // buttonMetarIcon1.disabled = false;
           // buttonMetarIcon1.style.cursor = 'pointer';
-
           // buttonMetarIcon2.disabled = false;
           // buttonMetarIcon2.style.cursor = 'pointer';
           // buttonMetar.disabled = false;
@@ -3077,8 +3012,8 @@
           // buttonMetar.style.backgroundColor = '#80B0C0';
 
           metarField.style.backgroundColor = 'transparent';
-          dateField.style.backgroundColor = 'transparent';
           metarText.style.backgroundColor = 'transparent';
+          dateField.style.backgroundColor = 'transparent';
           windDirectionField.style.backgroundColor = 'transparent';
           windSpeedField.style.backgroundColor = 'transparent';
           windGustField.style.backgroundColor = 'transparent';
@@ -3089,7 +3024,6 @@
         } else {
           // buttonMetarIcon1.disabled = true;
           // buttonMetarIcon1.style.cursor = "not-allowed";
-
           // buttonMetarIcon2.disabled = true;
           // buttonMetarIcon2.style.cursor = "not-allowed";
           // buttonMetar.disabled = true;
@@ -3100,8 +3034,7 @@
           metarText.value = ' ';
           metarField.value = 'Be patient while fetching METAR weather information...';
 
-          // Change background color to light red
-          // buttonMetar.style.backgroundColor = '#ffebee';
+          // Change background color to light red/pink
           metarField.style.backgroundColor = '#ffebee';
           dateField.style.backgroundColor = '#ffebee';
           metarText.style.backgroundColor = '#ffebee';
@@ -3111,7 +3044,6 @@
           windVariationField.style.backgroundColor = '#ffebee';
           windHeadwindField.style.backgroundColor = '#ffebee';
           windCrosswindField.style.backgroundColor = '#ffebee';
-          // borderFieldAerodrome.style.backgroundColor = '#ffebee';
 
         }
     }
@@ -3145,115 +3077,6 @@
         button.style.backgroundColor = '#80B0C0';
     }
 
-
-    // async function retrieve_metar(prefix, verbose = 'info') {
-    //     console.log(`> func: retrieve_metar(${prefix})`);
-
-    //     // Get the values from the input fields
-    //     const name = document.getElementById(prefix + '_NAME').value || '';
-    //     const icao = document.getElementById(prefix + '_ICAO').value || '';
-    //     const country = document.getElementById(prefix + '_COUNTRY').value || '';
-
-    //     // Get the button element that we can fill with METAR data
-    //     // const button = document.getElementById('BTN-METAR-' + prefix);
-    //     const dateField = document.getElementById('DATETIME-METAR-' + prefix);
-    //     const metarField = document.getElementById('METAR-FIELD-' + prefix);
-    //     const metarText = document.getElementById('METAR-TEXT-' + prefix);
-    //     const runwayField = document.getElementById(prefix + '_RUNWAY');
-    //     // const decodedCheckbox = document.getElementById('metar-decoded-' + prefix);
-    //     // const decoded = decodedCheckbox ? decodedCheckbox.checked : false;
-
-    //     // Set default values
-    //     let metar_icao = '';
-    //     let metar_message = '';
-    //     let datetimeStr = nowtime(true); // UTC
-    //     let runway_predicted = '';
-    //     let icao_stations = [''];
-    //     let name_stations = [''];
-    //     let stationName = '';
-
-    //     // If ICAO is empty or not provided, notify the user and return early
-    //     if (!icao || !country) {
-    //       if (verbose === 'info') {
-    //           alert("ℹ️ To retrieve METAR information, please select a country and load the aerodrome (ICAO) first.");
-    //       }
-    //         return;
-    //     }
-
-    //     // Update button: Disable
-    //     colorMetarFields(prefix, enable=false);
-
-    //     // Fetch METAR data from URL
-    //     try {
-    //         // Retrieve the METAR data for the closest station
-    //         icao_stations = get_top_metar_stations(prefix, 5, false).toJs();
-    //         console.log('   >Closest METAR stations:')
-    //         console.log(`   >${icao_stations}`);
-
-    //         // Fetch the METAR data for the closest station (pass decoded flag)
-    //         metar = await fetch_metar(icao_stations, true, false, prefix);
-    //         // metar = await fetchMetar(icao_stations[0]);
-    //         // console.log('Fetched METAR:', metar);
-
-    //         // Store data
-    //         metar_icao = metar[0];
-    //         datetimeStr = metar[1];
-    //         stationName = metar[2];
-
-    //         if (stationName) {
-    //             if (metarText) { metarText.value = 'Closest available METAR station is ' + stationName; }
-    //         } else {
-    //             if (metarText) { metarText.value = 'No nearby METAR stations found'; }
-    //         }
-
-    //     } catch (error) {
-    //         console.log(`   >Error retrieving METAR data. ${prefix} has likely no weather station. Error:`, error);
-    //         metar_message = 'No METAR weather station available for ' + icao;
-    //         // Update button: Enable
-    //         colorMetarFields(prefix, enable=true);
-    //     }
-
-    //     // Update GUI elements
-    //     dateField.value = datetimeStr;
-    //     metarField.value = metar_icao || metar_message;
-    //     colorMetarFields(prefix, enable=true);
-
-    //     // Update the expected runway based on wind direction and runway orientation
-    //     if (metar_icao !== '' && metar_icao != null) {
-    //         console.log(`   >All data is READY to compute the RUNWAY with the METAR data`);
-    //         // Compute expected runway number based on wind direction and runway orientation
-    //         runway_predicted = expected_runway_number(prefix, metar_icao, extra_runways=runwayField.value);
-    //         // Change RUNWAY field color to blue to show that it is predicted
-    //         runwayField.style.backgroundColor = '#e6f0ff';
-    //         // metarText.value = js.window.messages;
-    //         // Change value of RUNWAY field in the the predicted runway
-    //         if (runway_predicted !== null && runway_predicted !== undefined && String(runway_predicted).trim() !== '') {
-    //             runwayField.value = runway_predicted;
-    //         }
-    //         // else {
-    //         //     window.alert(`⚠️ Runway number could not be predicted for ${prefix}. Please set the runway number manually.`);
-
-    //         // Compute wind parameters from METAR data and update wind GUI fields
-    //         window.update_wind_gui_fields(prefix, metar_icao)
-    //         // Create wind envelope plot
-    //         window.windEnvelope_js(prefix,  25, 15, false)
-
-    //         // Store RUNWAY number in flight plan data
-    //         window.flight_plan_data[`${prefix}_RUNWAY`] = runway_predicted;
-    //         // Store METAR in flight plan data
-    //         window.flight_plan_data[`${prefix}_METAR_ICAO`] = metar_icao;
-    //         // Display alert message
-    //         // window.alert(`✅ METAR information is loaded from the closest station: ${stationName}.\n✅ The predicted runway is: ${runway_predicted}`);
-    //     }
-
-    //     checkMetarAge();
-    //     console.log(`   >✅ METAR information is loaded from the closest station: ${stationName}.\n   >✅ The predicted runway is: ${runway_predicted}`);
-
-    // }
-
-    // Initial check and start interval and Check every minute
-    // checkMetarAge();
-    // setInterval(checkMetarAge, 60000);
 
   </script>
 
@@ -4457,9 +4280,9 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
         metarField.style.backgroundColor = 'transparent';
         metarText.style.backgroundColor = 'transparent';
 
+        metarText.value = ' '
         datetime_field.value = ''
         metarField.value = ''
-        metarText.value = ' '
         windDirectionField.value = '';
         windSpeedField.value = '';
         windGustField.value = '';

@@ -10,6 +10,7 @@ const FILES_TO_CACHE = [
   // SCRIPTS
   "./scripts/metar.js",
   "./scripts/rain.js",
+  "./scripts/fog.js",
   // FIGS
   "./libs/leaflet.css",
   "./libs/leaflet.js",
@@ -20,7 +21,7 @@ const FILES_TO_CACHE = [
   "./figs/logo_skywalk_dark.png",
   // ICONS
   "./icons/airplane_gray.png",
-  // VFR FIGS
+  // CATAGORY FIGS
   "./icons/sun_VFR.png",
   "./icons/clouds_VFR.png",
   "./icons/clouds_sun_VFR.png",

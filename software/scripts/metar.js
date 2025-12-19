@@ -25,6 +25,7 @@ class Metar {
     this.rain = this.determineRain();
     this.snow = this.determineSnow();
     this.icon = this.determineMetarIcon();
+    this.icon_vfr = this.determineVFRIcon();
     this.color = this.determineColor();
 
     this.properties = {
@@ -45,6 +46,7 @@ class Metar {
       rain: this.rain,
       snow: this.snow,
       icon: this.icon,
+      icon_vfr: this.icon_vfr,
       color: this.color,
       changements: this.changements,
     };
@@ -385,7 +387,8 @@ class Metar {
   determineRain() {
     const weather = this.weather;
     if (!weather || !weather.weather) return false;
-    return weather.weather.some((w) => ["Rain", "Drizzle"].includes(w));
+    const isWetWeather = weather.weather.some((w) => ["Rain", "Drizzle"].includes(w)) || weather.prefix.some((w) => ["Shower"].includes(w));
+    return isWetWeather;
   }
 
   determineSnow() {
@@ -473,6 +476,42 @@ class Metar {
     }
 
     return color;
+  }
+
+  determineVFRIcon() {
+    // Determine the icon
+    const flightCategory = this.flightCategory;
+    const iconDir = "./icons";
+
+    // ---- LIFR ----
+    if (flightCategory === "LIFR") {
+      // return `${iconDir}/LIFR.png`;
+      // return "https://img.shields.io/badge/flight-LIFR-purple?style=for-the-badge";
+      return "https://img.shields.io/badge/FLIGHT-LIFR-purple";
+    }
+    // ---- IFR ----
+    if (flightCategory === "IFR") {
+      // return `${iconDir}/IFR.png`;
+      // return "https://img.shields.io/badge/flight-IFR-red?style=for-the-badge";
+      return "https://img.shields.io/badge/FLIGHT-IFR-red";
+    }
+    // ---- MVFR ----
+    if (flightCategory === "MVFR") {
+      // return `${iconDir}/MVFR.png`;
+      // return "https://img.shields.io/badge/flight-MVFR-blue?style=for-the-badge";
+      return "https://img.shields.io/badge/FLIGHT-MVFR-blue";
+    }
+    // ---- VFR  ----
+    if (flightCategory === "VFR") {
+      // return `${iconDir}/VFR.png`;
+      // return "https://img.shields.io/badge/flight-VFR-green?style=for-the-badge";
+      return "https://img.shields.io/badge/FLIGHT-VFR-green";
+    }
+
+    // ---- Fallback ----
+    // return `${iconDir}/label_unknown.png`;
+    // return "https://img.shields.io/badge/flight-UNKNOWN-black?style=for-the-badge";
+    return "https://img.shields.io/badge/FLIGHT-UNKNOWN-green";
   }
 
   determineMetarIcon() {
@@ -792,9 +831,10 @@ function checkMetarAge() {
     console.log(`   >${prefix}\n   >currenTime: ${currenTime}.\n   >Metar time: ${metarTime}\n   >Diff: ${minutesOld}min\n   >isOld: ${isOld}`);
 
     if (isOld) {
-      // colorMetarFields(prefix, enable=false);
+      // colorMetarFields(prefix, false);
       message = `METAR weather info is ${minutesOld} minutes old. Reload the METAR information to retrieve the latest one.`;
       dateField.title = message;
+      dateField.value = ` METAR: ${minutesOld} min. old`;
       metarField.title = message;
       dateField.style.backgroundColor = "#ffebee";
       metarField.style.backgroundColor = "#ffebee";
@@ -802,7 +842,7 @@ function checkMetarAge() {
       // colorMetarFields(prefix, enable=true);
       dateField.title = "The UTC date/time for the retrieved METAR data";
       metarField.title = `METAR information for the ${prefix.toLowerCase()} aerodrome.`;
-      dateField.style.backgroundColor = "";
+      dateField.style.backgroundColor = "transparent";
       metarField.style.backgroundColor = "";
     }
   }
@@ -976,10 +1016,11 @@ async function retrieve_metar(prefix, verbose = "info") {
     if (prefix === "DEPARTURE") {
       window.METAR_DEPARTURE = metar_plain;
     } else {
-      window.animateR_ARRIVAL = metar_plain;
+      window.METAR_ARRIVAL = metar_plain;
     }
     // Animate
     animateRain(prefix);
+    animateFog(prefix);
     // Update flight catagory icon
     updateFlightCatagoryIcon(prefix);
 
@@ -994,7 +1035,8 @@ async function retrieve_metar(prefix, verbose = "info") {
 function updateFlightCatagoryIcon(prefix, remove = false) {
   console.log(`>func: updateFlightCatagory(${prefix})`);
   // Get elements
-  const img = document.getElementById(`${prefix}_VFR_ICON`);
+  const imgCat = document.getElementById(`${prefix}_CATAGORY_ICON`);
+  const imgVFR = document.getElementById(`${prefix}_VFR_ICON`);
   const borderFieldAerodrome = document.getElementById(prefix + "_SELECT_AERODROME_BORDER");
 
   // Get metar data for aerodrome
@@ -1008,9 +1050,14 @@ function updateFlightCatagoryIcon(prefix, remove = false) {
   // Do not show image when metar data is not present
   if (remove || !metar_obj) {
     console.log("   >VFR icon removed.");
-    img.style.display = "none";
-    img.alt = "";
-    img.src = "";
+    imgCat.style.display = "none";
+    imgCat.alt = "";
+    imgCat.src = "";
+
+    imgVFR.style.display = "none";
+    imgVFR.alt = "";
+    imgVFR.src = "";
+
     // Update border color
     borderFieldAerodrome.style.backgroundColor = "f5f5f5";
     return;
@@ -1018,10 +1065,14 @@ function updateFlightCatagoryIcon(prefix, remove = false) {
 
   console.log("   >📊 Flight Category:", metar_obj.flightCategory);
   // console.log(metar_obj.icon);
-  // Update to appriorate flight catagory
-  // img.src = "./icons/clouds_rain_VFR.png";
-  img.src = metar_obj.icon;
-  img.alt = metar_obj.flightCategory;
-  img.style.display = "inline-block";
+  // Get flight catagory
+  imgCat.src = metar_obj.icon;
+  imgCat.alt = metar_obj.flightCategory;
+  imgCat.style.display = "inline-block";
+  // Get VFR icon
+  imgVFR.src = metar_obj.icon_vfr;
+  imgVFR.alt = metar_obj.flightCategory;
+  imgVFR.style.display = "inline-block";
+  // Color the Div
   borderFieldAerodrome.style.backgroundColor = metar_obj.color;
 }

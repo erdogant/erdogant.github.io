@@ -294,6 +294,14 @@ input[type="text"]:hover {
     border-radius: 10px;
 }
 
+.fog-canvas {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 3; /* fog ABOVE rain */
+    border-radius: 10px;
+}
+
 /* Coffee container */
 .coffee-container {
     text-align: center;
