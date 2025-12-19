@@ -22,7 +22,8 @@ class Metar {
     this.cavok = this.analyzeCAVOK();
     this.vmc = this.verifyVMC();
     this.flightCategory = this.determineFlightCategory();
-    this.rain_or_snow = this.determineRainOrSnow();
+    this.rain = this.determineRain();
+    this.snow = this.determineSnow();
     this.icon = this.determineMetarIcon();
     this.color = this.determineColor();
 
@@ -41,11 +42,30 @@ class Metar {
       cavok: this.cavok,
       vmc: this.vmc,
       flightCategory: this.flightCategory,
-      rain_or_snow: this.rain_or_snow,
+      rain: this.rain,
+      snow: this.snow,
       icon: this.icon,
       color: this.color,
       changements: this.changements,
     };
+
+    // Show the details on screen
+    console.log("\n   >📅 Date/Time:", this.dateTime);
+    console.log("   >🤖 Automatic:", this.auto);
+    console.log("   >🌬️  Wind:", this.wind);
+    console.log("   >👁️  Visibility:", this.visibility, "m");
+    console.log("   >🌦️  Weather:", this.weather);
+    console.log("   >☁️  Clouds:", this.cloud);
+    console.log("   >🌡️  Temp/Dewpoint:", this.temperatures);
+    console.log("   >🔽 QNH:", this.qnh);
+    console.log("   >☀️  CAVOK:", this.cavok);
+    console.log("   >✈️  VMC Status:", this.vmc);
+    console.log("   >📊 Flight Category:", this.flightCategory);
+    console.log("   >🌧️ Rain:", this.rain);
+    console.log("   >❄️ Snow:", this.snow);
+    console.log("   >👁️ Icon:", this.icon);
+    console.log("   >🤖 Color:", this.color);
+    console.log("   >🔄 Changements:", this.changements);
   }
 
   analyzeChangements() {
@@ -213,15 +233,19 @@ class Metar {
       { code: "TS", meaning: "Thunderstorm" },
     ];
 
+    // Search in original METAR to include weather in TEMPO/BECMG sections
+    // const searchText = this.metarWithoutChangements;
+    const searchText = this.metar;
+
     // Find intensity
-    const intensityMatches = this.metarWithoutChangements.match(/[-+]/g);
+    const intensityMatches = searchText.match(/[-+]/g);
     const intensity = intensityMatches ? intensityMatches.map((i) => (i === "+" ? true : false)) : null;
 
     // Find prefixes
-    const foundPrefixes = prefixes.filter((p) => new RegExp(p.code + "+").test(this.metarWithoutChangements)).map((p) => p.meaning);
+    const foundPrefixes = prefixes.filter((p) => new RegExp(p.code + "+").test(searchText)).map((p) => p.meaning);
 
     // Find weather phenomena
-    const foundWeather = weathers.filter((w) => new RegExp(w.code + "+").test(this.metarWithoutChangements)).map((w) => w.meaning);
+    const foundWeather = weathers.filter((w) => new RegExp(w.code + "+").test(searchText)).map((w) => w.meaning);
 
     if (!intensity && foundPrefixes.length === 0 && foundWeather.length === 0) {
       return null;
@@ -358,16 +382,22 @@ class Metar {
     };
   }
 
-  determineRainOrSnow(weather) {
+  determineRain() {
+    const weather = this.weather;
     if (!weather || !weather.weather) return false;
+    return weather.weather.some((w) => ["Rain", "Drizzle"].includes(w));
+  }
 
-    return weather.weather.some((w) => ["Rain", "Snow", "Drizzle", "Hail", "Ice Pellets", "Snow Grains"].includes(w));
+  determineSnow() {
+    const weather = this.weather;
+    if (!weather || !weather.weather) return false;
+    return weather.weather.some((w) => ["Snow", "Hail", "Ice Pellets", "Snow Grains"].includes(w));
   }
 
   determineColor() {
     const category = this.flightCategory; // "VFR", "MVFR", "IFR", "LIFR"
     const cloud = this.cloud;
-    const rainOrSnow = !!this.rain_or_snow;
+    const rainOrSnow = !!(this.rain || this.snow);
 
     // Base colors by flight category
     const baseColors = {
@@ -380,6 +410,8 @@ class Metar {
     // Lightness adjustments for clouds/rain
     // returns slightly lighter shades
     function lighten(hex, factor = 0.2) {
+      return hex;
+
       // Convert hex to RGB
       const r = parseInt(hex.slice(1, 3), 16);
       const g = parseInt(hex.slice(3, 5), 16);
@@ -449,7 +481,7 @@ class Metar {
     const cloud = this.cloud;
     const cavok = this.cavok;
     const weather = this.weather;
-    const rainOrSnow = !!this.rain_or_snow;
+    const rainOrSnow = !!(this.rain || this.snow);
     const sunset_flag = false;
     const iconDir = "./icons";
 
@@ -887,15 +919,8 @@ async function retrieve_metar(prefix, verbose = "info") {
     datetimeStr = metar[1];
     stationName = metar[2];
 
-    // if (stationName) {
-    //   if (metarText) {
-    //     metarText.value = "Closest available METAR station is " + stationName;
-    //   }
-    // } else {
-    //   if (metarText) {
-    //     metarText.value = "No nearby METAR stations found";
-    //   }
-    // }
+    // metar_icao = "EDDH 191350Z AUTO 22009KT 9999 OVC013 12/09 Q1015 TEMPO 4500 -RADZ BKN009";
+
     if (metarText) {
       metarText.value = stationName ? `Closest available METAR station is ${stationName}` : "No nearby METAR stations found";
     }
@@ -919,23 +944,6 @@ async function retrieve_metar(prefix, verbose = "info") {
       // Convert metar object to plain so that it can be used in pyton dictionary for later usage
       metar_plain = metar_obj.getAll();
       // metar_plain = JSON.stringify(metar_details.getAll());
-
-      // Show the details on screen
-      console.log("\n   >📅 Date/Time:", metar_obj.dateTime);
-      console.log("   >🤖 Automatic:", metar_obj.auto);
-      console.log("   >🌬️  Wind:", metar_obj.wind);
-      console.log("   >👁️  Visibility:", metar_obj.visibility, "m");
-      console.log("   >🌦️  Weather:", metar_obj.weather);
-      console.log("   >☁️  Clouds:", metar_obj.cloud);
-      console.log("   >🌡️  Temp/Dewpoint:", metar_obj.temperatures);
-      console.log("   >🔽 QNH:", metar_obj.qnh);
-      console.log("   >☀️  CAVOK:", metar_obj.cavok);
-      console.log("   >✈️  VMC Status:", metar_obj.vmc);
-      console.log("   >📊 Flight Category:", metar_obj.flightCategory);
-      console.log("   >🌦️ Rain or Snow:", metar_obj.rain_or_snow);
-      console.log("   >👁️ Icon:", metar_obj.icon);
-      console.log("   >🤖 Color:", metar_obj.color);
-      console.log("   >🔄 Changements:", metar_obj.changements);
     } catch (error) {
       console.log(`   >Error: Metar details could not be comptued`);
     }
@@ -971,6 +979,9 @@ async function retrieve_metar(prefix, verbose = "info") {
     } else {
       window.METAR_ARRIVAL = metar_plain;
     }
+    // Animate
+    window.updateRain(prefix);
+    // Update flight catagory icon
     updateFlightCatagoryIcon(prefix);
 
     // Display alert message
@@ -996,7 +1007,6 @@ function updateFlightCatagoryIcon(prefix, remove = false) {
   }
 
   // Do not show image when metar data is not present
-  console.log(`Metar object: ${metar_obj}`);
   if (remove || !metar_obj) {
     console.log("   >VFR icon removed.");
     img.style.display = "none";
@@ -1008,7 +1018,7 @@ function updateFlightCatagoryIcon(prefix, remove = false) {
   }
 
   console.log("   >📊 Flight Category:", metar_obj.flightCategory);
-  console.log(metar_obj.icon);
+  // console.log(metar_obj.icon);
   // Update to appriorate flight catagory
   // img.src = "./icons/clouds_rain_VFR.png";
   img.src = metar_obj.icon;

@@ -232,16 +232,13 @@ input[type="text"]:hover {
 }
 
 /* Logo wrapper container */
-.logo-container {
+/*.logo-container {
     text-align: center;
     margin: 10px;
-    /* increased spacing below logo */
-    /*margin-bottom: 5px;*/
     border-radius: 5px;
-    /* allow overflow so the image never gets cropped by parent sizing changes */
     overflow: visible;
     min-height: 80px;
-    padding-bottom: 6px; /* small breathing room */
+    padding-bottom: 6px;
 }
 
 .logo-container img {
@@ -251,14 +248,50 @@ input[type="text"]:hover {
     margin: 0 auto;
     cursor: pointer;
     transition: transform 0.2s;
-    /* Prevent image from exceeding viewport height on tiny screens */
     max-height: calc(
         100vh - 220px
-    ); /* adapt if needed; ensures logo shrinks when vertical space small */
+    );
 }
 
 .logo-container img:hover {
     transform: scale(1.05);
+}*/
+
+/* Logo wrapper container */
+.logo-container {
+    position: relative; /* REQUIRED for overlay */
+    text-align: center;
+    margin: 10px;
+    border-radius: 5px;
+    overflow: visible;
+    min-height: 80px;
+    padding-bottom: 6px;
+}
+
+/* The aerodrome image */
+.logo-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    cursor: pointer;
+    transition: transform 0.2s;
+    max-height: calc(100vh - 220px);
+    border-radius: 10px;
+}
+
+/* Hover effect stays intact */
+.logo-container img:hover {
+    transform: scale(1.05);
+}
+
+/* 🌧️ Rain canvas overlay */
+.rain-canvas {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    border-radius: 10px;
 }
 
 /* Coffee container */

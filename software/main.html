@@ -26,6 +26,11 @@
     <!--<link rel="icon" type="image/png" sizes="16x16" href="https://erdogant.github.io/datasets/skywalk/figs/icons/airplane_gray.png">-->
     <!--<link rel="apple-touch-icon" sizes="180x180" href="https://erdogant.github.io/datasets/skywalk/figs/icons/airplane_gray.png">-->
 
+    <!--ANIMATION-->
+    <script src="./scripts/rain.js" defer></script>
+    <script src="./scripts/metar.js"></script
+
+
     <!--STYLESHEETS-->
     <link rel="stylesheet" href="style.css">
 
@@ -46,7 +51,6 @@
     <!--MANIFEST-->
     <link rel="manifest" href="/manifest.json">
 
-    <script src="metar.js"></script
 
 </head>
 
@@ -187,13 +191,28 @@
         <label_h1>Departure Information</label_h1>
 
         <!-- Departure Image -->
-        <div class="logo-container" style="margin-top: 20px;">
-            <img id="DEPARTURE_image_cache" alt="Departure Aerodrome"
+        <!--<div class="logo-container" style="margin-top: 20px;">
+            <img id="DEPARTURE_image_cache"
+                alt="Departure Aerodrome"
                 style="max-width: 100%; height: auto; border-radius: 10px; cursor: pointer;"
                 onclick="openAerodromeMap('DEPARTURE')"
                 src="./figs/default_aerodrome.jpg"
             >
+        </div>-->
+
+        <div class="logo-container rain-wrapper" style="margin-top: 20px;">
+            <!--Aerodrome image-->
+            <img
+                id="DEPARTURE_image_cache"
+                alt="Departure Aerodrome"
+                src="./figs/default_aerodrome.jpg"
+                onclick="openAerodromeMap('DEPARTURE')"
+            >
+            <!--Rain overlay-->
+            <canvas class="rain-canvas" data-prefix="DEPARTURE"></canvas>
         </div>
+
+
 
 
         <label_h1>Select Departure</label_h1>
@@ -497,12 +516,26 @@
         <label_h1>Arrival Information</label_h1>
 
         <!-- Arrival Image -->
-        <div class="logo-container" style="margin-top: 20px;">
+        <!--<div class="logo-container" style="margin-top: 20px;">
             <img id="ARRIVAL_image_cache" alt="Arrival Aerodrome"
                 style="max-width: 100%; height: auto; border-radius: 10px; cursor: pointer;"
                 onclick="openAerodromeMap('ARRIVAL')"
                 src="./figs/default_aerodrome.jpg"
             >
+        </div>-->
+
+        <div class="logo-container rain-wrapper" style="margin-top: 20px;">
+            <!-- Aerodrome image -->
+            <img
+                id="ARRIVAL_image_cache"
+                alt="Arrival Aerodrome"
+                src="./figs/default_aerodrome.jpg"
+                onclick="openAerodromeMap('ARRIVAL')"
+            >
+
+            <!-- Rain overlay -->
+            <!--<canvas class="rain-canvas"></canvas>-->
+            <canvas class="rain-canvas" data-prefix="ARRIVAL"></canvas>
         </div>
 
 
@@ -1177,7 +1210,8 @@
 
 
 <script>
-  // function computeFlightRules() {
+
+// function computeFlightRules() {
 
 
     // ============== TEST CASES ==============
@@ -1228,21 +1262,23 @@
   //     console.log(`METAR: ${text}`);
   //     console.log(`${'='.repeat(60)}`);
 
-  //     const metar = new Metar(code, text);
+      // code: 'EGLL';
+      // text: "EDDH 191350Z AUTO 22009KT 9999 OVC013 12/09 Q1015 TEMPO 4500 -RADZ BKN009";
+      // const metar = new Metar(code, text);
 
-  //     console.log('\n📅 Date/Time:', metar.dateTime);
-  //     console.log('🤖 Automatic:', metar.auto);
-  //     console.log('🌬️  Wind:', metar.wind);
-  //     console.log('👁️  Visibility:', metar.visibility, 'm');
-  //     console.log('🌦️  Weather:', metar.weather);
-  //     console.log('☁️  Clouds:', metar.cloud);
-  //     console.log('🌡️  Temp/Dewpoint:', metar.temperatures);
-  //     console.log('🔽 QNH:', metar.qnh);
-  //     console.log('☀️  CAVOK:', metar.cavok);
-  //     console.log('✈️  VMC Status:', metar.flightCategory);
-  //     console.log('📊 Flight Category:', metar.flightCategory);
-  //     console.log('🔄 Changements:', metar.changements);
-  //   });
+      // console.log('\n📅 Date/Time:', metar.dateTime);
+      // console.log('🤖 Automatic:', metar.auto);
+      // console.log('🌬️  Wind:', metar.wind);
+      // console.log('👁️  Visibility:', metar.visibility, 'm');
+      // console.log('🌦️  Weather:', metar.weather);
+      // console.log('☁️  Clouds:', metar.cloud);
+      // console.log('🌡️  Temp/Dewpoint:', metar.temperatures);
+      // console.log('🔽 QNH:', metar.qnh);
+      // console.log('☀️  CAVOK:', metar.cavok);
+      // console.log('✈️  VMC Status:', metar.flightCategory);
+      // console.log('📊 Flight Category:', metar.flightCategory);
+      // console.log('🔄 Changements:', metar.changements);
+    // });
 
   //   console.log('\n\n=== Summary Table ===');
   //   console.log('Airport | CAVOK | Category | Vis(m) | Ceiling(ft) | Temp | Wind');
@@ -4968,6 +5004,9 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
         element = js.document.getElementById(f'{fname}_ICAO_2_LABEL')
         element.textContent = f'{fname.title()} (ICAO)'
 
+        # Clear aerdrome image
+        js.document.getElementById(f'{fname}_image_cache').src = js.window.settings['img_default_icao']
+
         # Clear all GUI fields with overlapping names
         for field_id in field_ids:
             element = js.document.getElementById(field_id)
@@ -5004,8 +5043,6 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
             else:
                 js.window.flight_plan_data[key] = ''
 
-        # Reset to default image
-        await clear_aerodrome_image(fname)
         # Remove METAR widget
         remove_metar_widget(fname)
         # Remove wind envelope
@@ -5039,19 +5076,14 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
         # 3. from default
         image_url1 = os.path.join(js.window.settings['url_aerodromes_images'], js.window.flight_plan_data[f'{fname}_ICAO']) + '.png' if js.window.flight_plan_data[f'{fname}_ICAO'] != '' else None
         image_url2 = js.window.flight_plan_data.get(f'{fname}_IMAGE')
-        image_url3 = js.window.settings['img_default_icao']
 
-        for image_url in [image_url1, image_url2, image_url3]:
+        for image_url in [image_url1, image_url2]:
             if await cache_and_display_image(image_url, f'{fname}_image_cache'):
                 print(f"  📋 {fname}_IMAGE from flight_plan_data: {image_url}")
-                break
+                return
 
-    async def clear_aerodrome_image(fname):
-        """Reset aerodrome image to default"""
-        print("🔄 Resetting to default image...")
-        await cache_and_display_image(js.window.settings['img_default_icao'], f'{fname}_image_cache')
-        # Clear flag
-        js.window.updateFlag(fname, 'remove')
+        # Set the default image when all other fails
+        js.document.getElementById(f'{fname}_image_cache').src = js.window.settings['img_default_icao']
 
 
     async def cache_and_display_image(url, img_element_id):
@@ -7181,7 +7213,6 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
 
     # CLEAR FIELDS
     js.window.clear_aerodrome_fields = clear_aerodrome_fields
-    js.window.clear_aerodrome_image = clear_aerodrome_image
     js.window.clear_enroute_fields = clear_enroute_fields
 
     js.window.cache_and_display_image = cache_and_display_image
@@ -7417,7 +7448,6 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
         window.METAR_ARRIVAL = '';
         // Hide loading spinner once everything is ready
         // document.getElementById('loading-spinner').style.display = 'none';
-
       }
     }
 

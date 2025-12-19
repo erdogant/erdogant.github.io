@@ -7,8 +7,9 @@ const FILES_TO_CACHE = [
   "./manifest.json",
   // "./libs/core.css",
   // "./libs/core.js",
-  // JAVASCRIPTS
-  "./metar.js",
+  // SCRIPTS
+  "./scripts/metar.js",
+  "./scripts/rain.js",
   // FIGS
   "./libs/leaflet.css",
   "./libs/leaflet.js",
