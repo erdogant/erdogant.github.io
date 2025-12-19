@@ -973,14 +973,13 @@ async function retrieve_metar(prefix, verbose = "info") {
     window.flight_plan_data[`${prefix}_METAR_ICAO`] = metar_icao;
     // Store METAR in flight plan data. This will break the saving functionality!
     // window.flight_plan_data[`${prefix}_METAR`] = metar_plain;
-    // window.METAR[prefix] = metar_plain;
     if (prefix === "DEPARTURE") {
       window.METAR_DEPARTURE = metar_plain;
     } else {
-      window.METAR_ARRIVAL = metar_plain;
+      window.animateR_ARRIVAL = metar_plain;
     }
     // Animate
-    window.updateRain(prefix);
+    animateRain(prefix);
     // Update flight catagory icon
     updateFlightCatagoryIcon(prefix);
 

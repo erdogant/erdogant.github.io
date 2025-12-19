@@ -126,8 +126,8 @@
   }
 
   /* --- PUBLIC API --- */
-  window.updateRain = function (prefix) {
-    console.log(`>func: updateRain(${prefix})`);
+  animateRain = function (prefix) {
+    console.log(`>func: animateRain(${prefix})`);
 
     if (!rainControllers[prefix]) {
       // Get the canvas
@@ -176,7 +176,7 @@
 })();
 
 const INTENSITY = {
-  light: { count: 120, lenMin: 30, lenMax: 50, alphaMin: 0.04, alphaMax: 0.08 },
+  light: { count: 120, lenMin: 30, lenMax: 50, alphaMin: 0.04, alphaMax: 0.1 },
   medium: { count: 220, lenMin: 50, lenMax: 100, alphaMin: 0.05, alphaMax: 0.15 },
   heavy: { count: 350, lenMin: 80, lenMax: 160, alphaMin: 0.08, alphaMax: 0.25 },
 };
