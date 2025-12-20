@@ -937,20 +937,14 @@ async function fetch_metar(metar_stations, splitlines = true, decoded = false, p
 
 async function retrieve_metar(prefix, verbose = "info") {
   console.log(`> func: retrieve_metar(${prefix})`);
-
   // Get the values from the input fields
   const name = document.getElementById(prefix + "_NAME").value || "";
   const icao = document.getElementById(prefix + "_ICAO").value || "";
   const country = document.getElementById(prefix + "_COUNTRY").value || "";
-
   // Get the button element that we can fill with METAR data
-  // const button = document.getElementById('BTN-METAR-' + prefix);
   const dateField = document.getElementById("DATETIME-METAR-" + prefix);
   const metarField = document.getElementById("METAR-FIELD-" + prefix);
   const metarText = document.getElementById("METAR-TEXT-" + prefix);
-  // const runwayField = document.getElementById(prefix + "_RUNWAY");
-  // const decodedCheckbox = document.getElementById('metar-decoded-' + prefix);
-  // const decoded = decodedCheckbox ? decodedCheckbox.checked : false;
 
   // Set default values
   let metar_icao = "";
@@ -958,7 +952,6 @@ async function retrieve_metar(prefix, verbose = "info") {
   let datetimeStr = nowtime(true); // UTC
   let runway_predicted = "";
   let icao_stations = [""];
-  let name_stations = [""];
   let stationName = "";
   let metar_obj = {};
   let metar_plain = {};
@@ -983,14 +976,11 @@ async function retrieve_metar(prefix, verbose = "info") {
 
     // Fetch the METAR data for the closest station (pass decoded flag)
     metar = await fetch_metar(icao_stations, true, false, prefix);
-    // metar = await fetchMetar(icao_stations[0]);
-    // console.log('Fetched METAR:', metar);
 
     // Store data
     metar_icao = metar[0];
     datetimeStr = metar[1];
     stationName = metar[2];
-
     // metar_icao = "EDDH 191350Z AUTO 22009KT 9999 OVC013 12/09 Q1015 TEMPO 4500 -RADZ BKN009";
 
     if (metarText) {
@@ -1009,6 +999,7 @@ async function retrieve_metar(prefix, verbose = "info") {
   colorMetarFields(prefix, (enable = true));
 
   // Update the expected runway based on wind direction and runway orientation
+  // if (typeof metar_icao === "string" && metar_icao.trim() !== "") {
   if (metar_icao !== "" && metar_icao != null) {
     // Retrieve details about METAR
     try {

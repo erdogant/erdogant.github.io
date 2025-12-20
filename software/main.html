@@ -1,11 +1,11 @@
 <html lang="en">
 
-    <!--
-        This is the JavaScript widget for SkyWalk.
-        @copyright Copyright (c) 2025 Erdogan Taskesen
-        @license
-        @author Erdogan Taskesen <erdogant@gmail.com>
-    -->
+<!--
+    This is the JavaScript widget for SkyWalk.
+    @copyright Copyright (c) 2025 Erdogan Taskesen
+    @license
+    @author Erdogan Taskesen <erdogant@gmail.com>
+-->
 
 <head>
     <meta charset="UTF-8">
@@ -25,12 +25,6 @@
     <!--<link rel="shortcut icon" type="image/x-icon" href="https://erdogant.github.io/datasets/skywalk/figs/icons/airplane_gray.png">-->
     <!--<link rel="icon" type="image/png" sizes="16x16" href="https://erdogant.github.io/datasets/skywalk/figs/icons/airplane_gray.png">-->
     <!--<link rel="apple-touch-icon" sizes="180x180" href="https://erdogant.github.io/datasets/skywalk/figs/icons/airplane_gray.png">-->
-
-    <!--ANIMATION THE ORDE OF IMPORT MATHERS!-->
-    <script src="./scripts/rain.js" defer></script>
-    <script src="./scripts/cloud.js" defer></script>
-    <script src="./scripts/fog.js" defer></script>
-    <script src="./scripts/metar.js" defer></script
 
     <!--STYLESHEETS-->
     <link rel="stylesheet" href="style.css">
@@ -52,6 +46,11 @@
     <!--MANIFEST-->
     <link rel="manifest" href="/manifest.json">
 
+    <!--ANIMATION THE ORDE OF IMPORT MATHERS!-->
+    <script src="./scripts/rain.js" defer></script>
+    <script src="./scripts/cloud.js" defer></script>
+    <script src="./scripts/fog.js" defer></script>
+    <script src="./scripts/metar.js" defer></script
 
 </head>
 
@@ -103,7 +102,7 @@
             <a href="https://erdogant.github.io/skywalk-docs/pages/html/index.html" target="_blank">
                 <img id="skywalk_logo" alt="SkyWalk" src="./figs/logo_skywalk.png">
             </a>
-            <div class="version" style="margin-bottom: 5px; ">version: 0.6.0</div>
+            <div class="version" style="margin-bottom: 5px; ">version: 1.7.0</div>
         </div>
 
         <div>
@@ -2668,75 +2667,6 @@
         return `${dd}-${mm}-${yyyy} ${timePart}`;
     }
 
-    // async function fetchMetar(icao) {
-    //     const url = `https://tgftp.nws.noaa.gov/data/observations/metar/stations/${icao}.TXT`;
-    //     const response = await fetch(url);
-    //     const text = await response.text();
-
-    //     const lines = text.trim().split('\n');
-    //     // const lines = splitlines ? text.contents.split("\n") : text.contents;
-    //     return [
-    //         formatDateDMY(lines[0], format='yyyy/mm/dd'),
-    //         lines[1],
-    //         icao,
-    //     ];
-    // }
-
-    // async function fetch_metar(metar_stations, splitlines = true, decoded = false, prefix) {
-    //     console.log(`>Func: fetch_metar(${metar_stations})`);
-    //     // Make a function that runs over the list of metar_stations
-    //     const metarField = document.getElementById('METAR-FIELD-' + prefix);
-    //     const stations = Array.isArray(metar_stations) ? metar_stations : [metar_stations];
-
-    //     for (const icao of stations) {
-    //         console.log(`  >Fetching METAR report of ${icao}`);
-    //         if (metarField) {
-    //             metarField.value = `Be patient while fetching METAR weather information from closest station: ${icao}`;
-    //         }
-
-    //         const url = decoded
-    //             ? `https://tgftp.nws.noaa.gov/data/observations/metar/decoded/${icao}.TXT`
-    //             : `https://tgftp.nws.noaa.gov/data/observations/metar/stations/${icao}.TXT`;
-
-    //         const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-
-    //         try {
-    //             const response = await fetch(proxy);
-    //             const json = await response.json();
-
-    //             if (!json.contents) return null, null;
-
-    //             // Split the contents into date / metar info
-    //             metar_data = splitlines ? json.contents.split("\n") : json.contents;
-    //             console.log(metar_data);
-
-    //             if (metar_data)  {
-    //                 metar_icao = metar_data[1];
-    //                 metar_date = metar_data[0];
-    //             }
-    //             if (metar_date !== '') {
-    //                 metar_date = formatDateDMY(metar_date, format='yyyy/mm/dd');
-    //             }
-
-    //             // console.log(metar_icao);
-    //             // console.log(metar_date);
-    //             // Return only when `metar_icao` is successfully found**:
-    //             if (metar_icao) {
-    //                 return [metar_icao, metar_date, icao];
-    //             }
-
-    //             // Wait 0.5 seconds before continuing to next station to be nice to the server
-    //             await new Promise(resolve => setTimeout(resolve, 500));
-
-    //         } catch (err) {
-    //             console.log(`  >${icao}: Could not fetch the METAR report: ${url}`);
-    //         }
-    //     }
-    //     // Return when empty and nothing found
-    //     return [null, null, null];
-    // }
-
-
     /**
      * Reset METAR button UI state to enabled/active.
      * Accepts either an element reference or an element ID string.
@@ -3954,28 +3884,6 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
             # js.document.getElementById('loading-spinner').style.display = 'none'
             raise
 
-
-    # async def get_core_js():
-    #     """
-    #     Load https://pyscript.net/releases/2025.8.1/core.js
-    #     either from cache or from download.
-    #     """
-    #     cache_key = "pyscript_core_js_2025_8_1"
-    #     url = "https://pyscript.net/releases/2025.8.1/core.js"
-
-    #     # Try cache first
-    #     data = load_from_cache(cache_key)
-    #     if data is not None:
-    #         return data
-
-    #     # Otherwise: download it
-    #     data = await download_file(url)
-
-    #     # Save to cache in base64
-    #     # encode_base64=True is required when storing binary data in localStorage. Otherwise it will be corrupted.
-    #     save_to_cache(cache_key, data, encode_base64=True)
-
-    #     return data
 
     # ================================================
     # METAR HELPERS
@@ -6740,7 +6648,6 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
     js.window.load_aerodrome_from_json = load_aerodrome_from_json
 
     js.window.clear_cache = clear_cache
-    # js.window.get_core_js = get_core_js
     js.window.get_top_metar_stations = get_top_metar_stations
 
     js.window.update_dropdown = update_dropdown
@@ -7213,7 +7120,6 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
         window.load_aerodrome_from_json(prefix, elementId=id)
       });
     });
-
 
     // Add clear cache button handler
     document.getElementById('clear_cache_btn')?.addEventListener('click', async () => {
@@ -8385,7 +8291,7 @@ const COUNTRIES_DATA = [
       windEnvelopeField.value = results.message;
 
       // Animate the new clouds
-      // animateCloud(prefix)
+      animateCloud(prefix)
 
       // Return
       return results;
