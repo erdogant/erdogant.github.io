@@ -285,8 +285,7 @@ input[type="text"]:hover {
     transform: scale(1.05);
 }
 
-/* 🌧️ Rain canvas overlay */
-.rain-canvas {
+.fog-canvas {
     position: absolute;
     inset: 0;
     pointer-events: none;
@@ -294,11 +293,20 @@ input[type="text"]:hover {
     border-radius: 10px;
 }
 
-.fog-canvas {
+.cloud-canvas {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    z-index: 3; /* fog ABOVE rain */
+    z-index: 3; /* cloud ABOVE fog */
+    border-radius: 10px;
+}
+
+/* 🌧️ Rain canvas overlay */
+.rain-canvas {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 4; /* rain ABOVE cloud */
     border-radius: 10px;
 }
 

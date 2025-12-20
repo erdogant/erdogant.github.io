@@ -28,6 +28,7 @@
 
     <!--ANIMATION THE ORDE OF IMPORT MATHERS!-->
     <script src="./scripts/rain.js" defer></script>
+    <script src="./scripts/cloud.js" defer></script>
     <script src="./scripts/fog.js" defer></script>
     <script src="./scripts/metar.js" defer></script
 
@@ -211,6 +212,7 @@
             >
             <!--Rain overlay-->
             <canvas class="rain-canvas" data-prefix="DEPARTURE"></canvas>
+            <canvas class="cloud-canvas"  data-prefix="DEPARTURE"></canvas>
             <canvas class="fog-canvas"  data-prefix="DEPARTURE"></canvas>
         </div>
 
@@ -538,6 +540,7 @@
 
             <!-- Rain overlay -->
             <canvas class="rain-canvas" data-prefix="ARRIVAL"></canvas>
+            <canvas class="cloud-canvas"  data-prefix="ARRIVAL"></canvas>
             <canvas class="fog-canvas"  data-prefix="ARRIVAL"></canvas>
         </div>
 
@@ -8617,8 +8620,8 @@ const COUNTRIES_DATA = [
       // Update the text field
       windEnvelopeField.value = results.message;
 
-      // Animate the new clouds/fog
-      animateFog(prefix)
+      // Animate the new clouds
+      animateCloud(prefix)
 
       // Return
       return results;

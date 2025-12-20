@@ -10,6 +10,7 @@ const FILES_TO_CACHE = [
   // SCRIPTS
   "./scripts/metar.js",
   "./scripts/rain.js",
+  "./scripts/cloud.js",
   "./scripts/fog.js",
   // FIGS
   "./libs/leaflet.css",

@@ -1035,8 +1035,9 @@ async function retrieve_metar(prefix, verbose = "info") {
 
       // Update flight catagory icon
       updateFlightCatagoryIcon(prefix);
-      // Animate
+      // Animations
       animateRain(prefix);
+      animateCloud(prefix);
       animateFog(prefix);
 
       // Display alert message
