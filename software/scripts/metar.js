@@ -1009,7 +1009,7 @@ async function retrieve_metar(prefix, verbose = "info") {
   colorMetarFields(prefix, (enable = true));
 
   // Update the expected runway based on wind direction and runway orientation
-  if (typeof metar_icao === "string" && metar_icao.trim() !== "") {
+  if (metar_icao !== "" && metar_icao != null) {
     // Retrieve details about METAR
     try {
       metar_obj = new Metar(stationName, metar_icao);
