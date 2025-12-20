@@ -413,7 +413,7 @@
 
             <div class="button-row">
                 <button id="BTN-PLOT-WIND-DEPARTURE" class="button-style" onclick="window.windEnvelope_js('DEPARTURE')">
-                    Compute Wind Envelope
+                    Compute Crosswind/ Headwind
                 </button>
             </div>
 
@@ -731,13 +731,14 @@
                     <div class="warning">
                         The wind envelope shows how wind direction and strength relate to the selected runway, and marks the maximum permitted headwind and crosswind components.
                         Use it only as an educational aid. Always do your own research, check the METAR/TAF from official aerodrome sources, and check your aircraft’s operating limitations.
+                        Change the wind input fields accordingly and re-compute to see the effect on crosswind and headwind components.
                     </div>
                 </div>
             </div>
 
             <div class="button-row">
                 <button id="BTN-PLOT-WIND-ARRIVAL" class="button-style" onclick="window.windEnvelope_js('ARRIVAL')">
-                    Compute Wind Envelope
+                    Compute Crosswind/ Headwind
                 </button>
             </div>
 
@@ -4582,7 +4583,7 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
         remove_wind_envelope_plot(fname)
 
         # Retrieve METAR
-        await window.retrieve_metar(fname)
+        await js.window.retrieve_metar(fname)
 
     # ================================================
     # GUI HELPERS
@@ -5899,7 +5900,7 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
             remove_wind_envelope_plot(fname)
 
             # Retrieve METAR data during loading of the aerodrome
-            window.retrieve_metar(fname, verbose=verbose)
+            js.window.retrieve_metar(fname, verbose=verbose)
 
             # Update flag
             # window.updateFlag(fname)
@@ -7429,6 +7430,24 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
       }
     });
 
+    // Update the wind envelope directly after chaning the inputfields
+    ['DEPARTURE_WIND_SPEED', 'DEPARTURE_WIND_DIRECTION', 'ARRIVAL_WIND_SPEED', 'ARRIVAL_WIND_DIRECTION'].forEach(id => {
+      document.getElementById(id)?.addEventListener('change', e => {
+        const num = Number(String(e?.target?.value ?? '').trim());
+        if (!Number.isFinite(num)) return;
+
+        let prefix = '';
+        if (id.startsWith('DEPARTURE')) {
+          prefix = 'DEPARTURE';
+        } else if (id.startsWith('ARRIVAL')) {
+          prefix = 'ARRIVAL';
+        }
+        // Run the windEnvelope
+        window.windEnvelope_js(prefix);
+      });
+    });
+
+
     // Add clear cache button handler
     document.getElementById('clear_cache_btn')?.addEventListener('click', async () => {
       /**
@@ -8594,7 +8613,14 @@ const COUNTRIES_DATA = [
         windHeadwindField.value = headwindY;
         windCrosswindField.value = crosswindX;
       }
+
+      // Update the text field
       windEnvelopeField.value = results.message;
+
+      // Animate the new clouds/fog
+      animateFog(prefix)
+
+      // Return
       return results;
     }
 

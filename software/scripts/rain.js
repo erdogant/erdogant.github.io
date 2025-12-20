@@ -186,3 +186,6 @@ function animateRain(prefix) {
     controller.stop();
   }
 }
+
+// Make it globally accessible
+window.animateRain = animateRain;

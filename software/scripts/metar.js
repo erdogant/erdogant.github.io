@@ -3,6 +3,8 @@
 
 class Metar {
   constructor(code, text = null) {
+    console.log(`>func: Metar()`);
+
     this.airport = code;
     this.dataDate = null;
     this.metar = text;
@@ -27,6 +29,8 @@ class Metar {
     this.icon = this.determineMetarIcon();
     this.icon_vfr = this.determineVFRIcon();
     this.color = this.determineColor();
+    this.crosswind = this.analyzeCrossWind();
+    this.headwind = this.analyzeHeadWind();
 
     this.properties = {
       airport: this.airport,
@@ -49,6 +53,8 @@ class Metar {
       icon_vfr: this.icon_vfr,
       color: this.color,
       changements: this.changements,
+      crosswind: this.crosswind,
+      headwind: this.headwind,
     };
 
     // Show the details on screen
@@ -68,6 +74,14 @@ class Metar {
     console.log("   >👁️ Icon:", this.icon);
     console.log("   >🤖 Color:", this.color);
     console.log("   >🔄 Changements:", this.changements);
+  }
+
+  analyzeCrossWind() {
+    return;
+  }
+
+  analyzeHeadWind() {
+    return;
   }
 
   analyzeChangements() {
@@ -385,16 +399,19 @@ class Metar {
   }
 
   determineRain() {
-    const weather = this.weather;
-    if (!weather || !weather.weather) return false;
-    const isWetWeather = weather.weather.some((w) => ["Rain", "Drizzle"].includes(w)) || weather.prefix.some((w) => ["Shower"].includes(w));
-    return isWetWeather;
+    const { weather, prefix } = this.weather || {};
+    const wetWeather = weather?.some((w) => ["Rain", "Drizzle"].includes(w));
+    const shower = prefix?.some((p) => p === "Shower");
+
+    return Boolean(wetWeather || shower);
   }
 
   determineSnow() {
     const weather = this.weather;
-    if (!weather || !weather.weather) return false;
-    return weather.weather.some((w) => ["Snow", "Hail", "Ice Pellets", "Snow Grains"].includes(w));
+    if (!weather) return false;
+    const isSnow = Array.isArray(weather.weather) && weather.weather.some((w) => ["Snow", "Hail", "Ice Pellets", "Snow Grains"].includes(w));
+
+    return Boolean(isSnow);
   }
 
   determineColor() {
@@ -984,48 +1001,49 @@ async function retrieve_metar(prefix, verbose = "info") {
       // Convert metar object to plain so that it can be used in pyton dictionary for later usage
       metar_plain = metar_obj.getAll();
       // metar_plain = JSON.stringify(metar_details.getAll());
+
+      // Compute expected runway number based on wind direction and runway orientation
+      runway_predicted = expected_runway_number(prefix, (wind_direction = metar_obj.wind.direction), (wind_strength = metar_obj.wind.speed), (extra_runways = runwayField.value));
+
+      // Change RUNWAY field color to blue to show that it is predicted
+      runwayField.style.backgroundColor = "#e6f0ff";
+      // metarText.value = js.window.messages;
+      // Change value of RUNWAY field in the the predicted runway
+      if (runway_predicted !== null && runway_predicted !== undefined && String(runway_predicted).trim() !== "") {
+        runwayField.value = runway_predicted;
+      }
+
+      // else {
+      //     window.alert(`⚠️ Runway number could not be predicted for ${prefix}. Please set the runway number manually.`);
+
+      // Compute wind parameters from METAR data and update wind GUI fields
+      window.update_wind_gui_fields(prefix, metar_icao, metar_obj);
+      // Create wind envelope plot
+      window.windEnvelope_js(prefix, 25, 15, false);
+
+      // Store RUNWAY number in flight plan data
+      window.flight_plan_data[`${prefix}_RUNWAY`] = runway_predicted;
+      // Store METAR in flight plan data
+      window.flight_plan_data[`${prefix}_METAR_ICAO`] = metar_icao;
+      // Store METAR in flight plan data. This will break the saving functionality!
+      // window.flight_plan_data[`${prefix}_METAR`] = metar_plain;
+      if (prefix === "DEPARTURE") {
+        window.METAR_DEPARTURE = metar_plain;
+      } else {
+        window.METAR_ARRIVAL = metar_plain;
+      }
+
+      // Update flight catagory icon
+      updateFlightCatagoryIcon(prefix);
+      // Animate
+      animateRain(prefix);
+      animateFog(prefix);
+
+      // Display alert message
+      // window.alert(`✅ METAR information is loaded from the closest station: ${stationName}.\n✅ The predicted runway is: ${runway_predicted}`);
     } catch (error) {
-      console.log(`   >Error: Metar details could not be comptued`);
+      console.log(`   >Error: Metar details could not be computed:`, error);
     }
-
-    // Compute expected runway number based on wind direction and runway orientation
-    runway_predicted = expected_runway_number(prefix, (wind_direction = metar_obj.wind.direction), (wind_strength = metar_obj.wind.speed), (extra_runways = runwayField.value));
-
-    // Change RUNWAY field color to blue to show that it is predicted
-    runwayField.style.backgroundColor = "#e6f0ff";
-    // metarText.value = js.window.messages;
-    // Change value of RUNWAY field in the the predicted runway
-    if (runway_predicted !== null && runway_predicted !== undefined && String(runway_predicted).trim() !== "") {
-      runwayField.value = runway_predicted;
-    }
-
-    // else {
-    //     window.alert(`⚠️ Runway number could not be predicted for ${prefix}. Please set the runway number manually.`);
-
-    // Compute wind parameters from METAR data and update wind GUI fields
-    window.update_wind_gui_fields(prefix, metar_icao, metar_obj);
-    // Create wind envelope plot
-    window.windEnvelope_js(prefix, 25, 15, false);
-
-    // Store RUNWAY number in flight plan data
-    window.flight_plan_data[`${prefix}_RUNWAY`] = runway_predicted;
-    // Store METAR in flight plan data
-    window.flight_plan_data[`${prefix}_METAR_ICAO`] = metar_icao;
-    // Store METAR in flight plan data. This will break the saving functionality!
-    // window.flight_plan_data[`${prefix}_METAR`] = metar_plain;
-    if (prefix === "DEPARTURE") {
-      window.METAR_DEPARTURE = metar_plain;
-    } else {
-      window.METAR_ARRIVAL = metar_plain;
-    }
-    // Animate
-    animateRain(prefix);
-    animateFog(prefix);
-    // Update flight catagory icon
-    updateFlightCatagoryIcon(prefix);
-
-    // Display alert message
-    // window.alert(`✅ METAR information is loaded from the closest station: ${stationName}.\n✅ The predicted runway is: ${runway_predicted}`);
   }
 
   checkMetarAge();
