@@ -26,6 +26,7 @@ class Metar {
     this.flightCategory = this.determineFlightCategory();
     this.rain = this.determineRain();
     this.snow = this.determineSnow();
+    this.mist = this.determineMist();
     this.icon = this.determineMetarIcon();
     this.icon_vfr = this.determineVFRIcon();
     this.color = this.determineColor();
@@ -49,6 +50,7 @@ class Metar {
       flightCategory: this.flightCategory,
       rain: this.rain,
       snow: this.snow,
+      mist: this.mist,
       icon: this.icon,
       icon_vfr: this.icon_vfr,
       color: this.color,
@@ -71,6 +73,7 @@ class Metar {
     console.log("   >📊 Flight Category:", this.flightCategory);
     console.log("   >🌧️ Rain:", this.rain);
     console.log("   >❄️ Snow:", this.snow);
+    console.log("   >🌫️ Mist:", this.mist);
     console.log("   >👁️ Icon:", this.icon);
     console.log("   >🤖 Color:", this.color);
     console.log("   >🔄 Changements:", this.changements);
@@ -250,8 +253,8 @@ class Metar {
     ];
 
     // Search in original METAR to include weather in TEMPO/BECMG sections
-    // const searchText = this.metarWithoutChangements;
-    const searchText = this.metar;
+    const searchText = this.metarWithoutChangements;
+    // const searchText = this.metar;
 
     // Find intensity
     const intensityMatches = searchText.match(/[-+]/g);
@@ -412,6 +415,18 @@ class Metar {
     const isSnow = Array.isArray(weather.weather) && weather.weather.some((w) => ["Snow", "Hail", "Ice Pellets", "Snow Grains"].includes(w));
 
     return Boolean(isSnow);
+  }
+
+  determineMist() {
+    const weather = this.weather;
+    if (!weather) return false;
+    const isMist =
+      Array.isArray(weather.weather) &&
+      weather.weather.some((w) =>
+        ["Mist", "Fog", "Haze", "Smoke", "Sand", "Dust", "Volcanic Ash", "Dust Whirlpool", "Sand Storm", "Dust Storm", "Funnel Cloud", "Squalls"].includes(w),
+      );
+
+    return Boolean(isMist);
   }
 
   determineColor() {
@@ -933,7 +948,7 @@ async function retrieve_metar(prefix, verbose = "info") {
   const dateField = document.getElementById("DATETIME-METAR-" + prefix);
   const metarField = document.getElementById("METAR-FIELD-" + prefix);
   const metarText = document.getElementById("METAR-TEXT-" + prefix);
-  const runwayField = document.getElementById(prefix + "_RUNWAY");
+  // const runwayField = document.getElementById(prefix + "_RUNWAY");
   // const decodedCheckbox = document.getElementById('metar-decoded-' + prefix);
   // const decoded = decodedCheckbox ? decodedCheckbox.checked : false;
 
@@ -994,28 +1009,14 @@ async function retrieve_metar(prefix, verbose = "info") {
   colorMetarFields(prefix, (enable = true));
 
   // Update the expected runway based on wind direction and runway orientation
-  if (metar_icao !== "" && metar_icao != null) {
+  if (typeof metar_icao === "string" && metar_icao.trim() !== "") {
     // Retrieve details about METAR
     try {
       metar_obj = new Metar(stationName, metar_icao);
       // Convert metar object to plain so that it can be used in pyton dictionary for later usage
       metar_plain = metar_obj.getAll();
-      // metar_plain = JSON.stringify(metar_details.getAll());
-
       // Compute expected runway number based on wind direction and runway orientation
-      runway_predicted = expected_runway_number(prefix, (wind_direction = metar_obj.wind.direction), (wind_strength = metar_obj.wind.speed), (extra_runways = runwayField.value));
-
-      // Change RUNWAY field color to blue to show that it is predicted
-      runwayField.style.backgroundColor = "#e6f0ff";
-      // metarText.value = js.window.messages;
-      // Change value of RUNWAY field in the the predicted runway
-      if (runway_predicted !== null && runway_predicted !== undefined && String(runway_predicted).trim() !== "") {
-        runwayField.value = runway_predicted;
-      }
-
-      // else {
-      //     window.alert(`⚠️ Runway number could not be predicted for ${prefix}. Please set the runway number manually.`);
-
+      runway_predicted = expected_runway_number(prefix, (wind_direction = metar_obj.wind.direction), (wind_strength = metar_obj.wind.speed));
       // Compute wind parameters from METAR data and update wind GUI fields
       window.update_wind_gui_fields(prefix, metar_icao, metar_obj);
       // Create wind envelope plot
@@ -1035,13 +1036,11 @@ async function retrieve_metar(prefix, verbose = "info") {
 
       // Update flight catagory icon
       updateFlightCatagoryIcon(prefix);
+
       // Animations
       animateRain(prefix);
       animateCloud(prefix);
       animateFog(prefix);
-
-      // Display alert message
-      // window.alert(`✅ METAR information is loaded from the closest station: ${stationName}.\n✅ The predicted runway is: ${runway_predicted}`);
     } catch (error) {
       console.log(`   >Error: Metar details could not be computed:`, error);
     }

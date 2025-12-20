@@ -1,7 +1,7 @@
 const rainControllers = {};
 const INTENSITY = {
-  light: { count: 120, lenMin: 30, lenMax: 50, alphaMin: 0.04, alphaMax: 0.1 },
-  medium: { count: 220, lenMin: 50, lenMax: 100, alphaMin: 0.05, alphaMax: 0.15 },
+  light: { count: 180, lenMin: 40, lenMax: 80, alphaMin: 0.05, alphaMax: 0.13 },
+  medium: { count: 220, lenMin: 60, lenMax: 120, alphaMin: 0.06, alphaMax: 0.15 },
   heavy: { count: 350, lenMin: 80, lenMax: 160, alphaMin: 0.08, alphaMax: 0.25 },
 };
 
@@ -65,9 +65,6 @@ function startRain(canvas, img) {
     const cfg = INTENSITY[currentIntensity];
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // for (let i = 0; i < 300; i++) {
-    //   new Dot(Math.random() * canvas.width, Math.random() * canvas.height, Math.random() * 10 - 5, Math.random() * 80 + 40);
-    // }
     for (let i = 0; i < cfg.count; i++) {
       new Dot(Math.random() * canvas.width, Math.random() * canvas.height, Math.random() * 6 - 3, Math.random() * (cfg.lenMax - cfg.lenMin) + cfg.lenMin);
     }
@@ -96,24 +93,6 @@ function startRain(canvas, img) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     },
   };
-
-  // return {
-  //   start(intensity) {
-  //     if (running) return;
-  //     intensity = intensity;
-  //     running = true;
-  //     resize();
-  //     loop();
-  //   },
-  //   stop,
-  // };
-
-  // function start() {
-  //   if (running) return;
-  //   running = true;
-  //   resize();
-  //   loop();
-  // }
 
   function stop() {
     running = false;
@@ -150,9 +129,6 @@ function animateRain(prefix) {
   const controller = rainControllers[prefix];
   const metar_obj = prefix === "DEPARTURE" ? window.METAR_DEPARTURE : window.METAR_ARRIVAL;
 
-  // DEMO
-  // metar_obj.rain = true;
-
   if (!metar_obj || !metar_obj.rain) {
     console.log(`   >No METAR data for ${prefix}`);
     controller.stop();
@@ -163,14 +139,6 @@ function animateRain(prefix) {
     const weatherIntensity = metar_obj.weather?.intensity?.[0];
     // Set default
     let rainIntensity = "medium";
-
-    // Set the intensity
-    // if (weatherIntensity === true) {
-    //   rainIntensity = "heavy"; // +
-    // }
-    // if (weatherIntensity === false) {
-    //   rainIntensity = "light"; // -
-    // }
 
     if (weatherIntensity === true)
       rainIntensity = "heavy"; // +

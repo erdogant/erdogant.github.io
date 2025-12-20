@@ -16,16 +16,11 @@ function startFog(canvas, img) {
     if (!running) return;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Soft gradient fog
-    // const gradient = ctx.createRadialGradient(canvas.width / 2, canvas.height / 2, canvas.width * 0.1, canvas.width / 2, canvas.height / 2, canvas.width);
-
     // Linear gradient fog (top to bottom)
     const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
 
     gradient.addColorStop(0, `rgba(250,250,250, ${fogDensity})`); // Top (denser fog)
     gradient.addColorStop(1, `rgba(220,220,220, ${fogDensity - 0.3})`); // Bottom (transparent fog)
-    // gradient.addColorStop(2, `rgba(150,150,150, 0)`); // Bottom (transparent fog)
 
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -58,6 +53,23 @@ function startFog(canvas, img) {
   return { start, stop };
 }
 
+function determineMistLight(metar_obj) {
+  const weather = metar_obj?.weather;
+  if (!weather || !Array.isArray(weather.weather)) return false;
+
+  isMist = weather.weather.some((w) => ["Mist", "Fog", "Haze", "Smoke", "Sand", "Dust"].includes(w));
+  return Boolean(isMist);
+}
+
+function determineMistHeavy(metar_obj) {
+  const weather = metar_obj?.weather;
+  if (!weather || !Array.isArray(weather.weather)) return false;
+
+  isMist = weather.weather.some((w) => ["Volcanic Ash", "Dust Whirlpool", "Sand Storm", "Dust Storm", "Funnel Cloud", "Squalls"].includes(w));
+
+  return Boolean(isMist);
+}
+
 /* --- PUBLIC API --- */
 function animateFog(prefix) {
   console.log(`> func: animateFog(${prefix})`);
@@ -83,14 +95,17 @@ function animateFog(prefix) {
     visibility = 9999;
   }
 
-  if (!metar_obj || !metar_obj.visibility || visibility >= 9999 || metar_obj.cavok === true) {
+  // if (!metar_obj || !metar_obj.visibility || visibility >= 9999 || metar_obj.cavok === true) {
+  if (!metar_obj || metar_obj.cavok === true) {
     console.log(`   >Exit cloud because no metar: ${metar_obj} or Visibility: ${metar_obj.visibility}m) with density: ${density} or CAVOK=${metar_obj.cavok}`);
     controller.stop();
     return;
   }
-
-  // DEMO
-  metar_obj.visibility = 1500;
+  // Add mist layers to the score
+  if (determineMistLight(metar_obj) === true) visibility = 5000;
+  if (determineMistHeavy(metar_obj) === true) visibility = 2500;
+  console.log(`   >Visibility is: ${visibility}. Light mist: ${determineMistLight(metar_obj) === true}, Heavy mist: ${determineMistHeavy(metar_obj) === true}`);
+  console.log(metar_obj.weather);
 
   // Add to image
   if (visibility <= 2500) {
@@ -103,6 +118,5 @@ function animateFog(prefix) {
     controller.stop();
   }
 }
-
 // Make it globally accessible
 window.animateFog = animateFog;

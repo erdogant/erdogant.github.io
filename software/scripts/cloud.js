@@ -57,7 +57,6 @@ function startCloud(canvas, img) {
 
   function initializeCloud() {
     cloudParticles = [];
-    // const numParticles = cloudDensity === "light" ? 8 : cloudDensity === "medium" ? 12 : cloudDensity === "heavy" ? 20 : 3;
     const numParticles = cloudDensity;
 
     for (let i = 0; i < numParticles; i++) {
@@ -83,7 +82,7 @@ function startCloud(canvas, img) {
     rafId = requestAnimationFrame(drawCloud);
   }
 
-  function start(level = 3, speed = 1.0, direction = "left") {
+  function start(level = 1, speed = 1.0, direction = "left") {
     if (running && cloudDensity === level && cloudSpeed === speed && cloudDirection === direction) return;
     // Store new variables if not returned
     running = true;
@@ -112,21 +111,21 @@ function startCloud(canvas, img) {
   return { start, stop };
 }
 
-function normalizeCrosswind(crossWind, maxCrosswind, exponent = 2) {
+function computeSpeedScore(crossWind, maxCrosswind, exponent = 2) {
   // exponent = 1:  linear)
   // exponent = 2: good default
   // exponent = 3: very aggressive near max (gust-like behavior)
   // Defaults
-  console.log(`   > func: normalizeCrosswind()`);
-  const getMIN = 0.01;
+  console.log(`   > func: computeSpeedScore()`);
+  const getMIN = 0.05;
   const getMAX = 1.5;
 
   // Convert to numbers
   const cw = Math.abs(Number(crossWind));
   const maxCw = Number(maxCrosswind);
-  // Validate inputs, return 3 when no input
+  // Validate inputs, return 1 when no input
   if (!Number.isFinite(cw) || !Number.isFinite(maxCw) || maxCw <= 0) {
-    return 3;
+    return 1;
   }
 
   if (maxCw <= 0) return getMIN;
@@ -144,30 +143,29 @@ function normalizeCrosswind(crossWind, maxCrosswind, exponent = 2) {
   return score;
 }
 
-function computeCloudDensityLinearLayers(cloudLayers) {
+function computeCloudDensityScore(cloudLayers) {
   /**
    * Compute total cloud density for an array of cloud layers (linear scaling)
    * @param {Array} cloudLayers - Array of clouds { code, oktaMin, oktaMax, altitude }
    * @returns {number} total density score (0-20)
    */
-  console.log(`   > func: computeCloudDensityLinearLayers()`);
-  console.log(cloudLayers);
+  console.log(`   > func: computeCloudDensityScore()`);
   if (!Array.isArray(cloudLayers) || cloudLayers.length === 0) return 0;
 
   const MAX_SCORE = 20;
   let totalDensity = 0;
 
   cloudLayers.forEach((layer) => {
-    // const oktaMin = Number(layer.oktaMin) || 0;
+    const oktaMin = Number(layer.oktaMin) || 0;
     const oktaMax = Number(layer.oktaMax) || oktaMin;
     let altitude = Number(layer.altitude);
     if (!Number.isFinite(altitude)) altitude = 10000;
 
     // Average okta
-    // const avgOkta = (oktaMin + oktaMax) / 2;
+    const avgOkta = (oktaMin + oktaMax) / 2;
 
     // Linear factors
-    const oktaFactor = Math.min(Math.max(oktaMax / 8, 0), 1); // From 0 (low okta) to 1 (high okta)
+    const oktaFactor = Math.min(Math.max(avgOkta / 8, 0), 1); // From 0 (low okta) to 1 (high okta)
     const altFactor = Math.min(Math.max(1 - altitude / 9999, 0), 1); // From 0 (high alt) to 1 (low alt)
 
     const layerDensity = oktaFactor * altFactor * MAX_SCORE;
@@ -183,7 +181,7 @@ function computeCloudDensityLinearLayers(cloudLayers) {
 }
 
 /* --- PUBLIC API --- */
-function animateCloud(prefix, density = 3, speed = 1.0, direction = "left") {
+function animateCloud(prefix, density = 1, speed = 1.0, direction = "left") {
   console.log(`> func: animateCloud(${prefix}, speed: ${speed}, direction: ${direction})`);
 
   if (!cloudControllers[prefix]) {
@@ -216,9 +214,9 @@ function animateCloud(prefix, density = 3, speed = 1.0, direction = "left") {
   // Compute left or right direction with respect to the runway. Note that this is the other way arround over here!
   direction = crossWind < 0 && headWind > 0 ? "right" : crossWind > 0 && headWind > 0 ? "left" : "left";
   // Compute the animated speed
-  speed = normalizeCrosswind(crossWind, maxCrosswind, 2);
+  speed = computeSpeedScore(crossWind, maxCrosswind, 2);
   // Compute cloud density score based on okta and altitude clouds
-  density = computeCloudDensityLinearLayers(metar_obj.cloud);
+  density = computeCloudDensityScore(metar_obj.cloud);
 
   // Start the animateCloud
   console.log(`   >Cloud for ${prefix}: density: ${density}, crossWind: ${crossWind}kt=${speed.toFixed(2)}, direction: ${direction}`);

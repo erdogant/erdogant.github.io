@@ -32,7 +32,6 @@
     <script src="./scripts/fog.js" defer></script>
     <script src="./scripts/metar.js" defer></script
 
-
     <!--STYLESHEETS-->
     <link rel="stylesheet" href="style.css">
 
@@ -141,11 +140,13 @@
 
             <div class="wind-grid">
                 <div class="tile">
-                    <input id="DEPARTURE_ICAO_2" type="text" class="tile-value UPPERCASE_input sync-departure" onchange="window.load_aerodrome_from_json('DEPARTURE', elementId='DEPARTURE_ICAO_2');" title="Departure ICAO">
+                    <!--<input id="DEPARTURE_ICAO_2" type="text" class="tile-value UPPERCASE_input sync-departure" onchange="window.load_aerodrome_from_json('DEPARTURE', elementId='DEPARTURE_ICAO_2');" title="Departure ICAO">-->
+                    <input id="DEPARTURE_ICAO_2" type="text" class="tile-value UPPERCASE_input sync-departure" title="Departure ICAO">
                     <span id="DEPARTURE_ICAO_2_LABEL" class="tile-label">Departure (ICAO)</span>
                 </div>
                 <div class="tile">
-                    <input id="ARRIVAL_ICAO_2" type="text" class="tile-value UPPERCASE_input sync-arrival" onchange="window.load_aerodrome_from_json('ARRIVAL', elementId='ARRIVAL_ICAO_2');" title="Arrival ICAO">
+                    <!--<input id="ARRIVAL_ICAO_2" type="text" class="tile-value UPPERCASE_input sync-arrival" onchange="window.load_aerodrome_from_json('ARRIVAL', elementId='ARRIVAL_ICAO_2');" title="Arrival ICAO">-->
+                    <input id="ARRIVAL_ICAO_2" type="text" class="tile-value UPPERCASE_input sync-arrival" title="Arrival ICAO">
                     <span id="ARRIVAL_ICAO_2_LABEL" class="tile-label">Arrival (ICAO)</span>
                 </div>
             </div>
@@ -238,7 +239,8 @@
                 <img id="DEPARTURE_FLAG" src="" alt="" style="width:30px; height:auto; vertical-align:middle; margin-left:6px;">
                 <img id="DEPARTURE_CATAGORY_ICON" src="" alt="" style="width:35px; height:auto; vertical-align:middle; margin-left:6px;">
                 <img id="DEPARTURE_VFR_ICON" src="" alt="" style="width:70px; height:auto; vertical-align:middle; margin-left:6px;">
-                <input type="text" id="DEPARTURE_ICAO" class="tile-value UPPERCASE_input sync-departure" onchange="window.load_aerodrome_from_json('DEPARTURE')" placeholder="ICAO">
+                <!--<input type="text" id="DEPARTURE_ICAO" class="tile-value UPPERCASE_input sync-departure" onchange="window.load_aerodrome_from_json('DEPARTURE')" placeholder="ICAO">-->
+                <input type="text" id="DEPARTURE_ICAO" class="tile-value UPPERCASE_input sync-departure" placeholder="ICAO">
                 <button id="DEPARTURE_USE_CACHED" onclick="window.retrieve_metar('DEPARTURE')" title="Retrieve METAR weather information for the selected aerodrome" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>
             </div>
 
@@ -564,7 +566,8 @@
                 <img id="ARRIVAL_FLAG" src="" alt="" style="width:30px; height:auto; vertical-align:middle; margin-left:6px;">
                 <img id="ARRIVAL_CATAGORY_ICON" src="" alt="" style="width:35px; height:auto; vertical-align:middle; margin-left:6px;">
                 <img id="ARRIVAL_VFR_ICON" src="" alt="" style="width:70px; height:auto; vertical-align:middle; margin-left:6px;">
-                <input type="text" id="ARRIVAL_ICAO" class="tile-value UPPERCASE_input sync-arrival" onchange="window.load_aerodrome_from_json('ARRIVAL')" placeholder="ICAO">
+                <!--<input type="text" id="ARRIVAL_ICAO" class="tile-value UPPERCASE_input sync-arrival" onchange="window.load_aerodrome_from_json('ARRIVAL')" placeholder="ICAO">-->
+                <input type="text" id="ARRIVAL_ICAO" class="tile-value UPPERCASE_input sync-arrival" placeholder="ICAO">
                 <button id="ARRIVAL_USE_CACHED" onclick="window.retrieve_metar('ARRIVAL')" title="Retrieve METAR weather information for the selected aerodrome" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>
             </div>
 
@@ -1186,7 +1189,6 @@
         </div>
         </div>
 
-
         <div class="border-round-eged">
             <div class="info" style="margin-bottom: 14px; font-size: 12px;">Personalize your checklist by adding or removing items.</div>
             <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
@@ -1217,139 +1219,7 @@
     </div>
 
 
-<script>
 
-// function computeFlightRules() {
-
-
-    // ============== TEST CASES ==============
-    // console.log('=== Complete METAR Parser Test ===\n');
-
-    // const testMetars = [
-    //   {
-    //     code: 'KJFK',
-    //     text: 'KJFK 121851Z 31008KT 10SM FEW250 M04/M17 A3034 RMK AO2'
-    //   },
-      // {
-      //   code: 'KORD',
-      //   text: 'KORD 121856Z 09014G25KT 3SM -SN BKN016 OVC024 M06/M08 A2990 RMK AO2'
-      // },
-      // {
-      //   code: 'KBOS',
-      //   text: 'KBOS 121854Z 36015G28KT 1SM +SN BKN008 OVC015 M03/M06 A2976 RMK AO2'
-      // },
-      // {
-      //   code: 'KLAX',
-      //   text: 'KLAX 121853Z 26008KT 1/2SM FG VV005 16/15 A3012 RMK AO2'
-      // },
-      // {
-      //   code: 'KSEA',
-      //   text: 'KSEA 121853Z VRB03KT 10SM FEW015 SCT200 09/06 A3022 RMK AO2'
-      // },
-      // {
-      //   code: 'KDFW',
-      //   text: 'KDFW 121853Z 18012KT 5SM HZ BKN015 BKN250 22/16 A3012 RMK AO2'
-      // },
-      // {
-      //   code: 'KATL',
-      //   text: 'KATL 121852Z 00000KT 2SM BR OVC003 18/17 A3020 RMK AO2'
-      // },
-      // {
-      //   code: 'LFPG',
-      //   text: 'LFPG 121830Z 24015KT 9999 FEW040 BKN100 12/08 Q1013 TEMPO BKN015'
-      // },
-      // {
-      //   code: 'EGLL',
-      //   text: 'EGLL 121820Z AUTO 27008KT 240V310 9999 SCT035 BKN042 11/07 Q1015 NOSIG'
-      // }
-    // ];
-
-  //   testMetars.forEach(({ code, text }) => {
-  //     console.log(`\n${'='.repeat(60)}`);
-  //     console.log(`Airport: ${code}`);
-  //     console.log(`METAR: ${text}`);
-  //     console.log(`${'='.repeat(60)}`);
-
-      // code: 'EGLL';
-      // text: "EDDH 191350Z AUTO 22009KT 9999 OVC013 12/09 Q1015 TEMPO 4500 -RADZ BKN009";
-      // const metar = new Metar(code, text);
-
-      // console.log('\n📅 Date/Time:', metar.dateTime);
-      // console.log('🤖 Automatic:', metar.auto);
-      // console.log('🌬️  Wind:', metar.wind);
-      // console.log('👁️  Visibility:', metar.visibility, 'm');
-      // console.log('🌦️  Weather:', metar.weather);
-      // console.log('☁️  Clouds:', metar.cloud);
-      // console.log('🌡️  Temp/Dewpoint:', metar.temperatures);
-      // console.log('🔽 QNH:', metar.qnh);
-      // console.log('☀️  CAVOK:', metar.cavok);
-      // console.log('✈️  VMC Status:', metar.flightCategory);
-      // console.log('📊 Flight Category:', metar.flightCategory);
-      // console.log('🔄 Changements:', metar.changements);
-    // });
-
-  //   console.log('\n\n=== Summary Table ===');
-  //   console.log('Airport | CAVOK | Category | Vis(m) | Ceiling(ft) | Temp | Wind');
-  //   console.log('-'.repeat(75));
-  //   testMetars.forEach(({ code, text }) => {
-  //     const m = new Metar(code, text);
-  //     const ceiling = m.cloud ?
-  //       Math.min(...m.cloud.filter(c => ['BKN', 'OVC', 'VV'].includes(c.code) && c.altitude).map(c => c.altitude) || [999999]) :
-  //       '---';
-  //     const wind = m.wind ? `${m.wind.direction}°/${m.wind.speed}kt` : '---';
-  //     const temp = m.temperatures ? `${m.temperatures.temperature}°C` : '---';
-  //     const cavok = m.cavok ? 'YES' : 'NO';
-
-  //     console.log(
-  //       `${code.padEnd(8)}| ${cavok.padEnd(6)}| ${m.flightCategory.padEnd(9)}| ${String(m.visibility).padEnd(7)}| ${String(ceiling).padEnd(12)}| ${temp.padEnd(5)}| ${wind}`
-  //     );
-  //   });
-
-  // }
-
-  // computeFlightRules()
-
-
-
-    // function computeFlightRules() {
-
-    // // Test cases
-    // console.log('=== METAR Flight Category Parser ===\n');
-
-    // const testMetars = [
-    //   'KJFK 121851Z 31008KT 10SM FEW250 M04/M17 A3034',
-    //   'KORD 121856Z 09014G25KT 3SM -SN BKN016 OVC024 M06/M08 A2990',
-    //   'KBOS 121854Z 36015G28KT 1SM SN BKN008 OVC015 M03/M06 A2976',
-    //   'KLAX 121853Z 26008KT 1/2SM FG VV005 16/15 A3012',
-    //   'KSEA 121853Z VRB03KT 10SM FEW015 SCT200 09/06 A3022',
-    //   'KDFW 121853Z 18012KT 5SM HZ BKN015 BKN250 22/16 A3012',
-    //   'KATL 121852Z 00000KT 2SM BR OVC003 18/17 A3020',
-    //   'KDEN 121853Z 36005KT 1/4SM FG VV002 M01/M02 A3025'
-    // ];
-
-    // testMetars.forEach(metar => {
-    //   const result = parseMetar(metar);
-    //   console.log(`METAR: ${metar.substring(0, 60)}...`);
-    //   console.log(`  Visibility: ${result.visibility !== null ? result.visibility + ' SM' : 'Not reported'}`);
-    //   console.log(`  Ceiling: ${result.ceiling !== null ? result.ceiling + ' ft' : 'No ceiling'}`);
-    //   console.log(`  Category: ${result.category}`);
-    //   console.log();
-    // });
-
-    // // Additional test with variable weather
-    // console.log('=== Variable Visibility Test ===');
-    // const varMetar = 'KPHX 121856Z 00000KT 1/2V2SM BR BKN004 OVC010 15/14 A3015';
-    // const varResult = parseMetar(varMetar);
-    // console.log(`METAR: ${varMetar}`);
-    // console.log(`  Visibility: ${varResult.visibility} SM (variable)`);
-    // console.log(`  Ceiling: ${varResult.ceiling} ft`);
-    // console.log(`  Category: ${varResult.category}`);
-    // console.log('\nNote: Variable visibility uses the lower value for conservative flight planning.');
-    // }
-
-    // computeFlightRules()
-
-</script>
 
 <script>
     // MAKE REAL OFFLINE APP WITH SERVICEWORK AND SW.JS
@@ -1367,55 +1237,6 @@
     //     console.warn(`Checklist container "${containerId}" not found`);
     //     return;
     //   }
-
-    //   // Clear any existing dynamic content
-    //   container.innerHTML = '';
-
-    //   const checklist = (window.flight_plan_data && window.flight_plan_data.CHECKLIST) ? window.flight_plan_data.CHECKLIST : {};
-
-    //   Object.keys(checklist).forEach((rawKey) => {
-    //     // Build a human-friendly title (e.g. "personal" -> "Personal checklist")
-    //     const capitalized = rawKey.charAt(0).toUpperCase() + rawKey.slice(1);
-    //     const title = `${capitalized}`;
-
-    //     // Create collapsible block
-    //     const block = document.createElement('div');
-    //     block.className = 'collapsible';
-    //     block.dataset.title = title;
-
-    //     // Header
-    //     const header = document.createElement('div');
-    //     header.className = 'collapsible-header';
-    //     header.textContent = title;
-
-    //     // Content
-    //     const content = document.createElement('div');
-    //     content.className = 'collapsible-content';
-    //     content.innerHTML = ''; // will be filled by populateChecklist when opened
-
-    //     // Append
-    //     block.appendChild(header);
-    //     block.appendChild(content);
-    //     container.appendChild(block);
-
-    //     // Toggle behavior + lazy populate on open
-    //     header.addEventListener('click', () => {
-    //       block.classList.toggle('open');
-
-    //       if (block.classList.contains('open')) {
-    //         // Ensure content height animates
-    //         content.style.maxHeight = content.scrollHeight + 'px';
-    //         // Fill checkboxes for this category now (lazy)
-    //         if (typeof populateChecklist === 'function') {
-    //           // Use the same data-title string populateChecklist expects
-    //           populateChecklist(title);
-    //         }
-    //       } else {
-    //         content.style.maxHeight = null;
-    //       }
-    //     });
-    //   });
-    // }
 
     function populateChecklistCatagories() {
       console.log(`> func: populateChecklistCatagories()`);
@@ -1494,10 +1315,6 @@
         console.warn(`No data found for ${category} in window.CHECKLIST`);
         return;
       }
-      // if (!items || (typeof items === 'object' && Object.keys(items).length === 0)) {
-      //   console.warn(`No data found for ${category} in window.CHECKLIST`);
-      //   return;
-      // }
 
       // Generate checkbox HTML for each item
       content.innerHTML = Object.entries(items)
@@ -5069,11 +4886,13 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
     #     return js_object.to_py()
 
 
-    def expected_runway_number(fname, wind_direction='', wind_strength='', extra_runways=None):
+    def expected_runway_number(fname, wind_direction='', wind_strength=''):
         """Compute the expected runway based on wind information for a given aerodrome."""
         print(f'> func: expected_runway_number({fname})')
         # Defaults
         expect_runway = ''
+        runwayField = js.document.getElementById(fname + "_RUNWAY")
+        extra_runways = runwayField.value.strip()
 
         # Get all runways for the aerodrome. We need to copy the list to avoid modifying the original data
         runways = js.window.flight_plan_data[f"{fname}_RUNWAYS"].copy()
@@ -5098,6 +4917,14 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
         else:
             # js.window.messages = f'No wind direction: {wind_direction} or wind strength: {wind_strength} or runways: {runways}.'
             print(f'   >No wind direction {wind_direction} or wind_strength {wind_strength} or runways {runways} found')
+
+        # Update the GUI input field
+        if (expect_runway != '' and expect_runway is not None):
+            # Set new runway
+            runwayField.value = expect_runway
+            # Change color
+            runwayField.style.backgroundColor = "#e6f0ff";
+            # metarText.value = js.window.messages;
 
         # Return
         print(f'   >Predicted runway: {expect_runway}')
@@ -5277,88 +5104,6 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
         result = round(math.cos(radians_difference) * wind_strength, 1)
         if result == 0: result = int(result)
         return result
-
-
-    # def analyzeWind(metar):
-    #     """Method parse and analyze wind datas from METAR message and
-    #     returns a dictionnary with wind informations.
-    #     Support Knots (KT) and Meter Per Second (MPS) units.
-    #     Units are not informations returned by method.
-    #     If can't decode wind information (in case of unavaibility
-    #     indicated by KT method return None.
-
-    #     Returns
-    #     --------
-    #         wind_tot (dict): Dictionnary with wind informations.
-    #         Keys:
-    #             - direction (integer), direction of wind
-    #             - direction (string), "VRB" for variable
-    #             - speed (integer), speed of wind
-    #             - gust_speed (integer or None), speed of gust, None if no gust
-    #             - variation(tuple), variation of wind (tuple of integer), None if no variation
-
-    #         - None (NoneType): None if method can't decode wind informations.
-    #     """
-    #     search = None
-
-    #     regex_list_kt = [r'\d{5}KT', r'\d{5}G\d{2}KT', r'VRB\d{2}KT']
-    #     # [0] Normal (33005KT) [1] Gust (33010G25KT) [2] Variable direction (VRB03KT)
-    #     regex_list_mps = [r'\d{5}MPS', r'\d{5}G\d{2}MPS', r'VRB\d{2}MPS']
-    #     # Meters per second
-
-    #     i = 0
-    #     end = len(regex_list_kt)
-
-    #     while search is None and i < end:
-    #         search = re.search(regex_list_kt[i], metar)
-    #         i += 1
-
-    #     if search is None:  # Knot verification failed, MPS verification
-    #         i = 0
-    #         end = len(regex_list_mps)
-
-    #         while search is None and i < end:
-    #             search = re.search(
-    #                 regex_list_mps[i], metar)
-    #             i += 1
-
-    #         if search is None:
-    #             return None
-
-    #     wind_tot = search.group()
-    #     direction = wind_tot[:3]
-
-    #     if direction != 'VRB':
-    #         direction = int(direction)
-
-    #     speed = wind_tot[3:5]
-    #     speed = int(speed)
-
-    #     if 'G' in wind_tot:  # Gust
-    #         gust_speed = int(wind_tot[6:8])
-    #     else:
-    #         gust_speed = None
-
-    #     ##Variations##
-    #     regex = r'\d{3}V\d{3}'
-    #     search = re.search(regex, metar)
-
-    #     if search is not None:
-    #         variation = search.group()
-    #         variation = variation.split('V')
-    #         variation = [int(value) for value in variation]
-    #         variation = tuple(variation)
-    #     else:
-    #         variation = None
-
-    #     wind_infos = {
-    #         'direction': direction,
-    #         'speed': speed,
-    #         'gust': gust_speed,
-    #         'variation': variation
-    #     }
-
-    #     return wind_infos
 
     def is_numeric(value):
         """
@@ -5902,11 +5647,11 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
             # Remove wind envelope
             remove_wind_envelope_plot(fname)
 
-            # Retrieve METAR data during loading of the aerodrome
-            js.window.retrieve_metar(fname, verbose=verbose)
-
             # Update flag
             # window.updateFlag(fname)
+
+            # Retrieve METAR data during loading of the aerodrome
+            await js.window.retrieve_metar(fname, verbose=verbose)
 
             print(f"   >✅ Aerodrome {icaoName} successfully loaded from cache: {fname.lower()}")
             # js.window.alert(f"✅ Aerodrome {icaoName} successfully loaded for {fname.lower()}")
@@ -7447,6 +7192,25 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
         }
         // Run the windEnvelope
         window.windEnvelope_js(prefix);
+      });
+    });
+
+
+    // Update the aerodrome directly after changing the inputfields
+    ['DEPARTURE_ICAO', 'DEPARTURE_ICAO_2', 'ARRIVAL_ICAO', 'ARRIVAL_ICAO_2'].forEach(id => {
+      document.getElementById(id)?.addEventListener('change', e => {
+        // At least 4 chars is required
+        const field = String(e?.target?.value ?? '').trim();
+        if (field.length < 4) return;
+
+        let prefix = '';
+        if (id.startsWith('DEPARTURE')) {
+          prefix = 'DEPARTURE';
+        } else if (id.startsWith('ARRIVAL')) {
+          prefix = 'ARRIVAL';
+        }
+        // Load the aerodrome from json
+        window.load_aerodrome_from_json(prefix, elementId=id)
       });
     });
 
