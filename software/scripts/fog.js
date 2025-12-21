@@ -41,15 +41,23 @@ function startFog(canvas, img) {
   }
 
   function stop() {
+    // this is like a pause. You can continue with the animation at any time.
     running = false;
     if (rafId) cancelAnimationFrame(rafId);
     rafId = null;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
 
+  // function destroy() {
+  //   controller.stop();
+  //   img.removeEventListener("load", resize);
+  //   window.removeEventListener("resize", resize);
+  // }
+
+  // Resize the images correctly
   img.addEventListener("load", resize);
   window.addEventListener("resize", resize);
-
+  // Return
   return { start, stop };
 }
 
@@ -71,11 +79,23 @@ function determineMistHeavy(metar_obj) {
 }
 
 /* --- PUBLIC API --- */
-function animateFog(prefix) {
+function animateFog(prefix, process = "auto", intensity = "light") {
+  // process:
+  //      'auto':  Starts based on METAR data
+  //      'start': Starts with rainIntensity
+  //      'stop':  Stops rain animation
+  // intensity:
+  //      'light'
+  //      'medium'
+  //      'heavy'
+
   console.log(`> func: animateFog(${prefix})`);
 
+  // Initialization of the controllers
   if (!fogControllers[prefix]) {
+    // Get the canvas
     const canvas = document.querySelector(`.fog-canvas[data-prefix="${prefix}"]`);
+    // Get the images
     const img = document.getElementById(`${prefix}_image_cache`);
 
     if (!canvas || !img) {
@@ -86,26 +106,36 @@ function animateFog(prefix) {
     fogControllers[prefix] = startFog(canvas, img);
   }
 
+  // Spin up the controllers
   const controller = fogControllers[prefix];
-  const metar_obj = prefix === "DEPARTURE" ? window.METAR_DEPARTURE : window.METAR_ARRIVAL;
 
+  // Force animate to start
+  if (process === "start") {
+    console.log(`   >Start Fog animation for ${prefix}`);
+    controller.start(intensity);
+  }
+
+  // Get METAR data
+  const metar_obj = prefix === "DEPARTURE" ? window.METAR_DEPARTURE : window.METAR_ARRIVAL;
   // Check visiblity
   let visibility = Number(metar_obj.visibility);
   if (!Number.isFinite(visibility) || visibility <= 0) {
     visibility = 9999;
   }
 
-  // if (!metar_obj || !metar_obj.visibility || visibility >= 9999 || metar_obj.cavok === true) {
-  if (!metar_obj || metar_obj.cavok === true) {
-    console.log(`   >Exit cloud because no metar: ${metar_obj} or Visibility: ${metar_obj.visibility}m) with density: ${density} or CAVOK=${metar_obj.cavok}`);
+  // Stop animation and return
+  if (!metar_obj || metar_obj.cavok === true || process === "stop") {
+    console.log(`   >Exit Fog: METAR: ${metar_obj}, CAVOK=${metar_obj.cavok}`);
     controller.stop();
     return;
   }
-  // Add mist layers to the score
+
+  // Override visibility based on the mist from the METAR
   if (determineMistLight(metar_obj) === true) visibility = 5000;
   if (determineMistHeavy(metar_obj) === true) visibility = 2500;
-  console.log(`   >Visibility is: ${visibility}. Light mist: ${determineMistLight(metar_obj) === true}, Heavy mist: ${determineMistHeavy(metar_obj) === true}`);
-  console.log(metar_obj.weather);
+  console.log(
+    `   >Visibility is: ${visibility}. Light mist: ${determineMistLight(metar_obj) === true}, Heavy mist: ${determineMistHeavy(metar_obj) === true}`,
+  );
 
   // Add to image
   if (visibility <= 2500) {

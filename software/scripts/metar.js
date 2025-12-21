@@ -423,7 +423,20 @@ class Metar {
     const isMist =
       Array.isArray(weather.weather) &&
       weather.weather.some((w) =>
-        ["Mist", "Fog", "Haze", "Smoke", "Sand", "Dust", "Volcanic Ash", "Dust Whirlpool", "Sand Storm", "Dust Storm", "Funnel Cloud", "Squalls"].includes(w),
+        [
+          "Mist",
+          "Fog",
+          "Haze",
+          "Smoke",
+          "Sand",
+          "Dust",
+          "Volcanic Ash",
+          "Dust Whirlpool",
+          "Sand Storm",
+          "Dust Storm",
+          "Funnel Cloud",
+          "Squalls",
+        ].includes(w),
       );
 
     return Boolean(isMist);
@@ -896,7 +909,9 @@ async function fetch_metar(metar_stations, splitlines = true, decoded = false, p
       metarField.value = `Be patient while fetching METAR weather information from closest station: ${icao}`;
     }
 
-    const url = decoded ? `https://tgftp.nws.noaa.gov/data/observations/metar/decoded/${icao}.TXT` : `https://tgftp.nws.noaa.gov/data/observations/metar/stations/${icao}.TXT`;
+    const url = decoded
+      ? `https://tgftp.nws.noaa.gov/data/observations/metar/decoded/${icao}.TXT`
+      : `https://tgftp.nws.noaa.gov/data/observations/metar/stations/${icao}.TXT`;
 
     const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
 
@@ -933,112 +948,6 @@ async function fetch_metar(metar_stations, splitlines = true, decoded = false, p
   }
   // Return when empty and nothing found
   return [null, null, null];
-}
-
-async function retrieve_metar(prefix, verbose = "info") {
-  console.log(`> func: retrieve_metar(${prefix})`);
-  // Get the values from the input fields
-  const name = document.getElementById(prefix + "_NAME").value || "";
-  const icao = document.getElementById(prefix + "_ICAO").value || "";
-  const country = document.getElementById(prefix + "_COUNTRY").value || "";
-  // Get the button element that we can fill with METAR data
-  const dateField = document.getElementById("DATETIME-METAR-" + prefix);
-  const metarField = document.getElementById("METAR-FIELD-" + prefix);
-  const metarText = document.getElementById("METAR-TEXT-" + prefix);
-
-  // Set default values
-  let metar_icao = "";
-  let metar_message = "";
-  let datetimeStr = nowtime(true); // UTC
-  let runway_predicted = "";
-  let icao_stations = [""];
-  let stationName = "";
-  let metar_obj = {};
-  let metar_plain = {};
-
-  // If ICAO is empty or not provided, notify the user and return early
-  if (!icao || !country) {
-    if (verbose === "info") {
-      alert("ℹ️ To retrieve METAR information, please select a country and load the aerodrome (ICAO) first.");
-    }
-    return;
-  }
-
-  // Update button: Disable
-  colorMetarFields(prefix, (enable = false));
-
-  // Fetch METAR data from URL
-  try {
-    // Retrieve the METAR data for the closest station
-    icao_stations = get_top_metar_stations(prefix, 5, false).toJs();
-    console.log("   >Closest METAR stations:");
-    console.log(`   >${icao_stations}`);
-
-    // Fetch the METAR data for the closest station (pass decoded flag)
-    metar = await fetch_metar(icao_stations, true, false, prefix);
-
-    // Store data
-    metar_icao = metar[0];
-    datetimeStr = metar[1];
-    stationName = metar[2];
-    // metar_icao = "EDDH 191350Z AUTO 22009KT 9999 OVC013 12/09 Q1015 TEMPO 4500 -RADZ BKN009";
-
-    if (metarText) {
-      metarText.value = stationName ? `Closest available METAR station is ${stationName}` : "No nearby METAR stations found";
-    }
-  } catch (error) {
-    console.log(`   >Error retrieving METAR data. ${prefix} has likely no weather station. Error:`, error);
-    metar_message = "No METAR weather station available for " + icao;
-    // Update button: Enable
-    colorMetarFields(prefix, (enable = true));
-  }
-
-  // Update GUI elements
-  dateField.value = datetimeStr;
-  metarField.value = metar_icao || metar_message;
-  colorMetarFields(prefix, (enable = true));
-
-  // Update the expected runway based on wind direction and runway orientation
-  // if (typeof metar_icao === "string" && metar_icao.trim() !== "") {
-  if (metar_icao !== "" && metar_icao != null) {
-    // Retrieve details about METAR
-    try {
-      metar_obj = new Metar(stationName, metar_icao);
-      // Convert metar object to plain so that it can be used in pyton dictionary for later usage
-      metar_plain = metar_obj.getAll();
-      // Compute expected runway number based on wind direction and runway orientation
-      runway_predicted = expected_runway_number(prefix, (wind_direction = metar_obj.wind.direction), (wind_strength = metar_obj.wind.speed));
-      // Compute wind parameters from METAR data and update wind GUI fields
-      window.update_wind_gui_fields(prefix, metar_icao, metar_obj);
-      // Create wind envelope plot
-      window.windEnvelope_js(prefix, 25, 15, false);
-
-      // Store RUNWAY number in flight plan data
-      window.flight_plan_data[`${prefix}_RUNWAY`] = runway_predicted;
-      // Store METAR in flight plan data
-      window.flight_plan_data[`${prefix}_METAR_ICAO`] = metar_icao;
-      // Store METAR in flight plan data. This will break the saving functionality!
-      // window.flight_plan_data[`${prefix}_METAR`] = metar_plain;
-      if (prefix === "DEPARTURE") {
-        window.METAR_DEPARTURE = metar_plain;
-      } else {
-        window.METAR_ARRIVAL = metar_plain;
-      }
-
-      // Update flight catagory icon
-      updateFlightCatagoryIcon(prefix);
-
-      // Animations
-      animateRain(prefix);
-      animateCloud(prefix);
-      animateFog(prefix);
-    } catch (error) {
-      console.log(`   >Error: Metar details could not be computed:`, error);
-    }
-  }
-
-  checkMetarAge();
-  console.log(`   >✅ METAR information is loaded from the closest station: ${stationName}.\n   >✅ The predicted runway is: ${runway_predicted}`);
 }
 
 function updateFlightCatagoryIcon(prefix, remove = false) {
@@ -1084,4 +993,115 @@ function updateFlightCatagoryIcon(prefix, remove = false) {
   imgVFR.style.display = "inline-block";
   // Color the Div
   borderFieldAerodrome.style.backgroundColor = metar_obj.color;
+}
+
+async function retrieve_metar(prefix, verbose = "info") {
+  console.log(`> func: retrieve_metar(${prefix})`);
+  // Get the values from the input fields
+  const name = document.getElementById(prefix + "_NAME").value || "";
+  const icao = document.getElementById(prefix + "_ICAO").value || "";
+  const country = document.getElementById(prefix + "_COUNTRY").value || "";
+  // Get the button element that we can fill with METAR data
+  const dateField = document.getElementById("DATETIME-METAR-" + prefix);
+  const metarField = document.getElementById("METAR-FIELD-" + prefix);
+  const metarText = document.getElementById("METAR-TEXT-" + prefix);
+
+  // Set default values
+  let metar_icao = "";
+  let metar_message = "";
+  let datetimeStr = nowtime(true); // UTC
+  let runway_predicted = "";
+  let icao_stations = [""];
+  let stationName = "";
+  let metar_obj = {};
+  let metar_plain = {};
+
+  // If ICAO is empty or not provided, notify the user and return early
+  if (!icao || !country) {
+    if (verbose === "info") {
+      alert("ℹ️ To retrieve METAR information, please select a country and load the aerodrome (ICAO) first.");
+    }
+    return;
+  }
+
+  // Update button: Disable
+  colorMetarFields(prefix, (enable = false));
+
+  // Fetch METAR data from URL
+  try {
+    // Stop animations
+    animateRain(prefix, "stop");
+    animateCloud(prefix, "stop");
+    animateFog(prefix, "stop");
+
+    // Retrieve the METAR data for the closest station
+    icao_stations = get_top_metar_stations(prefix, 5, false).toJs();
+    console.log("   >Closest METAR stations:");
+    console.log(`   >${icao_stations}`);
+
+    // Fetch the METAR data for the closest station (pass decoded flag)
+    metarData = await fetch_metar(icao_stations, true, false, prefix);
+
+    // Store data
+    metar_icao = metarData[0];
+    datetimeStr = metarData[1];
+    stationName = metarData[2];
+    // metar_icao = "EDDH 191350Z AUTO 22009KT 9999 OVC013 12/09 Q1015 TEMPO 4500 -RADZ BKN009";
+
+    if (metarText) {
+      metarText.value = stationName ? `Closest available METAR station is ${stationName}` : "No nearby METAR stations found";
+    }
+  } catch (error) {
+    console.log(`   >Error retrieving METAR data. ${prefix} has likely no weather station. Error:`, error);
+    metar_message = "No METAR weather station available for " + icao;
+    // Enable fields
+    colorMetarFields(prefix, (enable = true));
+  }
+
+  // Update GUI elements
+  dateField.value = datetimeStr;
+  metarField.value = metar_icao || metar_message;
+  colorMetarFields(prefix, (enable = true));
+
+  // Update the expected runway based on wind direction and runway orientation
+  // if (typeof metar_icao === "string" && metar_icao.trim() !== "") {
+  if (metar_icao !== "" && metar_icao !== null) {
+    // Retrieve details about METAR
+    try {
+      metar_obj = new Metar(stationName, metar_icao);
+      // Convert metar object to plain so that it can be used in pyton dictionary for later usage
+      metar_plain = metar_obj.getAll();
+      // Compute expected runway number based on wind direction and runway orientation
+      runway_predicted = expected_runway_number(prefix, (wind_direction = metar_obj.wind.direction), (wind_strength = metar_obj.wind.speed));
+      // Compute wind parameters from METAR data and update wind GUI fields
+      window.update_wind_gui_fields(prefix, metar_icao, metar_obj);
+      // Create wind envelope plot
+      window.windEnvelope_js(prefix, 25, 15, false);
+
+      // Store RUNWAY number in flight plan data
+      window.flight_plan_data[`${prefix}_RUNWAY`] = runway_predicted;
+      // Store METAR in flight plan data
+      window.flight_plan_data[`${prefix}_METAR_ICAO`] = metar_icao;
+      // Store METAR in flight plan data. This will break the saving functionality!
+      if (prefix === "DEPARTURE") {
+        window.METAR_DEPARTURE = metar_plain;
+      } else {
+        window.METAR_ARRIVAL = metar_plain;
+      }
+
+      // Update flight catagory icon
+      updateFlightCatagoryIcon(prefix);
+
+      // Animations
+      animateRain(prefix);
+      animateCloud(prefix);
+      animateFog(prefix);
+    } catch (error) {
+      console.log(`   >Error: METAR details could not be computed:`, error);
+    }
+  }
+
+  // Check METAR age and show
+  checkMetarAge();
+  console.log(`   >✅ METAR information is loaded from the closest station: ${stationName}.\n   >✅ The predicted runway is: ${runway_predicted}`);
 }

@@ -5,20 +5,12 @@ const INTENSITY = {
   heavy: { count: 350, lenMin: 80, lenMax: 160, alphaMin: 0.08, alphaMax: 0.25 },
 };
 
-// function startRain(canvas, img) {
-//   const ctx = canvas.getContext("2d");
-//   let running = false;
-//   let rafId = null;
-//   let particles = [];
-//   let pIndex = 0;
-
 function startRain(canvas, img) {
   const ctx = canvas.getContext("2d");
   let running = false;
   let rafId = null;
   let particles = [];
   let pIndex = 0;
-  let currentIntensity = "medium";
 
   function resize() {
     const r = img.getBoundingClientRect();
@@ -36,6 +28,7 @@ function startRain(canvas, img) {
     this.height = h;
     this.life = 0;
     this.maxlife = Math.random() * 2 + 1;
+    // this.alpha = Math.random() * 0.15 + 0.05;
     this.alpha = Math.random() * (cfg.alphaMax - cfg.alphaMin) + cfg.alphaMin;
     particles[pIndex++] = this;
   }
@@ -73,30 +66,35 @@ function startRain(canvas, img) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     for (let i = 0; i < cfg.count; i++) {
-      new Dot(
-        Math.random() * canvas.width,
-        Math.random() * canvas.height,
-        Math.random() * 6 - 3,
-        Math.random() * (cfg.lenMax - cfg.lenMin) + cfg.lenMin,
-      );
+      new Dot(Math.random() * canvas.width, Math.random() * canvas.height, Math.random() * 6 - 3, Math.random() * (cfg.lenMax - cfg.lenMin) + cfg.lenMin);
     }
 
     for (let i in particles) particles[i].draw();
     rafId = requestAnimationFrame(loop);
   }
 
-  function start(newIntensity = "medium") {
-    currentIntensity = newIntensity;
-    if (running) return;
+  return {
+    start(newIntensity = "medium") {
+      currentIntensity = newIntensity;
 
-    running = true;
-    particles = [];
-    resize();
-    loop();
-  }
+      if (running) return;
+
+      running = true;
+      particles = []; // reset for clean intensity switch
+      resize();
+      loop();
+    },
+
+    stop() {
+      running = false;
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = null;
+      particles = [];
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    },
+  };
 
   function stop() {
-    // this is like a pause. You can continue with the animation at any time.
     running = false;
     if (rafId) cancelAnimationFrame(rafId);
     rafId = null;
@@ -104,33 +102,16 @@ function startRain(canvas, img) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
 
-  // function destroy() {
-  //   controller.stop();
-  //   img.removeEventListener("load", resize);
-  //   window.removeEventListener("resize", resize);
-  // }
-
-  // Resize the images correctly
   img.addEventListener("load", resize);
   window.addEventListener("resize", resize);
-  // Return
+
   return { start, stop };
 }
 
 /* --- PUBLIC API --- */
-function animateRain(prefix, process = "auto", rainIntensity = "medium") {
-  // process:
-  //      'auto':  Starts based on METAR data
-  //      'start': Starts with rainIntensity
-  //      'stop':  Stops rain animation
-  // rainIntensity:
-  //      'light'
-  //      'medium'
-  //      'heavy'
-
+function animateRain(prefix, process = "auto") {
   console.log(`>func: animateRain(${prefix})`);
 
-  // Initialization of the controllers
   if (!rainControllers[prefix]) {
     // Get the canvas
     const canvas = document.querySelector(`.rain-canvas[data-prefix="${prefix}"]`);
@@ -145,33 +126,33 @@ function animateRain(prefix, process = "auto", rainIntensity = "medium") {
     rainControllers[prefix] = startRain(canvas, img);
   }
 
-  // Spin up the controllers
   const controller = rainControllers[prefix];
-
-  // Force animate to start
-  if (process === "start") {
-    console.log(`   >Start Rain animation for ${prefix}`);
-    controller.start(rainIntensity);
-  }
-
-  // Get METAR data
   const metar_obj = prefix === "DEPARTURE" ? window.METAR_DEPARTURE : window.METAR_ARRIVAL;
-  // Stop animation and return
+
   if (!metar_obj || !metar_obj.rain || process === "stop") {
-    console.log(`   >Stop Rain animatoin. No METAR data for ${prefix}`);
+    console.log(`   >No METAR data for ${prefix}`);
     controller.stop();
     return;
   }
 
-  // Parameters to define rain strength
-  const weatherIntensity = metar_obj.weather?.intensity?.[0];
-  // let rainIntensity = "medium";
-  if (weatherIntensity === true) rainIntensity = "heavy";
-  else if (weatherIntensity === false) rainIntensity = "light";
+  if (metar_obj.rain === true) {
+    const weatherIntensity = metar_obj.weather?.intensity?.[0];
+    // Set default
+    let rainIntensity = "medium";
 
-  // Start the rain
-  console.log(`   >Rain ${rainIntensity} for ${prefix}`);
-  controller.start(rainIntensity);
+    if (weatherIntensity === true)
+      rainIntensity = "heavy"; // +
+    else if (weatherIntensity === false)
+      rainIntensity = "light"; // -
+    else rainIntensity = "medium";
+
+    // Start the rain
+    console.log(`   >Rain ${rainIntensity} for ${prefix}`);
+    controller.start(rainIntensity);
+  } else {
+    console.log(`   >No rain for ${prefix}`);
+    controller.stop();
+  }
 }
 
 // Make it globally accessible
