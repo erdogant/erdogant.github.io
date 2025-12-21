@@ -113,6 +113,7 @@ function animateFog(prefix, process = "auto", intensity = "light") {
   if (process === "start") {
     console.log(`   >Start Fog animation for ${prefix}`);
     controller.start(intensity);
+    return;
   }
 
   // Get METAR data

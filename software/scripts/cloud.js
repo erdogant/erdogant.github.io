@@ -186,24 +186,32 @@ function startCloud(canvas, img) {
   return { start, stop };
 }
 
-function computeSpeedScore(crossWind, maxCrosswind, exponent = 2) {
+function computeSpeedScore(speedWind, crossWind, maxCrosswind, exponent = 2) {
   // exponent = 1:  linear)
   // exponent = 2: good default
   // exponent = 3: very aggressive near max (gust-like behavior)
   // Defaults
   console.log(`   > func: computeSpeedScore()`);
-  const getMIN = 0.05;
+  const getMIN = 0.03;
   const getMAX = 1.5;
 
   // Convert to numbers
-  const cw = Math.abs(Number(crossWind));
+  let wkt = Math.abs(Number(speedWind));
+  let cw = Math.abs(Number(crossWind));
   const maxCw = Number(maxCrosswind);
   // Validate inputs, return 1 when no input
   if (!Number.isFinite(cw) || !Number.isFinite(maxCw) || maxCw <= 0) {
     return 1;
   }
+  if (!Number.isFinite(wkt) || wkt <= 0 || wkt === null) {
+    wkt = 0;
+  }
 
   if (maxCw <= 0) return getMIN;
+  // Take the regular wind (kt) also into consideration because when the wind is exactly on the runway, it is still not windstill!
+  if (wkt >= 10) {
+    cw = cw + Math.min(wkt, 2);
+  }
   // Clamp input
   const clamped = Math.min(Math.max(cw, 0), maxCw);
   // Normalize to [0, 1]
@@ -212,7 +220,7 @@ function computeSpeedScore(crossWind, maxCrosswind, exponent = 2) {
   const curved = Math.pow(t, exponent);
   // Scale to [getMIN, getMAX]
   const score = Math.min(getMIN + curved * (getMAX - getMIN), getMAX);
-  console.log(`   > Wind score: ${score.toFixed(2)}`);
+  console.log(`   > Speed of wind sliding score: ${score.toFixed(2)} in range: ${getMIN}-${getMAX}`);
 
   // return
   return score;
@@ -291,6 +299,7 @@ function animateCloud(prefix, process = "auto", density = 1, speed = 1.0, direct
   if (process === "start") {
     console.log(`   >Start Cloud animation for ${prefix}`);
     controller.start(density, speed, direction);
+    return;
   }
 
   // Get METAR data
@@ -306,12 +315,13 @@ function animateCloud(prefix, process = "auto", density = 1, speed = 1.0, direct
   // Get variables from GUI
   const crossWind = document.getElementById(prefix + "_WIND_CROSSWIND").value;
   const headWind = document.getElementById(prefix + "_WIND_HEADWIND").value;
+  const speedWind = document.getElementById(prefix + "_WIND_SPEED").value;
   const maxCrosswind = window.settings["MAX_CROSSWIND_LIMIT"];
 
   // Compute left or right direction with respect to the runway. Note that this is the other way arround over here!
   direction = crossWind < 0 && headWind > 0 ? "right" : crossWind > 0 && headWind > 0 ? "left" : "left";
   // Compute the animated speed
-  speed = computeSpeedScore(crossWind, maxCrosswind, 2);
+  speed = computeSpeedScore(speedWind, crossWind, maxCrosswind, 2);
   // Compute cloud density score based on okta and altitude clouds
   density = computeCloudDensityScore(metar_obj.cloud);
 

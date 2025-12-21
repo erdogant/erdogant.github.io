@@ -118,12 +118,12 @@ function startRain(canvas, img) {
 }
 
 /* --- PUBLIC API --- */
-function animateRain(prefix, process = "auto", rainIntensity = "medium") {
+function animateRain(prefix, process = "auto", intensity = "medium") {
   // process:
   //      'auto':  Starts based on METAR data
-  //      'start': Starts with rainIntensity
+  //      'start': Starts with intensity
   //      'stop':  Stops rain animation
-  // rainIntensity:
+  // intensity:
   //      'light'
   //      'medium'
   //      'heavy'
@@ -151,27 +151,29 @@ function animateRain(prefix, process = "auto", rainIntensity = "medium") {
   // Force animate to start
   if (process === "start") {
     console.log(`   >Start Rain animation for ${prefix}`);
-    controller.start(rainIntensity);
+    controller.start(intensity);
+    return;
   }
 
   // Get METAR data
   const metar_obj = prefix === "DEPARTURE" ? window.METAR_DEPARTURE : window.METAR_ARRIVAL;
+
   // Stop animation and return
   if (!metar_obj || !metar_obj.rain || process === "stop") {
-    console.log(`   >Stop Rain animatoin. No METAR data for ${prefix}`);
+    console.log(`   >Stop Rain animation. No METAR data for ${prefix}`);
     controller.stop();
     return;
   }
 
   // Parameters to define rain strength
   const weatherIntensity = metar_obj.weather?.intensity?.[0];
-  // let rainIntensity = "medium";
-  if (weatherIntensity === true) rainIntensity = "heavy";
-  else if (weatherIntensity === false) rainIntensity = "light";
+  // let intensity = "medium";
+  if (weatherIntensity === true) intensity = "heavy";
+  else if (weatherIntensity === false) intensity = "light";
 
   // Start the rain
-  console.log(`   >Rain ${rainIntensity} for ${prefix}`);
-  controller.start(rainIntensity);
+  console.log(`   >Rain ${intensity} for ${prefix}`);
+  controller.start(intensity);
 }
 
 // Make it globally accessible

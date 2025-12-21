@@ -569,7 +569,7 @@ class Metar {
     const sunset_flag = false;
     const iconDir = "./icons";
 
-    // Compute cloud ceiling locally (safe)
+    // Compute cloud ceiling
     let cloud_ceiling = null;
     if (cloud) {
       for (const layer of cloud) {
@@ -708,126 +708,6 @@ class Metar {
     return this.properties;
   }
 }
-
-// METAR Flight Category Parser
-// Based on FAA definitions:
-// VFR: Ceiling >3000 ft AGL AND Visibility >5 SM
-// MVFR: Ceiling 1000-3000 ft AGL OR Visibility 3-5 SM
-// IFR: Ceiling 500-999 ft AGL OR Visibility 1-2 SM
-// LIFR: Ceiling <500 ft AGL OR Visibility <1 SM
-
-// function parseMetar(metar) {
-//   const result = {
-//     raw: metar,
-//     visibility: null,
-//     ceiling: null,
-//     category: null,
-//   };
-
-//   // Parse visibility (in statute miles)
-//   result.visibility = parseVisibility(metar);
-
-//   // Parse ceiling (lowest broken or overcast layer in feet)
-//   result.ceiling = parseCeiling(metar);
-
-//   // Determine flight category
-//   result.category = determineCategory(result.ceiling, result.visibility);
-
-//   return result;
-// }
-
-// function parseVisibility(metar) {
-//   // Handle variable visibility (e.g., "1/2V2SM")
-//   const varVisMatch = metar.match(/(\d+(?:\/\d+)?)V(\d+(?:\/\d+)?)SM/);
-//   if (varVisMatch) {
-//     const low = parseFraction(varVisMatch[1]);
-//     const high = parseFraction(varVisMatch[2]);
-//     return Math.min(low, high); // Use lower value for conservative estimate
-//   }
-
-//   // Handle standard visibility (e.g., "10SM", "1/2SM", "1 1/2SM")
-//   const visMatch = metar.match(/(\d+\s+)?(\d+\/\d+|\d+)SM/);
-//   if (visMatch) {
-//     const whole = visMatch[1] ? parseInt(visMatch[1]) : 0;
-//     const fraction = parseFraction(visMatch[2]);
-//     return whole + fraction;
-//   }
-
-//   // Handle CAVOK (Ceiling And Visibility OK) - implies >10km (~6SM) and no clouds below 5000ft
-//   if (metar.includes("CAVOK")) {
-//     return 10;
-//   }
-
-//   return null; // Visibility not found
-// }
-
-// function parseFraction(str) {
-//   if (str.includes("/")) {
-//     const parts = str.split("/");
-//     return parseInt(parts[0]) / parseInt(parts[1]);
-//   }
-//   return parseInt(str);
-// }
-
-// function parseCeiling(metar) {
-//   // Match cloud layers: BKN (broken) or OVC (overcast)
-//   // Format: BKN015 means broken at 1500 feet
-//   // Also handle VV (vertical visibility) for obscured sky
-//   const cloudRegex = /(BKN|OVC|VV)(\d{3})/g;
-//   let match;
-//   let lowestCeiling = null;
-
-//   while ((match = cloudRegex.exec(metar)) !== null) {
-//     const height = parseInt(match[2]) * 100; // Convert to feet
-//     if (lowestCeiling === null || height < lowestCeiling) {
-//       lowestCeiling = height;
-//     }
-//   }
-
-//   // CAVOK implies no ceiling below 5000 feet
-//   if (metar.includes("CAVOK") && lowestCeiling === null) {
-//     return 5000;
-//   }
-
-//   return lowestCeiling;
-// }
-
-// function determineCategory(ceiling, visibility) {
-//   // LIFR: Ceiling <500 ft OR Visibility <1 SM
-//   if (
-//     (ceiling !== null && ceiling < 500) ||
-//     (visibility !== null && visibility < 1)
-//   ) {
-//     return "LIFR";
-//   }
-
-//   // IFR: Ceiling 500-999 ft OR Visibility 1-2 SM
-//   if (
-//     (ceiling !== null && ceiling >= 500 && ceiling < 1000) ||
-//     (visibility !== null && visibility >= 1 && visibility < 3)
-//   ) {
-//     return "IFR";
-//   }
-
-//   // MVFR: Ceiling 1000-3000 ft OR Visibility 3-5 SM
-//   if (
-//     (ceiling !== null && ceiling >= 1000 && ceiling <= 3000) ||
-//     (visibility !== null && visibility >= 3 && visibility <= 5)
-//   ) {
-//     return "MVFR";
-//   }
-
-//   // VFR: Ceiling >3000 ft AND Visibility >5 SM (or no restrictive conditions)
-//   if (
-//     (ceiling === null || ceiling > 3000) &&
-//     (visibility === null || visibility > 5)
-//   ) {
-//     return "VFR";
-//   }
-
-//   // Default to VFR if conditions cannot be determined
-//   return "VFR";
-// }
 
 function checkMetarAge() {
   /* Check datetime of METAR data and update UI colors.
@@ -1033,6 +913,8 @@ async function retrieve_metar(prefix, verbose = "info") {
     animateRain(prefix, "stop");
     animateCloud(prefix, "stop");
     animateFog(prefix, "stop");
+    animateFlare(prefix, "stop");
+    animateSnow(prefix, "stop");
 
     // Retrieve the METAR data for the closest station
     icao_stations = get_top_metar_stations(prefix, 5, false).toJs();
@@ -1096,6 +978,8 @@ async function retrieve_metar(prefix, verbose = "info") {
       animateRain(prefix);
       animateCloud(prefix);
       animateFog(prefix);
+      animateFlare(prefix);
+      animateSnow(prefix);
     } catch (error) {
       console.log(`   >Error: METAR details could not be computed:`, error);
     }
