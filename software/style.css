@@ -327,6 +327,15 @@ input[type="text"]:hover {
     border-radius: 10px;
 }
 
+/* Dark canvas overlay */
+.dark-canvas {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 6; /* rain ABOVE cloud */
+    border-radius: 10px;
+}
+
 /* Coffee container */
 .coffee-container {
     text-align: center;

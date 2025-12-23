@@ -915,6 +915,7 @@ async function retrieve_metar(prefix, verbose = "info") {
     animateFog(prefix, "stop");
     animateFlare(prefix, "stop");
     animateSnow(prefix, "stop");
+    animateDark(prefix, "stop");
 
     // Retrieve the METAR data for the closest station
     icao_stations = get_top_metar_stations(prefix, 5, false).toJs();
@@ -973,6 +974,9 @@ async function retrieve_metar(prefix, verbose = "info") {
 
       // Update flight catagory icon
       updateFlightCatagoryIcon(prefix);
+      const latlon = window.flight_plan_data?.[`${prefix}_LATLON`];
+      lat = latlon[0];
+      lon = latlon[1];
 
       // Animations
       animateRain(prefix);
@@ -980,6 +984,14 @@ async function retrieve_metar(prefix, verbose = "info") {
       animateFog(prefix);
       animateFlare(prefix);
       animateSnow(prefix);
+      animateDark(prefix, "start", lat, lon);
+
+      // animateDark(prefix, "start", (lat = null), (lon = null), (date = new Date()), (sunAltitude = 7));
+      // animateDark(prefix, "start", (lat = null), (lon = null), (date = new Date()), (sunAltitude = 1));
+      // animateDark(prefix, "start", (lat = null), (lon = null), (date = new Date()), (sunAltitude = -5));
+      // animateDark(prefix, "start", (lat = null), (lon = null), (date = new Date()), (sunAltitude = -7));
+      // animateDark(prefix, "start", (lat = null), (lon = null), (date = new Date()), (sunAltitude = -13));
+      // animateDark(prefix, "start", (lat = null), (lon = null), (date = new Date()), (sunAltitude = -17));
     } catch (error) {
       console.log(`   >Error: METAR details could not be computed:`, error);
     }

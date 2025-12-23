@@ -255,6 +255,10 @@ function shouldShowSun(metar_obj, min_visibility = 8000) {
 
 /* --- PUBLIC API --- */
 function animateFlare(prefix, process = "auto", intensity = 1.5, position = { x: 0.05, y: 0.1 }, pulseSpeed = 0.2, size = 1.1) {
+  // process:
+  //      'auto':  Starts based on METAR data
+  //      'start': Starts with rainIntensity
+  //      'stop':  Stops rain animation
   console.log(
     `> func: animateFlare(${prefix}, intensity: ${intensity}, position: ${position.x},${position.y}, pulseSpeed: ${pulseSpeed}, size: ${size})`,
   );

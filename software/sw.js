@@ -1,4 +1,4 @@
-const CACHE_NAME = "skywalk-v0.5";
+const CACHE_NAME = "skywalk-v0.1";
 
 const FILES_TO_CACHE = [
   "./main.html",
@@ -14,6 +14,7 @@ const FILES_TO_CACHE = [
   "./scripts/fog.js",
   "./scripts/sun.js",
   "./scripts/snow.js",
+  "./scripts/dark.js",
   // FIGS
   "./libs/leaflet.css",
   "./libs/leaflet.js",
