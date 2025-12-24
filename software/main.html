@@ -47,6 +47,7 @@
     <link rel="manifest" href="/manifest.json">
 
     <!--ANIMATION THE ORDE OF IMPORT MATHERS!-->
+    <!--<script src="./scripts/utils.js" defer></script>-->
     <script src="./scripts/rain.js" defer></script>
     <script src="./scripts/cloud.js" defer></script>
     <script src="./scripts/fog.js" defer></script>
@@ -292,7 +293,7 @@
                            color: #333333; outline: none;">
 
                 <input type="text" id="DATETIME-METAR-DEPARTURE" readonly
-                    style="transition: background-color 0.3s; width: 30%;
+                    style="transition: background-color 0.3s; width: 40%;
                            padding: 0; box-sizing: border-box; font-size: 10px;
                            border: none; background-color: transparent;
                            color: #333333; outline: none;">
@@ -622,7 +623,7 @@
                            color: #333333; outline: none;">
 
                 <input type="text" id="DATETIME-METAR-ARRIVAL" readonly
-                    style="transition: background-color 0.3s; width: 30%;
+                    style="transition: background-color 0.3s; width: 40%;
                            padding: 0; box-sizing: border-box; font-size: 10px;
                            border: none; background-color: transparent;
                            color: #333333; outline: none;">
@@ -2644,21 +2645,23 @@
     }
 
 
-    function formatDateDMY(datetimeString, format='dd/mm/yyyy') {
+    function formatDateDMY(datetimeString, format='ddmmyyyy', splitchar = '/') {
         // Expecting: "16/11/2025 11:18"
 
         // Not in expected DD/MM/YYYY format — bail out early
-        if (typeof datetimeString !== 'string' || datetimeString.indexOf('/') === -1) {
-            return datetimeString;
+        if (typeof datetimeString !== 'string' || datetimeString.indexOf(splitchar) === -1) {
+          console.warn('formatDateDMY: format unknown, returning original string');
+          return datetimeString;
         }
+
         const [datePart, timePart] = datetimeString.split(" ");
         let day, month, year;
-        if (format === 'dd/mm/yyyy') {
-            [day, month, year] = datePart.split("/");
-        } else if (format === 'yyyy/mm/dd') {
-            [year, month, day] = datePart.split("/");
+        if (format === 'ddmmyyyy') {
+            [day, month, year] = datePart.split(splitchar);
+        } else if (format === 'yyyymmdd') {
+            [year, month, day] = datePart.split(splitchar);
         } else {
-            console.log('formatDateDMY: format unknown, returning original string');
+            console.warn('formatDateDMY: format unknown, returning original string');
             return datetimeString;
         }
 

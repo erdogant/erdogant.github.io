@@ -14,8 +14,21 @@ function startDark(canvas, img) {
     canvas.height = r.height;
   }
 
-  function calculateSunPosition(lat, lon, date) {
+  function calculateSunPosition(lat = null, lon = null, date = null) {
     // Calculate sun position using solar position algorithm
+    // Sun altitude phases:
+    // > 6° = Day
+    // 0° to 6° = Golden Hour
+    // -6° to 0° = Civil Twilight (sunset/sunrise glow)
+    // -12° to -6° = Nautical Twilight
+    // -18° to -12° = Astronomical Twilight
+    // < -18° = Night
+    console.log(`   > func: calculateSunPosition($lat: ${lat}, lon: ${lon}), date: ${date})`);
+    if (lat === null || lon === null || date === null) {
+      console.warn("   > Return with default daylight altitude because no lat/lon or date");
+      return { altitude: 7, azimuth: 0 };
+    }
+
     const julianDate = date.getTime() / 86400000 + 2440587.5;
     const century = (julianDate - 2451545.0) / 36525.0;
 
@@ -35,31 +48,46 @@ function startDark(canvas, img) {
     // True longitude
     const trueLong = meanLong + center;
 
+    // Apparent longitude (corrected for nutation and aberration)
+    const omega = 125.04 - 1934.136 * century;
+    const lambda = trueLong - 0.00569 - 0.00478 * Math.sin((omega * Math.PI) / 180);
+
     // Obliquity of ecliptic
     const obliquity = 23.439291 - century * (0.0130042 + century * (0.00000016 - century * 0.000000504));
-    const obliquityRad = (obliquity * Math.PI) / 180;
+    const obliquityCorr = obliquity + 0.00256 * Math.cos((omega * Math.PI) / 180);
+    const obliquityRad = (obliquityCorr * Math.PI) / 180;
 
     // Right ascension and declination
-    const trueLongRad = (trueLong * Math.PI) / 180;
-    const rightAscension = Math.atan2(Math.cos(obliquityRad) * Math.sin(trueLongRad), Math.cos(trueLongRad));
-    const declination = Math.asin(Math.sin(obliquityRad) * Math.sin(trueLongRad));
+    const lambdaRad = (lambda * Math.PI) / 180;
+    const rightAscension = Math.atan2(Math.cos(obliquityRad) * Math.sin(lambdaRad), Math.cos(lambdaRad));
+    const declination = Math.asin(Math.sin(obliquityRad) * Math.sin(lambdaRad));
 
-    // Local hour angle
-    const hours = date.getUTCHours() + date.getUTCMinutes() / 60 + date.getUTCSeconds() / 3600;
-    const hourAngle = (hours - 12) * 15 + lon - (rightAscension * 180) / Math.PI;
-    const hourAngleRad = (hourAngle * Math.PI) / 180;
+    // Greenwich Mean Sidereal Time
+    const gmst =
+      (280.46061837 + 360.98564736629 * (julianDate - 2451545.0) + 0.000387933 * century * century - (century * century * century) / 38710000.0) %
+      360;
 
-    // Convert to radians
+    // Local sidereal time
+    const lst = (gmst + lon) % 360;
+
+    // Hour angle
+    const hourAngle = (lst - (rightAscension * 180) / Math.PI + 360) % 360;
+    // Adjust to -180 to 180 range
+    const ha = hourAngle > 180 ? hourAngle - 360 : hourAngle;
+    const hourAngleRad = (ha * Math.PI) / 180;
+
+    // Convert latitude to radians
     const latRad = (lat * Math.PI) / 180;
 
-    // Calculate altitude and azimuth
+    // Calculate altitude
     const altitude = Math.asin(Math.sin(latRad) * Math.sin(declination) + Math.cos(latRad) * Math.cos(declination) * Math.cos(hourAngleRad));
 
+    // Calculate azimuth
     const azimuth = Math.atan2(-Math.sin(hourAngleRad), Math.cos(latRad) * Math.tan(declination) - Math.sin(latRad) * Math.cos(hourAngleRad));
 
     return {
       altitude: (altitude * 180) / Math.PI, // Convert to degrees
-      azimuth: (azimuth * 180) / Math.PI,
+      azimuth: ((azimuth * 180) / Math.PI + 360) % 360, // Convert to degrees, 0-360
     };
   }
 
@@ -88,11 +116,11 @@ function startDark(canvas, img) {
       return { phase: "nautical_twilight", darkness };
     } else if (sunAltitude > -18) {
       // Astronomical twilight: -12 to -18 degrees
-      const darkness = 0.5 + ((-12 - sunAltitude) / 6) * 0.1; // 0.45 to 0.6
+      const darkness = 0.5 + ((-12 - sunAltitude) / 6) * 0.05; // 0.45 to 0.55
       return { phase: "astronomical_twilight", darkness };
     } else {
       // Full night
-      return { phase: "night", darkness: 0.65 };
+      return { phase: "night", darkness: 0.55 };
     }
   }
 
@@ -100,10 +128,14 @@ function startDark(canvas, img) {
     // Return gradient colors based on sun position
     switch (phase) {
       case "golden_hour":
+        const goldenProgress = (6 - sunAltitude) / 6; // 0 at 6°, 1 at 0°
         return {
-          top: `rgba(255, 200, 100, ${0.3 - sunAltitude / 60})`,
-          middle: `rgba(255, 180, 80, ${0.4 - sunAltitude / 60})`,
-          bottom: `rgba(255, 150, 60, ${0.5 - sunAltitude / 60})`,
+          // top: `rgba(255, 200, 100, ${0.3 - sunAltitude / 60})`,
+          // middle: `rgba(255, 180, 80, ${0.4 - sunAltitude / 60})`,
+          // bottom: `rgba(255, 150, 60, ${0.5 - sunAltitude / 60})`,
+          top: `rgba(255, 200, 100, ${0.05 + goldenProgress * 0.1})`, // 0.05 to 0.15
+          middle: `rgba(255, 180, 80, ${0.08 + goldenProgress * 0.12})`, // 0.08 to 0.2
+          bottom: `rgba(255, 150, 60, ${0.1 + goldenProgress * 0.15})`, // 0.1 to 0.25
         };
       case "civil_twilight":
         const civilProgress = (0 - sunAltitude) / 6;
@@ -128,43 +160,6 @@ function startDark(canvas, img) {
         return null;
     }
   }
-
-  // function getGlowColor(phase, sunAltitude) {
-  //   // Return gradient colors based on sun position
-  //   switch (phase) {
-  //     case "golden_hour":
-  //       // Make it much more transparent during golden hour
-  //       const goldenProgress = (6 - sunAltitude) / 6; // 0 at 6°, 1 at 0°
-  //       return {
-  //         top: `rgba(255, 200, 100, ${0.05 + goldenProgress * 0.1})`, // 0.05 to 0.15
-  //         middle: `rgba(255, 180, 80, ${0.08 + goldenProgress * 0.12})`, // 0.08 to 0.2
-  //         bottom: `rgba(255, 150, 60, ${0.1 + goldenProgress * 0.15})`, // 0.1 to 0.25
-  //       };
-  //     case "civil_twilight":
-  //       const civilProgress = (0 - sunAltitude) / 6;
-  //       return {
-  //         top: `rgba(30, 60, 120, ${0.2 + civilProgress * 0.2})`, // 0.2 to 0.4
-  //         middle: `rgba(255, 120, 60, ${0.3 + civilProgress * 0.2})`, // 0.3 to 0.5
-  //         bottom: `rgba(255, 100, 40, ${0.4 + civilProgress * 0.2})`, // 0.4 to 0.6
-  //       };
-  //     case "nautical_twilight":
-  //       const nauticalProgress = (-6 - sunAltitude) / 6;
-  //       return {
-  //         top: `rgba(10, 20, 50, ${0.3 + nauticalProgress * 0.2})`, // 0.3 to 0.5
-  //         middle: `rgba(30, 40, 80, ${0.4 + nauticalProgress * 0.2})`, // 0.4 to 0.6
-  //         bottom: `rgba(60, 40, 60, ${0.3 + nauticalProgress * 0.2})`, // 0.3 to 0.5
-  //       };
-  //     case "astronomical_twilight":
-  //       const astroProgress = (-12 - sunAltitude) / 6;
-  //       return {
-  //         top: `rgba(5, 10, 30, ${0.4 + astroProgress * 0.2})`, // 0.4 to 0.6
-  //         middle: `rgba(10, 15, 40, ${0.4 + astroProgress * 0.2})`, // 0.4 to 0.6
-  //         bottom: `rgba(20, 20, 40, ${0.3 + astroProgress * 0.2})`, // 0.3 to 0.5
-  //       };
-  //     default:
-  //       return null;
-  //   }
-  // }
 
   function drawDarkness() {
     if (!running) return;
@@ -192,8 +187,38 @@ function startDark(canvas, img) {
     }
 
     // Apply overall darkness overlay
+    // if (darknessLevel > 0) {
+    //   ctx.fillStyle = `rgba(0, 0, 20, ${darknessLevel})`;
+    //   ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // }
+
+    // Apply darkness overlay with gradient
     if (darknessLevel > 0) {
-      ctx.fillStyle = `rgba(0, 0, 20, ${darknessLevel})`;
+      // Create a radial gradient from center to corners
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+
+      // Calculate distance from center to corner
+      const maxRadius = Math.sqrt(centerX * centerX + centerY * centerY);
+
+      const gradient = ctx.createRadialGradient(
+        centerX,
+        centerY,
+        0, // Inner circle (center)
+        centerX,
+        centerY,
+        maxRadius, // Outer circle (corners)
+      );
+
+      // if (currentPhase === "night" || currentPhase === "astronomical_twilight") {}
+      // Center is more transparent. change 0.7 to make it darker
+      gradient.addColorStop(0, `rgba(0, 0, 20, ${darknessLevel * 0.7})`);
+      // Mid-way transition
+      gradient.addColorStop(0.5, `rgba(0, 0, 20, ${darknessLevel * 0.8})`);
+      // Corners are darkest
+      gradient.addColorStop(1, `rgba(0, 0, 20, ${darknessLevel})`);
+
+      ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
 
@@ -206,20 +231,22 @@ function startDark(canvas, img) {
       resize();
     }
 
-    // Calculate sun position
-    sunPosition = calculateSunPosition(lat, lon, date);
-
     // Determine lighting phase
-    let phase, darkness;
+    let phase, darkness, altitude;
     if (sunAltitude === null) {
+      // Calculate sun position
+      sunPosition = calculateSunPosition(lat, lon, date);
+      altitude = sunPosition.altitude;
+      // Calculate phase
       ({ phase, darkness } = determineLightingPhase(sunPosition.altitude));
     } else {
       ({ phase, darkness } = determineLightingPhase(sunAltitude));
+      altitude = sunAltitude;
     }
     currentPhase = phase;
     darknessLevel = darkness;
 
-    console.log(`   >Sun altitude: ${sunPosition.altitude.toFixed(2)}°, Phase: ${phase}, Darkness: ${darkness.toFixed(2)}`);
+    console.log(`   >Sun altitude: ${altitude.toFixed(2)}°, Phase: ${phase}, Darkness: ${darkness.toFixed(2)}`);
 
     if (!rafId) {
       drawDarkness();
@@ -249,18 +276,18 @@ function updateDarkness(prefix, lat, lon) {
 }
 
 // Optional: Auto-update every 5 minutes
-function startAutoUpdate(prefix, lat, lon, intervalMinutes = 5) {
-  animateDark(prefix, lat, lon);
-  return setInterval(
-    () => {
-      updateDarkness(prefix, lat, lon);
-    },
-    intervalMinutes * 60 * 1000,
-  );
-}
+// function startAutoUpdate(prefix, lat, lon, intervalMinutes = 5) {
+//   animateDark(prefix, lat, lon);
+//   return setInterval(
+//     () => {
+//       updateDarkness(prefix, lat, lon);
+//     },
+//     intervalMinutes * 60 * 1000,
+//   );
+// }
 
 /* --- PUBLIC API --- */
-function animateDark(prefix, process = "auto", lat = null, lon = null, date = new Date(), sunAltitude = null) {
+function animateDark(prefix, process = "auto", lat = null, lon = null, date = null, sunAltitude = null) {
   // process:
   //      'auto':  Starts based on METAR data
   //      'start': Starts with rainIntensity
@@ -274,7 +301,12 @@ function animateDark(prefix, process = "auto", lat = null, lon = null, date = ne
   // -18° to -12° = Astronomical Twilight
   // < -18° = Night
   //
-  console.log(`> func: animateDark(${prefix}, lat: ${lat}, lon: ${lon})`);
+
+  if (date === null) {
+    date = new Date();
+  }
+
+  console.log(`> func: animateDark(${prefix}, lat: ${lat}, lon: ${lon}), date: ${date})`);
 
   if (!darkControllers[prefix]) {
     // Get the canvas
@@ -295,7 +327,8 @@ function animateDark(prefix, process = "auto", lat = null, lon = null, date = ne
 
   // Force animate to start
   if (process === "start") {
-    console.log(`   >Start Darkness animation for ${prefix}, sunAltitude: ${sunAltitude}`);
+    console.log(`   >Force Start Darkness animation for sunAltitude: ${sunAltitude}`);
+    // Take latlon of europe
     if (lat === null) lat = 54.526;
     if (lon === null) lon = 15.2551;
     controller.start(lat, lon, date, sunAltitude);
@@ -304,7 +337,7 @@ function animateDark(prefix, process = "auto", lat = null, lon = null, date = ne
 
   // Get coordinates from METAR or other source
   if (lat === null || lon === null || process === "stop") {
-    console.warn(`   >Darkness is stopped for ${prefix}. Either there are no coordinates or was stopped: ${process}`);
+    console.log(`   >Darkness is stopped for ${prefix}. Either there are no coordinates or was stopped: ${process}`);
     controller.stop();
     return;
   }
@@ -316,4 +349,4 @@ function animateDark(prefix, process = "auto", lat = null, lon = null, date = ne
 // Make it globally accessible
 window.animateDark = animateDark;
 window.updateDarkness = updateDarkness;
-window.startDarkAutoUpdate = startAutoUpdate;
+// window.startDarkAutoUpdate = startAutoUpdate;

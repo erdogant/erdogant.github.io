@@ -2,12 +2,14 @@
 // Based on ICAO METAR standards and FAA flight categories
 
 class Metar {
-  constructor(code, text = null) {
+  constructor(code, text = null, lat = null, lon = null) {
     console.log(`>func: Metar()`);
 
     this.airport = code;
     this.dataDate = null;
     this.metar = text;
+    this.lat = lat;
+    this.lon = lon;
     this.metarWithoutChangements = text;
 
     // Parse all components
@@ -27,11 +29,13 @@ class Metar {
     this.rain = this.determineRain();
     this.snow = this.determineSnow();
     this.mist = this.determineMist();
-    this.icon = this.determineMetarIcon();
     this.icon_vfr = this.determineVFRIcon();
     this.color = this.determineColor();
     this.crosswind = this.analyzeCrossWind();
     this.headwind = this.analyzeHeadWind();
+    this.sunPosition = this.calculateSunPosition();
+    // this.lightingPhase = this.determineLightingPhase();
+    this.icon = this.determineMetarIcon();
 
     this.properties = {
       airport: this.airport,
@@ -57,6 +61,8 @@ class Metar {
       changements: this.changements,
       crosswind: this.crosswind,
       headwind: this.headwind,
+      sunPosition: this.sunPosition,
+      // lightingPhase: this.lightingPhase,
     };
 
     // Show the details on screen
@@ -77,6 +83,8 @@ class Metar {
     console.log("   >👁️ Icon:", this.icon);
     console.log("   >🤖 Color:", this.color);
     console.log("   >🔄 Changements:", this.changements);
+    console.log("   >☀️ Sun Position:", this.sunPosition);
+    // console.log("   >👁️ lighting Phase:", this.lightingPhase);
   }
 
   analyzeCrossWind() {
@@ -120,15 +128,25 @@ class Metar {
   }
 
   analyzeDateTime() {
-    const regex = /\s(\d{2})(\d{2})(\d{2})Z\s/;
-    const match = this.metarWithoutChangements.match(regex);
-    if (!match) return null;
+    // Parse datetime
+    let metar_date_obj = null;
+    // const metar_date_obj = parseMetarTime(this.metarWithoutChangements);
+    metar_date_obj = parseMetarTime(this.metarWithoutChangements);
+    // Contains:
+    // metar_date_obj.date
+    // metar_date_obj.formatted
+    // Return
+    return metar_date_obj;
 
-    return {
-      day: parseInt(match[1]),
-      hour: parseInt(match[2]),
-      minute: parseInt(match[3]),
-    };
+    // const regex = /\s(\d{2})(\d{2})(\d{2})Z\s/;
+    // const match = this.metarWithoutChangements.match(regex);
+    // if (!match) return null;
+
+    // return {
+    //   day: parseInt(match[1]),
+    //   hour: parseInt(match[2]),
+    //   minute: parseInt(match[3]),
+    // };
   }
 
   analyzeWind() {
@@ -559,14 +577,144 @@ class Metar {
     return "https://img.shields.io/badge/FLIGHT-UNKNOWN-green";
   }
 
+  calculateSunPosition() {
+    // Calculate sun position using solar position algorithm
+    // Sun altitude phases:
+    // > 6° = Day
+    // 0° to 6° = Golden Hour
+    // -6° to 0° = Civil Twilight (sunset/sunrise glow)
+    // -12° to -6° = Nautical Twilight
+    // -18° to -12° = Astronomical Twilight
+    // < -18° = Night
+    const lat = this.lat;
+    const lon = this.lon;
+    const date = this.dateTime.date;
+
+    console.log(`   > func: calculateSunPosition($lat: ${lat}, lon: ${lon}), date: ${date})`);
+    // console.log(`   > func: calculateSunPosition(`);
+    if (lat === null || lon === null || date === null) {
+      console.warn("   > Return with default daylight altitude because no lat/lon or date");
+      return { altitude: 7, azimuth: 0 };
+    }
+
+    const julianDate = date.getTime() / 86400000 + 2440587.5;
+    const century = (julianDate - 2451545.0) / 36525.0;
+
+    // Mean longitude of sun
+    const meanLong = (280.46646 + century * (36000.76983 + century * 0.0003032)) % 360;
+
+    // Mean anomaly
+    const meanAnomaly = 357.52911 + century * (35999.05029 - 0.0001537 * century);
+    const meanAnomalyRad = (meanAnomaly * Math.PI) / 180;
+
+    // Equation of center
+    const center =
+      Math.sin(meanAnomalyRad) * (1.914602 - century * (0.004817 + 0.000014 * century)) +
+      Math.sin(2 * meanAnomalyRad) * (0.019993 - 0.000101 * century) +
+      Math.sin(3 * meanAnomalyRad) * 0.000289;
+
+    // True longitude
+    const trueLong = meanLong + center;
+
+    // Apparent longitude (corrected for nutation and aberration)
+    const omega = 125.04 - 1934.136 * century;
+    const lambda = trueLong - 0.00569 - 0.00478 * Math.sin((omega * Math.PI) / 180);
+
+    // Obliquity of ecliptic
+    const obliquity = 23.439291 - century * (0.0130042 + century * (0.00000016 - century * 0.000000504));
+    const obliquityCorr = obliquity + 0.00256 * Math.cos((omega * Math.PI) / 180);
+    const obliquityRad = (obliquityCorr * Math.PI) / 180;
+
+    // Right ascension and declination
+    const lambdaRad = (lambda * Math.PI) / 180;
+    const rightAscension = Math.atan2(Math.cos(obliquityRad) * Math.sin(lambdaRad), Math.cos(lambdaRad));
+    const declination = Math.asin(Math.sin(obliquityRad) * Math.sin(lambdaRad));
+
+    // Greenwich Mean Sidereal Time
+    const gmst =
+      (280.46061837 + 360.98564736629 * (julianDate - 2451545.0) + 0.000387933 * century * century - (century * century * century) / 38710000.0) %
+      360;
+
+    // Local sidereal time
+    const lst = (gmst + lon) % 360;
+
+    // Hour angle
+    const hourAngle = (lst - (rightAscension * 180) / Math.PI + 360) % 360;
+    // Adjust to -180 to 180 range
+    const ha = hourAngle > 180 ? hourAngle - 360 : hourAngle;
+    const hourAngleRad = (ha * Math.PI) / 180;
+
+    // Convert latitude to radians
+    const latRad = (lat * Math.PI) / 180;
+
+    // Calculate altitude
+    const altitude = Math.asin(Math.sin(latRad) * Math.sin(declination) + Math.cos(latRad) * Math.cos(declination) * Math.cos(hourAngleRad));
+
+    // Calculate azimuth
+    const azimuth = Math.atan2(-Math.sin(hourAngleRad), Math.cos(latRad) * Math.tan(declination) - Math.sin(latRad) * Math.cos(hourAngleRad));
+
+    // Calculate sun altitude
+    const sunAltitude = (altitude * 180) / Math.PI; // Convert to degrees
+
+    // Caclulate lightning phase
+    const lightingPhase = this.determineLightingPhase(sunAltitude);
+
+    return {
+      altitude: sunAltitude,
+      azimuth: ((azimuth * 180) / Math.PI + 360) % 360, // Convert to degrees, 0-360
+      phase: lightingPhase.phase,
+      darkness: lightingPhase.darkness,
+    };
+  }
+
+  determineLightingPhase(sunAltitude) {
+    // Sun altitude phases:
+    // > 6° = Day
+    // 0° to 6° = Golden Hour
+    // -6° to 0° = Civil Twilight (sunset/sunrise glow)
+    // -12° to -6° = Nautical Twilight
+    // -18° to -12° = Astronomical Twilight
+    // < -18° = Night
+    // const sunAltitude = this.sunPosition.altitude;
+
+    if (sunAltitude > 6) {
+      return { phase: "day", darkness: 0 };
+    } else if (sunAltitude > 0) {
+      // Golden hour: 0-6 degrees
+      // const darkness = 0.1 + ((6 - sunAltitude) / 6) * 0.05; // 0.1 to 0.15
+      const darkness = 0.1 + ((6 - sunAltitude) / 6) * 0.15; // 0.1 to 0.25
+      return { phase: "golden_hour", darkness };
+    } else if (sunAltitude > -6) {
+      // Civil twilight: 0 to -6 degrees
+      // const darkness = 0.25 + ((0 - sunAltitude) / 6) * 0.1; // 0.25 to 0.35
+      const darkness = 0.25 + ((0 - sunAltitude) / 6) * 0.25; // 0.25 to 0.5
+      return { phase: "civil_twilight", darkness };
+    } else if (sunAltitude > -12) {
+      // Nautical twilight: -6 to -12 degrees
+      // const darkness = 0.35 + ((-6 - sunAltitude) / 6) * 0.1; // 0.35 to 0.45
+      const darkness = 0.5 + ((-6 - sunAltitude) / 6) * 0.2; // 0.5 to 0.7
+      return { phase: "nautical_twilight", darkness };
+    } else if (sunAltitude > -18) {
+      // Astronomical twilight: -12 to -18 degrees
+      // const darkness = 0.5 + ((-12 - sunAltitude) / 6) * 0.05; // 0.45 to 0.55
+      const darkness = 0.7 + ((-12 - sunAltitude) / 6) * 0.2; // 0.7 to 0.9
+      return { phase: "astronomical_twilight", darkness };
+    } else {
+      // Full night
+      // return { phase: "night", darkness: 0.55 };
+      return { phase: "night", darkness: 0.9 };
+    }
+  }
+
   determineMetarIcon() {
     // Determine the icon
     const flightCategory = this.flightCategory;
     const cloud = this.cloud;
     const cavok = this.cavok;
-    const weather = this.weather;
+    // const weather = this.weather;
+    const sunAltitude = this.sunPosition.altitude;
     const rainOrSnow = !!(this.rain || this.snow);
-    const sunset_flag = false;
+    let sunset_flag = false;
     const iconDir = "./icons";
 
     // Compute cloud ceiling
@@ -579,6 +727,14 @@ class Metar {
           }
         }
       }
+    }
+
+    // Calculate sun position using solar position algorithm. Function is from dark.js
+    // Only > 6° = Daylight
+    if (sunAltitude >= 6) {
+      sunset_flag = false;
+    } else {
+      sunset_flag = true;
     }
 
     // Normalize
@@ -709,6 +865,82 @@ class Metar {
   }
 }
 
+// function calculateSunPosition(lat = null, lon = null, date = null) {
+//   // Calculate sun position using solar position algorithm
+//   // Sun altitude phases:
+//   // > 6° = Day
+//   // 0° to 6° = Golden Hour
+//   // -6° to 0° = Civil Twilight (sunset/sunrise glow)
+//   // -12° to -6° = Nautical Twilight
+//   // -18° to -12° = Astronomical Twilight
+//   // < -18° = Night
+//   console.log(`   > func: calculateSunPosition($lat: ${lat}, lon: ${lon}), date: ${date})`);
+//   if (lat === null || lon === null || date === null) {
+//     console.warn("   > Return with default daylight altitude because no lat/lon or date");
+//     return { altitude: 7, azimuth: 0 };
+//   }
+
+//   const julianDate = date.getTime() / 86400000 + 2440587.5;
+//   const century = (julianDate - 2451545.0) / 36525.0;
+
+//   // Mean longitude of sun
+//   const meanLong = (280.46646 + century * (36000.76983 + century * 0.0003032)) % 360;
+
+//   // Mean anomaly
+//   const meanAnomaly = 357.52911 + century * (35999.05029 - 0.0001537 * century);
+//   const meanAnomalyRad = (meanAnomaly * Math.PI) / 180;
+
+//   // Equation of center
+//   const center =
+//     Math.sin(meanAnomalyRad) * (1.914602 - century * (0.004817 + 0.000014 * century)) +
+//     Math.sin(2 * meanAnomalyRad) * (0.019993 - 0.000101 * century) +
+//     Math.sin(3 * meanAnomalyRad) * 0.000289;
+
+//   // True longitude
+//   const trueLong = meanLong + center;
+
+//   // Apparent longitude (corrected for nutation and aberration)
+//   const omega = 125.04 - 1934.136 * century;
+//   const lambda = trueLong - 0.00569 - 0.00478 * Math.sin((omega * Math.PI) / 180);
+
+//   // Obliquity of ecliptic
+//   const obliquity = 23.439291 - century * (0.0130042 + century * (0.00000016 - century * 0.000000504));
+//   const obliquityCorr = obliquity + 0.00256 * Math.cos((omega * Math.PI) / 180);
+//   const obliquityRad = (obliquityCorr * Math.PI) / 180;
+
+//   // Right ascension and declination
+//   const lambdaRad = (lambda * Math.PI) / 180;
+//   const rightAscension = Math.atan2(Math.cos(obliquityRad) * Math.sin(lambdaRad), Math.cos(lambdaRad));
+//   const declination = Math.asin(Math.sin(obliquityRad) * Math.sin(lambdaRad));
+
+//   // Greenwich Mean Sidereal Time
+//   const gmst =
+//     (280.46061837 + 360.98564736629 * (julianDate - 2451545.0) + 0.000387933 * century * century - (century * century * century) / 38710000.0) % 360;
+
+//   // Local sidereal time
+//   const lst = (gmst + lon) % 360;
+
+//   // Hour angle
+//   const hourAngle = (lst - (rightAscension * 180) / Math.PI + 360) % 360;
+//   // Adjust to -180 to 180 range
+//   const ha = hourAngle > 180 ? hourAngle - 360 : hourAngle;
+//   const hourAngleRad = (ha * Math.PI) / 180;
+
+//   // Convert latitude to radians
+//   const latRad = (lat * Math.PI) / 180;
+
+//   // Calculate altitude
+//   const altitude = Math.asin(Math.sin(latRad) * Math.sin(declination) + Math.cos(latRad) * Math.cos(declination) * Math.cos(hourAngleRad));
+
+//   // Calculate azimuth
+//   const azimuth = Math.atan2(-Math.sin(hourAngleRad), Math.cos(latRad) * Math.tan(declination) - Math.sin(latRad) * Math.cos(hourAngleRad));
+
+//   return {
+//     altitude: (altitude * 180) / Math.PI, // Convert to degrees
+//     azimuth: ((azimuth * 180) / Math.PI + 360) % 360, // Convert to degrees, 0-360
+//   };
+// }
+
 function checkMetarAge() {
   /* Check datetime of METAR data and update UI colors.
    *
@@ -741,8 +973,9 @@ function checkMetarAge() {
     }
 
     // Parse the METAR date parts
-    const dateFieldClean = formatDateDMY(dateField.value, (format = "dd/mm/yyyy"));
+    const dateFieldClean = formatDateDMY(dateField.value, "ddmmyyyy", "-");
     const metarTime = createTimeObject(dateFieldClean);
+    console.log(metarTime);
 
     // Parse the NOW date parts
     const now = nowtime((utc = true));
@@ -777,55 +1010,122 @@ function checkMetarAge() {
   compareTime("ARRIVAL");
 }
 
+function parseMetarTime(metar_string) {
+  console.log(`>Func: parseMetarTime(${metar_string})`);
+
+  // Example metarTime: "241055Z"
+  if (typeof metar_string !== "string" || metar_string.trim() === "") {
+    console.warn("   >Return because metar is not a string.");
+    return { formatted: null, date: null };
+  }
+
+  // Extract datetime element from metar
+  const timeMatch = metar_string.match(/\s(\d{6}Z)/);
+  const metarTime = timeMatch ? timeMatch[1] : "";
+  // Example metarTime: "241055Z"
+
+  const day = parseInt(metarTime.slice(0, 2), 10);
+  const hour = parseInt(metarTime.slice(2, 4), 10);
+  const minute = parseInt(metarTime.slice(4, 6), 10);
+
+  // Use UTC-based "now"
+  const nowUTC = new Date();
+  let year = nowUTC.getUTCFullYear();
+  let month = nowUTC.getUTCMonth(); // 0-based
+
+  // Initial candidate date (UTC)
+  let dateUTC = new Date(Date.UTC(year, month, day, hour, minute));
+
+  // Handle month rollover (METAR from previous month)
+  if (dateUTC.getTime() - nowUTC.getTime() > 24 * 60 * 60 * 1000) {
+    month -= 1;
+    if (month < 0) {
+      month = 11;
+      year -= 1;
+    }
+    dateUTC = new Date(Date.UTC(year, month, day, hour, minute));
+  }
+
+  // Format explicitly in UTC
+  const dd = String(dateUTC.getUTCDate()).padStart(2, "0");
+  const mm = String(dateUTC.getUTCMonth() + 1).padStart(2, "0");
+  const yyyy = dateUTC.getUTCFullYear();
+  const timePart = `${String(dateUTC.getUTCHours()).padStart(2, "0")}:${String(dateUTC.getUTCMinutes()).padStart(2, "0")}`;
+
+  return {
+    formatted: `${dd}-${mm}-${yyyy} ${timePart} UTC`,
+    date: dateUTC, // true UTC instant
+  };
+}
+
 async function fetch_metar(metar_stations, splitlines = true, decoded = false, prefix) {
   console.log(`>Func: fetch_metar(${metar_stations})`);
-  // Make a function that runs over the list of metar_stations
   const metarField = document.getElementById("METAR-FIELD-" + prefix);
   const stations = Array.isArray(metar_stations) ? metar_stations : [metar_stations];
 
   for (const icao of stations) {
-    console.log(`  >Fetching METAR report of ${icao}`);
+    console.log(`  >Fetching METAR for ${icao}`);
     if (metarField) {
       metarField.value = `Be patient while fetching METAR weather information from closest station: ${icao}`;
     }
 
-    const url = decoded
-      ? `https://tgftp.nws.noaa.gov/data/observations/metar/decoded/${icao}.TXT`
-      : `https://tgftp.nws.noaa.gov/data/observations/metar/stations/${icao}.TXT`;
+    let baseUrl;
+    if (decoded === true) {
+      baseUrl = `https://aviationweather.gov/api/data/metar?ids=${icao}&format=decoded&hours=1`;
+      // https://tgftp.nws.noaa.gov/data/observations/metar/decoded/${icao}.TXT
+    } else {
+      baseUrl = `https://aviationweather.gov/api/data/metar?ids=${icao}&format=raw&hours=1`;
+      // https://tgftp.nws.noaa.gov/data/observations/metar/stations/${icao}.TXT
+    }
 
-    const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+    // Use CORS proxy to avoid CORS errors
+    const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(baseUrl)}`;
 
     try {
-      const response = await fetch(proxy);
-      const json = await response.json();
+      const response = await fetch(url);
 
-      if (!json.contents) return (null, null);
-
-      // Split the contents into date / metar info
-      metar_data = splitlines ? json.contents.split("\n") : json.contents;
-      console.log(metar_data);
-
-      if (metar_data) {
-        metar_icao = metar_data[1];
-        metar_date = metar_data[0];
-      }
-      if (metar_date !== "") {
-        metar_date = formatDateDMY(metar_date, (format = "yyyy/mm/dd"));
+      if (!response.ok) {
+        console.log(`  >${icao}: HTTP error ${response.status}`);
+        continue;
       }
 
-      // console.log(metar_icao);
-      // console.log(metar_date);
-      // Return only when `metar_icao` is successfully found**:
-      if (metar_icao) {
-        return [metar_icao, metar_date, icao];
+      const text = await response.text();
+      console.log(text);
+
+      if (!text || text.trim() === "") {
+        console.log(`  >${icao}: No data returned`);
+        continue;
       }
 
-      // Wait 0.5 seconds before continuing to next station to be nice to the server
+      // Split into lines and get the first (most recent) METAR
+      const lines = text.trim().split("\n");
+      let metar_string = lines[0] || null; // The top line contains the full METAR
+      // let metar_date_str = "";
+      // let metar_date_obj = null;
+
+      // Extract time from METAR (format: EHRD 241025Z ...)
+      // if (metar_string) {
+      //   ({ formatted: metar_date_str, date: metar_date_obj } = parseMetarTime(metar_string));
+      // }
+
+      console.log(`   >Retrieved METAR: ${metar_string}`);
+      // console.log(`   >Retrieved Time: ${metar_date_str}`);
+      // console.log(`   >Retrieved Time: ${metar_date_obj}`);
+
+      // Return when metar_string is successfully found
+      if (metar_string) {
+        return [metar_string, icao];
+        // return [metar_string, metar_date_str, metar_date_obj, icao];
+      }
+
+      // Wait 0.5 seconds before continuing to next station
       await new Promise((resolve) => setTimeout(resolve, 500));
     } catch (err) {
       console.log(`  >${icao}: Could not fetch the METAR report: ${url}`);
+      console.error(err);
     }
   }
+
   // Return when empty and nothing found
   return [null, null, null];
 }
@@ -927,9 +1227,10 @@ async function retrieve_metar(prefix, verbose = "info") {
 
     // Store data
     metar_icao = metarData[0];
-    datetimeStr = metarData[1];
-    stationName = metarData[2];
-    // metar_icao = "EDDH 191350Z AUTO 22009KT 9999 OVC013 12/09 Q1015 TEMPO 4500 -RADZ BKN009";
+    // datetimeStr = metarData[1];
+    // datetimeObj = metarData[2];
+    stationName = metarData[1];
+    // metarStr = "EDDH 191350Z AUTO 22009KT 9999 OVC013 12/09 Q1015 TEMPO 4500 -RADZ BKN009";
 
     if (metarText) {
       metarText.value = stationName ? `Closest available METAR station is ${stationName}` : "No nearby METAR stations found";
@@ -942,8 +1243,6 @@ async function retrieve_metar(prefix, verbose = "info") {
   }
 
   // Update GUI elements
-  dateField.value = datetimeStr;
-  metarField.value = metar_icao || metar_message;
   colorMetarFields(prefix, (enable = true));
 
   // Update the expected runway based on wind direction and runway orientation
@@ -951,11 +1250,17 @@ async function retrieve_metar(prefix, verbose = "info") {
   if (metar_icao !== "" && metar_icao !== null) {
     // Retrieve details about METAR
     try {
-      metar_obj = new Metar(stationName, metar_icao);
-      // Convert metar object to plain so that it can be used in pyton dictionary for later usage
-      metar_plain = metar_obj.getAll();
+      // Get lat/lon
+      const latlon = window.flight_plan_data?.[`${prefix}_LATLON`];
+      // Extract features from METAR
+      metar_obj = new Metar(stationName, metar_icao, latlon[0], latlon[1]);
+
+      // Set GUI fields
+      dateField.value = metar_obj.dateTime.formatted;
+      metarField.value = metar_icao || metar_message;
+
       // Compute expected runway number based on wind direction and runway orientation
-      runway_predicted = expected_runway_number(prefix, (wind_direction = metar_obj.wind.direction), (wind_strength = metar_obj.wind.speed));
+      runway_predicted = expected_runway_number(prefix, metar_obj.wind.direction, metar_obj.wind.speed);
       // Compute wind parameters from METAR data and update wind GUI fields
       window.update_wind_gui_fields(prefix, metar_icao, metar_obj);
       // Create wind envelope plot
@@ -967,31 +1272,23 @@ async function retrieve_metar(prefix, verbose = "info") {
       window.flight_plan_data[`${prefix}_METAR_ICAO`] = metar_icao;
       // Store METAR in flight plan data. This will break the saving functionality!
       if (prefix === "DEPARTURE") {
-        window.METAR_DEPARTURE = metar_plain;
+        // Convert metar object to plain so that it can be used in pyton dictionary for later usage
+        window.METAR_DEPARTURE = metar_obj.getAll();
       } else {
-        window.METAR_ARRIVAL = metar_plain;
+        window.METAR_ARRIVAL = metar_obj.getAll();
       }
 
       // Update flight catagory icon
       updateFlightCatagoryIcon(prefix);
-      const latlon = window.flight_plan_data?.[`${prefix}_LATLON`];
-      lat = latlon[0];
-      lon = latlon[1];
 
       // Animations
       animateRain(prefix);
+      // animateCloud(prefix, "auto", 1, 1.0, "left", "white");
       animateCloud(prefix);
       animateFog(prefix);
-      animateFlare(prefix);
       animateSnow(prefix);
-      animateDark(prefix, "start", lat, lon);
-
-      // animateDark(prefix, "start", (lat = null), (lon = null), (date = new Date()), (sunAltitude = 7));
-      // animateDark(prefix, "start", (lat = null), (lon = null), (date = new Date()), (sunAltitude = 1));
-      // animateDark(prefix, "start", (lat = null), (lon = null), (date = new Date()), (sunAltitude = -5));
-      // animateDark(prefix, "start", (lat = null), (lon = null), (date = new Date()), (sunAltitude = -7));
-      // animateDark(prefix, "start", (lat = null), (lon = null), (date = new Date()), (sunAltitude = -13));
-      // animateDark(prefix, "start", (lat = null), (lon = null), (date = new Date()), (sunAltitude = -17));
+      animateFlare(prefix, "auto", metar_obj.lat, metar_obj.lon, metar_obj.dateTime.date);
+      animateDark(prefix, "auto", metar_obj.lat, metar_obj.lon, metar_obj.dateTime.date, metar_obj.sunPosition.altitude);
     } catch (error) {
       console.log(`   >Error: METAR details could not be computed:`, error);
     }

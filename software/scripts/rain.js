@@ -1,7 +1,7 @@
 const rainControllers = {};
 const INTENSITY = {
-  light: { count: 180, lenMin: 40, lenMax: 80, alphaMin: 0.05, alphaMax: 0.13 },
-  medium: { count: 220, lenMin: 60, lenMax: 120, alphaMin: 0.06, alphaMax: 0.15 },
+  light: { count: 220, lenMin: 40, lenMax: 80, alphaMin: 0.05, alphaMax: 0.13 },
+  medium: { count: 275, lenMin: 60, lenMax: 120, alphaMin: 0.06, alphaMax: 0.15 },
   heavy: { count: 350, lenMin: 80, lenMax: 160, alphaMin: 0.08, alphaMax: 0.25 },
 };
 

@@ -146,48 +146,6 @@ function startFlare(canvas, img) {
     rafId = requestAnimationFrame(drawFlares);
   }
 
-  // function drawFlares() {
-  //   if (!running) return;
-
-  //   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  //   // Draw radial flares
-  //   flares.forEach((flare) => {
-  //     flare.draw();
-  //   });
-
-  //   /* ===============================
-  //      ANAMORPHIC CINEMATIC STREAKS
-  //      =============================== */
-
-  //   const sunX = canvas.width * flarePosition.x;
-  //   const sunY = canvas.height * flarePosition.y;
-
-  //   ctx.save();
-  //   ctx.globalCompositeOperation = "screen";
-  //   ctx.filter = "blur(6px)";
-
-  //   // Main blue streak
-  //   addAnamorphicStreak(sunX, sunY, canvas.width * 0.9, 8, "rgba(180,220,255", 0.12 * flareIntensity);
-  //   // Secondary faint streak slightly offset
-  //   addAnamorphicStreak(sunX, sunY + 10, canvas.width * 0.6, 5, "rgba(200,235,255", 0.08 * flareIntensity);
-  //   ctx.restore();
-  //   rafId = requestAnimationFrame(drawFlares);
-  // }
-
-  // function addAnamorphicStreak(x, y, width, height, color, opacity) {
-  //   const gradient = ctx.createLinearGradient(x - width / 2, y, x + width / 2, y);
-
-  //   gradient.addColorStop(0.0, `${color}, 0)`);
-  //   gradient.addColorStop(0.45, `${color}, ${opacity})`);
-  //   gradient.addColorStop(0.5, `${color}, ${opacity * 1.2})`);
-  //   gradient.addColorStop(0.55, `${color}, ${opacity})`);
-  //   gradient.addColorStop(1.0, `${color}, 0)`);
-
-  //   ctx.fillStyle = gradient;
-  //   ctx.fillRect(x - width / 2, y - height / 2, width, height);
-  // }
-
   function start(intensity = 1.5, position = { x: 0.05, y: 0.1 }, pulseSpeed = 0.2, size = 1.1) {
     const needsReinit = !running || flarePosition.x !== position.x || flarePosition.y !== position.y || flareSize !== size;
 
@@ -230,9 +188,31 @@ function startFlare(canvas, img) {
 
 function shouldShowSun(metar_obj, min_visibility = 8000) {
   // Show sun if:
-  // 1. CAVOK, OR
-  // 2. Good visibility (>8km) AND not overcast below 5000
+  // 1. Must be daylight period
+  // 2. CAVOK, or
+  // 3. Good visibility (>8km) AND not overcast below 5000
 
+  // Calculate sun position using solar position algorithm. Function is from dark.js or metar.js
+  let sunAltitude;
+  if (
+    !metar_obj ||
+    !metar_obj.sunPosition ||
+    metar_obj.sunPosition.altitude === null ||
+    metar_obj.sunPosition.altitude === "" ||
+    typeof metar_obj.sunPosition.altitude === "undefined"
+  ) {
+    // daylight
+    sunAltitude = 7;
+  } else {
+    sunAltitude = metar_obj.sunPosition.altitude;
+  }
+
+  // Only > 6° = Daylight
+  if (sunAltitude < 6) {
+    return false;
+  }
+
+  // If CAVOK, then sun
   if (metar_obj.cavok) {
     return true;
   }
@@ -254,7 +234,17 @@ function shouldShowSun(metar_obj, min_visibility = 8000) {
 }
 
 /* --- PUBLIC API --- */
-function animateFlare(prefix, process = "auto", intensity = 1.5, position = { x: 0.05, y: 0.1 }, pulseSpeed = 0.2, size = 1.1) {
+function animateFlare(
+  prefix,
+  process = "auto",
+  lat = null,
+  lon = null,
+  date = null,
+  intensity = 1.5,
+  position = { x: 0.05, y: 0.1 },
+  pulseSpeed = 0.2,
+  size = 1.1,
+) {
   // process:
   //      'auto':  Starts based on METAR data
   //      'start': Starts with rainIntensity
@@ -290,15 +280,15 @@ function animateFlare(prefix, process = "auto", intensity = 1.5, position = { x:
 
   // Get METAR data
   const metar_obj = prefix === "DEPARTURE" ? window.METAR_DEPARTURE : window.METAR_ARRIVAL;
+  // Check for clear/sunny conditions (no heavy clouds, good visibility)
+  const hasSun = shouldShowSun(metar_obj, 8000, lat, lon, date);
 
   // Stop animation and return
-  if (!metar_obj || process === "stop") {
+  if (!metar_obj || process === "stop" || !hasSun) {
+    console.log(`   >Stop showing sun flares ${prefix}, process: ${process}, hasSun: ${hasSun}`);
     controller.stop();
     return;
   }
-
-  // Check for clear/sunny conditions (no heavy clouds, good visibility)
-  const hasSun = shouldShowSun(metar_obj);
 
   if (hasSun) {
     console.log(`   >Sun flare for ${prefix}: intensity ${intensity}, pulseSpeed ${pulseSpeed}, size ${size}`);

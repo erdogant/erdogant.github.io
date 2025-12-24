@@ -5,9 +5,10 @@ function startCloud(canvas, img) {
   let running = false;
   let rafId = null;
   let cloudParticles = [];
-  let cloudDensity = "regular"; // Density
-  let cloudSpeed = 1.0; // Speed multiplier
-  let cloudDirection = "left"; // "left" or "right"
+  let cloudDensity = "regular";
+  let cloudSpeed = 1.0;
+  let cloudDirection = "left";
+  let cloudColor = "white"; // New: cloud color property
 
   class CloudParticle {
     constructor(x, y, size, velocity) {
@@ -17,7 +18,7 @@ function startCloud(canvas, img) {
       this.height = size.h;
       this.baseVelocity = velocity;
       this.opacity = 0.3 + Math.random() * 0.4;
-      this.offsets = this.generateOffsets(); // Pre-calculate offsets
+      this.offsets = this.generateOffsets();
     }
 
     generateOffsets() {
@@ -33,8 +34,23 @@ function startCloud(canvas, img) {
       return offsets;
     }
 
+    getColorRGB() {
+      // Return RGB values based on cloudColor
+      switch (cloudColor) {
+        case "white":
+          return { r: 255, g: 255, b: 255 };
+        case "gray":
+          return { r: 160, g: 160, b: 160 };
+        case "dark":
+          return { r: 80, g: 80, b: 85 };
+        default:
+          return { r: 255, g: 255, b: 255 };
+      }
+    }
+
     draw() {
       ctx.save();
+      const color = this.getColorRGB();
 
       this.offsets.forEach((offset) => {
         const gradient = ctx.createRadialGradient(
@@ -46,9 +62,9 @@ function startCloud(canvas, img) {
           (this.width / 2) * offset.scale,
         );
 
-        gradient.addColorStop(0, `rgba(255, 255, 255, ${this.opacity * 0.6})`);
-        gradient.addColorStop(0.5, `rgba(255, 255, 255, ${this.opacity * 0.3})`);
-        gradient.addColorStop(1, `rgba(255, 255, 255, 0)`);
+        gradient.addColorStop(0, `rgba(${color.r}, ${color.g}, ${color.b}, ${this.opacity * 0.6})`);
+        gradient.addColorStop(0.5, `rgba(${color.r}, ${color.g}, ${color.b}, ${this.opacity * 0.3})`);
+        gradient.addColorStop(1, `rgba(${color.r}, ${color.g}, ${color.b}, 0)`);
 
         ctx.fillStyle = gradient;
         ctx.beginPath();
@@ -101,7 +117,6 @@ function startCloud(canvas, img) {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw all cloud particles
     cloudParticles.forEach((particle) => {
       particle.update();
       particle.draw();
@@ -110,21 +125,20 @@ function startCloud(canvas, img) {
     rafId = requestAnimationFrame(drawCloud);
   }
 
-  function start(level = 1, speed = 1.0, direction = "left") {
-    if (running && cloudDensity === level && cloudSpeed === speed && cloudDirection === direction) return;
-    // Store new variables if not returned
+  function start(level = 1, speed = 1.0, direction = "left", color = "white") {
+    if (running && cloudDensity === level && cloudSpeed === speed && cloudDirection === direction && cloudColor === color) return;
+
     running = true;
     cloudDensity = level;
     cloudSpeed = speed;
     cloudDirection = direction;
-    // Resize image
+    cloudColor = color; // Store the new color
+
     resize();
-    // Create the animated cloud
     drawCloud();
   }
 
   function stop() {
-    // this is like a pause. You can continue with the animation at any time.
     running = false;
     if (rafId) {
       cancelAnimationFrame(rafId);
@@ -134,33 +148,21 @@ function startCloud(canvas, img) {
     cloudParticles = [];
   }
 
-  // function destroy() {
-  //   controller.stop();
-  //   img.removeEventListener("load", resize);
-  //   window.removeEventListener("resize", resize);
-  // }
-
-  // Resize the images correctly
   img.addEventListener("load", resize);
   window.addEventListener("resize", resize);
-  // Return
+
   return { start, stop };
 }
 
 function computeSpeedScore(speedWind, crossWind, maxCrosswind, exponent = 2) {
-  // exponent = 1:  linear)
-  // exponent = 2: good default
-  // exponent = 3: very aggressive near max (gust-like behavior)
-  // Defaults
   console.log(`   > func: computeSpeedScore()`);
   const getMIN = 0.03;
   const getMAX = 1.5;
 
-  // Convert to numbers
   let wkt = Math.abs(Number(speedWind));
   let cw = Math.abs(Number(crossWind));
   const maxCw = Number(maxCrosswind);
-  // Validate inputs, return 1 when no input
+
   if (!Number.isFinite(cw) || !Number.isFinite(maxCw) || maxCw <= 0) {
     return 1;
   }
@@ -169,30 +171,21 @@ function computeSpeedScore(speedWind, crossWind, maxCrosswind, exponent = 2) {
   }
 
   if (maxCw <= 0) return getMIN;
-  // Take the regular wind (kt) also into consideration because when the wind is exactly on the runway, it is still not windstill!
+
   if (wkt >= 10) {
     cw = cw + Math.min(wkt, 2);
   }
-  // Clamp input
-  const clamped = Math.min(Math.max(cw, 0), maxCw);
-  // Normalize to [0, 1]
-  const t = clamped / maxCw;
-  // Non-linear emphasis on high end
-  const curved = Math.pow(t, exponent);
-  // Scale to [getMIN, getMAX]
-  const score = Math.min(getMIN + curved * (getMAX - getMIN), getMAX);
-  console.log(`   > Speed of wind sliding score: ${score.toFixed(2)} in range: ${getMIN}-${getMAX}`);
 
-  // return
+  const clamped = Math.min(Math.max(cw, 0), maxCw);
+  const t = clamped / maxCw;
+  const curved = Math.pow(t, exponent);
+  const score = Math.min(getMIN + curved * (getMAX - getMIN), getMAX);
+
+  console.log(`   > Speed of wind sliding score: ${score.toFixed(2)} in range: ${getMIN}-${getMAX}`);
   return score;
 }
 
 function computeCloudDensityScore(cloudLayers) {
-  /**
-   * Compute total cloud density for an array of cloud layers (linear scaling)
-   * @param {Array} cloudLayers - Array of clouds { code, oktaMin, oktaMax, altitude }
-   * @returns {number} total density score (0-20)
-   */
   console.log(`   > func: computeCloudDensityScore()`);
   if (!Array.isArray(cloudLayers) || cloudLayers.length === 0) return 0;
 
@@ -200,23 +193,16 @@ function computeCloudDensityScore(cloudLayers) {
   let totalDensity = 0;
 
   cloudLayers.forEach((layer) => {
-    const maxAltitude = 9999; // The maximum altitude up to which the cloud score is computed
+    const maxAltitude = 9999;
     const oktaMin = Number(layer.oktaMin) || 0;
     const oktaMax = Number(layer.oktaMax) || oktaMin;
     let altitude = Number(layer.altitude);
     if (!Number.isFinite(altitude)) altitude = 10000;
 
-    // Average okta
     const avgOkta = (oktaMin + oktaMax) / 2;
-
-    // Linear factors
-    // From 0-1, where 0=low okta and 1=high okta (more impact on clouds)
     const oktaFactor = Math.min(Math.max(avgOkta / 8, 0), 1);
-    // From 0-1, where 0=high alt to 1=low alt (more impact on clouds)
     const altFactor = Math.min(Math.max(1 - altitude / maxAltitude, 0), 1);
-    // Compute score for this layer
     const layerDensity = oktaFactor * altFactor * MAX_SCORE;
-    // Total density score
     totalDensity += layerDensity;
 
     console.log(
@@ -224,25 +210,61 @@ function computeCloudDensityScore(cloudLayers) {
     );
   });
 
-  // Clamp total to MAX_SCORE
   const score = Math.min(totalDensity, MAX_SCORE);
   return score;
 }
 
-/* --- PUBLIC API --- */
-function animateCloud(prefix, process = "auto", density = 1, speed = 1.0, direction = "left") {
-  // process:
-  //      'auto':  Starts based on METAR data
-  //      'start': Starts with rainIntensity
-  //      'stop':  Stops rain animation
+function determineCloudColor(metar_obj, density) {
+  /**
+   * Determine cloud color based on weather conditions
+   * @param {Object} metar_obj - METAR data object
+   * @param {number} density - Cloud density score
+   * @returns {string} "white", "gray", or "dark"
+   */
 
-  console.log(`> func: animateCloud(${prefix}, process: ${process}, speed: ${speed}, direction: ${direction})`);
+  // Check for severe weather conditions
+  if (metar_obj.weather) {
+    let weatherCodes = "";
 
-  // Initialization of the controllers
+    // Handle weather as array
+    if (Array.isArray(metar_obj.weather)) {
+      weatherCodes = metar_obj.weather.map((w) => w.abbreviation || w.code || "").join("");
+    }
+    // Handle weather as string
+    else if (typeof metar_obj.weather === "string") {
+      weatherCodes = metar_obj.weather;
+    }
+    // Handle weather as single object
+    else if (typeof metar_obj.weather === "object") {
+      weatherCodes = metar_obj.weather.abbreviation || metar_obj.weather.code || "";
+    }
+
+    // Dark clouds for thunderstorms, heavy rain, or freezing conditions
+    if (weatherCodes.includes("TS") || weatherCodes.includes("+RA") || weatherCodes.includes("FZRA") || weatherCodes.includes("+SN")) {
+      return "dark";
+    }
+
+    // Gray clouds for moderate precipitation
+    if (weatherCodes.includes("RA") || weatherCodes.includes("SN") || weatherCodes.includes("DZ") || weatherCodes.includes("SH")) {
+      return "gray";
+    }
+  }
+
+  // Color based on cloud density
+  if (density >= 15) {
+    return "dark";
+  } else if (density >= 8) {
+    return "gray";
+  }
+
+  return "white";
+}
+
+function animateCloud(prefix, process = "auto", density = 1, speed = 1.0, direction = "left", color = "auto") {
+  console.log(`> func: animateCloud(${prefix}, process: ${process}, speed: ${speed}, direction: ${direction}, color: ${color})`);
+
   if (!cloudControllers[prefix]) {
-    // Get the canvas
     const canvas = document.querySelector(`.cloud-canvas[data-prefix="${prefix}"]`);
-    // Get the images
     const img = document.getElementById(`${prefix}_image_cache`);
 
     if (!canvas || !img) {
@@ -253,43 +275,38 @@ function animateCloud(prefix, process = "auto", density = 1, speed = 1.0, direct
     cloudControllers[prefix] = startCloud(canvas, img);
   }
 
-  // Spin up the controllers
   const controller = cloudControllers[prefix];
 
-  // Force animate to start
   if (process === "start") {
     console.log(`   >Start Cloud animation for ${prefix}`);
-    controller.start(density, speed, direction);
+    controller.start(density, speed, direction, color === "auto" ? "white" : color);
     return;
   }
 
-  // Get METAR data
   const metar_obj = prefix === "DEPARTURE" ? window.METAR_DEPARTURE : window.METAR_ARRIVAL;
 
-  // Stop animation and return
   if (!metar_obj || metar_obj.cavok === true || process === "stop") {
     console.log(`   >Exit Cloud because process: ${process} or metar: [${metar_obj}] or CAVOK: ${metar_obj.cavok}`);
     controller.stop();
     return;
   }
 
-  // Get variables from GUI
   const crossWind = document.getElementById(prefix + "_WIND_CROSSWIND").value;
   const headWind = document.getElementById(prefix + "_WIND_HEADWIND").value;
   const speedWind = document.getElementById(prefix + "_WIND_SPEED").value;
   const maxCrosswind = window.settings["MAX_CROSSWIND_LIMIT"];
 
-  // Compute left or right direction with respect to the runway. Note that this is the other way arround over here!
   direction = crossWind < 0 && headWind > 0 ? "right" : crossWind > 0 && headWind > 0 ? "left" : "left";
-  // Compute the animated speed
   speed = computeSpeedScore(speedWind, crossWind, maxCrosswind, 2);
-  // Compute cloud density score based on okta and altitude clouds
   density = computeCloudDensityScore(metar_obj.cloud);
 
-  // Start the animateCloud
-  console.log(`   >Cloud for ${prefix}: density: ${density.toFixed(2)}, crossWind: ${crossWind}kt=${speed.toFixed(2)}, direction: ${direction}`);
-  controller.start(density, speed, direction);
+  // Determine cloud color automatically or use provided color
+  const finalColor = color === "auto" ? determineCloudColor(metar_obj, density) : color;
+
+  console.log(
+    `   >Cloud for ${prefix}: density: ${density.toFixed(2)}, crossWind: ${crossWind}kt=${speed.toFixed(2)}, direction: ${direction}, color: ${finalColor}`,
+  );
+  controller.start(density, speed, direction, finalColor);
 }
 
-// Make it globally accessible
 window.animateCloud = animateCloud;
