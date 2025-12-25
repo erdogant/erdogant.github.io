@@ -574,7 +574,7 @@ class Metar {
     // ---- Fallback ----
     // return `${iconDir}/label_unknown.png`;
     // return "https://img.shields.io/badge/flight-UNKNOWN-black?style=for-the-badge";
-    return "https://img.shields.io/badge/FLIGHT-UNKNOWN-green";
+    return "https://img.shields.io/badge/FLIGHT-UNKNOWN-black";
   }
 
   calculateSunPosition() {
@@ -659,11 +659,20 @@ class Metar {
     // Caclulate lightning phase
     const lightingPhase = this.determineLightingPhase(sunAltitude);
 
+    // Daylight starts when sun > -6° = When civil_twilight starts
+    let dayLight;
+    if (sunAltitude >= -6) {
+      dayLight = true;
+    } else {
+      dayLight = false;
+    }
+
     return {
       altitude: sunAltitude,
       azimuth: ((azimuth * 180) / Math.PI + 360) % 360, // Convert to degrees, 0-360
       phase: lightingPhase.phase,
       darkness: lightingPhase.darkness,
+      daylight: dayLight,
     };
   }
 
@@ -714,7 +723,7 @@ class Metar {
     // const weather = this.weather;
     const sunAltitude = this.sunPosition.altitude;
     const rainOrSnow = !!(this.rain || this.snow);
-    let sunset_flag = false;
+    let dayLight = this.sunPosition.daylight;
     const iconDir = "./icons";
 
     // Compute cloud ceiling
@@ -727,14 +736,6 @@ class Metar {
           }
         }
       }
-    }
-
-    // Calculate sun position using solar position algorithm. Function is from dark.js
-    // Only > 6° = Daylight
-    if (sunAltitude >= 6) {
-      sunset_flag = false;
-    } else {
-      sunset_flag = true;
     }
 
     // Normalize
@@ -770,7 +771,7 @@ class Metar {
     }
 
     // ---- Day VFR ----
-    if (flightCategory === "VFR" && !sunset_flag) {
+    if (flightCategory === "VFR" && dayLight) {
       if (cavok) {
         return `${iconDir}/CAVOK_sun.png`;
       }
@@ -783,7 +784,7 @@ class Metar {
     }
 
     // ---- Night VFR ----
-    if (flightCategory === "VFR" && sunset_flag) {
+    if (flightCategory === "VFR" && !dayLight) {
       if (cavok) {
         return `${iconDir}/moon_VFR.png`;
       }
@@ -996,12 +997,17 @@ function checkMetarAge() {
       metarField.title = message;
       dateField.style.backgroundColor = "#ffebee";
       metarField.style.backgroundColor = "#ffebee";
+      // Update flight catagory icon
+      updateFlightCatagoryIcon(prefix, true);
     } else {
       // colorMetarFields(prefix, enable=true);
       dateField.title = "The UTC date/time for the retrieved METAR data";
       metarField.title = `METAR information for the ${prefix.toLowerCase()} aerodrome.`;
       dateField.style.backgroundColor = "transparent";
       metarField.style.backgroundColor = "";
+
+      // Update flight catagory icon
+      updateFlightCatagoryIcon(prefix);
     }
   }
 
@@ -1148,13 +1154,15 @@ function updateFlightCatagoryIcon(prefix, remove = false) {
   // Do not show image when metar data is not present
   if (remove || !metar_obj) {
     console.log("   >VFR icon removed.");
+    imgCat.alt = "Unknown";
+    imgCat.src = "./icons/clouds_unknown.png";
+    // imgCat.style.display = "inline-block";
     imgCat.style.display = "none";
-    imgCat.alt = "";
-    imgCat.src = "";
 
-    imgVFR.style.display = "none";
-    imgVFR.alt = "";
-    imgVFR.src = "";
+    imgVFR.alt = "Unknown";
+    imgVFR.src = "https://img.shields.io/badge/FLIGHT-UNKNOWN-black";
+    imgVFR.style.display = "inline-block";
+    // imgVFR.style.display = "none";
 
     // Update border color
     borderFieldAerodrome.style.backgroundColor = "f5f5f5";
@@ -1227,8 +1235,6 @@ async function retrieve_metar(prefix, verbose = "info") {
 
     // Store data
     metar_icao = metarData[0];
-    // datetimeStr = metarData[1];
-    // datetimeObj = metarData[2];
     stationName = metarData[1];
     // metarStr = "EDDH 191350Z AUTO 22009KT 9999 OVC013 12/09 Q1015 TEMPO 4500 -RADZ BKN009";
 
@@ -1278,12 +1284,11 @@ async function retrieve_metar(prefix, verbose = "info") {
         window.METAR_ARRIVAL = metar_obj.getAll();
       }
 
-      // Update flight catagory icon
+      // Update flight catagory icon (this is also periodically checked in checkMetarAge())
       updateFlightCatagoryIcon(prefix);
 
       // Animations
       animateRain(prefix);
-      // animateCloud(prefix, "auto", 1, 1.0, "left", "white");
       animateCloud(prefix);
       animateFog(prefix);
       animateSnow(prefix);

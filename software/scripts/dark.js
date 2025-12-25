@@ -179,8 +179,11 @@ function startDark(canvas, img) {
       // Draw gradient for twilight phases
       const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
       gradient.addColorStop(0, glowColors.top);
-      gradient.addColorStop(0.6, glowColors.middle);
+      gradient.addColorStop(0.8, glowColors.middle);
       gradient.addColorStop(1, glowColors.bottom);
+      // gradient.addColorStop(0, glowColors.top);
+      // gradient.addColorStop(0.8, glowColors.middle);
+      // gradient.addColorStop(1, glowColors.bottom);
 
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);

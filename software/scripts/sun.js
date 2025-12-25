@@ -193,23 +193,17 @@ function shouldShowSun(metar_obj, min_visibility = 8000) {
   // 3. Good visibility (>8km) AND not overcast below 5000
 
   // Calculate sun position using solar position algorithm. Function is from dark.js or metar.js
-  let sunAltitude;
+  let dayLight;
   if (
     !metar_obj ||
     !metar_obj.sunPosition ||
-    metar_obj.sunPosition.altitude === null ||
-    metar_obj.sunPosition.altitude === "" ||
-    typeof metar_obj.sunPosition.altitude === "undefined"
+    metar_obj.sunPosition.daylight === null ||
+    metar_obj.sunPosition.daylight === "" ||
+    typeof metar_obj.sunPosition.daylight === "undefined"
   ) {
-    // daylight
-    sunAltitude = 7;
+    dayLight = false;
   } else {
-    sunAltitude = metar_obj.sunPosition.altitude;
-  }
-
-  // Only > 6° = Daylight
-  if (sunAltitude < 6) {
-    return false;
+    dayLight = metar_obj.sunPosition.daylight;
   }
 
   // If CAVOK, then sun
@@ -230,7 +224,7 @@ function shouldShowSun(metar_obj, min_visibility = 8000) {
     }
   }
 
-  return goodVisibility && !hasOvercast;
+  return goodVisibility && !hasOvercast && dayLight;
 }
 
 /* --- PUBLIC API --- */
@@ -240,7 +234,7 @@ function animateFlare(
   lat = null,
   lon = null,
   date = null,
-  intensity = 1.5,
+  intensity = 2,
   position = { x: 0.05, y: 0.1 },
   pulseSpeed = 0.2,
   size = 1.1,
