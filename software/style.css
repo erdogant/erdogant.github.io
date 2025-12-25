@@ -232,32 +232,6 @@ input[type="text"]:hover {
 }
 
 /* Logo wrapper container */
-/*.logo-container {
-    text-align: center;
-    margin: 10px;
-    border-radius: 5px;
-    overflow: visible;
-    min-height: 80px;
-    padding-bottom: 6px;
-}
-
-.logo-container img {
-    max-width: 100%;
-    height: auto;
-    display: block;
-    margin: 0 auto;
-    cursor: pointer;
-    transition: transform 0.2s;
-    max-height: calc(
-        100vh - 220px
-    );
-}
-
-.logo-container img:hover {
-    transform: scale(1.05);
-}*/
-
-/* Logo wrapper container */
 .logo-container {
     position: relative; /* REQUIRED for overlay */
     text-align: center;

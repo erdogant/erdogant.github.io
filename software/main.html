@@ -104,7 +104,21 @@
         <!-- Logo -->
         <div class="logo-container">
             <a href="https://erdogant.github.io/skywalk-docs/pages/html/index.html" target="_blank">
-                <img id="skywalk_logo" alt="SkyWalk" src="./figs/logo_skywalk.png">
+                <img
+                    id="skywalk_logo"
+                    alt="SkyWalk"
+                    src="./figs/logo_skywalk.png"
+                >
+                    <!--id="LOGO_SKYWALK_image_cache"-->
+
+                <!-- Canvas overlay -->
+                <!--<canvas class="rain-canvas" data-prefix="LOGO_SKYWALK"></canvas>
+                <canvas class="cloud-canvas"  data-prefix="LOGO_SKYWALK"></canvas>
+                <canvas class="fog-canvas"  data-prefix="LOGO_SKYWALK"></canvas>
+                <canvas class="flare-canvas"  data-prefix="LOGO_SKYWALK"></canvas>
+                <canvas class="snow-canvas"  data-prefix="LOGO_SKYWALK"></canvas>
+                <canvas class="dark-canvas"  data-prefix="LOGO_SKYWALK"></canvas>-->
+
             </a>
             <div class="version" style="margin-bottom: 5px; ">version: 1.0.0</div>
         </div>
@@ -206,7 +220,8 @@
             >
         </div>-->
 
-        <div class="logo-container rain-wrapper" style="margin-top: 20px;">
+        <!--<div class="logo-container rain-wrapper" style="margin-top: 20px;">-->
+        <div class="logo-container" style="margin-top: 20px;">
             <!--Aerodrome image-->
             <img
                 id="DEPARTURE_image_cache"
@@ -528,16 +543,8 @@
         <!-- Arrival Information Label -->
         <label_h1>Arrival Information</label_h1>
 
-        <!-- Arrival Image -->
-        <!--<div class="logo-container" style="margin-top: 20px;">
-            <img id="ARRIVAL_image_cache" alt="Arrival Aerodrome"
-                style="max-width: 100%; height: auto; border-radius: 10px; cursor: pointer;"
-                onclick="openAerodromeMap('ARRIVAL')"
-                src="./figs/default_aerodrome.jpg"
-            >
-        </div>-->
-
-        <div class="logo-container rain-wrapper" style="margin-top: 20px;">
+        <!--<div class="logo-container rain-wrapper" style="margin-top: 20px;">-->
+        <div class="logo-container" style="margin-top: 20px;">
             <!-- Aerodrome image -->
             <img
                 id="ARRIVAL_image_cache"
@@ -546,7 +553,7 @@
                 onclick="openAerodromeMap('ARRIVAL')"
             >
 
-            <!-- Rain overlay -->
+            <!-- Canvas overlay -->
             <canvas class="rain-canvas" data-prefix="ARRIVAL"></canvas>
             <canvas class="cloud-canvas"  data-prefix="ARRIVAL"></canvas>
             <canvas class="fog-canvas"  data-prefix="ARRIVAL"></canvas>

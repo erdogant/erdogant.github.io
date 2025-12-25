@@ -8,6 +8,7 @@ function startCloud(canvas, img) {
   let cloudDensity = "regular"; // Density
   let cloudSpeed = 1.0; // Speed multiplier
   let cloudDirection = "left"; // "left" or "right"
+  let cloudColor = "white"; // New: cloud color property
 
   class CloudParticle {
     constructor(x, y, size, velocity) {
@@ -33,8 +34,23 @@ function startCloud(canvas, img) {
       return offsets;
     }
 
+    getColorRGB() {
+      // Return RGB values based on cloudColor
+      switch (cloudColor) {
+        case "white":
+          return { r: 255, g: 255, b: 255 };
+        case "gray":
+          return { r: 160, g: 160, b: 160 };
+        case "dark":
+          return { r: 80, g: 80, b: 85 };
+        default:
+          return { r: 255, g: 255, b: 255 };
+      }
+    }
+
     draw() {
       ctx.save();
+      const color = this.getColorRGB();
 
       this.offsets.forEach((offset) => {
         const gradient = ctx.createRadialGradient(
@@ -46,9 +62,12 @@ function startCloud(canvas, img) {
           (this.width / 2) * offset.scale,
         );
 
-        gradient.addColorStop(0, `rgba(255, 255, 255, ${this.opacity * 0.6})`);
-        gradient.addColorStop(0.5, `rgba(255, 255, 255, ${this.opacity * 0.3})`);
-        gradient.addColorStop(1, `rgba(255, 255, 255, 0)`);
+        // gradient.addColorStop(0, `rgba(255, 255, 255, ${this.opacity * 0.6})`);
+        // gradient.addColorStop(0.5, `rgba(255, 255, 255, ${this.opacity * 0.3})`);
+        // gradient.addColorStop(1, `rgba(255, 255, 255, 0)`);
+        gradient.addColorStop(0, `rgba(${color.r}, ${color.g}, ${color.b}, ${this.opacity * 0.6})`);
+        gradient.addColorStop(0.5, `rgba(${color.r}, ${color.g}, ${color.b}, ${this.opacity * 0.3})`);
+        gradient.addColorStop(1, `rgba(${color.r}, ${color.g}, ${color.b}, 0)`);
 
         ctx.fillStyle = gradient;
         ctx.beginPath();
@@ -110,13 +129,15 @@ function startCloud(canvas, img) {
     rafId = requestAnimationFrame(drawCloud);
   }
 
-  function start(level = 1, speed = 1.0, direction = "left") {
+  function start(level = 1, speed = 1.0, direction = "left", color = "white") {
     if (running && cloudDensity === level && cloudSpeed === speed && cloudDirection === direction) return;
     // Store new variables if not returned
     running = true;
     cloudDensity = level;
     cloudSpeed = speed;
     cloudDirection = direction;
+    cloudColor = color; // Store the new color
+
     // Resize image
     resize();
     // Create the animated cloud
@@ -229,8 +250,28 @@ function computeCloudDensityScore(cloudLayers) {
   return score;
 }
 
+function determineCloudColor(metar_obj, color) {
+  if (color !== "auto") {
+    return color;
+  }
+  const flightCategory = metar_obj.flightCategory;
+  const dayLight = metar_obj.sunPosition.daylight;
+
+  if (flightCategory === "VFR" && dayLight === true) {
+    return "white";
+  } else if (flightCategory === "VFR" && dayLight === false) {
+    return "gray";
+  } else if (flightCategory === "MVFR") {
+    return "gray";
+  } else if (flightCategory === "IFR") {
+    return "gray";
+  } else if (flightCategory === "LIFR") {
+    return "dark";
+  }
+}
+
 /* --- PUBLIC API --- */
-function animateCloud(prefix, process = "auto", density = 1, speed = 1.0, direction = "left") {
+function animateCloud(prefix, process = "auto", density = 10, speed = 1.0, direction = "left", color = "auto") {
   // process:
   //      'auto':  Starts based on METAR data
   //      'start': Starts with rainIntensity
@@ -259,7 +300,7 @@ function animateCloud(prefix, process = "auto", density = 1, speed = 1.0, direct
   // Force animate to start
   if (process === "start") {
     console.log(`   >Start Cloud animation for ${prefix}`);
-    controller.start(density, speed, direction);
+    controller.start(density, speed, direction, color === "auto" ? "white" : color);
     return;
   }
 
@@ -285,10 +326,12 @@ function animateCloud(prefix, process = "auto", density = 1, speed = 1.0, direct
   speed = computeSpeedScore(speedWind, crossWind, maxCrosswind, 2);
   // Compute cloud density score based on okta and altitude clouds
   density = computeCloudDensityScore(metar_obj.cloud);
+  // Determine cloud color automatically or use provided color
+  color = determineCloudColor(metar_obj, color);
 
   // Start the animateCloud
   console.log(`   >Cloud for ${prefix}: density: ${density.toFixed(2)}, crossWind: ${crossWind}kt=${speed.toFixed(2)}, direction: ${direction}`);
-  controller.start(density, speed, direction);
+  controller.start(density, speed, direction, color);
 }
 
 // Make it globally accessible

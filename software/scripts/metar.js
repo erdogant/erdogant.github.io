@@ -1289,6 +1289,7 @@ async function retrieve_metar(prefix, verbose = "info") {
 
       // Animations
       animateRain(prefix);
+      // animateCloud(prefix, "start", 1, 1.0, "left", "dark");
       animateCloud(prefix);
       animateFog(prefix);
       animateSnow(prefix);
