@@ -206,8 +206,8 @@ function shouldShowSun(metar_obj, min_visibility = 8000) {
     dayLight = metar_obj.sunPosition.daylight;
   }
 
-  // If CAVOK, then sun
-  if (metar_obj.cavok) {
+  // If CAVOK and daylight, then sun
+  if (dayLight && metar_obj.cavok) {
     return true;
   }
 
@@ -235,9 +235,9 @@ function animateFlare(
   lon = null,
   date = null,
   intensity = 2,
-  position = { x: 0.05, y: 0.1 },
   pulseSpeed = 0.2,
   size = 1.1,
+  position = { x: 0.05, y: 0.1 },
 ) {
   // process:
   //      'auto':  Starts based on METAR data

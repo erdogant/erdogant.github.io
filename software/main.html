@@ -105,19 +105,17 @@
         <div class="logo-container">
             <a href="https://erdogant.github.io/skywalk-docs/pages/html/index.html" target="_blank">
                 <img
-                    id="skywalk_logo"
+                    id="SKYWALK_LOGO_image_cache"
                     alt="SkyWalk"
                     src="./figs/logo_skywalk.png"
                 >
-                    <!--id="LOGO_SKYWALK_image_cache"-->
 
-                <!-- Canvas overlay -->
-                <!--<canvas class="rain-canvas" data-prefix="LOGO_SKYWALK"></canvas>
-                <canvas class="cloud-canvas"  data-prefix="LOGO_SKYWALK"></canvas>
-                <canvas class="fog-canvas"  data-prefix="LOGO_SKYWALK"></canvas>
-                <canvas class="flare-canvas"  data-prefix="LOGO_SKYWALK"></canvas>
-                <canvas class="snow-canvas"  data-prefix="LOGO_SKYWALK"></canvas>
-                <canvas class="dark-canvas"  data-prefix="LOGO_SKYWALK"></canvas>-->
+                <canvas class="rain-canvas" data-prefix="SKYWALK_LOGO"></canvas>
+                <canvas class="cloud-canvas"  data-prefix="SKYWALK_LOGO"></canvas>
+                <canvas class="fog-canvas"  data-prefix="SKYWALK_LOGO"></canvas>
+                <canvas class="flare-canvas"  data-prefix="SKYWALK_LOGO"></canvas>
+                <canvas class="snow-canvas"  data-prefix="SKYWALK_LOGO"></canvas>
+                <canvas class="dark-canvas"  data-prefix="SKYWALK_LOGO"></canvas>
 
             </a>
             <div class="version" style="margin-bottom: 5px; ">version: 1.0.0</div>
@@ -6915,7 +6913,7 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
         cacheAndSetImage(window.settings['img_default_icao'], 'DEPARTURE_image_cache')
         cacheAndSetImage(window.settings['img_default_icao'], 'ARRIVAL_image_cache')
         cacheAndSetImage(window.settings['coffee_logo'], 'coffee_logo')
-        cacheAndSetImage(window.settings['skywalk_logo'], 'skywalk_logo')
+        cacheAndSetImage(window.settings['skywalk_logo'], 'SKYWALK_LOGO_image_cache')
         console.log("   >Logos are loaded..");
 
         // Get default flight plan data
@@ -6946,6 +6944,15 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
         window.METAR_ARRIVAL = '';
         // Hide loading spinner once everything is ready
         // document.getElementById('loading-spinner').style.display = 'none';
+
+        // Run the animation for the skywalk logo
+        // animateRain('SKYWALK_LOGO', process = "start", intensity = "light");
+        animateCloud('SKYWALK_LOGO', process = "start", density=8, speed=0.2, direction='right', color='white');
+        // animateFog('SKYWALK_LOGO', process = "start", intensity = "light");
+        animateSnow('SKYWALK_LOGO', process ='start', intensity = "medium", speed = 0.1);
+        // animateFlare('SKYWALK_LOGO', "start", null, null, null, intensity=2, pulseSpeed = 0.2, size = 1.1);
+        // animateDark('SKYWALK_LOGO', "start", null, null, null, "night", "down");
+
       }
     }
 

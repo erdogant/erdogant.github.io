@@ -659,9 +659,9 @@ class Metar {
     // Caclulate lightning phase
     const lightingPhase = this.determineLightingPhase(sunAltitude);
 
-    // Daylight starts when sun > -6° = When civil_twilight starts
+    // Daylight is when the altitude of the sun is > 0 degrees.
     let dayLight;
-    if (sunAltitude >= -6) {
+    if (sunAltitude > 0) {
       dayLight = true;
     } else {
       dayLight = false;
@@ -711,7 +711,7 @@ class Metar {
     } else {
       // Full night
       // return { phase: "night", darkness: 0.55 };
-      return { phase: "night", darkness: 0.9 };
+      return { phase: "night", darkness: 0.85 };
     }
   }
 
@@ -865,82 +865,6 @@ class Metar {
     return this.properties;
   }
 }
-
-// function calculateSunPosition(lat = null, lon = null, date = null) {
-//   // Calculate sun position using solar position algorithm
-//   // Sun altitude phases:
-//   // > 6° = Day
-//   // 0° to 6° = Golden Hour
-//   // -6° to 0° = Civil Twilight (sunset/sunrise glow)
-//   // -12° to -6° = Nautical Twilight
-//   // -18° to -12° = Astronomical Twilight
-//   // < -18° = Night
-//   console.log(`   > func: calculateSunPosition($lat: ${lat}, lon: ${lon}), date: ${date})`);
-//   if (lat === null || lon === null || date === null) {
-//     console.warn("   > Return with default daylight altitude because no lat/lon or date");
-//     return { altitude: 7, azimuth: 0 };
-//   }
-
-//   const julianDate = date.getTime() / 86400000 + 2440587.5;
-//   const century = (julianDate - 2451545.0) / 36525.0;
-
-//   // Mean longitude of sun
-//   const meanLong = (280.46646 + century * (36000.76983 + century * 0.0003032)) % 360;
-
-//   // Mean anomaly
-//   const meanAnomaly = 357.52911 + century * (35999.05029 - 0.0001537 * century);
-//   const meanAnomalyRad = (meanAnomaly * Math.PI) / 180;
-
-//   // Equation of center
-//   const center =
-//     Math.sin(meanAnomalyRad) * (1.914602 - century * (0.004817 + 0.000014 * century)) +
-//     Math.sin(2 * meanAnomalyRad) * (0.019993 - 0.000101 * century) +
-//     Math.sin(3 * meanAnomalyRad) * 0.000289;
-
-//   // True longitude
-//   const trueLong = meanLong + center;
-
-//   // Apparent longitude (corrected for nutation and aberration)
-//   const omega = 125.04 - 1934.136 * century;
-//   const lambda = trueLong - 0.00569 - 0.00478 * Math.sin((omega * Math.PI) / 180);
-
-//   // Obliquity of ecliptic
-//   const obliquity = 23.439291 - century * (0.0130042 + century * (0.00000016 - century * 0.000000504));
-//   const obliquityCorr = obliquity + 0.00256 * Math.cos((omega * Math.PI) / 180);
-//   const obliquityRad = (obliquityCorr * Math.PI) / 180;
-
-//   // Right ascension and declination
-//   const lambdaRad = (lambda * Math.PI) / 180;
-//   const rightAscension = Math.atan2(Math.cos(obliquityRad) * Math.sin(lambdaRad), Math.cos(lambdaRad));
-//   const declination = Math.asin(Math.sin(obliquityRad) * Math.sin(lambdaRad));
-
-//   // Greenwich Mean Sidereal Time
-//   const gmst =
-//     (280.46061837 + 360.98564736629 * (julianDate - 2451545.0) + 0.000387933 * century * century - (century * century * century) / 38710000.0) % 360;
-
-//   // Local sidereal time
-//   const lst = (gmst + lon) % 360;
-
-//   // Hour angle
-//   const hourAngle = (lst - (rightAscension * 180) / Math.PI + 360) % 360;
-//   // Adjust to -180 to 180 range
-//   const ha = hourAngle > 180 ? hourAngle - 360 : hourAngle;
-//   const hourAngleRad = (ha * Math.PI) / 180;
-
-//   // Convert latitude to radians
-//   const latRad = (lat * Math.PI) / 180;
-
-//   // Calculate altitude
-//   const altitude = Math.asin(Math.sin(latRad) * Math.sin(declination) + Math.cos(latRad) * Math.cos(declination) * Math.cos(hourAngleRad));
-
-//   // Calculate azimuth
-//   const azimuth = Math.atan2(-Math.sin(hourAngleRad), Math.cos(latRad) * Math.tan(declination) - Math.sin(latRad) * Math.cos(hourAngleRad));
-
-//   return {
-//     altitude: (altitude * 180) / Math.PI, // Convert to degrees
-//     azimuth: ((azimuth * 180) / Math.PI + 360) % 360, // Convert to degrees, 0-360
-//   };
-// }
 
 function checkMetarAge() {
   /* Check datetime of METAR data and update UI colors.
@@ -1289,12 +1213,14 @@ async function retrieve_metar(prefix, verbose = "info") {
 
       // Animations
       animateRain(prefix);
-      // animateCloud(prefix, "start", 1, 1.0, "left", "dark");
       animateCloud(prefix);
       animateFog(prefix);
       animateSnow(prefix);
       animateFlare(prefix, "auto", metar_obj.lat, metar_obj.lon, metar_obj.dateTime.date);
-      animateDark(prefix, "auto", metar_obj.lat, metar_obj.lon, metar_obj.dateTime.date, metar_obj.sunPosition.altitude);
+      animateDark(prefix, "auto");
+
+      // animateCloud(prefix, "start", 1, 1.0, "left", "dark");
+      // animateDark(prefix, "start", metar_obj.lat, metar_obj.lon, metar_obj.dateTime.date, -12, "up");
     } catch (error) {
       console.log(`   >Error: METAR details could not be computed:`, error);
     }

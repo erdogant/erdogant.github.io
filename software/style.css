@@ -252,6 +252,7 @@ input[type="text"]:hover {
     transition: transform 0.2s;
     max-height: calc(100vh - 220px);
     border-radius: 10px;
+    z-index: 0; /* below everything else*/
 }
 
 /* Hover effect stays intact */

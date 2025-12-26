@@ -126,7 +126,7 @@ function animateRain(prefix, process = "auto", intensity = "medium") {
   // intensity:
   //      'light'
   //      'medium'
-  //      'heavy'
+  //      'SKYWALK_LOGO'
 
   console.log(`>func: animateRain(${prefix})`);
 
@@ -138,7 +138,7 @@ function animateRain(prefix, process = "auto", intensity = "medium") {
     const img = document.getElementById(`${prefix}_image_cache`);
 
     if (!canvas || !img) {
-      console.warn(`Rain setup missing for ${prefix}`);
+      console.warn(`Rain setup missing for ${prefix}, canvas: ${canvas}, img: ${img}`);
       return;
     }
 
