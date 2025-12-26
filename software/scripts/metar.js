@@ -1068,15 +1068,15 @@ function updateFlightCatagoryIcon(prefix, remove = false) {
   const borderFieldAerodrome = document.getElementById(prefix + "_SELECT_AERODROME_BORDER");
 
   // Get metar data for aerodrome
-  // metar_obj = window.flight_plan_data[`${prefix}_METAR`];
+  // metarObject = window.flight_plan_data[`${prefix}_METAR`];
   if (prefix === "DEPARTURE") {
-    metar_obj = window.METAR_DEPARTURE;
+    metarObject = window.METAR_DEPARTURE;
   } else {
-    metar_obj = window.METAR_ARRIVAL;
+    metarObject = window.METAR_ARRIVAL;
   }
 
   // Do not show image when metar data is not present
-  if (remove || !metar_obj) {
+  if (remove || !metarObject) {
     console.log("   >VFR icon removed.");
     imgCat.alt = "Unknown";
     imgCat.src = "./icons/clouds_unknown.png";
@@ -1093,18 +1093,18 @@ function updateFlightCatagoryIcon(prefix, remove = false) {
     return;
   }
 
-  console.log("   >📊 Flight Category:", metar_obj.flightCategory);
-  // console.log(metar_obj.icon);
+  console.log("   >📊 Flight Category:", metarObject.flightCategory);
+  // console.log(metarObject.icon);
   // Get flight catagory
-  imgCat.src = metar_obj.icon;
-  imgCat.alt = metar_obj.flightCategory;
+  imgCat.src = metarObject.icon;
+  imgCat.alt = metarObject.flightCategory;
   imgCat.style.display = "inline-block";
   // Get VFR icon
-  imgVFR.src = metar_obj.icon_vfr;
-  imgVFR.alt = metar_obj.flightCategory;
+  imgVFR.src = metarObject.icon_vfr;
+  imgVFR.alt = metarObject.flightCategory;
   imgVFR.style.display = "inline-block";
   // Color the Div
-  borderFieldAerodrome.style.backgroundColor = metar_obj.color;
+  borderFieldAerodrome.style.backgroundColor = metarObject.color;
 }
 
 async function retrieve_metar(prefix, verbose = "info") {
@@ -1125,7 +1125,7 @@ async function retrieve_metar(prefix, verbose = "info") {
   let runway_predicted = "";
   let icao_stations = [""];
   let stationName = "";
-  let metar_obj = {};
+  let metarObject = {};
   let metar_plain = {};
 
   // If ICAO is empty or not provided, notify the user and return early
@@ -1183,16 +1183,16 @@ async function retrieve_metar(prefix, verbose = "info") {
       // Get lat/lon
       const latlon = window.flight_plan_data?.[`${prefix}_LATLON`];
       // Extract features from METAR
-      metar_obj = new Metar(stationName, metar_icao, latlon[0], latlon[1]);
+      metarObject = new Metar(stationName, metar_icao, latlon[0], latlon[1]);
 
       // Set GUI fields
-      dateField.value = metar_obj.dateTime.formatted;
+      dateField.value = metarObject.dateTime.formatted;
       metarField.value = metar_icao || metar_message;
 
       // Compute expected runway number based on wind direction and runway orientation
-      runway_predicted = expected_runway_number(prefix, metar_obj.wind.direction, metar_obj.wind.speed);
+      runway_predicted = expected_runway_number(prefix, metarObject.wind.direction, metarObject.wind.speed);
       // Compute wind parameters from METAR data and update wind GUI fields
-      window.update_wind_gui_fields(prefix, metar_icao, metar_obj);
+      window.update_wind_gui_fields(prefix, metar_icao, metarObject);
       // Create wind envelope plot
       window.windEnvelope_js(prefix, 25, 15, false);
 
@@ -1203,9 +1203,9 @@ async function retrieve_metar(prefix, verbose = "info") {
       // Store METAR in flight plan data. This will break the saving functionality!
       if (prefix === "DEPARTURE") {
         // Convert metar object to plain so that it can be used in pyton dictionary for later usage
-        window.METAR_DEPARTURE = metar_obj.getAll();
+        window.METAR_DEPARTURE = metarObject.getAll();
       } else {
-        window.METAR_ARRIVAL = metar_obj.getAll();
+        window.METAR_ARRIVAL = metarObject.getAll();
       }
 
       // Update flight catagory icon (this is also periodically checked in checkMetarAge())
@@ -1216,13 +1216,11 @@ async function retrieve_metar(prefix, verbose = "info") {
       animateCloud(prefix);
       animateFog(prefix);
       animateSnow(prefix);
-      animateFlare(prefix, "auto", metar_obj.lat, metar_obj.lon, metar_obj.dateTime.date);
-      animateDark(prefix, "auto");
-
-      // animateCloud(prefix, "start", 1, 1.0, "left", "dark");
-      // animateDark(prefix, "start", metar_obj.lat, metar_obj.lon, metar_obj.dateTime.date, -12, "up");
+      animateFlare(prefix, "auto", metarObject.lat, metarObject.lon, metarObject.dateTime.date);
+      animateDark(prefix, "auto", "center");
+      // animateTextOverlay(prefix);
     } catch (error) {
-      console.log(`   >Error: METAR details could not be computed:`, error);
+      console.error(`   >Error: METAR details could not be computed:`, error);
     }
   }
 

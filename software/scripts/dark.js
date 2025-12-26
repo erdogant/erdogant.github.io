@@ -7,7 +7,7 @@ function startDark(canvas, img) {
   let currentPhase = "day";
   let darknessLevel = 0; // 0 = full day, 1 = full night
   let sunPosition = null; // { altitude, azimuth }
-  let gradientDirection = "down"; // "down" or "up"
+  let gradientType = "linear"; // "linear" or "center"
 
   function resize() {
     const r = img.getBoundingClientRect();
@@ -130,17 +130,18 @@ function startDark(canvas, img) {
     switch (phase) {
       case "golden_hour":
         const goldenProgress = (6 - sunAltitude) / 6; // 0 at 6°, 1 at 0°
+
         return {
-          top: `rgba(255, 200, 100, ${0.05 + goldenProgress * 0.1})`, // 0.05 to 0.15
-          middle: `rgba(255, 180, 80, ${0.08 + goldenProgress * 0.12})`, // 0.08 to 0.2
-          bottom: `rgba(255, 150, 60, ${0.1 + goldenProgress * 0.15})`, // 0.1 to 0.25
+          top: `rgba(255, 200, 100, ${0.15 - goldenProgress * 0.1})`,
+          middle: `rgba(255, 180, 80, ${0.2 - goldenProgress * 0.12})`,
+          bottom: `rgba(255, 150, 60, ${0.05})`, // most transparent
         };
       case "civil_twilight":
         const civilProgress = (0 - sunAltitude) / 6;
         return {
-          top: `rgba(30, 60, 120, ${0.3 * civilProgress})`,
-          middle: `rgba(255, 120, 60, ${0.5 * (1 - civilProgress)})`,
-          bottom: `rgba(255, 100, 40, ${0.6 * (1 - civilProgress)})`,
+          top: `rgba(30, 60, 120, ${0.6 * civilProgress})`,
+          middle: `rgba(255, 120, 60, ${0.4 * civilProgress})`,
+          bottom: `rgba(255, 100, 40, ${0.15 * civilProgress})`,
         };
       case "nautical_twilight":
         return {
@@ -176,10 +177,15 @@ function startDark(canvas, img) {
       // Draw gradient for twilight phases
       const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
 
-      if (gradientDirection === "down") {
+      if (gradientType === "linear") {
         // Original: opaque at top, transparent at bottom
         gradient.addColorStop(0, glowColors.top);
-        gradient.addColorStop(0.8, glowColors.middle);
+        gradient.addColorStop(0.7, glowColors.middle);
+        gradient.addColorStop(1, glowColors.bottom);
+      } else if (gradientType === "linear") {
+        // opaque at top and bottom, transparent at middle
+        gradient.addColorStop(0, glowColors.middle);
+        gradient.addColorStop(1, glowColors.top);
         gradient.addColorStop(1, glowColors.bottom);
       } else {
         // Reversed: transparent at top, opaque at bottom
@@ -194,29 +200,31 @@ function startDark(canvas, img) {
 
     // Apply darkness overlay with gradient
     if (darknessLevel > 0) {
-      if (gradientDirection === "down") {
+      if (gradientType === "linear") {
+        const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        // Linear gradient from top (transparent) to bottom (opaque)
+        gradient.addColorStop(0, `rgba(0, 0, 20, ${darknessLevel})`); // top: darkest
+        gradient.addColorStop(0.5, `rgba(0, 0, 20, ${darknessLevel * 0.8})`);
+        gradient.addColorStop(1, `rgba(0, 0, 20, ${darknessLevel * 0.4})`); // bottom: more transparent
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      } else if (gradientType === "center") {
+        const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        // Center most transparent
+        gradient.addColorStop(0, `rgba(0, 0, 20, ${darknessLevel})`);
+        gradient.addColorStop(0.5, `rgba(0, 0, 20, ${darknessLevel * 0.5})`); // more transparent
+        gradient.addColorStop(1, `rgba(0, 0, 20, ${darknessLevel})`);
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      } else {
         // Original radial gradient (center lighter, edges darker)
         const centerX = canvas.width / 2;
         const centerY = canvas.height / 2;
         const maxRadius = Math.sqrt(centerX * centerX + centerY * centerY);
-
         const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, maxRadius);
-        // const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-
         gradient.addColorStop(0, `rgba(0, 0, 20, ${darknessLevel * 0.7})`);
         gradient.addColorStop(0.5, `rgba(0, 0, 20, ${darknessLevel * 0.8})`);
         gradient.addColorStop(1, `rgba(0, 0, 20, ${darknessLevel})`);
-
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-      } else {
-        // Linear gradient from top (transparent) to bottom (opaque)
-        const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-
-        gradient.addColorStop(0, `rgba(0, 0, 20, ${darknessLevel * 0.3})`); // Top: lighter
-        gradient.addColorStop(0.5, `rgba(0, 0, 20, ${darknessLevel * 0.7})`); // Middle
-        gradient.addColorStop(1, `rgba(0, 0, 20, ${darknessLevel})`); // Bottom: darkest
-
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
       }
@@ -225,125 +233,19 @@ function startDark(canvas, img) {
     rafId = requestAnimationFrame(drawDarkness);
   }
 
-  // Function to change gradient direction
-  function setGradientDirection(direction) {
-    if (direction === "up" || direction === "down") {
-      gradientDirection = direction;
-      console.log(`Gradient direction set to: ${direction}`);
-    } else {
-      gradientDirection = "down";
-    }
-  }
-
-  // function getGlowColor(phase, sunAltitude) {
-  //   // Return gradient colors based on sun position
-  //   switch (phase) {
-  //     case "golden_hour":
-  //       const goldenProgress = (6 - sunAltitude) / 6; // 0 at 6°, 1 at 0°
-  //       return {
-  //         top: `rgba(255, 200, 100, ${0.05 + goldenProgress * 0.1})`, // 0.05 to 0.15
-  //         middle: `rgba(255, 180, 80, ${0.08 + goldenProgress * 0.12})`, // 0.08 to 0.2
-  //         bottom: `rgba(255, 150, 60, ${0.1 + goldenProgress * 0.15})`, // 0.1 to 0.25
-  //       };
-  //     case "civil_twilight":
-  //       const civilProgress = (0 - sunAltitude) / 6;
-  //       return {
-  //         top: `rgba(30, 60, 120, ${0.3 * civilProgress})`,
-  //         middle: `rgba(255, 120, 60, ${0.5 * (1 - civilProgress)})`,
-  //         bottom: `rgba(255, 100, 40, ${0.6 * (1 - civilProgress)})`,
-  //       };
-  //     case "nautical_twilight":
-  //       return {
-  //         top: `rgba(10, 20, 50, ${0.4})`,
-  //         middle: `rgba(30, 40, 80, ${0.5})`,
-  //         bottom: `rgba(60, 40, 60, ${0.4})`,
-  //       };
-  //     case "astronomical_twilight":
-  //       return {
-  //         top: `rgba(5, 10, 30, ${0.5})`,
-  //         middle: `rgba(10, 15, 40, ${0.5})`,
-  //         bottom: `rgba(20, 20, 40, ${0.3})`,
-  //       };
-  //     default:
-  //       return null;
-  //   }
-  // }
-
-  // function drawDarkness() {
-  //   if (!running) return;
-
-  //   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  //   if (currentPhase === "day") {
-  //     // No overlay during full day
-  //     rafId = requestAnimationFrame(drawDarkness);
-  //     return;
-  //   }
-
-  //   // Draw gradient overlay based on sun position
-  //   const glowColors = getGlowColor(currentPhase, sunPosition.altitude);
-
-  //   if (glowColors) {
-  //     // Draw gradient for twilight phases
-  //     const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-  //     gradient.addColorStop(0, glowColors.top);
-  //     gradient.addColorStop(0.8, glowColors.middle);
-  //     gradient.addColorStop(1, glowColors.bottom);
-
-  //     ctx.fillStyle = gradient;
-  //     ctx.fillRect(0, 0, canvas.width, canvas.height);
-  //   }
-
-  //   // Apply overall darkness overlay
-  //   // if (darknessLevel > 0) {
-  //   //   ctx.fillStyle = `rgba(0, 0, 20, ${darknessLevel})`;
-  //   //   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  //   // }
-
-  //   // Apply darkness overlay with gradient
-  //   if (darknessLevel > 0) {
-  //     // Create a radial gradient from center to corners
-  //     const centerX = canvas.width / 2;
-  //     const centerY = canvas.height / 2;
-
-  //     // Calculate distance from center to corner
-  //     const maxRadius = Math.sqrt(centerX * centerX + centerY * centerY);
-
-  //     const gradient = ctx.createRadialGradient(
-  //       centerX,
-  //       centerY,
-  //       0, // Inner circle (center)
-  //       centerX,
-  //       centerY,
-  //       maxRadius, // Outer circle (corners)
-  //     );
-
-  //     // Center is more transparent. change 0.7 to make it darker
-  //     gradient.addColorStop(0, `rgba(0, 0, 20, ${darknessLevel * 0.7})`);
-  //     // Mid-way transition
-  //     gradient.addColorStop(0.5, `rgba(0, 0, 20, ${darknessLevel * 0.8})`);
-  //     // Corners are darkest
-  //     gradient.addColorStop(1, `rgba(0, 0, 20, ${darknessLevel})`);
-
-  //     ctx.fillStyle = gradient;
-  //     ctx.fillRect(0, 0, canvas.width, canvas.height);
-  //   }
-
-  //   rafId = requestAnimationFrame(drawDarkness);
-  // }
-
-  function auto(metar_obj, direction = "top") {
+  function auto(metar_obj, direction = "linear") {
     if (!running) {
       running = true;
       resize();
     }
     // Set the gradient direction
-    setGradientDirection(direction);
+    // setgradientType(direction);
+
     // Set variables
     currentPhase = metar_obj.sunPosition.phase;
     darknessLevel = metar_obj.sunPosition.darkness;
     sunPosition = metar_obj.sunPosition;
-    gradientDirection = direction;
+    gradientType = direction;
 
     console.log(`   >Sun position: ${sunPosition}°, Phase: ${currentPhase}, Darkness: ${darknessLevel}`);
 
@@ -352,7 +254,7 @@ function startDark(canvas, img) {
     }
   }
 
-  function start(lat, lon, date, direction = "top", lightningPhase = null) {
+  function start(lat, lon, date, direction = "linear", lightningPhase = null) {
     if (!running) {
       running = true;
       resize();
@@ -360,7 +262,7 @@ function startDark(canvas, img) {
     // Determine lighting phase
     let phase, darkness, altitude;
     // Set the gradient direction
-    setGradientDirection(direction);
+    // setgradientType(direction);
 
     if (lat !== null && lon !== null && date !== null) {
       // Calculate sun position
@@ -399,6 +301,7 @@ function startDark(canvas, img) {
 
     currentPhase = phase;
     darknessLevel = darkness;
+    gradientType = direction;
     console.log(`   >Sun position: ${sunPosition}°, Phase: ${currentPhase}, Darkness: ${darknessLevel}`);
 
     if (!rafId) {
@@ -440,7 +343,7 @@ function updateDarkness(prefix, lat, lon) {
 // }
 
 /* --- PUBLIC API --- */
-function animateDark(prefix, process = "auto", lat = null, lon = null, date = null, lightingPhase = null, gradientDirection = "down") {
+function animateDark(prefix, process = "auto", gradientType = "center", lightingPhase = null, lat = null, lon = null, date = null) {
   // process:
   //      'auto':  Starts based on METAR data
   //      'start': Starts with rainIntensity
@@ -458,7 +361,7 @@ function animateDark(prefix, process = "auto", lat = null, lon = null, date = nu
   //   date = new Date();
   // }
 
-  console.log(`> func: animateDark(${prefix}, lat: ${lat}, lon: ${lon}), date: ${date})`);
+  console.log(`> func: animateDark(${prefix}, gradientType: ${gradientType}, lat: ${lat}, lon: ${lon}), date: ${date})`);
 
   if (!darkControllers[prefix]) {
     // Get the canvas
@@ -480,7 +383,7 @@ function animateDark(prefix, process = "auto", lat = null, lon = null, date = nu
   // Force animate to start
   if (process === "start") {
     console.log(`   >Force Start Darkness animation for phase: ${lightingPhase}`);
-    controller.start(lat, lon, date, gradientDirection, lightingPhase);
+    controller.start(lat, lon, date, gradientType, lightingPhase);
     return;
   }
 
@@ -495,7 +398,7 @@ function animateDark(prefix, process = "auto", lat = null, lon = null, date = nu
   }
 
   // Spin up the controllers
-  controller.auto(metar_obj);
+  controller.auto(metar_obj, gradientType);
 }
 
 // Make it globally accessible

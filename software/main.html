@@ -54,6 +54,7 @@
     <script src="./scripts/sun.js" defer></script>
     <script src="./scripts/snow.js" defer></script>
     <script src="./scripts/dark.js" defer></script>
+    <script src="./scripts/textoverlay.js" defer></script>
     <script src="./scripts/metar.js" defer></script
 
 </head>
@@ -234,6 +235,7 @@
             <canvas class="flare-canvas"  data-prefix="DEPARTURE"></canvas>
             <canvas class="snow-canvas"  data-prefix="DEPARTURE"></canvas>
             <canvas class="dark-canvas"  data-prefix="DEPARTURE"></canvas>
+            <canvas class="textoverlay-canvas"  data-prefix="DEPARTURE"></canvas>
         </div>
 
 
@@ -558,6 +560,8 @@
             <canvas class="flare-canvas"  data-prefix="ARRIVAL"></canvas>
             <canvas class="snow-canvas"  data-prefix="ARRIVAL"></canvas>
             <canvas class="dark-canvas"  data-prefix="ARRIVAL"></canvas>
+            <canvas class="textoverlay-canvas"  data-prefix="ARRIVAL"></canvas>
+
         </div>
 
 
@@ -6947,11 +6951,11 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
 
         // Run the animation for the skywalk logo
         // animateRain('SKYWALK_LOGO', process = "start", intensity = "light");
-        animateCloud('SKYWALK_LOGO', process = "start", density=8, speed=0.2, direction='right', color='white');
+        animateCloud('SKYWALK_LOGO', process = "start", density=8, speed=0.3, direction='right', color='white');
         // animateFog('SKYWALK_LOGO', process = "start", intensity = "light");
-        animateSnow('SKYWALK_LOGO', process ='start', intensity = "medium", speed = 0.1);
+        animateSnow('SKYWALK_LOGO', process ='start', intensity = "medium", speed = 0.3);
         // animateFlare('SKYWALK_LOGO', "start", null, null, null, intensity=2, pulseSpeed = 0.2, size = 1.1);
-        // animateDark('SKYWALK_LOGO', "start", null, null, null, "night", "down");
+        // animateDark('SKYWALK_LOGO', "start", "center", "night");
 
       }
     }
