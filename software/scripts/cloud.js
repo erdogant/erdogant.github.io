@@ -256,17 +256,21 @@ function determineCloudColor(metar_obj, color) {
   }
   const flightCategory = metar_obj.flightCategory;
   const dayLight = metar_obj.sunPosition.daylight;
+  const isNight = metar_obj.sunPosition.phase;
 
-  if (flightCategory === "VFR" && dayLight === true) {
-    return "white";
-  } else if (flightCategory === "VFR" && dayLight === false) {
-    return "gray";
-  } else if (flightCategory === "MVFR") {
-    return "gray";
-  } else if (flightCategory === "IFR") {
-    return "gray";
-  } else if (flightCategory === "LIFR") {
+  // When night, always return dark clouds
+  if (isNight === "night") {
     return "dark";
+  }
+
+  if (flightCategory === "VFR") {
+    return "white";
+  } else if (flightCategory === "MVFR") {
+    return "white";
+  } else if (flightCategory === "IFR") {
+    return "white";
+  } else if (flightCategory === "LIFR") {
+    return "gray";
   }
 }
 

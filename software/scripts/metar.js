@@ -660,11 +660,9 @@ class Metar {
     const lightingPhase = this.determineLightingPhase(sunAltitude);
 
     // Daylight is when the altitude of the sun is > 0 degrees.
-    let dayLight;
+    let dayLight = false;
     if (sunAltitude > 0) {
       dayLight = true;
-    } else {
-      dayLight = false;
     }
 
     return {
@@ -691,27 +689,27 @@ class Metar {
     } else if (sunAltitude > 0) {
       // Golden hour: 0-6 degrees
       // const darkness = 0.1 + ((6 - sunAltitude) / 6) * 0.05; // 0.1 to 0.15
-      const darkness = 0.1 + ((6 - sunAltitude) / 6) * 0.15; // 0.1 to 0.25
+      const darkness = 0.2 + ((6 - sunAltitude) / 6) * 0.15; // 0.1 to 0.25
       return { phase: "golden_hour", darkness };
     } else if (sunAltitude > -6) {
       // Civil twilight: 0 to -6 degrees
       // const darkness = 0.25 + ((0 - sunAltitude) / 6) * 0.1; // 0.25 to 0.35
-      const darkness = 0.25 + ((0 - sunAltitude) / 6) * 0.25; // 0.25 to 0.5
+      const darkness = 0.4 + ((0 - sunAltitude) / 6) * 0.25; // 0.25 to 0.5
       return { phase: "civil_twilight", darkness };
     } else if (sunAltitude > -12) {
       // Nautical twilight: -6 to -12 degrees
       // const darkness = 0.35 + ((-6 - sunAltitude) / 6) * 0.1; // 0.35 to 0.45
-      const darkness = 0.5 + ((-6 - sunAltitude) / 6) * 0.2; // 0.5 to 0.7
+      const darkness = 0.6 + ((-6 - sunAltitude) / 6) * 0.2; // 0.5 to 0.7
       return { phase: "nautical_twilight", darkness };
     } else if (sunAltitude > -18) {
       // Astronomical twilight: -12 to -18 degrees
       // const darkness = 0.5 + ((-12 - sunAltitude) / 6) * 0.05; // 0.45 to 0.55
-      const darkness = 0.7 + ((-12 - sunAltitude) / 6) * 0.2; // 0.7 to 0.9
+      const darkness = 0.8 + ((-12 - sunAltitude) / 6) * 0.2; // 0.7 to 0.9
       return { phase: "astronomical_twilight", darkness };
     } else {
       // Full night
       // return { phase: "night", darkness: 0.55 };
-      return { phase: "night", darkness: 0.85 };
+      return { phase: "night", darkness: 0.9 };
     }
   }
 
@@ -1030,13 +1028,6 @@ async function fetch_metar(metar_stations, splitlines = true, decoded = false, p
       // Split into lines and get the first (most recent) METAR
       const lines = text.trim().split("\n");
       let metar_string = lines[0] || null; // The top line contains the full METAR
-      // let metar_date_str = "";
-      // let metar_date_obj = null;
-
-      // Extract time from METAR (format: EHRD 241025Z ...)
-      // if (metar_string) {
-      //   ({ formatted: metar_date_str, date: metar_date_obj } = parseMetarTime(metar_string));
-      // }
 
       console.log(`   >Retrieved METAR: ${metar_string}`);
       // console.log(`   >Retrieved Time: ${metar_date_str}`);
@@ -1045,7 +1036,6 @@ async function fetch_metar(metar_stations, splitlines = true, decoded = false, p
       // Return when metar_string is successfully found
       if (metar_string) {
         return [metar_string, icao];
-        // return [metar_string, metar_date_str, metar_date_obj, icao];
       }
 
       // Wait 0.5 seconds before continuing to next station
