@@ -174,7 +174,7 @@ function computeSpeedScore(speedWind, crossWind, maxCrosswind, exponent = 2) {
   // exponent = 3: very aggressive near max (gust-like behavior)
   // Defaults
   console.log(`   > func: computeSpeedScore()`);
-  const getMIN = 0.03;
+  const getMIN = 0.05;
   const getMAX = 1.5;
 
   // Convert to numbers

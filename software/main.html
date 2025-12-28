@@ -55,6 +55,7 @@
     <script src="./scripts/snow.js" defer></script>
     <script src="./scripts/dark.js" defer></script>
     <script src="./scripts/textoverlay.js" defer></script>
+    <script src="./scripts/controls.js" defer></script>
     <script src="./scripts/metar.js" defer></script
     <!--MAP-->
     <script src="./scripts/maps.js" defer></script
@@ -105,6 +106,7 @@
 	<div id="General" class="tabcontent">
 
         <!-- Logo -->
+        <!--<div class="logo-container" style="margin-top: 20px; padding-bottom: 0px; margin: 0px;">-->
         <div class="logo-container">
             <a href="https://erdogant.github.io/skywalk-docs/pages/html/index.html" target="_blank">
                 <img
@@ -222,7 +224,7 @@
         </div>-->
 
         <!--<div class="logo-container rain-wrapper" style="margin-top: 20px;">-->
-        <div class="logo-container" style="margin-top: 20px;">
+        <div class="logo-container">
             <!--Aerodrome image-->
             <img
                 id="DEPARTURE_image_cache"
@@ -237,7 +239,16 @@
             <canvas class="flare-canvas"  data-prefix="DEPARTURE"></canvas>
             <canvas class="snow-canvas"  data-prefix="DEPARTURE"></canvas>
             <canvas class="dark-canvas"  data-prefix="DEPARTURE"></canvas>
-            <canvas class="textoverlay-canvas"  data-prefix="DEPARTURE"></canvas>
+            <!--<canvas class="textoverlay-canvas"  data-prefix="DEPARTURE"></canvas>-->
+            <!--<canvas class="controls-canvas"  data-prefix="DEPARTURE"></canvas>-->
+            <!--<div class="controls-wrapper" data-prefix="DEPARTURE">
+              <canvas class="controls-canvas"></canvas>
+            </div>-->
+
+        </div>
+        <div style="display: flex; justify-content: flex-end; align-items: center; gap: 0px; margin-top: 0px; padding-bottom: 0px; margin: 0px;">
+            <button id="DEPARTURE_ANIMATION_START" title="Start the METAR Animation" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">▶️</button>
+            <button id="DEPARTURE_ANIMATION_STOP" title="Stop the METAR Animation" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">⏸️</button>
         </div>
 
 
@@ -546,7 +557,7 @@
         <label_h1>Arrival Information</label_h1>
 
         <!--<div class="logo-container rain-wrapper" style="margin-top: 20px;">-->
-        <div class="logo-container" style="margin-top: 20px;">
+        <div class="logo-container">
             <!-- Aerodrome image -->
             <img
                 id="ARRIVAL_image_cache"
@@ -562,8 +573,16 @@
             <canvas class="flare-canvas"  data-prefix="ARRIVAL"></canvas>
             <canvas class="snow-canvas"  data-prefix="ARRIVAL"></canvas>
             <canvas class="dark-canvas"  data-prefix="ARRIVAL"></canvas>
-            <canvas class="textoverlay-canvas"  data-prefix="ARRIVAL"></canvas>
+            <!--<canvas class="textoverlay-canvas"  data-prefix="ARRIVAL"></canvas>-->
+            <!--<canvas class="controls-canvas"  data-prefix="ARRIVAL"></canvas>-->
+            <!--<div class="controls-wrapper" data-prefix="ARRIVAL">
+              <canvas class="controls-canvas"></canvas>
+            </div>-->
+        </div>
 
+        <div style="display: flex; justify-content: flex-end; align-items: center; gap: 0px; margin-top: 0px; padding-bottom: 0px; margin: 0px;">
+            <button id="ARRIVAL_ANIMATION_START" title="Start the METAR Animation" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">▶️</button>
+            <button id="ARRIVAL_ANIMATION_STOP" title="Stop the METAR Animation" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">⏸️</button>
         </div>
 
 
@@ -1070,11 +1089,6 @@
                 </button>
             </div>
         </div>
-
-
-        <!-- Leaflet CSS -->
-        <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>-->
 
         <label_h1>Warning</label_h1>
         <div class="warning" style="margin-bottom: 20px; border: 2px solid orange; border-radius: 10px; padding: 10px;">The airspace projections on the map are based on data that can be outdated or inaccurate. Do not navigate using the map but only use it for educational purposes.</div>
@@ -1634,8 +1648,6 @@
 
     async function colorMetarFields(prefix, enable=true) {
         // const buttonMetar = document.getElementById('BTN-METAR-' + prefix);
-        // const buttonMetarIcon1 = document.getElementById('BTN-METAR-ICON-' + prefix + '_1');
-        const buttonMetarIcon2 = document.getElementById('BTN-METAR-ICON-' + prefix + '_2');
         const metarText = document.getElementById('METAR-TEXT-' + prefix);
         const dateField = document.getElementById('DATETIME-METAR-' + prefix);
         const metarField = document.getElementById('METAR-FIELD-' + prefix);
@@ -1648,10 +1660,11 @@
         const borderFieldAerodrome = document.getElementById(prefix + '_SELECT_AERODROME_BORDER');
 
         if (enable) {
-          // buttonMetarIcon1.disabled = false;
-          // buttonMetarIcon1.style.cursor = 'pointer';
           // buttonMetarIcon2.disabled = false;
           // buttonMetarIcon2.style.cursor = 'pointer';
+
+          // buttonMetarIcon1.disabled = false;
+          // buttonMetarIcon1.style.cursor = 'pointer';
           // buttonMetar.disabled = false;
           // buttonMetar.style.cursor = 'pointer';
           // buttonMetar.setAttribute('aria-disabled', 'false');
@@ -1669,10 +1682,11 @@
           windCrosswindField.style.backgroundColor = 'transparent';
           borderFieldAerodrome.style.backgroundColor = '#f5f5f5';
         } else {
-          // buttonMetarIcon1.disabled = true;
-          // buttonMetarIcon1.style.cursor = "not-allowed";
           // buttonMetarIcon2.disabled = true;
           // buttonMetarIcon2.style.cursor = "not-allowed";
+
+          // buttonMetarIcon1.disabled = true;
+          // buttonMetarIcon1.style.cursor = "not-allowed";
           // buttonMetar.disabled = true;
           // buttonMetar.style.cursor = "not-allowed";
           // buttonMetar.setAttribute('aria-disabled', 'true');
@@ -5590,8 +5604,11 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
         const currentActiveTab = document.querySelector(".tablinks.active");
         const currentTab = currentActiveTab ? currentActiveTab.getAttribute("data-tab") : null;
 
-        // SAVE TAB SWITCHING
-        if (pyscriptReady && window.save_flightplan && currentTab && currentTab !== targetTab) {
+        console.log(`>Tab switch to: ${targetTab}`)
+
+        // SAVE ON TAB SWITCHING
+        // if (pyscriptReady && window.save_flightplan && currentTab && currentTab !== targetTab) {
+        if (pyscriptReady && window.save_flightplan && (targetTab === "ATC" || targetTab === "General")) {
           try {
             await window.save_flightplan(true, false);
           } catch (error) {
@@ -5604,41 +5621,6 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
         tabContents.forEach(c => c.style.display = "none");
         btn.classList.add("active");
         document.getElementById(btn.getAttribute("data-tab")).style.display = "block";
-
-        // (DE)ACTIVATE ANIMATIONS ON TAB CHANGE
-        // let prefix = '';
-        // let metarObject = null;
-        // if (targetTab === "DEPARTURE") {
-        //   // Get metar data
-        //   prefix = "DEPARTURE";
-        //   metarObject = window.METAR_DEPARTURE
-        //   // Stop animations
-        //   animateRain('ARRIVAL', "stop");
-        //   animateCloud('ARRIVAL', "stop");
-        //   animateFog('ARRIVAL', "stop");
-        //   animateFlare('ARRIVAL', "stop");
-        //   animateSnow('ARRIVAL', "stop");
-        //   animateDark('ARRIVAL', "stop");
-        // } else if targetTab === 'ARRIVAL' {
-        //   // Get metar data
-        //   prefix = "ARRIVAL";
-        //   metarObject = window.METAR_ARRIVAL
-        //   animateRain('DEPARTURE', "stop");
-        //   animateCloud('DEPARTURE', "stop");
-        //   animateFog('DEPARTURE', "stop");
-        //   animateFlare('DEPARTURE', "stop");
-        //   animateSnow('DEPARTURE', "stop");
-        //   animateDark('DEPARTURE', "stop");
-        // }
-        // if (metarObject !=== null) && (prefix === 'DEPARTURE' || prefix === 'ARRIVAL') {
-        //   // Animations
-        //   animateRain(prefix);
-        //   animateCloud(prefix);
-        //   animateFog(prefix);
-        //   animateSnow(prefix);
-        //   animateFlare(prefix, "auto", metarObject.lat, metarObject.lon, metarObject.dateTime.date);
-        //   animateDark(prefix, "auto", "center");
-        // }
 
         // REPLACE INFORMATION with "INFO" in the ENROUTE TAB.
         updateEnrouteFields();
@@ -5928,57 +5910,81 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
 
     document.getElementById('BTN_HTML_SUMMARY')?.addEventListener('click', () => {
       if (window.create_summary_atc) {
-        window.save_flightplan({to_cache: true})
+        window.save_flightplan(true, false)
         window.create_summary_atc();
       }
     });
     document.getElementById('BTN_HTML_SUMMARY_REV')?.addEventListener('click', () => {
       if (window.create_summary_atc) {
         window.save_flightplan({to_cache: true})
-        window.create_summary_atc({ reverse_path: true });
+        window.create_summary_atc({ reverse_path: true, verbose: false });
       }
     });
 
     document.getElementById('BTN_HTML_DEPARTURE')?.addEventListener('click', () => {
       if (window.create_departure_atc) {
-        window.save_flightplan({to_cache: true})
+        window.save_flightplan(true, false)
         window.create_departure_atc();
       }
     });
     document.getElementById('BTN_HTML_DEPARTURE_REV')?.addEventListener('click', () => {
       if (window.create_departure_atc) {
-        window.save_flightplan({to_cache: true})
+        window.save_flightplan(true, false)
         window.create_departure_atc({ reverse_path: true });
       }
     });
 
     document.getElementById('BTN_HTML_ARRIVAL')?.addEventListener('click', () => {
       if (window.create_arrival_atc) {
-        window.save_flightplan({to_cache: true})
+        window.save_flightplan(true, false)
         window.create_arrival_atc();
       }
     });
     document.getElementById('BTN_HTML_ARRIVAL_REV')?.addEventListener('click', () => {
       if (window.create_arrival_atc) {
-        window.save_flightplan({to_cache: true})
+        window.save_flightplan(true, false)
         window.create_arrival_atc({ reverse_path: true });
       }
     });
 
     document.getElementById('BTN_HTML_ENROUTE')?.addEventListener('click', () => {
       if (window.create_enroute_atc) {
-        window.save_flightplan({to_cache: true})
+        window.save_flightplan(true, false)
         window.create_enroute_atc();
       }
     });
     document.getElementById('BTN_HTML_EN_REV')?.addEventListener('click', () => {
       if (window.create_enroute_atc) {
-        window.save_flightplan({to_cache: true})
+        window.save_flightplan(true, false)
         window.create_enroute_atc({ reverse_path: true });
       }
     });
 
-    // Update the wind envelope directly after chaning the inputfields
+    ['DEPARTURE_ANIMATION_START', 'ARRIVAL_ANIMATION_START'].forEach(btnId => {
+      const el = document.getElementById(btnId);
+      if (!el) return;
+      el.addEventListener('click', e => {
+        // Prefer the event's currentTarget id (safe even if a child element was clicked)
+        const id = e?.currentTarget?.id ?? btnId;
+        const prefix = id.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
+        // Start animations
+        animations(prefix, "start");
+      });
+    });
+
+    ['DEPARTURE_ANIMATION_STOP', 'ARRIVAL_ANIMATION_STOP'].forEach(btnId => {
+      const el = document.getElementById(btnId);
+      if (!el) return;
+      el.addEventListener('click', e => {
+        // Prefer the event's currentTarget id (safe even if a child element was clicked)
+        const id = e?.currentTarget?.id ?? btnId;
+        const prefix = id.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
+        // Stop animations
+        animations(prefix, "stop");
+      });
+    });
+
+      // Update the wind envelope directly after chaning the inputfields
     ['DEPARTURE_WIND_SPEED', 'DEPARTURE_WIND_DIRECTION', 'ARRIVAL_WIND_SPEED', 'ARRIVAL_WIND_DIRECTION'].forEach(id => {
       document.getElementById(id)?.addEventListener('change', e => {
         const num = Number(String(e?.target?.value ?? '').trim());

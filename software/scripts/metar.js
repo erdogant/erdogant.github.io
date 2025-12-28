@@ -1132,12 +1132,7 @@ async function retrieve_metar(prefix, verbose = "info") {
   // Fetch METAR data from URL
   try {
     // Stop animations
-    animateRain(prefix, "stop");
-    animateCloud(prefix, "stop");
-    animateFog(prefix, "stop");
-    animateFlare(prefix, "stop");
-    animateSnow(prefix, "stop");
-    animateDark(prefix, "stop");
+    animations(prefix, "stop");
 
     // Retrieve the METAR data for the closest station
     icao_stations = get_top_metar_stations(prefix, 5, false).toJs();
@@ -1202,13 +1197,7 @@ async function retrieve_metar(prefix, verbose = "info") {
       updateFlightCatagoryIcon(prefix);
 
       // Animations
-      animateRain(prefix);
-      animateCloud(prefix);
-      animateFog(prefix);
-      animateSnow(prefix);
-      animateFlare(prefix, "auto", metarObject.lat, metarObject.lon, metarObject.dateTime.date);
-      animateDark(prefix, "auto", "center");
-      // animateTextOverlay(prefix);
+      animations(prefix, "start");
     } catch (error) {
       console.error(`   >Error: METAR details could not be computed:`, error);
     }
@@ -1218,3 +1207,40 @@ async function retrieve_metar(prefix, verbose = "info") {
   checkMetarAge();
   console.log(`   >✅ METAR information is loaded from the closest station: ${stationName}.\n   >✅ The predicted runway is: ${runway_predicted}`);
 }
+
+function animations(prefix, process = "start") {
+  console.log(`>func: animations(${prefix}, ${process})`);
+
+  // const metarObject = prefix === "DEPARTURE" ? window.METAR_DEPARTURE : window.METAR_ARRIVAL;
+  let metarObject = null;
+  if (prefix === "DEPARTURE") {
+    metarObject = window.METAR_DEPARTURE ?? null;
+  } else if (prefix === "ARRIVAL") {
+    metarObject = window.METAR_ARRIVAL ?? null;
+  }
+
+  if (!metarObject || process === "stop") {
+    console.log(`   >Stop Animations: metarObject: [${metarObject}] or ${process}`);
+    animateRain(prefix, "stop");
+    animateCloud(prefix, "stop");
+    animateFog(prefix, "stop");
+    animateFlare(prefix, "stop");
+    animateSnow(prefix, "stop");
+    animateDark(prefix, "stop");
+    // animateControls(prefix, "stop");
+  } else if (process === "start") {
+    // Start/stop animations
+    console.log("   >Start Animations");
+    animateRain(prefix);
+    animateCloud(prefix);
+    animateFog(prefix);
+    animateSnow(prefix);
+    animateFlare(prefix, "auto", metarObject.lat, metarObject.lon, metarObject.dateTime.date);
+    animateDark(prefix, "auto", "center");
+    // animateControls(prefix);
+    // animateTextOverlay(prefix);
+  }
+}
+
+// Make it globally accessible
+window.animations = animations;
