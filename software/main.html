@@ -54,8 +54,8 @@
     <script src="./scripts/sun.js" defer></script>
     <script src="./scripts/snow.js" defer></script>
     <script src="./scripts/dark.js" defer></script>
-    <script src="./scripts/textoverlay.js" defer></script>
-    <script src="./scripts/controls.js" defer></script>
+    <!--<script src="./scripts/textoverlay.js" defer></script>-->
+    <!--<script src="./scripts/controls.js" defer></script>-->
     <script src="./scripts/metar.js" defer></script
     <!--MAP-->
     <script src="./scripts/maps.js" defer></script
@@ -1548,7 +1548,7 @@
 
         // Not in expected DD/MM/YYYY format — bail out early
         if (typeof datetimeString !== 'string' || datetimeString.indexOf(splitchar) === -1) {
-          console.warn('formatDateDMY: format unknown, returning original string');
+          console.warn(`formatDateDMY: format unknown: ${datetimeString}, returning original string`);
           return datetimeString;
         }
 

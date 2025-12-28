@@ -890,23 +890,30 @@ function checkMetarAge() {
     const metarField = document.getElementById(`METAR-FIELD-${prefix}`);
     // const metarText = document.getElementById('METAR-TEXT-' + prefix);
 
-    if (!dateField?.value) {
-      console.log(`   >No METAR date is found for ${prefix}.This is checked every minute.`);
+    // if (!dateField?.value) {
+    //   console.log(`   >No METAR date is found for ${prefix}.This is checked every minute.`);
+    //   return;
+    // }
+    const metarObject = prefix === "DEPARTURE" ? window.METAR_DEPARTURE : window.METAR_ARRIVAL;
+    if (!metarObject) {
+      console.warn(`   >No METAR date is found for ${prefix}.This is checked every minute.`);
       return;
     }
+    const metarTime = metarObject.dateTime.date;
 
     // Parse the METAR date parts
-    const dateFieldClean = formatDateDMY(dateField.value, "ddmmyyyy", "-");
-    const metarTime = createTimeObject(dateFieldClean);
-    console.log(metarTime);
+    // const dateFieldClean = formatDateDMY(dateField.value, "ddmmyyyy", "-");
+    // const metarTime = createTimeObject(dateFieldClean);
+    // console.log(metarTime);
 
     // Parse the NOW date parts
-    const now = nowtime((utc = true));
+    const now = nowtime((utc = false));
     const currenTime = createTimeObject(now);
 
     // Compute difference
     const diff = currenTime - metarTime;
-    const isOld = diff > 35 * 60 * 1000; // 35 minutes in milliseconds
+    const maxMinutes = 35;
+    const isOld = diff > maxMinutes * 60 * 1000; // 35 minutes in milliseconds
     const minutesOld = Math.round(diff / 1000 / 60);
 
     console.log(`   >${prefix}\n   >currenTime: ${currenTime}.\n   >Metar time: ${metarTime}\n   >Diff: ${minutesOld}min\n   >isOld: ${isOld}`);
@@ -1235,8 +1242,8 @@ function animations(prefix, process = "start") {
     animateCloud(prefix);
     animateFog(prefix);
     animateSnow(prefix);
-    animateFlare(prefix, "auto", metarObject.lat, metarObject.lon, metarObject.dateTime.date);
-    animateDark(prefix, "auto", "center");
+    animateFlare(prefix);
+    animateDark(prefix);
     // animateControls(prefix);
     // animateTextOverlay(prefix);
   }

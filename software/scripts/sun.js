@@ -186,7 +186,7 @@ function startFlare(canvas, img) {
   return { start, stop };
 }
 
-function shouldShowSun(metar_obj, min_visibility = 8000) {
+function shouldShowSun(metarObject, min_visibility = 8000) {
   // Show sun if:
   // 1. Must be daylight period
   // 2. CAVOK, or
@@ -195,28 +195,28 @@ function shouldShowSun(metar_obj, min_visibility = 8000) {
   // Calculate sun position using solar position algorithm. Function is from dark.js or metar.js
   let dayLight;
   if (
-    !metar_obj ||
-    !metar_obj.sunPosition ||
-    metar_obj.sunPosition.daylight === null ||
-    metar_obj.sunPosition.daylight === "" ||
-    typeof metar_obj.sunPosition.daylight === "undefined"
+    !metarObject ||
+    !metarObject.sunPosition ||
+    metarObject.sunPosition.daylight === null ||
+    metarObject.sunPosition.daylight === "" ||
+    typeof metarObject.sunPosition.daylight === "undefined"
   ) {
     dayLight = false;
   } else {
-    dayLight = metar_obj.sunPosition.daylight;
+    dayLight = metarObject.sunPosition.daylight;
   }
 
   // If CAVOK and daylight, then sun
-  if (dayLight && metar_obj.cavok) {
+  if (dayLight && metarObject.cavok) {
     return true;
   }
 
-  const goodVisibility = metar_obj.visibility > min_visibility;
+  const goodVisibility = metarObject.visibility > min_visibility;
 
   // Check cloud coverage
   let hasOvercast = false;
-  if (metar_obj.cloud && Array.isArray(metar_obj.cloud)) {
-    for (const layer of metar_obj.cloud) {
+  if (metarObject.cloud && Array.isArray(metarObject.cloud)) {
+    for (const layer of metarObject.cloud) {
       if (["BKN", "OVC", "VV"].includes(layer.code) && layer.altitude < 5000) {
         hasOvercast = true;
         break;
@@ -273,12 +273,19 @@ function animateFlare(
   }
 
   // Get METAR data
-  const metar_obj = prefix === "DEPARTURE" ? window.METAR_DEPARTURE : window.METAR_ARRIVAL;
+  const metarObject = prefix === "DEPARTURE" ? window.METAR_DEPARTURE : window.METAR_ARRIVAL;
+  // Update lat/lon/date
+  if (metarObject && (lat === null || lon === null)) {
+    lat = metarObject.lat;
+    lon = metarObject.lon;
+    date = metarObject.dateTime.date;
+  }
+
   // Check for clear/sunny conditions (no heavy clouds, good visibility)
-  const hasSun = shouldShowSun(metar_obj, 8000, lat, lon, date);
+  const hasSun = shouldShowSun(metarObject, 8000, lat, lon, date);
 
   // Stop animation and return
-  if (!metar_obj || process === "stop" || !hasSun) {
+  if (!metarObject || process === "stop" || !hasSun) {
     console.log(`   >Stop showing sun flares ${prefix}, process: ${process}, hasSun: ${hasSun}`);
     controller.stop();
     return;
