@@ -341,7 +341,7 @@
             <div class="wind-grid">
                 <div class="tile">
                     <input id="DEPARTURE_NAME" type="text" class="tile-value" title="Name of the aerodrome how it is known on the radio">
-                    <span class="tile-label">Aerodrome</span>
+                    <span class="tile-label">Aerodrome name</span>
                 </div>
             </div>
 
@@ -674,7 +674,7 @@
             <div class="wind-grid">
                 <div class="tile">
                     <input id="ARRIVAL_NAME" type="text" class="tile-value" title="Name of the aerodrome how it is known on the radio">
-                    <span class="tile-label">Aerodrome</span>
+                    <span class="tile-label">Aerodrome name</span>
                 </div>
             </div>
 
@@ -731,7 +731,7 @@
         </div>
 
 
-    	  <!--<label_h1>Contact</label_h1>-->
+        <!--CONTACT-->
         <div class="collapsible" data-title="CONTACT">
         <div class="collapsible-header"></div>
         <div class="collapsible-content">
@@ -767,10 +767,30 @@
         </div>
 
 
+        <!--RUNWAY ARRIVAL-->
+        <!--<div class="collapsible" data-title="RUNWAY">
+        <div class="collapsible-header"></div>
+        <div class="collapsible-content">
 
-        <label_h1>METAR WIDGETS</label_h1>
+            <div class="wind-grid">
+                <div class="tile">
+                    <input id="ARRIVAL_RUNWAY_LENGTH" type="text" class="tile-value">
+                    <span class="tile-label">Runway length</span>
+                </div>
+                <div class="tile">
+                    <input id="ARRIVAL_ATC_TOWER" type="text" class="tile-value">
+                    <span class="tile-label">Tower/ Radio (MHz)</span>
+                </div>
+            </div>
+
+            <button onclick="window.save_aerodrome_to_json('ARRIVAL')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 4px 8px 0; flex: 0 0 auto; cursor: pointer; float: right;">💾</button>
+        </div>
+        </div>-->
+
 
         <!-- METAR Information -->
+        <label_h1>METAR WIDGETS</label_h1>
+
         <div class="collapsible" data-title="WIND ENVELOPE">
         <div class="collapsible-header"></div>
         <div class="collapsible-content">
@@ -2370,7 +2390,7 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
         listname = js.document.getElementById(elementId).value.strip()
         if listname == '':
             print('Name is required. Nothing saved. <return>')
-            js.window.alert(f"⚠️ Please provide a checklist name before saving.")
+            js.window.alert(f"ℹ️ Please provide a checklist name before saving.")
             return
 
         cache_key = 'CHECKLIST_' + listname
@@ -3466,6 +3486,8 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
         js.window.updateFlightCatagoryIcon(fname, remove=True)
         # Update missing fields colors
         js.window.highlightMissingFields()
+        # Stop animations
+        js.window.animations(fname, "stop")
 
         # Clear selectionbox (WARNING: CAN NOT BE CLEARED HERE BECAUSE THE ICOA SELECTIONS WILL BE RESET AFTER SELECTION)
         # select = js.document.getElementById(f'{fname}_ICAO_CITY')
@@ -4358,14 +4380,15 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
         elif not json_data and js.window.flight_plan_data[f'{fname}_ICAO_CITY'] == '':
             # No saved aerodrome but I nothing selected
             # Clean all GUI fields
-            message = f"ℹ️ No custom saved aerodrome found for {icaoName}. Please select the aerodrome in the {fname.lower()} tab and check the input fields before saving."
+            message = f"ℹ️ Please select and save the {icaoName} aerodrome in the {fname.lower()} tab first."
             print(message)
             if verbose == 'info': js.window.alert(message)
             await clear_aerodrome_fields(fname)
             return False
         else:
-            # No saved aerodrome and nothing selected
-            message = f'⚠️ {fname.title()} aerodrome ({icaoName}) not valid or previously saved. Please choose the aerodrome using the selection box first.'
+            # Aerodrome does not exits. Return without clearning all fields.
+            # message = f'⚠️ {fname.title()} aerodrome ({icaoName}) not valid or previously saved. Please choose the aerodrome using the selection box first.'
+            message = f"ℹ️ Please select and save the {icaoName} aerodrome in the {fname.lower()} tab first."
             print(message)
             if verbose == 'info': js.window.alert(message)
 
@@ -6888,24 +6911,52 @@ const COUNTRIES_DATA = [
       return inside;
     }
 
+    // function variableWindRange(variation) {
+    //   if (!variation) return null;
+    //   const parts = variation.split('/');
+    //   if (parts.length !== 2) return null;
+
+    //   const start = parseInt(parts[0]);
+    //   const end = parseInt(parts[1]);
+
+    //   const range = [];
+    //   let current = start;
+    //   while (current !== end) {
+    //     range.push(current);
+    //     current = (current + 10) % 360;
+    //   }
+    //   range.push(end);
+
+    //   return range;
+    // }
+
     function variableWindRange(variation) {
       if (!variation) return null;
+
       const parts = variation.split('/');
       if (parts.length !== 2) return null;
 
-      const start = parseInt(parts[0]);
-      const end = parseInt(parts[1]);
+      let start = parseInt(parts[0], 10);
+      let end   = parseInt(parts[1], 10);
+
+      if (Number.isNaN(start) || Number.isNaN(end)) return null;
+
+      // Normalize 360 → 0
+      start = start % 360;
+      end   = end % 360;
 
       const range = [];
       let current = start;
+
       while (current !== end) {
         range.push(current);
         current = (current + 10) % 360;
       }
-      range.push(end);
 
+      range.push(end);
       return range;
     }
+
 
     async function windEnvelope_js(prefix, maxHeadwind = 25, maxCrosswind = 15, update_gui_fields = true) {
       console.log(`>func: windEnvelope_js(${prefix})`);

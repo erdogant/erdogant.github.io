@@ -285,21 +285,12 @@ input[type="text"]:hover {
     border-radius: 10px;
 }
 
-/* 🌧️ Rain canvas overlay */
-.rain-canvas {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 5; /* rain ABOVE cloud */
-    border-radius: 10px;
-}
-
 /* Snow canvas overlay */
 .snow-canvas {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    z-index: 5; /* rain ABOVE cloud */
+    z-index: 5;
     border-radius: 10px;
 }
 
@@ -308,7 +299,16 @@ input[type="text"]:hover {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    z-index: 6; /* rain ABOVE cloud */
+    z-index: 6;
+    border-radius: 10px;
+}
+
+/* 🌧️ Rain canvas overlay */
+.rain-canvas {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 7;
     border-radius: 10px;
 }
 
