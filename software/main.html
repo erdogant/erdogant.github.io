@@ -249,6 +249,8 @@
         <div style="display: flex; justify-content: flex-end; align-items: center; gap: 0px; margin-top: 0px; padding-bottom: 0px; margin: 0px;">
             <button id="DEPARTURE_ANIMATION_START" title="Start the METAR Animation" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">▶️</button>
             <button id="DEPARTURE_ANIMATION_STOP" title="Stop the METAR Animation" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">⏸️</button>
+            <!--<button id="DEPARTURE_USE_CACHED" onclick="window.retrieve_metar('DEPARTURE')" title="Retrieve METAR weather information for the selected aerodrome" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>-->
+            <button id="DEPARTURE_USE_CACHED" title="Retrieve METAR weather information for the selected aerodrome" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>
         </div>
 
 
@@ -275,7 +277,7 @@
                 <img id="DEPARTURE_VFR_ICON" src="" alt="" style="width:70px; height:auto; vertical-align:middle; margin-left:6px;">
                 <!--<input type="text" id="DEPARTURE_ICAO" class="tile-value UPPERCASE_input sync-departure" onchange="window.load_aerodrome_from_json('DEPARTURE')" placeholder="ICAO">-->
                 <input type="text" id="DEPARTURE_ICAO" class="tile-value UPPERCASE_input sync-departure" placeholder="ICAO">
-                <button id="DEPARTURE_USE_CACHED" onclick="window.retrieve_metar('DEPARTURE')" title="Retrieve METAR weather information for the selected aerodrome" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>
+                <button id="DEPARTURE_LOAD_ICAO" title="Load ICAO information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">📍</button>
             </div>
 
 
@@ -583,6 +585,8 @@
         <div style="display: flex; justify-content: flex-end; align-items: center; gap: 0px; margin-top: 0px; padding-bottom: 0px; margin: 0px;">
             <button id="ARRIVAL_ANIMATION_START" title="Start the METAR Animation" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">▶️</button>
             <button id="ARRIVAL_ANIMATION_STOP" title="Stop the METAR Animation" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">⏸️</button>
+            <!--<button id="ARRIVAL_USE_CACHED" onclick="window.retrieve_metar('ARRIVAL')" title="Retrieve METAR weather information for the selected aerodrome" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>-->
+            <button id="ARRIVAL_USE_CACHED" title="Retrieve METAR weather information for the selected aerodrome" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>
         </div>
 
 
@@ -607,7 +611,7 @@
                 <img id="ARRIVAL_VFR_ICON" src="" alt="" style="width:70px; height:auto; vertical-align:middle; margin-left:6px;">
                 <!--<input type="text" id="ARRIVAL_ICAO" class="tile-value UPPERCASE_input sync-arrival" onchange="window.load_aerodrome_from_json('ARRIVAL')" placeholder="ICAO">-->
                 <input type="text" id="ARRIVAL_ICAO" class="tile-value UPPERCASE_input sync-arrival" placeholder="ICAO">
-                <button id="ARRIVAL_USE_CACHED" onclick="window.retrieve_metar('ARRIVAL')" title="Retrieve METAR weather information for the selected aerodrome" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>
+                <button id="ARRIVAL_LOAD_ICAO" title="Load ICAO information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">📍</button>
             </div>
 
 
@@ -4367,14 +4371,18 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
 
             # Get the original selected ICAO
             icaoSelected = js.document.getElementById(f'{fname}_ICAO_CITY')
+
             # Extract the string that is between parentheses in the alert message (e.g. the ICAO) and set it as the spinner value
             icao_value = re.search(r'\(([^)]+)\)', icaoSelected.value).group(1)
+
             # Store previous value back elements and flight plan
             js.document.getElementById(f'{fname}_ICAO').value = icao_value
             js.document.getElementById(f'{fname}_ICAO_2').value = icao_value
             js.window.flight_plan_data[f'{fname}_ICAO'] = icao_value
+
             # Update missing fields colors
             js.window.highlightMissingFields()
+
             # Return
             return False
 
@@ -5953,6 +5961,7 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
         window.create_enroute_atc();
       }
     });
+
     document.getElementById('BTN_HTML_EN_REV')?.addEventListener('click', () => {
       if (window.create_enroute_atc) {
         window.save_flightplan(true, false)
@@ -6002,7 +6011,7 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
     });
 
 
-    // Update the aerodrome directly after changing the inputfields
+    // Update the aerodrome directly after changing one of the inputfields
     ['DEPARTURE_ICAO', 'DEPARTURE_ICAO_2', 'ARRIVAL_ICAO', 'ARRIVAL_ICAO_2'].forEach(id => {
       document.getElementById(id)?.addEventListener('change', e => {
         // At least 4 chars is required
@@ -6019,6 +6028,44 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
         window.load_aerodrome_from_json(prefix, elementId=id)
       });
     });
+
+    // Update the aerodrome directly after clicking one the icon
+    ['DEPARTURE_LOAD_ICAO', 'ARRIVAL_LOAD_ICAO'].forEach(id => {
+      const e = document.getElementById(id);
+      if (!e) return;
+        e.addEventListener('click', e => {
+        // Prefer the event's currentTarget id (safe even if a child element was clicked)
+        const field = e?.currentTarget?.id ?? id;
+        const prefix = field.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
+
+        // At least 4 chars is required for the icao
+        element = document.getElementById(`${prefix}_ICAO`);
+        const icao = String(element?.value ?? '').trim();
+        if (icao.length < 4) return;
+        // alert(`${prefix} with id: ${id}: field: ${icao}`)
+
+        // Load the aerodrome from json
+        window.load_aerodrome_from_json(prefix, elementId=`${prefix}_ICAO`);
+      });
+    });
+
+    // Update the aerodrome directly after clicking one the icon
+    ['DEPARTURE_USE_CACHED', 'ARRIVAL_USE_CACHED'].forEach(id => {
+      const e = document.getElementById(id);
+      if (!e) return;
+        e.addEventListener('click', e => {
+        // Prefer the event's currentTarget id (safe even if a child element was clicked)
+        const field = e?.currentTarget?.id ?? id;
+        const prefix = field.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
+        // Get the METAR from the field
+        // const metarField = document.getElementById(`METAR-FIELD-${prefix}`).value;
+        const metarField = '';
+        // alert(`${prefix} with id: ${id}: METAR field: ${metarField.value}`);
+        // Retrieve METAR based on the text input field
+        window.retrieve_metar(prefix, 'info', metarField);
+      });
+    });
+
 
     // Add clear cache button handler
     document.getElementById('clear_cache_btn')?.addEventListener('click', async () => {

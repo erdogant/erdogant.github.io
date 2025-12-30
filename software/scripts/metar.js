@@ -1104,7 +1104,7 @@ function updateFlightCatagoryIcon(prefix, remove = false) {
   borderFieldAerodrome.style.backgroundColor = metarObject.color;
 }
 
-async function retrieve_metar(prefix, verbose = "info") {
+async function retrieve_metar(prefix, verbose = "info", metar_custom = "") {
   console.log(`> func: retrieve_metar(${prefix})`);
   // Get the values from the input fields
   const name = document.getElementById(prefix + "_NAME").value || "";
@@ -1127,9 +1127,7 @@ async function retrieve_metar(prefix, verbose = "info") {
 
   // If ICAO is empty or not provided, notify the user and return early
   if (!icao || !country) {
-    if (verbose === "info") {
-      alert("ℹ️ To retrieve METAR information, please select a country and load the aerodrome (ICAO) first.");
-    }
+    if (verbose === "info") alert("ℹ️ To retrieve METAR information, please select a country and load the aerodrome (ICAO) first.");
     return;
   }
 
@@ -1141,18 +1139,22 @@ async function retrieve_metar(prefix, verbose = "info") {
     // Stop animations
     animations(prefix, "stop");
 
-    // Retrieve the METAR data for the closest station
-    icao_stations = get_top_metar_stations(prefix, 5, false).toJs();
-    console.log("   >Closest METAR stations:");
-    console.log(`   >${icao_stations}`);
-
-    // Fetch the METAR data for the closest station (pass decoded flag)
-    metarData = await fetch_metar(icao_stations, true, false, prefix);
-
-    // Store data
-    metar_icao = metarData[0];
-    stationName = metarData[1];
-    // metarStr = "EDDH 191350Z AUTO 22009KT 9999 OVC013 12/09 Q1015 TEMPO 4500 -RADZ BKN009";
+    if (metar_custom === "" || metar_custom === null) {
+      // Retrieve the METAR data for the closest station
+      icao_stations = get_top_metar_stations(prefix, 5, false).toJs();
+      console.log("   >Closest METAR stations:");
+      console.log(`   >${icao_stations}`);
+      // Fetch the METAR data for the closest station (pass decoded flag)
+      metarData = await fetch_metar(icao_stations, true, false, prefix);
+      // Store data
+      metar_icao = metarData[0];
+      stationName = metarData[1];
+      // metarStr = "METAR EDDH 191350Z AUTO 22009KT 9999 OVC013 12/09 Q1015 TEMPO 4500 -RADZ BKN009";
+    } else {
+      console.log("   >Custom  METAR information provided");
+      metar_icao = metar_custom;
+      stationName = icao;
+    }
 
     if (metarText) {
       metarText.value = stationName ? `Closest available METAR station is ${stationName}` : "No nearby METAR stations found";
