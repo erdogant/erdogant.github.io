@@ -247,10 +247,10 @@
 
         </div>
         <div style="display: flex; justify-content: flex-end; align-items: center; gap: 0px; margin-top: 0px; padding-bottom: 0px; margin: 0px;">
-            <button id="DEPARTURE_ANIMATION_START" title="Start the METAR Animation" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">▶️</button>
-            <button id="DEPARTURE_ANIMATION_STOP" title="Stop the METAR Animation" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">⏸️</button>
-            <!--<button id="DEPARTURE_USE_CACHED" onclick="window.retrieve_metar('DEPARTURE')" title="Retrieve METAR weather information for the selected aerodrome" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>-->
-            <button id="DEPARTURE_USE_CACHED" title="Retrieve METAR weather information for the selected aerodrome" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>
+            <button id="DEPARTURE_ANIMATION_START" title="Start the animation" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">▶️</button>
+            <button id="DEPARTURE_ANIMATION_STOP" title="Stop the animation" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">⏸️</button>
+            <button id="DEPARTURE_ANIMATION_METARTEXT" title="Update animation directly on the METAR textfield" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔀</button>
+            <button id="DEPARTURE_USE_CACHED" title="Retrieve most recent METAR weather information from Aviation weather" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>
         </div>
 
 
@@ -585,8 +585,8 @@
         <div style="display: flex; justify-content: flex-end; align-items: center; gap: 0px; margin-top: 0px; padding-bottom: 0px; margin: 0px;">
             <button id="ARRIVAL_ANIMATION_START" title="Start the METAR Animation" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">▶️</button>
             <button id="ARRIVAL_ANIMATION_STOP" title="Stop the METAR Animation" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">⏸️</button>
-            <!--<button id="ARRIVAL_USE_CACHED" onclick="window.retrieve_metar('ARRIVAL')" title="Retrieve METAR weather information for the selected aerodrome" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>-->
-            <button id="ARRIVAL_USE_CACHED" title="Retrieve METAR weather information for the selected aerodrome" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>
+            <button id="ARRIVAL_ANIMATION_METARTEXT" title="Update animation directly on the METAR textfield" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔀</button>
+            <button id="ARRIVAL_USE_CACHED" title="Retrieve most recent METAR weather information from Aviation weather" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>
         </div>
 
 
@@ -5632,12 +5632,12 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
         const targetTab = btn.getAttribute("data-tab");
 
         // Get the CURRENT active tab (before switching)
-        const currentActiveTab = document.querySelector(".tablinks.active");
-        const currentTab = currentActiveTab ? currentActiveTab.getAttribute("data-tab") : null;
+        const elementActiveTab = document.querySelector(".tablinks.active");
+        const currentTab = elementActiveTab ? elementActiveTab.getAttribute("data-tab") : null;
 
-        console.log(`>Tab switch to: ${targetTab}`)
+        console.log(`>Tab switch from: ${currentTab}, to ${targetTab}`)
 
-        // SAVE ON TAB SWITCHING
+        // SAVE ON TAB CHANGE SWITCHING TO GENERAL AND ATC
         // if (pyscriptReady && window.save_flightplan && currentTab && currentTab !== targetTab) {
         if (pyscriptReady && window.save_flightplan && (targetTab === "ATC" || targetTab === "General")) {
           try {
@@ -5646,6 +5646,20 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
             console.error("Error saving data before tab switch:", error);
           }
         }
+
+        // // Stop animation when leaving Departure tab
+        // if (currentTab !== targetTab && currentTab === 'Departure'){
+        //   window.animations('DEPARTURE', 'stop');
+        // }
+        // // Stop animation when leaving Arrival tab
+        // if (currentTab !== targetTab && currentTab === 'Arrival'){
+        //   window.animations('ARRIVAL', 'stop');
+        // }
+        // // Stop animation when leaving General tab
+        // if (currentTab !== targetTab && currentTab === 'General'){
+        //   animateCloud('SKYWALK_LOGO', process = "stop");
+        //   animateSnow('SKYWALK_LOGO', process ='stop');
+        // }
 
         // Switch tabs
         tabButtons.forEach(b => b.classList.remove("active"));
@@ -6083,6 +6097,22 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
         // Get the METAR from the field
         // const metarField = document.getElementById(`METAR-FIELD-${prefix}`).value;
         const metarField = '';
+        // alert(`${prefix} with id: ${id}: METAR field: ${metarField.value}`);
+        // Retrieve METAR based on the text input field
+        window.retrieve_metar(prefix, 'info', metarField);
+      });
+    });
+
+    // Update the aerodrome directly after clicking one the icon
+    ['DEPARTURE_ANIMATION_METARTEXT', 'ARRIVAL_ANIMATION_METARTEXT'].forEach(id => {
+      const e = document.getElementById(id);
+      if (!e) return;
+        e.addEventListener('click', e => {
+        // Prefer the event's currentTarget id (safe even if a child element was clicked)
+        const field = e?.currentTarget?.id ?? id;
+        const prefix = field.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
+        // Get the METAR from the text field
+        const metarField = document.getElementById(`METAR-FIELD-${prefix}`).value;
         // alert(`${prefix} with id: ${id}: METAR field: ${metarField.value}`);
         // Retrieve METAR based on the text input field
         window.retrieve_metar(prefix, 'info', metarField);

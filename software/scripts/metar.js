@@ -911,7 +911,7 @@ function checkMetarAge() {
     const currenTime = createTimeObject(now);
 
     // Compute difference
-    const diff = currenTime - metarTime;
+    const diff = Math.abs(currenTime - metarTime);
     const maxMinutes = 35;
     const isOld = diff > maxMinutes * 60 * 1000; // 35 minutes in milliseconds
     const minutesOld = Math.round(diff / 1000 / 60);
@@ -920,9 +920,9 @@ function checkMetarAge() {
 
     if (isOld) {
       // colorMetarFields(prefix, false);
-      message = `METAR weather info is ${minutesOld} minutes old. Reload the METAR information to retrieve the latest one.`;
+      message = `METAR weather info is ${minutesOld} minutes off. Reload the METAR information to retrieve the latest one.`;
       dateField.title = message;
-      dateField.value = ` METAR: ${minutesOld} min. old`;
+      dateField.value = ` METAR: ${minutesOld} min. diff`;
       metarField.title = message;
       dateField.style.backgroundColor = "#ffebee";
       metarField.style.backgroundColor = "#ffebee";

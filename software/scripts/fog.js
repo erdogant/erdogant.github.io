@@ -4,7 +4,8 @@ function startFog(canvas, img) {
   const ctx = canvas.getContext("2d");
   let running = false;
   let rafId = null;
-  let fogDensity = 0.4; // default
+  let fogDensityStart = 0.4; // default
+  let fogDensityStop = 0.3; // default
 
   function resize() {
     const r = img.getBoundingClientRect();
@@ -19,8 +20,8 @@ function startFog(canvas, img) {
     // Linear gradient fog (top to bottom)
     const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
 
-    gradient.addColorStop(0, `rgba(250,250,250, ${fogDensity})`); // Top (denser fog)
-    gradient.addColorStop(1, `rgba(220,220,220, ${fogDensity - 0.3})`); // Bottom (transparent fog)
+    gradient.addColorStop(0, `rgba(250,250,250, ${fogDensityStart})`); // Top (denser fog)
+    gradient.addColorStop(1, `rgba(220,220,220, ${fogDensityStart - fogDensityStop})`); // Bottom (transparent fog)
 
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -32,9 +33,22 @@ function startFog(canvas, img) {
     if (running) return;
     running = true;
 
-    if (level === "light") fogDensity = 0.6;
-    else if (level === "heavy") fogDensity = 0.9;
-    else fogDensity = 0.7;
+    if (level === "light") {
+      fogDensityStart = 0.6;
+      fogDensityStop = 0.3;
+    } else if (level === "medium") {
+      fogDensityStart = 0.7;
+      fogDensityStop = 0.2;
+    } else if (level === "heavy") {
+      fogDensityStart = 0.9;
+      fogDensityStop = 0.1;
+    } else if (level === "superheavy") {
+      fogDensityStart = 0.98;
+      fogDensityStop = 0.05;
+    } else {
+      fogDensityStart = 0.7;
+      fogDensityStop = 0.3;
+    }
 
     resize();
     drawFog();
@@ -88,6 +102,7 @@ function animateFog(prefix, process = "auto", intensity = "light") {
   //      'light'
   //      'medium'
   //      'heavy'
+  //      'superheavy'
 
   console.log(`> func: animateFog(${prefix})`);
 
@@ -139,7 +154,9 @@ function animateFog(prefix, process = "auto", intensity = "light") {
   );
 
   // Add to image
-  if (visibility <= 2500) {
+  if (visibility <= 1000) {
+    controller.start("superheavy");
+  } else if (visibility <= 2500) {
     controller.start("heavy");
   } else if (visibility <= 5000) {
     controller.start("medium");
