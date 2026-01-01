@@ -59,6 +59,7 @@
     <script src="./scripts/metar.js" defer></script
     <!--MAP-->
     <script src="./scripts/maps.js" defer></script
+    <script src="app.js"></script>
 
 </head>
 
@@ -85,19 +86,20 @@
 
 	<div id="Menu" class="tabcontent">
     	<button class="tablinks" data-tab="Config" style="cursor: pointer;">⚙️ Config</button>
-            <button class="tablinks" data-tab="MAP" style="cursor: pointer;">🗺️ Map</button>
-            <button class="tablinks" data-tab="Checklist" style="cursor: pointer;">📋 Checklist</button>
-            <div class="button-row">
-                <button id="BTN-WEIGHTBALANCE"
-                    type="button"
-                    onclick="window.open('https://www.vliegclubrotterdam.nl/wb/', '_blank')"
-                    title="Weight and Balance calculator vliegclub Rotterdam">
-                        ⚖️ Weight & Balance vliegclub Rotterdam
-                </button>
-            </div>
-            <!--CHECK FOR UPDATES-->
-            <button id="updateBtn" onclick="updateApp()">Check for updates</button>
-            <script src="app.js"></script>
+        <button class="tablinks" data-tab="MAP" style="cursor: pointer;">🗺️ Map</button>
+        <button class="tablinks" data-tab="Checklist" style="cursor: pointer;">📋 Checklist</button>
+        <button class="tablinks" data-tab="Aircraft Specifications" style="cursor: pointer;">📐 Aircraft Specifications</button>
+        <div class="button-row">
+            <button id="BTN-WEIGHTBALANCE"
+                type="button"
+                onclick="window.open('https://www.vliegclubrotterdam.nl/wb/', '_blank')"
+                title="Weight and Balance calculator vliegclub Rotterdam">
+                    ⚖️ Weight & Balance vliegclub Rotterdam
+            </button>
+        </div>
+        <!--CHECK FOR UPDATES-->
+        <button id="updateBtn" onclick="updateApp()">Check for updates</button>
+        <!--<script src="app.js"></script>-->
 
 	</div>
 
@@ -1139,6 +1141,7 @@
 
     </div>
 
+
     <div id="Checklist" class="tabcontent">
 
         <label_h1>Checklist</label_h1>
@@ -1152,7 +1155,7 @@
         <div class="border-round-eged">
             <div class="wind-grid" style="display: flex; align-items: center; gap: 1px;">
                 <!-- Inputfield -->
-                <input id="checklist_field" type="text" class="tile-value" placeholder="My checklist" style="background-color:transparent; font-size: 18px; padding: 0.5px;">
+                <input id="checklist_field" type="text" class="tile-value" placeholder="My new checklist" style="background-color:transparent; font-size: 18px; padding: 0.5px;">
             </div>
 
             <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
@@ -1165,7 +1168,8 @@
                     <option value="">Select and Load</option>
                 </select>
                 <!-- Save button -->
-                <button id="checklist_save_btn" onclick="window.save_checklist_to_json('checklist_field')" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Checklist">💾</button>
+                <!--<button id="checklist_save_btn" onclick="window.save_checklist_to_json('checklist_field')" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Checklist">💾</button>-->
+                <button id="checklist_save_btn" onclick="window.save_to_json('checklist_field', 'CHECKLIST')" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Checklist">💾</button>
             </div>
         </div>
 
@@ -1276,7 +1280,40 @@
 
     </div>
 
+    <!-- AIRCRAFT SPECIFICATIONS-->
+    <div id="Aircraft Specifications" class="tabcontent">
+        <label_h1>Aircraft Specifications</label_h1>
 
+        <div style="border: 0px solid lightgrey; border-radius: 10px; padding: 10px;">
+            <div id="bottom-container">
+                <div class="info">
+                    This section is to manage your aircrafts. You can set the technical specifications for one or multiple aircrafts.
+                    The information is used for weight and balance calculations, and the takeoff and landing performance (based on the POH)..
+                </div>
+            </div>
+        </div>
+
+        <div class="border-round-eged">
+            <div class="wind-grid" style="display: flex; align-items: center; gap: 1px;">
+                <!-- Inputfield -->
+                <input id="aircraft_field" type="text" class="tile-value" placeholder="My new aircraft" style="background-color:transparent; font-size: 18px; padding: 0.5px;">
+            </div>
+
+            <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
+                <!-- Clean Button -->
+                <button id="aircraft_clear_btn" onclick="aircraft_clean()" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Create New Aircraft">🧹</button>
+                <!-- Delete Button -->
+                <button id="aircraft_delete_btn" onclick="window.delete_item_from_spinner('aircraft_spinner', 'AIRCRAFT', 'aircraft_field')" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete Aircraft">🗑️</button>
+                <!-- Spinner -->
+                <select id="aircraft_spinner" class="tile-value-dropdown" style="flex: 1; font-size: 12px; font-weight: normal;">
+                    <option value="">Select and Load</option>
+                </select>
+                <!-- Save button -->
+                <button id="aircraft_save_btn" onclick="window.save_to_json('aircraft_field', 'AIRCRAFT')" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Aircraft">💾</button>
+            </div>
+        </div>
+
+    </div>
 
 <!-- Javascript functionality -->
 
@@ -1899,6 +1936,17 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
     }
 });
 
+// Add event listeners for aircraft spinners
+document.getElementById('aircraft_spinner')?.addEventListener('change', async function() {
+    if (this.value && window.load_spinner_selection) {
+        console.log(`> addEventListener: aircraft_spinner`);
+        // Update the checklist using the selection from cache (Python async)
+        await window.load_spinner_selection('aircraft_spinner', 'AIRCRAFT');
+        // Rebuild sections and categories after loading
+        // populateChecklistCatagories();
+    }
+});
+
 </script>
 
 
@@ -1908,6 +1956,7 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
     # Standard library imports
     import json
     import os
+    import copy
     import sys
     import re
     import pathlib
@@ -1928,7 +1977,6 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
     import ast
     import asyncio
     from jinja2 import Environment, DictLoader
-    # from math import radians, cos
 
     # JavaScript/browser imports
     import js
@@ -1938,6 +1986,64 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
 
     import logging
     logger = logging.getLogger('SKYWALK')
+
+
+    def get_default_aircraft():
+        print('> func: get_default_aircraft()')
+        # Default POH
+        POH_RUNWAY = [{"Altitude": None, "Temperature": None, "Weigth": None, 'Distance': None, '50ft': None}]
+
+        # Make the template
+        template = {
+                    'NAME': '',
+                    'AIRCRAFT_NAME': '',
+                    'TYPE': '',
+                    'CALLSIGN': '',
+                    'CALLSIGN_SHORT': '',
+                    'CRUISESPEED': None,
+                    'RULES': '',
+                    'COSTS': {'PER_HOUR': None},
+                    'FUEL': {'value': 0, 'type': '', 'density': 1, 'consumption': None},
+                    'WEIGHT': {'fuel_kg': 0, 'empty': 0, 'pilot': 0, 'copilot': 0, 'passenger_left': 0, 'passenger_right': 0, 'bagage': 0},
+                    'ARM': {'fuel': 0, 'empty_weight': 0, 'pilot': 0, 'copilot': 0, 'passenger_left': 0, 'passenger_right': 0, 'bagage': 0},
+                    'WEIGHT_BALANCE': {'moment': None, 'CG': None},
+                    'MTOW': None,
+                    'ENVELOPE': {'x1': None, 'x2': None, 'x3': None, 'x4': None, 'x5': None, 'y1': None, 'y2': None, 'y3': None, 'y4': None, 'y5': None},
+                    'POH_RUNWAY': {'TAKEOFF': copy.deepcopy(str(POH_RUNWAY)),
+                                    'LANDING': copy.deepcopy(str(POH_RUNWAY))},
+                    'PERFORMANCE': {
+                        'TAKEOFF': {
+                            'soft_dry': None,
+                            'soft_wet': None,
+                            'hard_dry': 1,
+                            'hard_wet': None,
+                            'other_dry': 1,
+                            'other_wet': None,
+
+                            'paved_slope': None,
+                            'safety_correction': None,
+                            'minimum_distance_available': None,
+                            'tailwind_influence': {'item_0': [None, None]},
+                            'headwind_influence': {'item_0': [None, None], 'item_1': [None, None], 'item_2': [None, None], 'item_3': [None, None]},
+                            },
+                        'LANDING': {
+                            'soft_dry': None,
+                            'soft_wet': None,
+                            'hard_dry': 1,
+                            'hard_wet': None,
+                            'other_dry': 1,
+                            'other_wet': None,
+
+                            'paved_slope': None,
+                            'safety_correction': None,
+                            'minimum_distance_available': None,
+                            'tailwind_influence': {'item_0': [None, None]},
+                            'headwind_influence': {'item_0': [None, None], 'item_1': [None, None], 'item_2': [None, None], 'item_3': [None, None]},
+                            },
+                        }
+                    }
+
+        return template
 
     def get_default_checklist():
         print('> func: default_checklist()')
@@ -2164,7 +2270,11 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
             'NOTAM': {'data': {}},      # NOTAM data
 
             # CHECKLIST
-            'CHECKLIST': get_default_checklist(),
+            'CHECKLIST': copy.deepcopy(get_default_checklist()),
+
+            # AIRCRAFT
+            'AIRCRAFT': copy.deepcopy(get_default_aircraft()),
+
         }
 
     # ================================================
@@ -2229,7 +2339,6 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
             print(f"   >⚠️ Dropdown {elementId} not found for {cacheName.lower()}.")
 
 
-
     async def load_spinner_selection(elementId, cacheName):
         """Load selected from localStorage"""
         print(f'> func: load_spinner_selection({elementId})')
@@ -2262,11 +2371,64 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
                 js.window.flight_plan_data['CHECKLIST'] = data_dict
                 js.document.getElementById('checklist_field').value = user_selection
                 checklist_populate()
+            elif elementId == 'aircraft_spinner':
+                js.window.flight_plan_data['AIRCRAFT'] = data_dict
+                js.document.getElementById('aircraft_field').value = user_selection
+                # aircraft_populate()
+                print('PRINT AIRCRAFT DICT')
+                print(data_dict)
 
             print(f"   >✅ [elementId] '{user_selection}' loaded successfully")
         except Exception as e:
             print(f"   >⚠️ Error loading {user_selection}: {e}")
             js.window.alert(f"❗ Error loading {user_selection}: {e}")
+
+
+    def save_to_json(elementId, cacheName):
+        """Save custom data to localStorage. """
+        print(f'> func: save_to_json()')
+
+        # Store to localStorage
+        listname = js.document.getElementById(elementId).value.strip()
+        if listname == '':
+            print('Name is required. Nothing saved. <return>')
+            js.window.alert(f"ℹ️ Please provide a {cacheName} name before saving.")
+            return
+
+        cache_key = f'{cacheName}_{listname}'
+        # Store Cache key in flightplan
+        js.window.flight_plan_data[cacheName]['NAME'] = cache_key
+        # Convert to JSON string
+        json_data = json.dumps(js.window.flight_plan_data[cacheName])
+        # Save to cache
+        js.localStorage.setItem(cache_key, json_data)
+
+        # Update the checklist list
+        update_dropdown(f'{cacheName.lower()}_spinner', cacheName=cacheName, keepSelection=True, elementId2=f'{cacheName.lower()}_field');
+        message = f"✅ {cacheName} {listname} is saved with the catagories and items."
+        print(message)
+        js.window.alert(message)
+
+        # Return
+        return True
+
+    # ================================================
+    # AIRCRAFT SPECIFICATIONS
+    # ================================================
+
+    def aircraft_clean(verbose='info'):
+        print('> func: aircraft_clean()')
+        # Clean the fields
+        js.document.getElementById('aircraft_field').value = ''
+        select = js.document.getElementById('aircraft_spinner')
+        select.value = 'Select and Load'
+
+        # Set the default checklist
+        js.window.flight_plan_data['AIRCRAFT'] = get_default_aircraft()
+
+        if verbose=='info':
+            js.window.alert(f"ℹ️ Default aircraft specifications are loaded.")
+            print(js.window.flight_plan_data['AIRCRAFT'])
 
 
     # ================================================
@@ -2381,34 +2543,34 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
         # window.createChecklistSections()
         # window.populateChecklistCatagories()
 
-    def save_checklist_to_json(elementId):
-        """Save custom checklist data to localStorage. """
-        print(f'> func: save_checklist_to_json()')
 
+    # def save_checklist_to_json(elementId):
+    #     """Save custom checklist data to localStorage. """
+    #     print(f'> func: save_checklist_to_json()')
 
-        # Store the CHECKLIST to localStorage
-        listname = js.document.getElementById(elementId).value.strip()
-        if listname == '':
-            print('Name is required. Nothing saved. <return>')
-            js.window.alert(f"ℹ️ Please provide a checklist name before saving.")
-            return
+    #     # Store the CHECKLIST to localStorage
+    #     listname = js.document.getElementById(elementId).value.strip()
+    #     if listname == '':
+    #         print('Name is required. Nothing saved. <return>')
+    #         js.window.alert(f"ℹ️ Please provide a checklist name before saving.")
+    #         return
 
-        cache_key = 'CHECKLIST_' + listname
-        # Store Cache key in flightplan
-        js.window.flight_plan_data['CHECKLIST']['NAME'] = cache_key
-        # Convert to JSON string
-        json_data = json.dumps(js.window.flight_plan_data['CHECKLIST'])
-        # Save to cache
-        js.localStorage.setItem(cache_key, json_data)
+    #     cache_key = 'CHECKLIST_' + listname
+    #     # Store Cache key in flightplan
+    #     js.window.flight_plan_data['CHECKLIST']['NAME'] = cache_key
+    #     # Convert to JSON string
+    #     json_data = json.dumps(js.window.flight_plan_data['CHECKLIST'])
+    #     # Save to cache
+    #     js.localStorage.setItem(cache_key, json_data)
 
-        # Update the checklist list
-        update_dropdown('checklist_spinner', cacheName='CHECKLIST', keepSelection=True, elementId2='checklist_field');
-        message = f"✅ Checklist {listname} is saved with the catagories and items."
-        print(message)
-        js.window.alert(message)
+    #     # Update the checklist list
+    #     update_dropdown('checklist_spinner', cacheName='CHECKLIST', keepSelection=True, elementId2='checklist_field');
+    #     message = f"✅ Checklist {listname} is saved with the catagories and items."
+    #     print(message)
+    #     js.window.alert(message)
 
-        # Return
-        return True
+    #     # Return
+    #     return True
 
 
     def checklist_clean(verbose='info'):
@@ -3249,7 +3411,9 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
                 js.window.flight_plan_data[key] = ''
 
         # Clear checklist
-        get_default_checklist()
+        js.window.flight_plan_data['CHECKLIST'] = get_default_checklist()
+        # Clear aircraft
+        js.window.flight_plan_data['AIRCRAFT'] = get_default_aircraft()
 
 
     def update_general_gui_fields(flight_plan_dict):
@@ -3972,6 +4136,7 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
             'ARRIVAL_COUNTRY': '',
         }
         js.window.flight_plan_data['CHECKLIST'] = get_default_checklist()
+        js.window.flight_plan_data['AIRCRAFT'] = get_default_aircraft()
 
         # Populate checklist items
         checklist_populate()
@@ -4039,10 +4204,12 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
         await clear_enroute_fields()
 
         # Clean all fields from checklist
-        # get_default_checklist()
         js.window.flight_plan_data['CHECKLIST'] = get_default_checklist()
         # populate checklist items
         checklist_populate()
+
+        # Clean all fields from aircraft
+        js.window.flight_plan_data['AIRCRAFT'] = get_default_aircraft()
 
         # Clean flag
         # updateFlag('DEPARTURE', 'remove')
@@ -5548,14 +5715,20 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
 
     # CHECKLIST
     js.window.checklist_clean = checklist_clean
-    js.window.save_checklist_to_json = save_checklist_to_json
+    # js.window.save_checklist_to_json = save_checklist_to_json
     js.window.check_items_complete = check_items_complete
     js.window.checklist_print = checklist_print
     js.window.checklist_populate = checklist_populate
     js.window.get_default_checklist = get_default_checklist
-    js.window.load_spinner_selection = load_spinner_selection
     js.window.checklist_update_catagories = checklist_update_catagories
 
+    # AIRCRAFT
+    js.window.aircraft_clean = aircraft_clean
+    js.window.get_default_aircraft = get_default_aircraft
+    js.window.save_to_json = save_to_json
+
+    # GENERAL
+    js.window.load_spinner_selection = load_spinner_selection
 
     # FLAG
     # js.window.retrieve_flag = retrieve_flag
@@ -5814,9 +5987,11 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
         window.flight_plan_data = window.get_default_data();
         // Populate the menus
         checklist_populate()
-        console.log("   >Checklist is populated..");
         update_dropdown('checklist_spinner', cacheName='CHECKLIST', keepSelection=false, elementId2='checklist_field');
-        console.log("   >Settings data is initialized.");
+        console.log("   >Checklists are initialized..");
+        // Aircraft spinner
+        update_dropdown('aircraft_spinner', cacheName='AIRCRAFT', keepSelection=false, elementId2='aircraft_field');
+        console.log("   >Aircrafts are initialized..");
         // Restore settings from cache
         restoreSettingsFromCache();
         console.log("   >Custom User settings are restored from cache.");
@@ -5846,6 +6021,8 @@ document.getElementById('checklist_spinner')?.addEventListener('change', async f
         animateSnow('SKYWALK_LOGO', process ='start', intensity = "medium", speed = 0.3);
         // animateFlare('SKYWALK_LOGO', "start", null, null, null, intensity=2, pulseSpeed = 0.2, size = 1.1);
         // animateDark('SKYWALK_LOGO', "start", "center", "night");
+
+        console.log("   >Settings data is initialized.");
 
       }
     }
