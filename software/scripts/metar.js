@@ -1228,7 +1228,8 @@ function animations(prefix, process = "start") {
     metarObject = window.METAR_ARRIVAL ?? null;
   }
 
-  if (!metarObject || process === "stop") {
+  // Stopping the processes before starting is important, otherwise it does not start(!)
+  if (!metarObject || process === "stop" || process === "start") {
     console.log(`   >Stop Animations: metarObject: [${metarObject}] or ${process}`);
     animateRain(prefix, "stop");
     animateCloud(prefix, "stop");
@@ -1237,8 +1238,9 @@ function animations(prefix, process = "start") {
     animateSnow(prefix, "stop");
     animateDark(prefix, "stop");
     // animateControls(prefix, "stop");
-  } else if (process === "start") {
-    // Start/stop animations
+  }
+
+  if (process === "start") {
     console.log("   >Start Animations");
     animateRain(prefix);
     animateCloud(prefix);

@@ -43,7 +43,10 @@ body {
     padding: 0;
     overflow-x: hidden;
     background-color: white;
-    font-family: Arial, sans-serif;
+    /*font-family: Arial, sans-serif;*/
+    font-family:
+        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+        Cantarell, sans-serif;
     display: flex;
     justify-content: center;
     align-items: stretch;
@@ -696,6 +699,18 @@ body.mobile-fullscreen .output-box {
     gap: 10px;
     margin-top: 10px;
 }
+.grid-middle-small {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+}
+.grid-middle-small > .tile {
+    grid-column: 2;          /* put the tile in the middle column */
+    justify-self: center;    /* center the tile within that column */
+    align-self: center;
+}
+
 .tile {
     background: white;
     border: 1px solid #dcdcdc;
@@ -769,4 +784,82 @@ body.mobile-fullscreen .output-box {
     padding: 8px 6px; /* Comfortable space at the top-down and left-right border */
     border: 1px solid #ccc;
     margin: 8px 0; /* keep spacing between adjacent elements */
+}
+
+.divider {
+    height: 1px;
+    background: #dcdcdc;
+    margin: 16px 0;
+}
+
+
+
+/*WEIGHT AND BALANCE*/
+.weight-card-header {
+    font-weight: 500;
+    font-size: 13px;
+    color: #333;
+    margin-bottom: 10px;
+}
+/* Card styling for each weight item */
+.weight-card {
+    background: white;
+    border: 1px solid #dcdcdc;
+    border-radius: 14px;
+    padding: 12px;
+    margin-bottom: 10px;
+}
+
+.input-label {
+    font-size: 11px;
+    color: #777;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Input styling */
+input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 14px;
+    color: #333;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+input[type="number"]:focus {
+    border-color: #4a90e2;
+    background: #f5f9ff;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+    outline: none;
+}
+
+input[type="number"]:disabled {
+    background: #fafafa;
+    color: #777;
+}
+
+
+
+.section-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+    margin: 20px 0 12px 0;
+}
+
+.coordinate-label {
+    font-size: 12px;
+    color: #777;
+    text-align: center;
+    margin-bottom: 4px;
 }

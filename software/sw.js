@@ -1,4 +1,4 @@
-const CACHE_NAME = "skywalk-v0.93";
+const CACHE_NAME = "skywalk-v0.94";
 
 const FILES_TO_CACHE = [
   "./main.html",
@@ -8,9 +8,10 @@ const FILES_TO_CACHE = [
   // "./libs/core.css",
   // "./libs/core.js",
   // SCRIPTS
+  "./scripts/weightbalance.js",
   // "./scripts/utils.js",
   "./scripts/maps.js",
-  // SCRIPTS
+  // WEATHER SCRIPTS
   "./scripts/metar.js",
   "./scripts/rain.js",
   "./scripts/cloud.js",
@@ -44,6 +45,11 @@ const FILES_TO_CACHE = [
   "./icons/clouds_LIFR.png",
   "./icons/clouds_rain_LIFR.png",
   "./icons/clouds_unknown.png",
+  // FIGS AIRCRAFT
+  "./icons/aircraft_front.png",
+  "./icons/aircraft_back.png",
+  "./icons/aircraft_front_black.png",
+  "./icons/aircraft_back_black.png",
 ];
 
 self.addEventListener("install", (event) => {
