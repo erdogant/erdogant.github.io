@@ -687,6 +687,7 @@ body.mobile-fullscreen .output-box {
     gap: 10px;
     margin-top: 10px;
 }
+
 .grid-one-third-two-thirds {
     display: grid;
     grid-template-columns: 1fr 2fr;

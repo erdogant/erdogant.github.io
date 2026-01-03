@@ -1,7 +1,9 @@
 let weightBalanceChart = null;
+let weightBalanceChart2 = null;
 
 function calculateWeightBalance() {
   console.log("> func: calculateWeightBalance()");
+
   // Get weights
   const weight_empty = parseFloat(document.getElementById("weight_empty").value) || 0;
   const weight_pilot = parseFloat(document.getElementById("weight_pilot").value) || 0;
@@ -40,7 +42,9 @@ function calculateWeightBalance() {
 
   // Calculate totals
   const total_moment = moment_empty + moment_pilot + moment_copilot + moment_rl + moment_rr + moment_bagage + moment_fuel;
+
   const total_weight = weight_empty + weight_pilot + weight_copilot + weight_rl + weight_rr + weight_bagage + weight_fuel;
+
   const takeoff_cg = total_weight > 0 ? (total_moment / total_weight).toFixed(0) : 0;
 
   // Update total fields
@@ -48,13 +52,15 @@ function calculateWeightBalance() {
   document.getElementById("total_weight").value = total_weight.toFixed(0);
   document.getElementById("takeoff_cg").value = takeoff_cg;
 
-  // Update the plot after calculation
-  updateWeightBalancePlot();
+  // Update plots
+  updateAllCharts();
 }
 
-// WIND ENVELOPE PLOT
+/* =========================
+   ENVELOPE LOGIC
+========================= */
+
 function isPointInPolygon(xcoord, ycoord, pointX, pointY) {
-  // Ray casting algorithm to check if point is inside polygon
   let inside = false;
   for (let i = 0, j = xcoord.length - 1; i < xcoord.length; j = i++) {
     const xi = xcoord[i],
@@ -63,95 +69,90 @@ function isPointInPolygon(xcoord, ycoord, pointX, pointY) {
       yj = ycoord[j];
 
     const intersect = yi > pointY !== yj > pointY && pointX < ((xj - xi) * (pointY - yi)) / (yj - yi) + xi;
+
     if (intersect) inside = !inside;
   }
   return inside;
 }
 
-function showEnvelopeMessage(isInside, pointX, pointY) {
-  const messageDiv = document.getElementById("envelopeMessage");
+function showEnvelopeMessage(isInside, pointX, pointY, messageId) {
+  const messageDiv = document.getElementById(messageId);
   messageDiv.style.display = "block";
 
   if (isInside) {
     messageDiv.style.background = "#d4edda";
     messageDiv.style.color = "#155724";
     messageDiv.style.border = "1px solid #c3e6cb";
-    messageDiv.innerHTML = `✓ Aircraft is WITHIN the envelope<br><small>CG: ${pointX.toFixed(0)} mm, Weight: ${pointY.toFixed(2)} kg</small>`;
+    messageDiv.innerHTML = `✓ Aircraft is WITHIN the envelope<br>` + `<small>CG: ${pointX.toFixed(2)} mm, Weight: ${pointY.toFixed(2)} kg</small>`;
   } else {
     messageDiv.style.background = "#f8d7da";
     messageDiv.style.color = "#721c24";
     messageDiv.style.border = "1px solid #f5c6cb";
-    messageDiv.innerHTML = `⚠ Aircraft is OUTSIDE the envelope<br><small>CG: ${pointX.toFixed(0)} mm, Weight: ${pointY.toFixed(2)} kg</small>`;
+    messageDiv.innerHTML = `⚠ Aircraft is OUTSIDE the envelope<br>` + `<small>CG: ${pointX.toFixed(2)} mm, Weight: ${pointY.toFixed(2)} kg</small>`;
   }
 }
 
-function updateWeightBalancePlot() {
-  // Get envelope coordinates
-  const xcoord = [
-    parseFloat(document.getElementById("x1").value) || 0,
-    parseFloat(document.getElementById("x2").value) || 0,
-    parseFloat(document.getElementById("x3").value) || 0,
-    parseFloat(document.getElementById("x4").value) || 0,
-    parseFloat(document.getElementById("x5").value) || 0,
-  ];
+/* =========================
+   CHART UPDATE
+========================= */
 
-  const ycoord = [
-    parseFloat(document.getElementById("y1").value) || 0,
-    parseFloat(document.getElementById("y2").value) || 0,
-    parseFloat(document.getElementById("y3").value) || 0,
-    parseFloat(document.getElementById("y4").value) || 0,
-    parseFloat(document.getElementById("y5").value) || 0,
-  ];
+function updateWeightBalancePlot(canvasId, messageId, showCG = true, marker_y_override = null) {
+  const canvas = document.getElementById(canvasId);
+  const ctx = canvas.getContext("2d");
 
-  // Get CG and total weight from calculated values
-  const marker_x = parseFloat(document.getElementById("takeoff_cg").value) || 0;
-  const marker_y = parseFloat(document.getElementById("total_weight").value) || 0;
-
-  // Check if point is inside polygon
-  const isInside = isPointInPolygon(xcoord, ycoord, marker_x, marker_y);
-  showEnvelopeMessage(isInside, marker_x, marker_y);
-
-  // Prepare data for chart
-  const envelopeData = xcoord.map((x, i) => ({ x: x, y: ycoord[i] }));
-  // Close the polygon by adding the first point at the end
-  envelopeData.push({ x: xcoord[0], y: ycoord[0] });
-
-  const ctx = document.getElementById("weightBalanceChart").getContext("2d");
-
-  // Destroy existing chart if it exists
-  if (weightBalanceChart) {
-    weightBalanceChart.destroy();
+  // 🔥 Destroy any chart already attached to this canvas
+  const existingChart = Chart.getChart(canvas);
+  if (existingChart) {
+    existingChart.destroy();
   }
 
-  // Create new chart
-  weightBalanceChart = new Chart(ctx, {
-    type: "scatter",
-    data: {
-      datasets: [
-        {
-          label: "Aircraft Envelope",
-          data: envelopeData,
-          borderColor: "#4a90e2",
-          backgroundColor: "rgba(74, 144, 226, 0.1)",
-          borderWidth: 2,
-          showLine: true,
-          fill: true,
-          pointRadius: 5,
-          pointHoverRadius: 7,
-          pointBackgroundColor: "#4a90e2",
-        },
-        {
-          label: "Center of Gravity",
-          data: [{ x: marker_x, y: marker_y }],
-          borderColor: "#ff4b4b",
-          backgroundColor: "#ff4b4b",
-          pointRadius: 10,
-          pointHoverRadius: 12,
-          pointStyle: "star",
-          showLine: false,
-        },
-      ],
+  // Envelope coordinates
+  const xcoord = ["x1", "x2", "x3", "x4", "x5"].map((id) => parseFloat(document.getElementById(id).value) || 0);
+
+  const ycoord = ["y1", "y2", "y3", "y4", "y5"].map((id) => parseFloat(document.getElementById(id).value) || 0);
+
+  const marker_x = parseFloat(document.getElementById("takeoff_cg").value) || 0;
+  const marker_y = marker_y_override !== null ? marker_y_override : parseFloat(document.getElementById("total_weight").value) || 0;
+
+  if (messageId) {
+    const isInside = isPointInPolygon(xcoord, ycoord, marker_x, marker_y);
+    showEnvelopeMessage(isInside, marker_x, marker_y, messageId);
+  }
+
+  const envelopeData = xcoord.map((x, i) => ({ x, y: ycoord[i] }));
+  envelopeData.push({ x: xcoord[0], y: ycoord[0] });
+
+  // Start with envelope dataset
+  const datasets = [
+    {
+      label: "Aircraft Envelope",
+      data: envelopeData,
+      borderColor: "#4a90e2",
+      backgroundColor: "rgba(74, 144, 226, 0.1)",
+      borderWidth: 2,
+      showLine: true,
+      fill: true,
     },
+  ];
+  // Optionally add Center of Gravity dataset
+  if (showCG) {
+    datasets.push({
+      label: "Center of Gravity",
+      data: [{ x: marker_x, y: marker_y }],
+      backgroundColor: "#ff4b4b", // fill color
+      borderColor: "#ff4b4b", // outline color
+      pointRadius: 10,
+      pointHoverRadius: 12,
+      pointStyle: "star",
+    });
+  }
+
+  // Chart.js data object
+  const data = { datasets };
+
+  return new Chart(ctx, {
+    type: "scatter",
+    data: data,
     options: {
       responsive: true,
       maintainAspectRatio: true,
@@ -160,102 +161,28 @@ function updateWeightBalancePlot() {
         legend: {
           display: true,
           position: "top",
-          labels: {
-            color: "#333",
-            font: {
-              size: 12,
-            },
-          },
-        },
-        tooltip: {
-          callbacks: {
-            label: function (context) {
-              return `CG: ${context.parsed.x.toFixed(2)} mm, Weight: ${context.parsed.y.toFixed(2)} kg`;
-            },
-          },
         },
       },
       scales: {
         x: {
-          type: "linear",
-          position: "bottom",
-          title: {
-            display: true,
-            text: "mm from reference datum",
-            color: "#333",
-            font: {
-              size: 12,
-              weight: "600",
-            },
-          },
-          ticks: {
-            color: "#666",
-          },
-          grid: {
-            color: "#e0e0e0",
-          },
+          title: { display: true, text: "mm from reference datum" },
         },
         y: {
-          title: {
-            display: true,
-            text: "KG",
-            color: "#333",
-            font: {
-              size: 12,
-              weight: "600",
-            },
-          },
-          ticks: {
-            color: "#666",
-          },
-          grid: {
-            color: "#e0e0e0",
-          },
+          title: { display: true, text: "KG" },
         },
       },
     },
   });
 }
 
-function updateWeightBalance() {
-  // Collect all data
-  const data = {
-    weights: {
-      empty: document.getElementById("weight_empty").value,
-      pilot: document.getElementById("weight_pilot").value,
-      copilot: document.getElementById("weight_copilot").value,
-      rl: document.getElementById("weight_rl").value,
-      rr: document.getElementById("weight_rr").value,
-      bagage: document.getElementById("weight_bagage").value,
-      fuel: document.getElementById("weight_fuel").value,
-    },
-    arms: {
-      empty: document.getElementById("arm_empty").value,
-      pilot: document.getElementById("arm_pilot").value,
-      copilot: document.getElementById("arm_copilot").value,
-      rl: document.getElementById("arm_rl").value,
-      rr: document.getElementById("arm_rr").value,
-      bagage: document.getElementById("arm_bagage").value,
-      fuel: document.getElementById("arm_fuel").value,
-    },
-    envelope: {
-      x1: document.getElementById("x1").value,
-      y1: document.getElementById("y1").value,
-      x2: document.getElementById("x2").value,
-      y2: document.getElementById("y2").value,
-      x3: document.getElementById("x3").value,
-      y3: document.getElementById("y3").value,
-      x4: document.getElementById("x4").value,
-      y4: document.getElementById("y4").value,
-      x5: document.getElementById("x5").value,
-      y5: document.getElementById("y5").value,
-    },
-  };
+function updateAllCharts() {
+  weightBalanceChart = updateWeightBalancePlot("weightBalanceChart", "envelopeMessage");
 
-  console.log("Updated weight and balance data:", data);
-  alert("Weight and balance scheme updated!");
+  weightBalanceChart2 = updateWeightBalancePlot("weightBalanceChart2", "", false);
 }
 
-// Make it globally accessible
+/* =========================
+   GLOBAL EXPORTS
+========================= */
+
 window.calculateWeightBalance = calculateWeightBalance;
-window.updateWeightBalancePlot = updateWeightBalancePlot;

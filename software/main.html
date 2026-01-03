@@ -461,12 +461,6 @@
                 </div>
             </div>
 
-            <div class="button-row">
-                <button id="BTN-PLOT-WIND-DEPARTURE" class="button-style" onclick="window.windEnvelope_js('DEPARTURE')">
-                    Compute Crosswind/ Headwind
-                </button>
-            </div>
-
            <!-- WIND INFORMATION -->
            <div class="wind-grid">
                <div class="tile">
@@ -486,10 +480,12 @@
 
            <div class="button-row">
                <div id="DEPARTURE_WIND_ENVELOPE_TEXT" style="margin-top: 12px; padding: 10px; border-radius: 8px; font-size: 14px; text-align: center; display: none;"></div>
-               <!--<textarea id="DEPARTURE_WIND_ENVELOPE_TEXT" readonly aria-readonly="true"
-                   placeholder="Information about the wind envelope will be shown here."
-                   style="transition: background-color 0.3s; width: 100%; min-height: 80px; max-height: 120px; resize: vertical; padding: 8px; box-sizing: border-box; border-radius: 10px">
-                </textarea>-->
+           </div>
+
+           <div class="button-row">
+               <button id="BTN-PLOT-WIND-DEPARTURE" class="button-style" onclick="window.windEnvelope_js('DEPARTURE')">
+                   Reset Plot
+               </button>
            </div>
 
        </div>
@@ -510,6 +506,22 @@
                </div>
            </div>
 
+
+           <!-- Totals Section -->
+           <div class="border-round-eged">
+               <div class="weight-card-header">Totals</div>
+               <div class="wind-grid_3">
+                    <input type="number" class="tile-value" id="total_moment" value="0" disabled>
+                    <input type="number" class="tile-value" id="total_weight" value="0" disabled>
+                    <input type="number" class="tile-value" id="takeoff_cg" value="0" disabled>
+               </div>
+               <div class="wind-grid_3">
+                    <span class="tile-label">Total Moment</span>
+                    <span class="tile-label">Total Weight (kg)</span>
+                    <span class="tile-label">Take off CG</span>
+               </div>
+           </div>
+
            <div class="border-round-eged" style="background-color: #ffffff;">
 
                 <div class="grid-middle-small">
@@ -525,21 +537,21 @@
                 </div>
 
                 <div class="wind-grid" style="margin:2; padding:0; gap:0; display:flex; align-items:center;">
-                    <div class="tile" style="border-color: transparent">
-                        <input type="number" id="weight_pilot" value="75" min="0"">
+                    <div class="tile" style="border-color: transparent; margin:2; padding:0; gap:2; align-items:center;">
+                        <input type="number" id="weight_pilot" value="75" min="0">
                         <span class="tile-label">Pilot (kg)</span>
                     </div>
-                    <div class="tile" style="border-color: transparent">
+                    <div class="tile" style="border-color: transparent; margin:2; padding:0; gap:2; align-items:center;">
                         <input type="number" id="weight_copilot" value="0" min="0">
                         <span class="tile-label">Front Passenger (kg)</span>
                     </div>
                 </div>
                 <div class="wind-grid" style="margin:2; padding:0; gap:0; display:flex; align-items:center;">
-                    <div class="tile" style="border-color: transparent">
+                    <div class="tile" style="border-color: transparent; margin:2; padding:0; gap:2; align-items:center;">
                         <input type="number" id="weight_rl" value="0" min="0">
                         <span class="tile-label">Left Passenger (kg)</span>
                     </div>
-                    <div class="tile" style="border-color: transparent">
+                    <div class="tile" style="border-color: transparent; margin:2; padding:0; gap:2; align-items:center;">
                         <input type="number" id="weight_rr" value="0" min="0">
                         <span class="tile-label">Right Passenger (kg)</span>
                     </div>
@@ -558,30 +570,13 @@
                 </div>
            </div>
 
-           <!--<button onclick="window.save_aerodrome_to_json('ARRIVAL')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 4px 8px 0; flex: 0 0 auto; cursor: pointer; float: right;">💾</button>-->
-
-           <!-- Totals Section -->
-           <div class="border-round-eged">
-               <div class="weight-card-header">Totals</div>
-               <div class="wind-grid_3">
-                    <input type="number" class="tile-value" id="total_moment" value="0" disabled>
-                    <input type="number" class="tile-value" id="total_weight" value="0" disabled>
-                    <input type="number" class="tile-value" id="takeoff_cg" value="0" disabled>
-               </div>
-               <div class="wind-grid_3">
-                    <span class="tile-label">Total Moment</span>
-                    <span class="tile-label">Total Weight (kg)</span>
-                    <span class="tile-label">Take off CG</span>
-               </div>
-           </div>
-
-
            <!-- Weight Balance Chart -->
            <div class="section-title">Weight & Balance Envelope</div>
            <div class="border-round-eged">
                <canvas id="weightBalanceChart"></canvas>
                <div id="envelopeMessage" style="margin-top: 12px; padding: 10px; border-radius: 8px; font-size: 14px; text-align: center; display: none;"></div>
            </div>
+
 
 
        </div>
@@ -909,12 +904,6 @@
                 </div>
             </div>
 
-            <div class="button-row">
-                <button id="BTN-PLOT-WIND-ARRIVAL" class="button-style" onclick="window.windEnvelope_js('ARRIVAL')">
-                    Compute Crosswind/ Headwind
-                </button>
-            </div>
-
            <!-- WIND INFORMATION -->
            <div class="wind-grid">
                <div class="tile">
@@ -934,10 +923,12 @@
 
            <div class="button-row">
                <div id="ARRIVAL_WIND_ENVELOPE_TEXT" style="margin-top: 12px; padding: 10px; border-radius: 8px; font-size: 14px; text-align: center; display: none;"></div>
-               <!--<textarea id="ARRIVAL_WIND_ENVELOPE_TEXT" readonly aria-readonly="true"
-                   placeholder="Compute the wind envelope to see here information."
-                   style="transition: background-color 0.3s; width: 100%; min-height: 80px; max-height: 120px; resize: vertical; padding: 8px; box-sizing: border-box; border-radius: 10px">
-                </textarea>-->
+           </div>
+
+           <div class="button-row">
+               <button id="BTN-PLOT-WIND-ARRIVAL" class="button-style" onclick="window.windEnvelope_js('ARRIVAL')">
+                   Reset Plot
+               </button>
            </div>
 
        </div>
@@ -1530,32 +1521,39 @@
                         </div>
 
                         <div class="wind-grid">
-                            <input type="number" id="x1" value="205">
-                            <input type="number" id="y1" value="660">
+                            <input type="number" id="x1" value="205" min="0">
+                            <input type="number" id="y1" value="660" min="0">
                         </div>
 
                         <div class="wind-grid">
-                            <input type="number" id="x2" value="205">
-                            <input type="number" id="y2" value="725">
+                            <input type="number" id="x2" value="205" min="0">
+                            <input type="number" id="y2" value="725" min="0">
                         </div>
 
                         <div class="wind-grid">
-                            <input type="number" id="x3" value="400">
-                            <input type="number" id="y3" value="975">
+                            <input type="number" id="x3" value="400" min="0">
+                            <input type="number" id="y3" value="975" min="0">
                         </div>
 
                         <div class="wind-grid">
-                            <input type="number" id="x4" value="570">
-                            <input type="number" id="y4" value="975">
+                            <input type="number" id="x4" value="570" min="0">
+                            <input type="number" id="y4" value="975" min="0">
                         </div>
 
                         <div class="wind-grid">
-                            <input type="number" id="x5" value="570">
-                            <input type="number" id="y5" value="660">
+                            <input type="number" id="x5" value="570" min="0">
+                            <input type="number" id="y5" value="660" min="0">
                         </div>
 
                     </div>
                 </div>
+            </div>
+
+            <!-- Weight Balance Chart -->
+            <div class="section-title">Weight & Balance Envelope</div>
+            <div class="border-round-eged">
+                <canvas id="weightBalanceChart2"></canvas>
+                <div id="envelopeMessage2" style="margin-top: 12px; padding: 10px; border-radius: 8px; font-size: 14px; text-align: center; display: none;"></div>
             </div>
 
 
@@ -2243,7 +2241,7 @@ document.getElementById('aircraft_spinner')?.addEventListener('change', async fu
     def get_default_aircraft():
         print('> func: get_default_aircraft()')
         # Default POH
-        POH_RUNWAY = [{"Altitude": None, "Temperature": None, "Weigth": None, 'Distance': None, '50ft': None}]
+        POH_RUNWAY = [{"Altitude": '', "Temperature": '', "Weigth": '', 'Distance': '', '50ft': ''}]
 
         # Make the template
         template = {
@@ -2252,45 +2250,45 @@ document.getElementById('aircraft_spinner')?.addEventListener('change', async fu
                     'TYPE': '',
                     'CALLSIGN': '',
                     'CALLSIGN_SHORT': '',
-                    'CRUISESPEED': None,
+                    'CRUISESPEED': '',
                     'RULES': '',
-                    'COSTS': {'PER_HOUR': None},
-                    'FUEL': {'value': 0, 'type': '', 'density': 1, 'consumption': None},
+                    'COSTS': {'PER_HOUR': ''},
+                    'FUEL': {'value': 0, 'type': '', 'density': 1, 'consumption': ''},
                     'WEIGHT': {'fuel_kg': 0, 'empty': 0, 'pilot': 0, 'copilot': 0, 'passenger_left': 0, 'passenger_right': 0, 'bagage': 0},
                     'ARM': {'fuel': 0, 'empty_weight': 0, 'pilot': 0, 'copilot': 0, 'passenger_left': 0, 'passenger_right': 0, 'bagage': 0},
-                    'WEIGHT_BALANCE': {'moment': None, 'CG': None},
-                    'MTOW': None,
-                    'ENVELOPE': {'x1': None, 'x2': None, 'x3': None, 'x4': None, 'x5': None, 'y1': None, 'y2': None, 'y3': None, 'y4': None, 'y5': None},
-                    'POH_RUNWAY': {'TAKEOFF': copy.deepcopy(str(POH_RUNWAY)),
-                                    'LANDING': copy.deepcopy(str(POH_RUNWAY))},
+                    'WEIGHT_BALANCE': {'moment': '', 'CG': ''},
+                    'MTOW': '',
+                    'ENVELOPE': {'x1': '', 'x2': '', 'x3': '', 'x4': '', 'x5': '', 'y1': '', 'y2': '', 'y3': '', 'y4': '', 'y5': ''},
+                    'POH_RUNWAY': {'TAKEOFF': copy.deepcopy(POH_RUNWAY),
+                                    'LANDING': copy.deepcopy(POH_RUNWAY)},
                     'PERFORMANCE': {
                         'TAKEOFF': {
-                            'soft_dry': None,
-                            'soft_wet': None,
+                            'soft_dry': '',
+                            'soft_wet': '',
                             'hard_dry': 1,
-                            'hard_wet': None,
+                            'hard_wet': '',
                             'other_dry': 1,
-                            'other_wet': None,
+                            'other_wet': '',
 
-                            'paved_slope': None,
-                            'safety_correction': None,
-                            'minimum_distance_available': None,
-                            'tailwind_influence': {'item_0': [None, None]},
-                            'headwind_influence': {'item_0': [None, None], 'item_1': [None, None], 'item_2': [None, None], 'item_3': [None, None]},
+                            'paved_slope': '',
+                            'safety_correction': '',
+                            'minimum_distance_available': '',
+                            'tailwind_influence': {'item_0': ['', '']},
+                            'headwind_influence': {'item_0': ['', ''], 'item_1': ['', ''], 'item_2': ['', ''], 'item_3': ['', '']},
                             },
                         'LANDING': {
-                            'soft_dry': None,
-                            'soft_wet': None,
+                            'soft_dry': '',
+                            'soft_wet': '',
                             'hard_dry': 1,
-                            'hard_wet': None,
+                            'hard_wet': '',
                             'other_dry': 1,
-                            'other_wet': None,
+                            'other_wet': '',
 
-                            'paved_slope': None,
-                            'safety_correction': None,
-                            'minimum_distance_available': None,
-                            'tailwind_influence': {'item_0': [None, None]},
-                            'headwind_influence': {'item_0': [None, None], 'item_1': [None, None], 'item_2': [None, None], 'item_3': [None, None]},
+                            'paved_slope': '',
+                            'safety_correction': '',
+                            'minimum_distance_available': '',
+                            'tailwind_influence': {'item_0': ['', '']},
+                            'headwind_influence': {'item_0': ['', ''], 'item_1': ['', ''], 'item_2': ['', ''], 'item_3': ['', '']},
                             },
                         }
                     }
@@ -2569,7 +2567,7 @@ document.getElementById('aircraft_spinner')?.addEventListener('change', async fu
 
         # Set user_selection with the value elementId2 name if user selection is empty
         # if keepSelection and elementId2 and user_selection == '':
-        if keepSelection:
+        if keepSelection and elementId2 is not None:
             user_selection = js.document.getElementById(elementId2).value
 
         if select:
@@ -4710,7 +4708,7 @@ document.getElementById('aircraft_spinner')?.addEventListener('change', async fu
         js.window.flight_plan_data["ARRIVAL_ROUTE_NAME"] = js.document.getElementById('ARRIVAL_ROUTE_NAME').value;
         js.window.flight_plan_data["ARRIVAL_POSITION"] = js.document.getElementById('ARRIVAL_POSITION').value;
         # STORE WAYPOINTS
-        # js.window.flight_plan_data['WAYPOINTS'] = js.window.waypoints
+        # js.window.flight_plan_data['WAYPOINTS'] = js.window.waypoints;
         # ALL OTHER FIELDS SHOULD BE STORE ALREADY IN THE FLIGHTPLAN DATA
 
         # GET FLIGHTPLAN NAME
@@ -4758,10 +4756,10 @@ document.getElementById('aircraft_spinner')?.addEventListener('change', async fu
             # print_local_storage()
 
             # Update the list of saved flightplans
-            update_dropdown('plan_spinner', cacheName='FLIGHTPLAN', keepSelection=True, elementId2='FLIGHTPLAN')
+            update_dropdown('plan_spinner', 'FLIGHTPLAN', keepSelection=True, elementId2='FLIGHTPLAN')
             # Update the enroute list
-            update_dropdown('fic_spinner', cacheName='enroute', keepSelection=True)
-            update_dropdown('fic_spinner2', cacheName='enroute', keepSelection=True)
+            update_dropdown('fic_spinner', 'enroute', keepSelection=True)
+            update_dropdown('fic_spinner2', 'enroute', keepSelection=True)
 
             print("   >---------------DATA SAVED-------------------")
             if verbose:
@@ -4991,8 +4989,8 @@ document.getElementById('aircraft_spinner')?.addEventListener('change', async fu
         # Save to cache
         js.localStorage.setItem(cache_key, json_data)
         # Update the enroute list
-        update_dropdown('fic_spinner', cacheName='enroute', keepSelection=True)
-        update_dropdown('fic_spinner2', cacheName='enroute', keepSelection=True)
+        update_dropdown('fic_spinner', 'enroute', keepSelection=True, elementId2='FIC_NAME')
+        update_dropdown('fic_spinner2', 'enroute', keepSelection=True, elementId2='FIC_NAME2')
         print(f"   >✅ FIC data saved and dropdown updated")
 
 
@@ -6068,7 +6066,7 @@ document.getElementById('aircraft_spinner')?.addEventListener('change', async fu
         // if (pyscriptReady && window.save_flightplan && currentTab && currentTab !== targetTab) {
         if (pyscriptReady && window.save_flightplan && (targetTab === "ATC" || targetTab === "General")) {
           try {
-            await window.save_flightplan(true, false);
+            window.save_flightplan(true, false);
           } catch (error) {
             console.error("Error saving data before tab switch:", error);
           }
@@ -6078,6 +6076,16 @@ document.getElementById('aircraft_spinner')?.addEventListener('change', async fu
         if (targetTab === 'More' || targetTab === 'Departure'){
           window.calculateWeightBalance();
         }
+        // WHEN THE TAB MAP IS CLICKED
+        if (targetTab === "MAP") {
+          if (typeof initRouteMap === "function") initRouteMap();
+          if (typeof updateRoute === "function") updateRoute();
+        }
+        // REPLACE INFORMATION with "INFO" in the ENROUTE TAB.
+        updateEnrouteFields();
+        // CHECK MISSING FIELDS AFTER TAB SWITCH AND HIGHLIGHT
+        highlightMissingFields();
+
 
         // // Stop animation when leaving Departure tab
         // if (currentTab !== targetTab && currentTab === 'Departure'){
@@ -6098,17 +6106,6 @@ document.getElementById('aircraft_spinner')?.addEventListener('change', async fu
         tabContents.forEach(c => c.style.display = "none");
         btn.classList.add("active");
         document.getElementById(btn.getAttribute("data-tab")).style.display = "block";
-
-        // REPLACE INFORMATION with "INFO" in the ENROUTE TAB.
-        updateEnrouteFields();
-        // CHECK MISSING FIELDS AFTER TAB SWITCH AND HIGHLIGHT
-        highlightMissingFields();
-
-        // WHEN THE TAB MAP IS CLICKED
-        if (targetTab === "MAP") {
-          if (typeof initRouteMap === "function") initRouteMap();
-          if (typeof updateRoute === "function") updateRoute();
-        }
 
       });
     });
@@ -6246,16 +6243,16 @@ document.getElementById('aircraft_spinner')?.addEventListener('change', async fu
         window.flight_plan_data = window.get_default_data();
         // Populate the menus
         checklist_populate()
-        update_dropdown('checklist_spinner', cacheName='CHECKLIST', keepSelection=false, elementId2='checklist_field');
+        update_dropdown('checklist_spinner', 'CHECKLIST', keepSelection=false, elementId2='checklist_field');
         console.log("   >Checklists are initialized..");
         // Aircraft spinner
-        update_dropdown('aircraft_spinner', cacheName='AIRCRAFT', keepSelection=false, elementId2='aircraft_field');
+        update_dropdown('aircraft_spinner', 'AIRCRAFT', keepSelection=false, elementId2='aircraft_field');
         console.log("   >Aircrafts are initialized..");
         // Restore settings from cache
         restoreSettingsFromCache();
         console.log("   >Custom User settings are restored from cache.");
         // Populate the plan_spinner with FLIGHTPLAN_ keys on startup
-        update_dropdown('plan_spinner', cacheName='FLIGHTPLAN', keepSelection=false);
+        update_dropdown('plan_spinner', 'FLIGHTPLAN', keepSelection=false);
         // Add the catagories for the spinner in checklist
         populateChecklistCatagories();
         // Update dropdown for the enroute spinners
@@ -6391,53 +6388,45 @@ document.getElementById('aircraft_spinner')?.addEventListener('change', async fu
 
     document.getElementById('BTN_HTML_SUMMARY')?.addEventListener('click', () => {
       if (window.create_summary_atc) {
-        window.save_flightplan(true, false)
         window.create_summary_atc();
       }
     });
     document.getElementById('BTN_HTML_SUMMARY_REV')?.addEventListener('click', () => {
       if (window.create_summary_atc) {
-        window.save_flightplan({to_cache: true})
         window.create_summary_atc({ reverse_path: true, verbose: false });
       }
     });
 
     document.getElementById('BTN_HTML_DEPARTURE')?.addEventListener('click', () => {
       if (window.create_departure_atc) {
-        window.save_flightplan(true, false)
         window.create_departure_atc();
       }
     });
     document.getElementById('BTN_HTML_DEPARTURE_REV')?.addEventListener('click', () => {
       if (window.create_departure_atc) {
-        window.save_flightplan(true, false)
         window.create_departure_atc({ reverse_path: true });
       }
     });
 
     document.getElementById('BTN_HTML_ARRIVAL')?.addEventListener('click', () => {
       if (window.create_arrival_atc) {
-        window.save_flightplan(true, false)
         window.create_arrival_atc();
       }
     });
     document.getElementById('BTN_HTML_ARRIVAL_REV')?.addEventListener('click', () => {
       if (window.create_arrival_atc) {
-        window.save_flightplan(true, false)
         window.create_arrival_atc({ reverse_path: true });
       }
     });
 
     document.getElementById('BTN_HTML_ENROUTE')?.addEventListener('click', () => {
       if (window.create_enroute_atc) {
-        window.save_flightplan(true, false)
         window.create_enroute_atc();
       }
     });
 
     document.getElementById('BTN_HTML_EN_REV')?.addEventListener('click', () => {
       if (window.create_enroute_atc) {
-        window.save_flightplan(true, false)
         window.create_enroute_atc({ reverse_path: true });
       }
     });
@@ -6473,13 +6462,6 @@ document.getElementById('aircraft_spinner')?.addEventListener('change', async fu
         if (!Number.isFinite(num)) return;
         // Get prefix
         const prefix = id.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
-
-        // let prefix = '';
-        // if (id.startsWith('DEPARTURE')) {
-        //   prefix = 'DEPARTURE';
-        // } else if (id.startsWith('ARRIVAL')) {
-        //   prefix = 'ARRIVAL';
-        // }
         // Run the windEnvelope
         window.windEnvelope_js(prefix);
       });
@@ -6494,12 +6476,6 @@ document.getElementById('aircraft_spinner')?.addEventListener('change', async fu
         if (field.length < 4) return;
         // Get prefix
         const prefix = id.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
-        // let prefix = '';
-        // if (id.startsWith('DEPARTURE')) {
-        //   prefix = 'DEPARTURE';
-        // } else if (id.startsWith('ARRIVAL')) {
-        //   prefix = 'ARRIVAL';
-        // }
         // Load the aerodrome from json
         window.load_aerodrome_from_json(prefix, elementId=id)
       });
@@ -6560,7 +6536,8 @@ document.getElementById('aircraft_spinner')?.addEventListener('change', async fu
 
     // Update the weight and balance directly after changing the value
     ['weight_fuel', 'weight_pilot', 'weight_copilot', 'weight_rl', 'weight_rr', 'weight_bagage',
-      'arm_empty', 'arm_pilot', 'arm_copilot', 'arm_rl', 'arm_rr', 'arm_bagage', 'arm_fuel'].forEach(id => {
+      'arm_empty', 'arm_pilot', 'arm_copilot', 'arm_rl', 'arm_rr', 'arm_bagage', 'arm_fuel',
+      'x1', 'y1', 'x2', 'y2', 'x3', 'y3', 'x4', 'y4', 'x5', 'y5'].forEach(id => {
       const field = document.getElementById(id);
       if (!field) return;
         field.addEventListener('change', element => {
