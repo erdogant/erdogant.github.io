@@ -1,18 +1,23 @@
-let weightBalanceChart = null;
-let weightBalanceChart2 = null;
+let ARRIVAL_weightBalanceChart = null;
+let DEPARTURE_weightBalanceChart = null;
+let SETTINGS_weightBalanceChart = null;
 
-function calculateWeightBalance() {
-  console.log("> func: calculateWeightBalance()");
+function calculateWeightBalance(prefix) {
+  console.log(`> func: calculateWeightBalance(${prefix})`);
+  if (prefix === null) {
+    console.warn(`<return> Prefix invalid: ${prefix}`);
+  }
 
-  // Get weights
+  // Get the specific weights
+  const fuel_liters = parseFloat(document.getElementById(`${prefix}_WEIGHT_FUEL_LITERS`).value) || 0;
+  const weight_pilot = parseFloat(document.getElementById(`${prefix}_WEIGHT_PILOT`).value) || 0;
+  const weight_copilot = parseFloat(document.getElementById(`${prefix}_WEIGHT_COPILOT`).value) || 0;
+  const weight_rl = parseFloat(document.getElementById(`${prefix}_WEIGHT_REAR_LEFT`).value) || 0;
+  const weight_rr = parseFloat(document.getElementById(`${prefix}_WEIGHT_REAR_RIGHT`).value) || 0;
+  const weight_bagage = parseFloat(document.getElementById(`${prefix}_WEIGHT_BAGAGE`).value) || 0;
+
+  // Get empty aircraft weight
   const weight_empty = parseFloat(document.getElementById("weight_empty").value) || 0;
-
-  const fuel_liters = parseFloat(document.getElementById("fuel_liters_departure").value) || 0;
-  const weight_pilot = parseFloat(document.getElementById("weight_pilot_departure").value) || 0;
-  const weight_copilot = parseFloat(document.getElementById("weight_copilot_departure").value) || 0;
-  const weight_rl = parseFloat(document.getElementById("weight_rl_departure").value) || 0;
-  const weight_rr = parseFloat(document.getElementById("weight_rr_departure").value) || 0;
-  const weight_bagage = parseFloat(document.getElementById("weight_bagage_departure").value) || 0;
 
   // Get arms
   const arm_fuel = parseFloat(document.getElementById("arm_fuel").value) || 0;
@@ -46,18 +51,23 @@ function calculateWeightBalance() {
 
   // Calculate totals
   const total_moment = moment_empty + moment_pilot + moment_copilot + moment_rl + moment_rr + moment_bagage + moment_fuel;
-
   const total_weight = weight_empty + weight_pilot + weight_copilot + weight_rl + weight_rr + weight_bagage + weight_fuel_kg;
-
   const takeoff_cg = total_weight > 0 ? (total_moment / total_weight).toFixed(0) : 0;
 
-  // Update total fields
-  document.getElementById("total_moment").value = total_moment.toFixed(0);
-  document.getElementById("total_weight").value = total_weight.toFixed(0);
-  document.getElementById("takeoff_cg").value = takeoff_cg;
+  document.getElementById(`${prefix}_total_moment`).value = total_moment.toFixed(0);
+  document.getElementById(`${prefix}_total_weight`).value = total_weight.toFixed(0);
+  document.getElementById(`${prefix}_takeoff_cg`).value = takeoff_cg;
 
-  // Update plots
-  updateAllCharts();
+  // Update plot
+  if (prefix === "DEPARTURE") {
+    DEPARTURE_weightBalanceChart = updateWeightBalancePlot(prefix, "DEPARTURE_weightBalanceChart", "DEPARTURE_envelopeMessage");
+  } else if (prefix === "ARRIVAL") {
+    ARRIVAL_weightBalanceChart = updateWeightBalancePlot(prefix, "ARRIVAL_weightBalanceChart", "ARRIVAL_envelopeMessage");
+  } else if (prefix === "SETTINGS") {
+    // Only draw the envelope
+    // SETTINGS_weightBalanceChart = updateWeightBalancePlot(prefix, "SETTINGS_weightBalanceChart", "", false);
+    SETTINGS_weightBalanceChart = updateWeightBalancePlot(prefix, "SETTINGS_weightBalanceChart", "SETTINGS_envelopeMessage");
+  }
 }
 
 /* =========================
@@ -102,7 +112,7 @@ function showEnvelopeMessage(isInside, pointX, pointY, messageId) {
    CHART UPDATE
 ========================= */
 
-function updateWeightBalancePlot(canvasId, messageId, showCG = true, marker_y_override = null) {
+function updateWeightBalancePlot(prefix, canvasId, messageId, showCG = true, marker_y_override = null) {
   const canvas = document.getElementById(canvasId);
   const ctx = canvas.getContext("2d");
 
@@ -114,13 +124,14 @@ function updateWeightBalancePlot(canvasId, messageId, showCG = true, marker_y_ov
 
   // Envelope coordinates
   const xcoord = ["x1", "x2", "x3", "x4", "x5"].map((id) => parseFloat(document.getElementById(id).value) || 0);
-
   const ycoord = ["y1", "y2", "y3", "y4", "y5"].map((id) => parseFloat(document.getElementById(id).value) || 0);
+  // Declare marker variables BEFORE the if block
+  let marker_x = 0;
+  let marker_y = 0;
 
-  const marker_x = parseFloat(document.getElementById("takeoff_cg").value) || 0;
-  const marker_y = marker_y_override !== null ? marker_y_override : parseFloat(document.getElementById("total_weight").value) || 0;
-
-  if (messageId) {
+  if (messageId && showCG) {
+    marker_x = parseFloat(document.getElementById(`${prefix}_takeoff_cg`).value) || 0;
+    marker_y = marker_y_override !== null ? marker_y_override : parseFloat(document.getElementById(`${prefix}_total_weight`).value) || 0;
     const isInside = isPointInPolygon(xcoord, ycoord, marker_x, marker_y);
     showEnvelopeMessage(isInside, marker_x, marker_y, messageId);
   }
@@ -150,6 +161,7 @@ function updateWeightBalancePlot(canvasId, messageId, showCG = true, marker_y_ov
       pointRadius: 10,
       pointHoverRadius: 12,
       pointStyle: "star",
+      showLine: false,
     });
   }
 
@@ -179,12 +191,6 @@ function updateWeightBalancePlot(canvasId, messageId, showCG = true, marker_y_ov
       },
     },
   });
-}
-
-function updateAllCharts() {
-  weightBalanceChart = updateWeightBalancePlot("weightBalanceChart", "envelopeMessage");
-
-  weightBalanceChart2 = updateWeightBalancePlot("weightBalanceChart2", "", false);
 }
 
 /* =========================

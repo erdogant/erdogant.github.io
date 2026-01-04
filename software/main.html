@@ -161,7 +161,7 @@
             <div class="wind-grid">
                 <div class="tile">
                     <input id="CALLSIGN" type="text", class="tile-value UPPERCASE_input", title="CALLSIGN of the aircraft">
-                    <span class="tile-label">CALLSIGN</span>
+                    <span id="CALLSIGN_LABEL" class="tile-label">CALLSIGN</span>
                 </div>
                 <div class="tile">
                     <input id="AIRCRAFT_TYPE" type="text", class="tile-value UPPERCASE_input", title="Aircraft Type (ROBIN, CESSNA)">
@@ -499,9 +499,9 @@
            <div class="border-round-eged">
                <div class="weight-card-header">Totals</div>
                <div class="wind-grid_3">
-                    <input type="number" class="tile-value" id="total_moment" value="0" disabled>
-                    <input type="number" class="tile-value" id="total_weight" value="0" disabled>
-                    <input type="number" class="tile-value" id="takeoff_cg" value="0" disabled>
+                    <input type="number" class="tile-value" id="DEPARTURE_total_moment" value="0" disabled>
+                    <input type="number" class="tile-value" id="DEPARTURE_total_weight" value="0" disabled>
+                    <input type="number" class="tile-value" id="DEPARTURE_takeoff_cg" value="0" disabled>
                </div>
                <div class="wind-grid_3">
                     <span class="tile-label">Total Moment</span>
@@ -510,11 +510,17 @@
                </div>
            </div>
 
+           <div class="button-row">
+               <button id="DEPARTURE_BTN_WEIGHTS" class="button-style" onclick="window.aircraft_aerodrome_defaults('DEPARTURE')">
+                   Set Default Weights
+               </button>
+           </div>
+
            <div class="border-round-eged" style="background-color: #ffffff;">
 
                 <div class="grid-middle-small">
                     <div class="tile" style="border-color: transparent">
-                        <input type="number" id="fuel_liters_departure" value="0">
+                        <input type="number" id="DEPARTURE_WEIGHT_FUEL_LITERS" value="0">
                         <span class="tile-label">Fuel (liters)</span>
                     </div>
                 </div>
@@ -525,29 +531,29 @@
                 </div>
 
                 <div class="wind-grid" style="margin:2; padding:0; gap:0; display:flex; align-items:center;">
-                    <div class="tile" style="border-color: transparent; margin:2; padding:0; gap:2; align-items:center;">
-                        <input type="number" id="weight_pilot_departure" value="0" min="0">
+                    <div class="tile" style="border-color: transparent; margin:2; padding:10; gap:2; align-items:center;">
+                        <input type="number" id="DEPARTURE_WEIGHT_PILOT" value="0" min="0">
                         <span class="tile-label">Pilot (kg)</span>
                     </div>
-                    <div class="tile" style="border-color: transparent; margin:2; padding:0; gap:2; align-items:center;">
-                        <input type="number" id="weight_copilot_departure" value="0" min="0">
+                    <div class="tile" style="border-color: transparent; margin:2; padding:10; gap:2; align-items:center;">
+                        <input type="number" id="DEPARTURE_WEIGHT_COPILOT" value="0" min="0">
                         <span class="tile-label">Front Passenger (kg)</span>
                     </div>
                 </div>
                 <div class="wind-grid" style="margin:2; padding:0; gap:0; display:flex; align-items:center;">
-                    <div class="tile" style="border-color: transparent; margin:2; padding:0; gap:2; align-items:center;">
-                        <input type="number" id="weight_rl_departure" value="0" min="0">
+                    <div class="tile" style="border-color: transparent; margin:2; padding:10; gap:2; align-items:center;">
+                        <input type="number" id="DEPARTURE_WEIGHT_REAR_LEFT" value="0" min="0">
                         <span class="tile-label">Left Passenger (kg)</span>
                     </div>
-                    <div class="tile" style="border-color: transparent; margin:2; padding:0; gap:2; align-items:center;">
-                        <input type="number" id="weight_rr_departure" value="0" min="0">
+                    <div class="tile" style="border-color: transparent; margin:2; padding:10; gap:2; align-items:center;">
+                        <input type="number" id="DEPARTURE_WEIGHT_REAR_RIGHT" value="0" min="0">
                         <span class="tile-label">Right Passenger (kg)</span>
                     </div>
                 </div>
 
                 <div class="grid-middle-small">
                     <div class="tile" style="border-color: transparent">
-                        <input type="number" id="weight_bagage_departure" value="5" min="0">
+                        <input type="number" id="DEPARTURE_WEIGHT_BAGAGE" value="0" min="0">
                         <span class="tile-label">Baggage (kg)</span>
                     </div>
                 </div>
@@ -561,8 +567,8 @@
            <!-- Weight Balance Chart -->
            <div class="section-title">Weight & Balance Envelope</div>
            <div class="border-round-eged">
-               <canvas id="weightBalanceChart"></canvas>
-               <div id="envelopeMessage" style="margin-top: 12px; padding: 10px; border-radius: 8px; font-size: 14px; text-align: center; display: none;"></div>
+               <canvas id="DEPARTURE_weightBalanceChart"></canvas>
+               <div id="DEPARTURE_envelopeMessage" style="margin-top: 12px; padding: 10px; border-radius: 8px; font-size: 14px; text-align: center; display: none;"></div>
            </div>
 
 
@@ -918,6 +924,102 @@
                    Reset Plot
                </button>
            </div>
+
+       </div>
+       </div>
+
+
+       <!--ARRIVAL WEIGHT AND BALANCE ENVELOPE-->
+       <div class="collapsible" data-title="WEIGHT AND BALANCE">
+       <div class="collapsible-header"></div>
+       <div class="collapsible-content">
+
+           <div style="border: 1px solid lightgrey; border-radius: 10px; padding: 10px;">
+               <div id="bottom-container">
+                   <div class="warning">
+                       Fill in the weights of the paggengers in kg, and the fuel in liters. The weight of the fuel is automatically normalized into kg based on the fuel type (see aircraft information).
+                       Use this information only as an educational aid. Always do your own research, check the weight and balance from official sources.
+                   </div>
+               </div>
+           </div>
+
+
+           <!-- Totals Section -->
+           <div class="border-round-eged">
+               <div class="weight-card-header">Totals</div>
+               <div class="wind-grid_3">
+                    <input type="number" class="tile-value" id="ARRIVAL_total_moment" value="0" disabled>
+                    <input type="number" class="tile-value" id="ARRIVAL_total_weight" value="0" disabled>
+                    <input type="number" class="tile-value" id="ARRIVAL_takeoff_cg" value="0" disabled>
+               </div>
+               <div class="wind-grid_3">
+                    <span class="tile-label">Total Moment</span>
+                    <span class="tile-label">Total Weight (kg)</span>
+                    <span class="tile-label">Take off CG</span>
+               </div>
+           </div>
+
+           <div class="button-row">
+               <button id="ARRIVAL_BTN_WEIGHTS" class="button-style" onclick="window.aircraft_aerodrome_defaults('ARRIVAL')">
+                   Set Default Weights
+               </button>
+           </div>
+
+           <div class="border-round-eged" style="background-color: #ffffff;">
+                <div class="grid-middle-small">
+                    <div class="tile" style="border-color: transparent">
+                        <input type="number" id="ARRIVAL_WEIGHT_FUEL_LITERS" value="0">
+                        <span class="tile-label">Fuel (liters)</span>
+                    </div>
+                </div>
+
+                <!--ADD FRONT AIRCRAFT IMAGE-->
+                <div class="logo-container">
+                    <img id="AIRCRAFT_FRONT_IMAGE" src="./figs/aircraft_front.png">
+                </div>
+
+                <div class="wind-grid" style="margin:2; padding:0; gap:0; display:flex; align-items:center;">
+                    <div class="tile" style="border-color: transparent; margin:2; padding:10; gap:2; align-items:center;">
+                        <input type="number" id="ARRIVAL_WEIGHT_PILOT" value="0" min="0">
+                        <span class="tile-label">Pilot (kg)</span>
+                    </div>
+                    <div class="tile" style="border-color: transparent; margin:2; padding:10; gap:2; align-items:center;">
+                        <input type="number" id="ARRIVAL_WEIGHT_COPILOT" value="0" min="0">
+                        <span class="tile-label">Front Passenger (kg)</span>
+                    </div>
+                </div>
+                <div class="wind-grid" style="margin:2; padding:0; gap:0; display:flex; align-items:center;">
+                    <div class="tile" style="border-color: transparent; margin:2; padding:10; gap:2; align-items:center;">
+                        <input type="number" id="ARRIVAL_WEIGHT_REAR_LEFT" value="0" min="0">
+                        <span class="tile-label">Left Passenger (kg)</span>
+                    </div>
+                    <div class="tile" style="border-color: transparent; margin:2; padding:10; gap:2; align-items:center;">
+                        <input type="number" id="ARRIVAL_WEIGHT_REAR_RIGHT" value="0" min="0">
+                        <span class="tile-label">Right Passenger (kg)</span>
+                    </div>
+                </div>
+
+                <div class="grid-middle-small">
+                    <div class="tile" style="border-color: transparent">
+                        <input type="number" id="ARRIVAL_WEIGHT_BAGAGE" value="0" min="0">
+                        <span class="tile-label">Baggage (kg)</span>
+                    </div>
+                </div>
+
+                <!--ADD BACK AIRCRAFT IMAGE-->
+                <div class="logo-container">
+                    <img id="AIRCRAFT_BACK_IMAGE" src="./figs/aircraft_back.png">
+                </div>
+           </div>
+
+           <!-- Weight Balance Chart -->
+           <div class="section-title">Weight & Balance Envelope</div>
+           <div class="border-round-eged">
+               <canvas id="ARRIVAL_weightBalanceChart"></canvas>
+               <div id="ARRIVAL_envelopeMessage" style="margin-top: 12px; padding: 10px; border-radius: 8px; font-size: 14px; text-align: center; display: none;"></div>
+           </div>
+
+
 
        </div>
        </div>
@@ -1378,7 +1480,7 @@
         <div class="border-round-eged">
             <div class="wind-grid" style="display: flex; align-items: center; gap: 1px;">
                 <!-- Inputfield -->
-                <input id="aircraft_field" type="text" class="tile-value" placeholder="My New Aircraft" style="background-color:transparent; font-size: 18px; padding: 0.5px;">
+                <input id="aircraft_field" type="text" class="tile-value UPPERCASE_input" placeholder="CALLSIGN" style="background-color:transparent; font-size: 18px; padding: 0.5px;">
             </div>
 
             <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
@@ -1391,7 +1493,8 @@
                     <option value="">Select and Load</option>
                 </select>
                 <!-- Save button -->
-                <button id="aircraft_save_btn" onclick="window.save_to_json('aircraft_field', 'AIRCRAFT')" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save aircraft specifications">💾</button>
+                <!--<button id="aircraft_save_btn" onclick="window.save_to_json('aircraft_field', 'AIRCRAFT')" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save aircraft">💾</button>-->
+                <button id="aircraft_save_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save aircraft">💾</button>
             </div>
         </div>
 
@@ -1403,26 +1506,26 @@
 
             <div class="wind-grid">
                  <div class="tile">
-                    <input id="weight_pilot" type="number" value="0" min="0">
+                    <input id="SETTINGS_WEIGHT_PILOT" type="number" value="0" min="0">
                     <span class="tile-label">Pilot (kg)</span>
                 </div>
                 <div class="tile">
-                   <input id="weight_copilot" type="number" value="0" min="0">
+                   <input id="SETTINGS_WEIGHT_COPILOT" type="number" value="0" min="0">
                    <span class="tile-label">Front Passenger (kg)</span>
                </div>
             </div>
 
             <div class="wind-grid">
                  <div class="tile">
-                    <input id="weight_rl" type="number" value="0" min="0">
+                    <input id="SETTINGS_WEIGHT_REAR_LEFT" type="number" value="0" min="0">
                     <span class="tile-label">Left Passenger (kg)</span>
                 </div>
                 <div class="tile">
-                   <input id="weight_rr" type="number" value="0" min="0">
+                   <input id="SETTINGS_WEIGHT_REAR_RIGHT" type="number" value="0" min="0">
                    <span class="tile-label">Right Passenger (kg)</span>
                </div>
                <div class="tile">
-                  <input id="weight_bagage" type="number" value="0" min="0">
+                  <input id="SETTINGS_WEIGHT_BAGAGE" type="number" value="0" min="0">
                   <span class="tile-label">Baggage (kg)</span>
               </div>
             </div>
@@ -1438,7 +1541,7 @@
 
             <div class="wind-grid">
                  <div class="tile">
-                    <input id="aircraft_callsign" type="text" class="tile-value UPPERCASE_input">
+                    <input id="aircraft_callsign" type="text" class="tile-value UPPERCASE_input" disabled>
                     <span class="tile-label">CALLSIGN</span>
                 </div>
                 <div class="tile">
@@ -1453,7 +1556,7 @@
                     <span class="tile-label">Cruise Speed (k/h)</span>
                 </div>
                 <div class="tile">
-                   <input id="aircraft_mtow" type="number" value="" min="0">
+                   <input id="aircraft_mtow" type="number" value="0" min="0">
                    <span class="tile-label">MTOW</span>
                 </div>
             </div>
@@ -1480,18 +1583,18 @@
 
             <div class="wind-grid">
                 <div class="tile">
-                    <input id="aircraft_fuel_consumption" type="number" value="", min="0">
+                    <input id="aircraft_fuel_consumption" type="number" value="0", min="0">
                     <span class="tile-label">Fuel Consumption (l/h)</span>
                 </div>
                 <div class="tile">
-                    <input id="fuel_liters" type="number" value="", min="0">
-                    <span class="tile-label">Maximum Fuel</span>
+                    <input id="SETTINGS_WEIGHT_FUEL_LITERS" type="number" value="0", min="0">
+                    <span class="tile-label">Maximum Fuel (l)</span>
                 </div>
             </div>
 
             <div class="wind-grid">
                 <div class="tile">
-                    <input id="aircraft_costs" type="number" value="", min="0">
+                    <input id="aircraft_costs_per_hour" type="number" value="", min="0">
                     <span class="tile-label">Costs Per Hour</span>
                 </div>
             </div>
@@ -1509,7 +1612,7 @@
                 <div class="weight-card">
                     <div class="grid-two-thirds-one-third">
                         <div class="weight-card-header">Empty aircraft weight (kg)</div>
-                        <input type="number" id="weight_empty" value="663", min="0">
+                        <input type="number" id="weight_empty" value="0", min="0">
                     </div>
                 </div>
 
@@ -1521,55 +1624,71 @@
                     </div>
 
                     <div class="wind-grid_3">
-                        <div class="weight-card-header">Aircraft</div>
-                        <input type="number" id="arm_empty" value="262", min="0">
+                        <div class="weight-card-header">Empty Weight</div>
+                        <input type="number" id="arm_empty" value="0", min="0">
                         <input type="number" id="moment_empty" value="0" disabled>
                     </div>
 
                     <!-- Pilot -->
                     <div class="wind-grid_3">
                         <div class="weight-card-header">Pilot</div>
-                        <input type="number" id="arm_pilot" value="410", min="0">
+                        <input type="number" id="arm_pilot" value="0", min="0">
                         <input type="number" id="moment_pilot" value="0" disabled>
                     </div>
 
                     <!-- Front Passenger -->
                     <div class="wind-grid_3">
                         <div class="weight-card-header">Front Passenger</div>
-                        <input type="number" id="arm_copilot" value="410", min="0">
+                        <input type="number" id="arm_copilot" value="0", min="0">
                         <input type="number" id="moment_copilot" value="0" disabled>
                     </div>
 
                     <!-- Rear Left Passenger -->
                     <div class="wind-grid_3">
                         <div class="weight-card-header">Rear Left Passenger</div>
-                        <input type="number" id="arm_rl" value="1190", min="0">
+                        <input type="number" id="arm_rl" value="0", min="0">
                         <input type="number" id="moment_rl" value="0" disabled>
                     </div>
 
                     <!-- Rear Right Passenger -->
                     <div class="wind-grid_3">
                         <div class="weight-card-header">Rear Right Passenger</div>
-                        <input type="number" id="arm_rr" value="1190", min="0">
+                        <input type="number" id="arm_rr" value="0", min="0">
                         <input type="number" id="moment_rr" value="0" disabled>
                     </div>
 
                     <!-- Baggage -->
                     <div class="wind-grid_3">
                         <div class="weight-card-header">Baggage</div>
-                        <input type="number" id="arm_bagage" value="1900", min="0">
+                        <input type="number" id="arm_bagage" value="0", min="0">
                         <input type="number" id="moment_bagage" value="0" disabled>
                     </div>
 
                     <!-- Fuel -->
                     <div class="wind-grid_3">
                         <div class="weight-card-header">Fuel</div>
-                        <input type="number" id="arm_fuel" value="1120", min="0">
+                        <input type="number" id="arm_fuel" value="0", min="0">
                         <input type="number" id="moment_fuel" value="0" disabled>
                     </div>
 
                 </div>
             </div>
+
+            <!-- Totals Section -->
+            <div class="border-round-eged">
+                <div class="weight-card-header">Totals</div>
+                <div class="wind-grid_3">
+                     <input type="number" class="tile-value" id="SETTINGS_total_moment" value="0" disabled>
+                     <input type="number" class="tile-value" id="SETTINGS_total_weight" value="0" disabled>
+                     <input type="number" class="tile-value" id="SETTINGS_takeoff_cg" value="0" disabled>
+                </div>
+                <div class="wind-grid_3">
+                     <span class="tile-label">Total Moment</span>
+                     <span class="tile-label">Total Weight (kg)</span>
+                     <span class="tile-label">Take off CG</span>
+                </div>
+            </div>
+
         </div>
         </div>
 
@@ -1618,8 +1737,8 @@
             <!-- Weight Balance Chart -->
             <div class="section-title">Weight & Balance Envelope</div>
             <div class="border-round-eged">
-                <canvas id="weightBalanceChart2"></canvas>
-                <div id="envelopeMessage2" style="margin-top: 12px; padding: 10px; border-radius: 8px; font-size: 14px; text-align: center; display: none;"></div>
+                <canvas id="SETTINGS_weightBalanceChart"></canvas>
+                <div id="SETTINGS_envelopeMessage" style="margin-top: 12px; padding: 10px; border-radius: 8px; font-size: 14px; text-align: center; display: none;"></div>
             </div>
 
 
@@ -2258,8 +2377,6 @@ document.getElementById('aircraft_spinner')?.addEventListener('change', async fu
         console.log(`> addEventListener: aircraft_spinner`);
         // Update the checklist using the selection from cache (Python async)
         await window.load_spinner_selection('aircraft_spinner', 'AIRCRAFT');
-        // Rebuild sections and categories after loading
-        // populateChecklistCatagories();
     }
 });
 
@@ -2325,20 +2442,20 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
     def get_default_aircraft():
         print('> func: get_default_aircraft()')
         template = {
-                    'NAME': '',
-                    'AIRCRAFT_NAME': '',
+                    'CACHENAME': '',
                     'TYPE': '',
                     'CALLSIGN': '',
                     'CALLSIGN_SHORT': '',
                     'RULES': '',
                     'CRUISESPEED': 0,
                     'MTOW': 0,
-                    'COSTS': {'PER_HOUR': ''},
-                    'FUEL': {'value': 0, 'type': '', 'density': 0, 'consumption': 0},
-                    'WEIGHT': {'fuel_liters': 0, 'empty': 0, 'pilot': 0, 'copilot': 0, 'passenger_left': 0, 'passenger_right': 0, 'bagage': 0},
+                    'EMPTY_WEIGHT': 0,
+                    'COSTS_PER_HOUR': 0,
+                    'FUEL': {'type': '', 'density': 0, 'consumption': 0},
+                    'WEIGHT': {'fuel_liters': 0, 'pilot': 0, 'copilot': 0, 'passenger_left': 0, 'passenger_right': 0, 'bagage': 0},
                     'ARM': {'fuel': 0, 'empty_weight': 0, 'pilot': 0, 'copilot': 0, 'passenger_left': 0, 'passenger_right': 0, 'bagage': 0},
                     'WEIGHT_BALANCE': {'moment': '', 'CG': ''},
-                    'ENVELOPE': {'x1': '', 'x2': '', 'x3': '', 'x4': '', 'x5': '', 'y1': '', 'y2': '', 'y3': '', 'y4': '', 'y5': ''},
+                    'ENVELOPE': {'x1': 0, 'x2': 0, 'x3': 0, 'x4': 0, 'x5': 0, 'y1': 0, 'y2': 0, 'y3': 0, 'y4': 0, 'y5': 0},
                     'POH_RUNWAY_TAKEOFF': {"altitude": '', "temperature": '', "weigth": '', 'distance': '', '50ft': ''},
                     'POH_RUNWAY_LANDING': {"altitude": '', "temperature": '', "weigth": '', 'distance': '', '50ft': ''},
                     'PERFORMANCE_TAKEOFF': {
@@ -2548,6 +2665,14 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
             'DEPARTURE_ATC_APPROACH': '',         # Approach
             'DEPARTURE_ATC_TELEPHONE': '',        # Telephone Tower
 
+            # Departure WEIGHTS
+            'DEPARTURE_WEIGHT_FUEL_LITERS': 0,
+            'DEPARTURE_WEIGHT_PILOT': 0,
+            'DEPARTURE_WEIGHT_COPILOT': 0,
+            'DEPARTURE_WEIGHT_REAR_LEFT': 0,
+            'DEPARTURE_WEIGHT_REAR_RIGHT': 0,
+            'DEPARTURE_WEIGHT_BAGAGE': 0,
+
             # Arrival
             'ARRIVAL_ICAO': '',                   # ICAO code
             'ARRIVAL_ICAO_CITY': '',              # ICAO code with City
@@ -2580,6 +2705,14 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
             'ARRIVAL_ATC_GROUND': '',       # Delivery/Ground frequency
             'ARRIVAL_ATC_APPROACH': '',     # Approach
             'ARRIVAL_ATC_TELEPHONE': '',    # Telephone Tower
+
+            # Arrival WEIGHTS
+            'ARRIVAL_WEIGHT_FUEL_LITERS': 0,
+            'ARRIVAL_WEIGHT_PILOT': 0,
+            'ARRIVAL_WEIGHT_COPILOT': 0,
+            'ARRIVAL_WEIGHT_REAR_LEFT': 0,
+            'ARRIVAL_WEIGHT_REAR_RIGHT': 0,
+            'ARRIVAL_WEIGHT_BAGAGE': 0,
 
             # Enroute
             'FIC_NAME': '',             # FIC name
@@ -2702,6 +2835,7 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
                 js.window.flight_plan_data['AIRCRAFT'] = data_dict
                 js.document.getElementById('aircraft_field').value = user_selection
                 aircraft_populate()
+                # aircraft_aerodrome_defaults()
 
             print(f"   >✅ [elementId] '{user_selection}' loaded successfully")
         except Exception as e:
@@ -2720,13 +2854,13 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
             js.window.alert(f"ℹ️ Please provide a {cacheName} name before saving.")
             return
 
-        # Update the flightplan with the latest version of the GUI fields
+        # Update the flightplan with the latest version of the GUI fields before dumping to json
         if cacheName=='AIRCRAFT':
             aircraft_update_flightplan()
 
         cache_key = f'{cacheName}_{listname}'
         # Store Cache key in flightplan
-        js.window.flight_plan_data[cacheName]['NAME'] = cache_key
+        js.window.flight_plan_data[cacheName]['CACHENAME'] = cache_key
         # Convert to JSON string
         json_data = json.dumps(js.window.flight_plan_data[cacheName])
         # Save to cache
@@ -2744,45 +2878,18 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
     # ================================================
     # AIRCRAFT SPECIFICATIONS
     # ================================================
-
-    def aircraft_clean(verbose='info'):
-        print('> func: aircraft_clean()')
-        # Clean the fields
-        js.document.getElementById('aircraft_field').value = ''
-        select = js.document.getElementById('aircraft_spinner')
-        select.value = 'Select and Load'
-
-        # Set the default checklist
-        js.window.flight_plan_data['AIRCRAFT'] = get_default_aircraft()
-
-        # Populate aircraft with defaults
-        aircraft_populate()
-
-        if verbose=='info':
-            js.window.alert(f"ℹ️ Default aircraft specifications are loaded.")
-            print(js.window.flight_plan_data['AIRCRAFT'])
-
-
     def aircraft_matching_pairs():
         """Matching pairs for GUI elements and dictionary in get_default_aircraft()."""
 
         return {
-          'weight_empty': ['WEIGHT', 'empty'],
+          'SETTINGS_WEIGHT_FUEL_LITERS': ['WEIGHT', 'fuel_liters'],
+          'SETTINGS_WEIGHT_PILOT': ['WEIGHT', 'pilot'],
+          'SETTINGS_WEIGHT_COPILOT': ['WEIGHT', 'copilot'],
+          'SETTINGS_WEIGHT_REAR_LEFT': ['WEIGHT', 'passenger_right'],
+          'SETTINGS_WEIGHT_REAR_RIGHT': ['WEIGHT', 'passenger_left'],
+          'SETTINGS_WEIGHT_BAGAGE': ['WEIGHT', 'bagage'],
 
-          'fuel_liters': ['WEIGHT', 'fuel_liters'],
-          'weight_pilot': ['WEIGHT', 'pilot'],
-          'weight_copilot': ['WEIGHT', 'copilot'],
-          'weight_rl': ['WEIGHT', 'passenger_left'],
-          'weight_rr': ['WEIGHT', 'passenger_right'],
-          'weight_bagage': ['WEIGHT', 'bagage'],
-
-          'fuel_liters_departure': ['WEIGHT', 'fuel_liters'],
-          'weight_pilot_departure': ['WEIGHT', 'pilot'],
-          'weight_copilot_departure': ['WEIGHT', 'copilot'],
-          'weight_rl_departure': ['WEIGHT', 'passenger_left'],
-          'weight_rr_departure': ['WEIGHT', 'passenger_right'],
-          'weight_bagage_departure': ['WEIGHT', 'bagage'],
-
+          'weight_empty': ['', 'EMPTY_WEIGHT'],
           'arm_fuel': ['ARM', 'fuel'],
           'arm_empty': ['ARM', 'empty_weight'],
           'arm_pilot': ['ARM', 'pilot'],
@@ -2806,43 +2913,89 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
           'aircraft_type': ['', 'TYPE'],
           'aircraft_cruisespeed': ['', 'CRUISESPEED'],
           'aircraft_mtow': ['', 'MTOW'],
+          'aircraft_costs_per_hour': ['', 'COSTS_PER_HOUR'],
+
           'aircraft_fuel_type': ['FUEL', 'type'],
           'aircraft_fuel_density': ['FUEL', 'density'],
           'aircraft_fuel_consumption': ['FUEL', 'consumption'],
-          'aircraft_costs': ['COSTS', 'PER_HOUR'],
         }
+
+    def aircraft_clean(verbose='info'):
+        print('> func: aircraft_clean()')
+        # Clean the fields
+        js.document.getElementById('aircraft_field').value = ''
+        select = js.document.getElementById('aircraft_spinner')
+        select.value = 'Select and Load'
+
+        # Set the default checklist
+        js.window.flight_plan_data['AIRCRAFT'] = get_default_aircraft()
+
+        # Populate aircraft with defaults
+        aircraft_populate()
+        # js.window.calculateWeightBalance('SETTINGS')
+
+        if verbose=='info':
+            js.window.alert(f"ℹ️ Default aircraft specifications are loaded.")
+            print(js.window.flight_plan_data['AIRCRAFT'])
+
+
+    def aircraft_aerodrome_defaults(fname):
+        """This will populate the departure and arrival aerdrome for the weights."""
+        print(f'> func: aircraft_aerodrome_defaults()')
+
+        # Set the defaults also for Departure and Arrival from the Aircraft SETTINGS
+        weight_fields = ["WEIGHT_FUEL_LITERS", "WEIGHT_PILOT", "WEIGHT_COPILOT", "WEIGHT_REAR_LEFT", "WEIGHT_REAR_RIGHT", "WEIGHT_BAGAGE"]
+
+        # Convert JS object to Python dict once
+        #flight_plan_py = js.window.flight_plan_data
+        #matching_pairs = aircraft_matching_pairs()
+
+        #for key in matching_pairs.keys():
+        #    cat, item = matching_pairs[key]
+        #    if cat == 'WEIGHT':
+        #        keyTarget = f"{fname}_{key.replace('SETTINGS', fname)}"
+        #        # Access JS object properties and convert only the final value
+        #        value = js.window.flight_plan_data['AIRCRAFT'][cat][item]
+        #        js.document.getElementById(keyTarget).value = value
+
+        for field in weight_fields:
+            keyTarget = f"{fname}_{field}"
+            keySource = f"SETTINGS_{field}"
+            js.document.getElementById(keyTarget).value = js.document.getElementById(keySource).value
 
 
     def aircraft_populate():
         """Populate the GUI with data from js.window.flight_plan_data['AIRCRAFT']."""
-        print('> func: aircraft_populate()')
+        print(f'> func: aircraft_populate()')
 
         if not js.window.flight_plan_data.get('AIRCRAFT'):
             print('   > ⚠️ AIRCRAFT not found in [js.window.flight_plan_data]')
-            return
+            return False
 
         print('PRINT AIRCRAFT DICT')
         print(js.window.flight_plan_data['AIRCRAFT'])
 
         # Matching pairs for GUI and dictionary
         matching_pairs = aircraft_matching_pairs()
+        aircraft_js = js.window.flight_plan_data['AIRCRAFT']
 
         # Populate the GUI
         for key in matching_pairs.keys():
             cat, item = matching_pairs[key]
-            print(f"   >Populate GUI {key}: {cat}-{item}")
             if (cat == '') or (cat is None):
-                js.document.getElementById(key).value = js.window.flight_plan_data['AIRCRAFT'][item]
+                print(f"   >Populate GUI field: [{key}] <- ['AIRCRAFT'][{item}]: {js.window.flight_plan_data['AIRCRAFT'][item]}")
+                js.document.getElementById(key).value = aircraft_js.get(item)
             else:
-                js.document.getElementById(key).value = js.window.flight_plan_data['AIRCRAFT'][cat][item]
+                print(f"   >Populate GUI field: [{key}] <- ['AIRCRAFT'][{cat}][{item}]: {js.window.flight_plan_data['AIRCRAFT'][cat][item]}")
+                js.document.getElementById(key).value = aircraft_js[cat].get(item)
 
         # Calculate weight and balance
-        js.window.calculateWeightBalance()
+        js.window.calculateWeightBalance('SETTINGS')
 
 
     def aircraft_update_flightplan():
         """Update the flightplan: js.window.flight_plan_data['AIRCRAFT'] with the values from the GUI."""
-        print('>func: aircraft_update_flightplan()')
+        print(f'>func: aircraft_update_flightplan()')
 
         # Matching pairs for GUI and dictionary
         matching_pairs = aircraft_matching_pairs()
@@ -2851,18 +3004,14 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
         for key in matching_pairs.keys():
             cat, item = matching_pairs[key]
 
-            # Do not save the departure keys in the specific aircraft cache
-            if 'departure' in key:
-                continue
-
-            print(f"   >Update flightplanL GUI {key}: {cat}-{item}")
+            print(f"   >Update flightplan GUI [{key}] -> ['AIRCRAFT'][{cat}][{item}]")
             if (cat == '') or (cat is None):
                 js.window.flight_plan_data['AIRCRAFT'][item] = js.document.getElementById(key).value
             else:
                 js.window.flight_plan_data['AIRCRAFT'][cat][item] = js.document.getElementById(key).value
 
         # Directly populate to all fields. This is required because some fields needs to be updated in departure
-        aircraft_populate()
+        # aircraft_populate()
 
 
     # ================================================
@@ -2976,35 +3125,6 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
         # Automatically create the checklists
         # window.createChecklistSections()
         # window.populateChecklistCatagories()
-
-
-    # def save_checklist_to_json(elementId):
-    #     """Save custom checklist data to localStorage. """
-    #     print(f'> func: save_checklist_to_json()')
-
-    #     # Store the CHECKLIST to localStorage
-    #     listname = js.document.getElementById(elementId).value.strip()
-    #     if listname == '':
-    #         print('Name is required. Nothing saved. <return>')
-    #         js.window.alert(f"ℹ️ Please provide a checklist name before saving.")
-    #         return
-
-    #     cache_key = 'CHECKLIST_' + listname
-    #     # Store Cache key in flightplan
-    #     js.window.flight_plan_data['CHECKLIST']['NAME'] = cache_key
-    #     # Convert to JSON string
-    #     json_data = json.dumps(js.window.flight_plan_data['CHECKLIST'])
-    #     # Save to cache
-    #     js.localStorage.setItem(cache_key, json_data)
-
-    #     # Update the checklist list
-    #     update_dropdown('checklist_spinner', cacheName='CHECKLIST', keepSelection=True, elementId2='checklist_field');
-    #     message = f"✅ Checklist {listname} is saved with the catagories and items."
-    #     print(message)
-    #     js.window.alert(message)
-
-    #     # Return
-    #     return True
 
 
     def checklist_clean(verbose='info'):
@@ -3907,6 +4027,12 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
             f'{fname}_ATC_ATIS_FREQ',
             f'{fname}_ATC_GROUND',
             f'{fname}_ATC_TELEPHONE',
+            f'{fname}_WEIGHT_FUEL_LITERS',
+            f'{fname}_WEIGHT_PILOT',
+            f'{fname}_WEIGHT_COPILOT',
+            f'{fname}_WEIGHT_REAR_LEFT',
+            f'{fname}_WEIGHT_REAR_RIGHT',
+            f'{fname}_WEIGHT_BAGAGE',
         ]
 
         # Only update these fields based on DEPARTURE
@@ -4016,15 +4142,21 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
             f'{fname}_ATC_ATIS_FREQ',
             f'{fname}_ATC_GROUND',
             f'{fname}_ATC_TELEPHONE',
-            f'DATETIME-METAR-{fname}',
-            f'METAR-FIELD-{fname}',
-            f'METAR-TEXT-{fname}',
             f'{fname}_WIND_DIRECTION',
             f'{fname}_WIND_SPEED',
             f'{fname}_WIND_GUST',
             f'{fname}_WIND_VARIATION',
             f'{fname}_WIND_HEADWIND',
             f'{fname}_WIND_CROSSWIND',
+            f'{fname}_WEIGHT_FUEL_LITERS',
+            f'{fname}_WEIGHT_PILOT',
+            f'{fname}_WEIGHT_COPILOT',
+            f'{fname}_WEIGHT_REAR_LEFT',
+            f'{fname}_WEIGHT_REAR_RIGHT',
+            f'{fname}_WEIGHT_BAGAGE',
+            f'DATETIME-METAR-{fname}',
+            f'METAR-FIELD-{fname}',
+            f'METAR-TEXT-{fname}',
         ]
 
         print(f"Clearing fields for {fname}:")
@@ -4040,10 +4172,16 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
 
         # Clear all GUI fields with overlapping names
         for field_id in field_ids:
+            default_value = ''
+            # Get GUI element
             element = js.document.getElementById(field_id)
+
             if element:
+                # Check whether it is one of the weight-elements
+                if '_WEIGHT_' in field_id: default_value = 0
+
                 print(f"   >🧹 Clearing {field_id}")
-                element.value = ''
+                element.value = default_value
                 # Trigger change event to update any dependent fields
                 if field_id.endswith('_CTR'):
                     js.document.getElementById(field_id).dispatchEvent(js.Event.new('change'))
@@ -4060,6 +4198,8 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
             f'{fname}_CLOUD', f'{fname}_TIMEZONE', f'{fname}_ATC_TOWER',
             f'{fname}_ATC_ATIS_FREQ', f'{fname}_ATC_GROUND', f'{fname}_ATC_APPROACH',
             f'{fname}_ATC_TELEPHONE', f'{fname}_RUNWAY_LENGTH', f'{fname}_RUNWAY_SURFACE',
+            f'{fname}_WEIGHT_FUEL_LITERS', f'{fname}_WEIGHT_PILOT', f'{fname}_WEIGHT_COPILOT',
+            f'{fname}_WEIGHT_REAR_LEFT', f'{fname}_WEIGHT_REAR_RIGHT', f'{fname}_WEIGHT_BAGAGE',
         ]
 
         for key in keys:
@@ -4581,6 +4721,7 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
         await clear_aerodrome_fields('ARRIVAL')
         await clear_enroute_fields()
         checklist_clean(verbose='silent')
+        aircraft_clean(verbose='silent')
 
         # Remove METAR widget
         # remove_metar_widget('DEPARTURE')
@@ -4685,6 +4826,8 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
             js.document.getElementById('FIC_FREQUENCY2').value = ''
             js.document.getElementById('OVERHEAD2').value = ''
             js.document.getElementById('SQUAWK2').value = ''
+        elif spinner_name == 'aircraft_spinner':
+            aircraft_clean(verbose='silent')
 
         if elementId2 is not None:
             js.document.getElementById(elementId2).value = ''
@@ -4813,13 +4956,12 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
 
             # Initialize empty waypoints array
             js.window.waypoints = []
-            # js.window.messages = ''
 
             # Fill the flight_plan_data dictionary from the loaded JSON data
             for key, value in flight_plan_dict.items():
                 js.window.flight_plan_data[key] = value
 
-            # print(js.window.flight_plan_data)
+            print(js.window.flight_plan_data)
             # js.window.waypoints = window.flight_plan_data['WAYPOINTS']
 
             # Update GUI FIELDS
@@ -4834,6 +4976,7 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
             # Update Flag
             js.window.updateFlag('DEPARTURE', 'remove')
             js.window.updateFlag('ARRIVAL', 'remove')
+
             # Update VFR icon
             js.window.updateFlightCatagoryIcon('DEPARTURE', remove=True)
             js.window.updateFlightCatagoryIcon('ARRIVAL', remove=True)
@@ -4853,7 +4996,7 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
 
             # Populate checklist
             checklist_populate()
-            # Populate aircraft
+            # Populate aircraft settings
             aircraft_populate()
 
             # Update METAR
@@ -4866,38 +5009,46 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
             js.window.alert(f"❗ Error loading flight plan: {e}")
 
 
+    def store_field(element_id=None):
+        js.window.flight_plan_data[element_id] = js.document.getElementById(element_id).value
+
     def save_flightplan(to_cache=True, verbose=True):
         """Save current flightplan data to localStorage"""
         print(f"> func: save_flightplan()")
 
         # STORE FIELDS FROM GENERAL IN FLIGHTPLAN
-        js.window.flight_plan_data["FLIGHTPLAN"] = js.document.getElementById('FLIGHTPLAN').value;
-        js.window.flight_plan_data["POB"] = js.document.getElementById('POB').value;
-        js.window.flight_plan_data["FLIGHT_RULES"] = js.document.getElementById('FLIGHT_RULES').value;
-        js.window.flight_plan_data["DATETIME"] = js.document.getElementById('DATETIME').value;
-        js.window.flight_plan_data["AIRCRAFT_TYPE"] = js.document.getElementById('AIRCRAFT_TYPE').value;
-        js.window.flight_plan_data["CALLSIGN"] = js.document.getElementById('CALLSIGN').value;
         js.window.flight_plan_data["CALLSIGN_SHORT"] = js.window.create_callsign_short(js.document.getElementById('CALLSIGN').value);
+        general_fields = ["FLIGHTPLAN", "POB", "FLIGHT_RULES", "DATETIME", "AIRCRAFT_TYPE", "CALLSIGN"]
+        for field in general_fields:
+            store_field(field)
+
         # STORE FIELDS FROM ENROUTE IN FLIGHTPLAN
-        js.window.flight_plan_data["FIC_NAME"] = js.document.getElementById('FIC_NAME').value;
-        js.window.flight_plan_data["FIC_FREQUENCY"] = js.document.getElementById('FIC_FREQUENCY').value;
-        js.window.flight_plan_data["OVERHEAD"] = js.document.getElementById('OVERHEAD').value;
-        js.window.flight_plan_data["SQUAWK"] = js.document.getElementById('SQUAWK').value;
-        js.window.flight_plan_data["FIC_NAME2"] = js.document.getElementById('FIC_NAME2').value;
-        js.window.flight_plan_data["FIC_FREQUENCY2"] = js.document.getElementById('FIC_FREQUENCY2').value;
-        js.window.flight_plan_data["OVERHEAD2"] = js.document.getElementById('OVERHEAD2').value;
-        js.window.flight_plan_data["SQUAWK2"] = js.document.getElementById('SQUAWK2').value;
+        enroute_fields = ["FIC_NAME", "FIC_FREQUENCY", "OVERHEAD", "SQUAWK", "FIC_NAME2", "FIC_FREQUENCY2", "OVERHEAD2", "SQUAWK2"]
+        for field in enroute_fields:
+            store_field(field)
+
         # STORE ROUTE AND POSITION FIELDS IN FLIGHTPLAN
-        js.window.flight_plan_data["DEPARTURE_ROUTE_NAME"] = js.document.getElementById('DEPARTURE_ROUTE_NAME').value;
-        js.window.flight_plan_data["DEPARTURE_POSITION"] = js.document.getElementById('DEPARTURE_POSITION').value;
-        js.window.flight_plan_data["ARRIVAL_ROUTE_NAME"] = js.document.getElementById('ARRIVAL_ROUTE_NAME').value;
-        js.window.flight_plan_data["ARRIVAL_POSITION"] = js.document.getElementById('ARRIVAL_POSITION').value;
+        route_fields = ["DEPARTURE_ROUTE_NAME", "DEPARTURE_POSITION", "ARRIVAL_ROUTE_NAME", "ARRIVAL_POSITION"]
+        for field in route_fields:
+            store_field(field)
+
+        # STORE WEIGHT AND BALANCE
+        weight_fields = ["WEIGHT_FUEL_LITERS", "WEIGHT_PILOT", "WEIGHT_COPILOT", "WEIGHT_REAR_LEFT", "WEIGHT_REAR_RIGHT", "WEIGHT_BAGAGE"]
+        fnames = ['DEPARTURE', 'ARRIVAL']
+        for fname in fnames:
+            for field in weight_fields:
+                key = f"{fname}_{field}"
+                store_field(key)
+
         # STORE WAYPOINTS
         # js.window.flight_plan_data['WAYPOINTS'] = js.window.waypoints;
         # ALL OTHER FIELDS SHOULD BE STORE ALREADY IN THE FLIGHTPLAN DATA
 
         # GET FLIGHTPLAN NAME
         flightplan_name = js.window.flight_plan_data["FLIGHTPLAN"]
+        # print('HEEREEE')
+        # print(js.window.flight_plan_data)
+
         if (flightplan_name is None or flightplan_name == ''):
             if verbose:
                 js.window.alert("ℹ️ Please enter a flight plan name before saving.")
@@ -5000,7 +5151,8 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
             icaoSelected = js.document.getElementById(f'{fname}_ICAO_CITY')
 
             # Extract the string that is between parentheses in the alert message (e.g. the ICAO) and set it as the spinner value
-            icao_value = re.search(r'\(([^)]+)\)', icaoSelected.value).group(1)
+            # icao_value = re.search(r'\(([^)]+)\)', icaoSelected.value).group(1)
+            icao_value = extract_icao_from_string(icaoSelected.value)
 
             # Store previous value back elements and flight plan
             js.document.getElementById(f'{fname}_ICAO').value = icao_value
@@ -5068,7 +5220,14 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
             return False
 
 
-    def save_aerodrome_to_json(fname):
+    def extract_icao_from_string(icao_string):
+        if not icao_string:
+            return None
+
+        match = re.search(r'\(([^)]+)\)', icao_string)
+        return match.group(1) if match else ''
+
+    def save_aerodrome_to_json(fname, verbose='info'):
         """Save custom aerodrome data (ICAO) to localStorage
 
         Saves data for either departure/arrival aerodrome data to browser's localStorage.
@@ -5094,6 +5253,7 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
 
         # Create Cache key
         cache_key = fname + '_' + flight_data[f"{fname}_ICAO"]
+        print(f'   >CACHE KEY: {cache_key}')
         # Retrieve keys for dictionary
         dict_fname = {k: v for k, v in flight_data.items() if k.startswith(fname)}
 
@@ -5111,7 +5271,9 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
         # Save to cache
         message = f"✅ Custom {fname.lower()} field information for {flight_data.get(f'{fname}_ICAO', '')} is saved."
         print(f'   >{message}')
-        window.alert(message)
+        if verbose=='info':
+            window.alert(message)
+
         # Convert to JSON string
         json_data = json.dumps(dict_fname)
         # Save to cache
@@ -6164,9 +6326,11 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
     js.window.get_default_aircraft = get_default_aircraft
     js.window.save_to_json = save_to_json
     js.window.aircraft_populate = aircraft_populate
+    js.window.aircraft_aerodrome_defaults = aircraft_aerodrome_defaults
 
     # GENERAL
     js.window.load_spinner_selection = load_spinner_selection
+    js.window.extract_icao_from_string = extract_icao_from_string
 
     # FLAG
     # js.window.retrieve_flag = retrieve_flag
@@ -6258,9 +6422,15 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
           }
         }
 
-        // Calculate Weight and Balance on More and Departure tab
-        if (targetTab === 'More' || targetTab === 'Departure'){
-          window.calculateWeightBalance();
+        // Update the checklist when clicking on the more tab
+        // if (targetTab === 'More'){
+        //   checklist_populate()
+        //   window.calculateWeightBalance('SETTINGS');
+        // }
+
+        // Calculate Weight and Balance and Departure tab
+        if (targetTab === 'Departure' || targetTab === 'Arrival'){
+          window.calculateWeightBalance(targetTab.toUpperCase());
         }
         // WHEN THE TAB MAP IS CLICKED
         if (targetTab === "MAP") {
@@ -6430,10 +6600,9 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
 
         // Populate checklist
         checklist_populate()
-        aircraft_populate()
-
-        // Add the catagories for the spinner in checklist
         populateChecklistCatagories();
+        // Populate aircraft settings
+        aircraft_populate()
 
         // Restore settings from cache
         restoreSettingsFromCache();
@@ -6684,6 +6853,20 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
         if (icao.length < 4) return;
         // alert(`${prefix} with id: ${id}: field: ${icao}`)
 
+        // SAVE when selected but not yet (manually) saved
+        countrySelected = document.getElementById(`${prefix}_COUNTRY`).value
+        icaoSelected = document.getElementById(`${prefix}_ICAO_CITY`).value
+        icoaName = extract_icao_from_string(icaoSelected)
+
+        // alert(`${prefix} with selection: COUNTRY: ${countrySelected} and ICOA: ${icoaName} and ${icao}`)
+        if (icao === icoaName && countrySelected !== '' && icoaName !== '') {
+          cache_key = `${prefix}_${icoaName}`
+          json_data = localStorage.getItem(cache_key)
+          if (json_data === null) {
+            save_aerodrome_to_json(prefix, 'silent')
+          }
+        }
+
         // Load the aerodrome from json
         window.load_aerodrome_from_json(prefix, elementId=`${prefix}_ICAO`);
       });
@@ -6723,15 +6906,21 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
     });
 
     // Update the weight and balance directly after changing the value
-    ['weight_empty', 'fuel_liters_departure', 'weight_pilot_departure', 'weight_copilot_departure', 'weight_rl_departure', 'weight_rr_departure', 'weight_bagage_departure',
-      'arm_empty', 'arm_pilot', 'arm_copilot', 'arm_rl', 'arm_rr', 'arm_bagage', 'arm_fuel',
-      'x1', 'y1', 'x2', 'y2', 'x3', 'y3', 'x4', 'y4', 'x5', 'y5'].forEach(id => {
+    ['SETTINGS_WEIGHT_FUEL_LITERS', 'SETTINGS_WEIGHT_PILOT', 'SETTINGS_WEIGHT_COPILOT', 'SETTINGS_WEIGHT_REAR_RIGHT', 'SETTINGS_WEIGHT_REAR_LEFT', 'SETTINGS_WEIGHT_BAGAGE',
+      'DEPARTURE_WEIGHT_FUEL_LITERS', 'DEPARTURE_WEIGHT_PILOT', 'DEPARTURE_WEIGHT_COPILOT', 'DEPARTURE_WEIGHT_REAR_RIGHT', 'DEPARTURE_WEIGHT_REAR_LEFT', 'DEPARTURE_WEIGHT_BAGAGE',
+      'ARRIVAL_WEIGHT_FUEL_LITERS', 'ARRIVAL_WEIGHT_PILOT', 'ARRIVAL_WEIGHT_COPILOT', 'ARRIVAL_WEIGHT_REAR_RIGHT', 'ARRIVAL_WEIGHT_REAR_LEFT', 'ARRIVAL_WEIGHT_BAGAGE',
+      'aircraft_fuel_density', 'weight_empty', 'arm_empty', 'arm_pilot', 'arm_copilot', 'arm_rl', 'arm_rr', 'arm_bagage', 'arm_fuel',
+      'x1', 'y1', 'x2', 'y2', 'x3', 'y3', 'x4', 'y4', 'x5', 'y5',
+      ].forEach(id => {
       const field = document.getElementById(id);
       if (!field) return;
         field.addEventListener('change', element => {
 
         // Prefer the event's currentTarget id
         const field = element?.currentTarget?.id ?? id;
+        let prefix = 'SETTINGS';
+        if (field.startsWith('DEPARTURE')) prefix = 'DEPARTURE';
+        if (field.startsWith('ARRIVAL')) prefix = 'ARRIVAL';
 
         // Ensure the value is non-negative: if less than 0 set to 0
         const input = element.currentTarget;
@@ -6739,9 +6928,63 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
         if (rawValue < 0 || !Number.isFinite(rawValue)) input.value = 0;
 
         // Compute Weight and balance and update plot
-        window.calculateWeightBalance()
+        window.calculateWeightBalance(prefix)
 
       });
+    });
+
+    // Find the Aircraft specificatoins matching with the callsign
+    document.getElementById("CALLSIGN")?.addEventListener("change", () => {
+      const callsignField = document.getElementById("CALLSIGN").value.trim();
+      const callsignLabel = document.getElementById("CALLSIGN_LABEL");
+      const aircraftField = document.getElementById("AIRCRAFT_TYPE");
+
+      if (!callsignField) {
+        callsignLabel.textContent = "CALLSIGN";
+        return;
+      }
+
+      // Check whether stored aircraft with this callsign exists
+      const cacheKey = `AIRCRAFT_${callsignField}`; // e.g. AIRCRAFT_PH-SVU
+      const jsonData = localStorage.getItem(cacheKey);
+
+      console.log(jsonData);
+
+      if (jsonData) {
+        callsignLabel.textContent = "✅ Aircraft loaded";
+
+        try {
+          const aircraftData = JSON.parse(jsonData);
+          // Store aircraft data globally for PyScript
+          window.flight_plan_data["AIRCRAFT"] = aircraftData;
+          // Set the aircraft type
+          if (aircraftData?.TYPE)  aircraftField.value = aircraftData.TYPE;
+          // Populate aerdromes and aircraft settings
+          // window.aircraft_populate()
+          // window.aircraft_aerodrome_defaults('DEPARTURE')
+          // window.aircraft_aerodrome_defaults('ARRIVAL')
+          // HER
+
+        } catch (err) {
+          console.error("Invalid aircraft data in localStorage", err);
+        }
+      } else {
+        callsignLabel.textContent = "⚠ Aircraft unknown";
+      }
+    });
+
+    // Map the aircraft name to the callsign
+    document.getElementById('aircraft_field')?.addEventListener('change', (e) => {
+      const value = e?.target?.value ?? '';
+      document.getElementById('aircraft_callsign').value = value;
+    });
+
+    // Add clear cache button handler
+    document.getElementById('aircraft_save_btn')?.addEventListener('click', async () => {
+      // Make sure the callsign matches the aircraft field
+      document.getElementById('aircraft_callsign').value = document.getElementById('aircraft_field').value
+      // Save
+      window.save_to_json('aircraft_field', 'AIRCRAFT')
     });
 
     // Add clear cache button handler
