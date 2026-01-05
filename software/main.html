@@ -183,12 +183,10 @@
 
             <div class="wind-grid">
                 <div class="tile">
-                    <!--<input id="DEPARTURE_ICAO_2" type="text" class="tile-value UPPERCASE_input sync-departure" onchange="window.load_aerodrome_from_json('DEPARTURE', elementId='DEPARTURE_ICAO_2');" title="Departure ICAO">-->
                     <input id="DEPARTURE_ICAO_2" type="text" class="tile-value UPPERCASE_input sync-departure" title="Departure ICAO">
                     <span id="DEPARTURE_ICAO_2_LABEL" class="tile-label">Departure (ICAO)</span>
                 </div>
                 <div class="tile">
-                    <!--<input id="ARRIVAL_ICAO_2" type="text" class="tile-value UPPERCASE_input sync-arrival" onchange="window.load_aerodrome_from_json('ARRIVAL', elementId='ARRIVAL_ICAO_2');" title="Arrival ICAO">-->
                     <input id="ARRIVAL_ICAO_2" type="text" class="tile-value UPPERCASE_input sync-arrival" title="Arrival ICAO">
                     <span id="ARRIVAL_ICAO_2_LABEL" class="tile-label">Arrival (ICAO)</span>
                 </div>
@@ -510,11 +508,6 @@
                </div>
            </div>
 
-           <div class="button-row">
-               <button id="DEPARTURE_BTN_WEIGHTS" class="button-style" onclick="window.aircraft_aerodrome_defaults('DEPARTURE')">
-                   Set Default Weights
-               </button>
-           </div>
 
            <div class="border-round-eged" style="background-color: #ffffff;">
 
@@ -562,6 +555,12 @@
                 <div class="logo-container">
                     <img id="AIRCRAFT_BACK_IMAGE" src="./figs/aircraft_back.png">
                 </div>
+           </div>
+
+           <div class="button-row">
+               <button id="DEPARTURE_BTN_WEIGHTS" class="button-style" onclick="update_aerodrome_weights_js('DEPARTURE')">
+                   Set to custom weights
+               </button>
            </div>
 
            <!-- Weight Balance Chart -->
@@ -959,12 +958,6 @@
                </div>
            </div>
 
-           <div class="button-row">
-               <button id="ARRIVAL_BTN_WEIGHTS" class="button-style" onclick="window.aircraft_aerodrome_defaults('ARRIVAL')">
-                   Set Default Weights
-               </button>
-           </div>
-
            <div class="border-round-eged" style="background-color: #ffffff;">
                 <div class="grid-middle-small">
                     <div class="tile" style="border-color: transparent">
@@ -1010,6 +1003,12 @@
                 <div class="logo-container">
                     <img id="AIRCRAFT_BACK_IMAGE" src="./figs/aircraft_back.png">
                 </div>
+           </div>
+
+           <div class="button-row">
+               <button id="ARRIVAL_BTN_WEIGHTS" class="button-style" onclick="update_aerodrome_weights_js('ARRIVAL')">
+                   Set to custom weights
+               </button>
            </div>
 
            <!-- Weight Balance Chart -->
@@ -1545,7 +1544,7 @@
                     <span class="tile-label">CALLSIGN</span>
                 </div>
                 <div class="tile">
-                    <input id="aircraft_type" type="text" class="tile-value UPPERCASE_input">
+                    <input id="aircraft_type2" type="text" class="tile-value UPPERCASE_input">
                     <span class="tile-label">Aircraft Type</span>
                 </div>
             </div>
@@ -2834,8 +2833,8 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
             elif elementId == 'aircraft_spinner':
                 js.window.flight_plan_data['AIRCRAFT'] = data_dict
                 js.document.getElementById('aircraft_field').value = user_selection
-                aircraft_populate()
-                # aircraft_aerodrome_defaults()
+                js.window.aircraft_populate_js()
+                # js.window.update_aerodrome_weights_js()
 
             print(f"   >✅ [elementId] '{user_selection}' loaded successfully")
         except Exception as e:
@@ -2880,8 +2879,13 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
     # ================================================
     def aircraft_matching_pairs():
         """Matching pairs for GUI elements and dictionary in get_default_aircraft()."""
+        # 'elementId'  : flight_plan_data['AIRCRAFT'][cat][item]
 
         return {
+
+          'AIRCRAFT_TYPE': ['', 'TYPE'],
+          'CALLSIGN': ['', 'CALLSIGN'],
+
           'SETTINGS_WEIGHT_FUEL_LITERS': ['WEIGHT', 'fuel_liters'],
           'SETTINGS_WEIGHT_PILOT': ['WEIGHT', 'pilot'],
           'SETTINGS_WEIGHT_COPILOT': ['WEIGHT', 'copilot'],
@@ -2909,12 +2913,13 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
           'y4': ['ENVELOPE', 'y4'],
           'y5': ['ENVELOPE', 'y5'],
 
+          'aircraft_field': ['', 'CALLSIGN'],
+          'aircraft_spinner': ['', 'CALLSIGN'],
           'aircraft_callsign': ['', 'CALLSIGN'],
-          'aircraft_type': ['', 'TYPE'],
+          'aircraft_type2': ['', 'TYPE'],
           'aircraft_cruisespeed': ['', 'CRUISESPEED'],
           'aircraft_mtow': ['', 'MTOW'],
           'aircraft_costs_per_hour': ['', 'COSTS_PER_HOUR'],
-
           'aircraft_fuel_type': ['FUEL', 'type'],
           'aircraft_fuel_density': ['FUEL', 'density'],
           'aircraft_fuel_consumption': ['FUEL', 'consumption'],
@@ -2931,66 +2936,11 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
         js.window.flight_plan_data['AIRCRAFT'] = get_default_aircraft()
 
         # Populate aircraft with defaults
-        aircraft_populate()
-        # js.window.calculateWeightBalance('SETTINGS')
+        js.window.aircraft_populate_js()
 
         if verbose=='info':
             js.window.alert(f"ℹ️ Default aircraft specifications are loaded.")
             print(js.window.flight_plan_data['AIRCRAFT'])
-
-
-    def aircraft_aerodrome_defaults(fname):
-        """This will populate the departure and arrival aerdrome for the weights."""
-        print(f'> func: aircraft_aerodrome_defaults()')
-
-        # Set the defaults also for Departure and Arrival from the Aircraft SETTINGS
-        weight_fields = ["WEIGHT_FUEL_LITERS", "WEIGHT_PILOT", "WEIGHT_COPILOT", "WEIGHT_REAR_LEFT", "WEIGHT_REAR_RIGHT", "WEIGHT_BAGAGE"]
-
-        # Convert JS object to Python dict once
-        #flight_plan_py = js.window.flight_plan_data
-        #matching_pairs = aircraft_matching_pairs()
-
-        #for key in matching_pairs.keys():
-        #    cat, item = matching_pairs[key]
-        #    if cat == 'WEIGHT':
-        #        keyTarget = f"{fname}_{key.replace('SETTINGS', fname)}"
-        #        # Access JS object properties and convert only the final value
-        #        value = js.window.flight_plan_data['AIRCRAFT'][cat][item]
-        #        js.document.getElementById(keyTarget).value = value
-
-        for field in weight_fields:
-            keyTarget = f"{fname}_{field}"
-            keySource = f"SETTINGS_{field}"
-            js.document.getElementById(keyTarget).value = js.document.getElementById(keySource).value
-
-
-    def aircraft_populate():
-        """Populate the GUI with data from js.window.flight_plan_data['AIRCRAFT']."""
-        print(f'> func: aircraft_populate()')
-
-        if not js.window.flight_plan_data.get('AIRCRAFT'):
-            print('   > ⚠️ AIRCRAFT not found in [js.window.flight_plan_data]')
-            return False
-
-        print('PRINT AIRCRAFT DICT')
-        print(js.window.flight_plan_data['AIRCRAFT'])
-
-        # Matching pairs for GUI and dictionary
-        matching_pairs = aircraft_matching_pairs()
-        aircraft_js = js.window.flight_plan_data['AIRCRAFT']
-
-        # Populate the GUI
-        for key in matching_pairs.keys():
-            cat, item = matching_pairs[key]
-            if (cat == '') or (cat is None):
-                print(f"   >Populate GUI field: [{key}] <- ['AIRCRAFT'][{item}]: {js.window.flight_plan_data['AIRCRAFT'][item]}")
-                js.document.getElementById(key).value = aircraft_js.get(item)
-            else:
-                print(f"   >Populate GUI field: [{key}] <- ['AIRCRAFT'][{cat}][{item}]: {js.window.flight_plan_data['AIRCRAFT'][cat][item]}")
-                js.document.getElementById(key).value = aircraft_js[cat].get(item)
-
-        # Calculate weight and balance
-        js.window.calculateWeightBalance('SETTINGS')
 
 
     def aircraft_update_flightplan():
@@ -3003,15 +2953,17 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
         # Go throught all matching keys to store in flight dict
         for key in matching_pairs.keys():
             cat, item = matching_pairs[key]
+            elementId = js.document.getElementById(key)
+            if not elementId: continue
 
             print(f"   >Update flightplan GUI [{key}] -> ['AIRCRAFT'][{cat}][{item}]")
             if (cat == '') or (cat is None):
-                js.window.flight_plan_data['AIRCRAFT'][item] = js.document.getElementById(key).value
+                js.window.flight_plan_data['AIRCRAFT'][item] = elementId.value
             else:
-                js.window.flight_plan_data['AIRCRAFT'][cat][item] = js.document.getElementById(key).value
+                js.window.flight_plan_data['AIRCRAFT'][cat][item] = elementId.value
 
-        # Directly populate to all fields. This is required because some fields needs to be updated in departure
-        # aircraft_populate()
+        # Directly populate to all fields. This is required because some fields needs to be updated in general
+        js.window.aircraft_populate_js()
 
 
     # ================================================
@@ -4709,17 +4661,18 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
             'DEPARTURE_COUNTRY': '',
             'ARRIVAL_COUNTRY': '',
         }
-        js.window.flight_plan_data['CHECKLIST'] = get_default_checklist()
-        js.window.flight_plan_data['AIRCRAFT'] = get_default_aircraft()
-
+        # js.window.flight_plan_data['CHECKLIST'] = get_default_checklist()
+        # js.window.flight_plan_data['AIRCRAFT'] = get_default_aircraft()
         # Populate checklist items
-        checklist_populate()
+        # checklist_populate()
 
         # Clear fields
         await clear_general_fields()
         await clear_aerodrome_fields('DEPARTURE')
         await clear_aerodrome_fields('ARRIVAL')
         await clear_enroute_fields()
+
+        # Populate with default items
         checklist_clean(verbose='silent')
         aircraft_clean(verbose='silent')
 
@@ -4743,6 +4696,8 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
         js.window.waypoints = []
         js.window.METAR_DEPARTURE = ''
         js.window.METAR_ARRIVAL = ''
+
+        js.document.getElementById("CALLSIGN_LABEL").textContent = 'CALLSIGN'
 
         print("✅ New flightplan initialized - all fields cleared")
         return current_time
@@ -4784,7 +4739,7 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
 
         # Set defaults aircraft
         js.window.flight_plan_data['AIRCRAFT'] = get_default_aircraft()
-        aircraft_populate()
+        js.window.aircraft_populate_js()
 
         # Clean flag
         # updateFlag('DEPARTURE', 'remove')
@@ -4997,7 +4952,7 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
             # Populate checklist
             checklist_populate()
             # Populate aircraft settings
-            aircraft_populate()
+            js.window.aircraft_populate_js()
 
             # Update METAR
             js.window.retrieve_metar('DEPARTURE', verbose='silent')
@@ -6325,8 +6280,7 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
     js.window.aircraft_clean = aircraft_clean
     js.window.get_default_aircraft = get_default_aircraft
     js.window.save_to_json = save_to_json
-    js.window.aircraft_populate = aircraft_populate
-    js.window.aircraft_aerodrome_defaults = aircraft_aerodrome_defaults
+    js.window.aircraft_matching_pairs = aircraft_matching_pairs
 
     # GENERAL
     js.window.load_spinner_selection = load_spinner_selection
@@ -6413,14 +6367,13 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
         console.log(`>Tab switch from: ${currentTab}, to ${targetTab}`)
 
         // SAVE ON TAB CHANGE SWITCHING TO GENERAL AND ATC
-        // if (pyscriptReady && window.save_flightplan && currentTab && currentTab !== targetTab) {
-        if (pyscriptReady && window.save_flightplan && (targetTab === "ATC" || targetTab === "General")) {
-          try {
-            window.save_flightplan(true, false);
-          } catch (error) {
-            console.error("Error saving data before tab switch:", error);
-          }
-        }
+        // if (pyscriptReady && window.save_flightplan && (targetTab === "ATC")) {
+        //   try {
+        //     window.save_flightplan(true, false);
+        //   } catch (error) {
+        //     console.error("Error saving data before tab switch:", error);
+        //   }
+        // }
 
         // Update the checklist when clicking on the more tab
         // if (targetTab === 'More'){
@@ -6601,8 +6554,8 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
         // Populate checklist
         checklist_populate()
         populateChecklistCatagories();
-        // Populate aircraft settings
-        aircraft_populate()
+        // Populate aircraft settings (with default settings in this case)
+        aircraft_populate_js()
 
         // Restore settings from cache
         restoreSettingsFromCache();
@@ -6933,6 +6886,63 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
       });
     });
 
+
+    function update_aerodrome_weights_js(prefix) {
+        console.log('> func: update_aerodrome_weights_js()');
+
+        // Access the flight plan data
+        const flight_plan_py = window.flight_plan_data;
+        const matching_pairs = aircraft_matching_pairs().toJs();;
+
+        for (const key in matching_pairs) {
+            const [cat, item] = matching_pairs[key];
+
+            if (cat === 'WEIGHT') {
+                const keyTarget = `${key.replace('SETTINGS', prefix)}`;
+                const value = window.flight_plan_data['AIRCRAFT'][cat][item];
+                const element = document.getElementById(keyTarget);
+                if (element) element.value = value;
+                console.log(`   >Populate GUI field: [${keyTarget}] <- ['AIRCRAFT'][${cat}][${item}]: ${window.flight_plan_data['AIRCRAFT'][cat][item]}`);
+            }
+        }
+        // Calculate weight and balance
+        window.calculateWeightBalance(prefix);
+    }
+
+    function aircraft_populate_js() {
+        console.log('> func: aircraft_populate_js()');
+
+        // Check if AIRCRAFT exists in flight_plan_data
+        if (!window.flight_plan_data || !window.flight_plan_data['AIRCRAFT']) {
+            console.log('   > ⚠️ AIRCRAFT not found in [window.flight_plan_data]');
+            return false;
+        }
+
+        // console.log('PRINT AIRCRAFT DICT');
+        // console.log(window.flight_plan_data['AIRCRAFT']);
+
+        // Matching pairs for GUI and dictionary
+        const matching_pairs = window.aircraft_matching_pairs().toJs();
+        const aircraft_js = window.flight_plan_data['AIRCRAFT'];
+
+        // Populate the GUI
+        for (const key in matching_pairs) {
+            const [cat, item] = matching_pairs[key];
+            const element = document.getElementById(key);
+            if (!element) continue;
+
+             if (cat === '' || cat === null || cat === undefined) {
+                 console.log(`   >Populate GUI field: [${key}] <- ['AIRCRAFT'][${item}]: ${aircraft_js[item]}`);
+                 element.value = aircraft_js[item] ?? 'aap';
+             } else {
+                 console.log(`   >Populate GUI field: [${key}] <- ['AIRCRAFT'][${cat}][${item}]: ${aircraft_js[cat]?.[item]}`);
+                 element.value = aircraft_js[cat]?.[item] ?? '';
+             }
+        }
+        // Calculate weight and balance
+        window.calculateWeightBalance('SETTINGS');
+    }
+
     // Find the Aircraft specificatoins matching with the callsign
     document.getElementById("CALLSIGN")?.addEventListener("change", () => {
       const callsignField = document.getElementById("CALLSIGN").value.trim();
@@ -6941,14 +6951,13 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
 
       if (!callsignField) {
         callsignLabel.textContent = "CALLSIGN";
+        aircraftField.value = ''
         return;
       }
 
       // Check whether stored aircraft with this callsign exists
       const cacheKey = `AIRCRAFT_${callsignField}`; // e.g. AIRCRAFT_PH-SVU
       const jsonData = localStorage.getItem(cacheKey);
-
-      console.log(jsonData);
 
       if (jsonData) {
         callsignLabel.textContent = "✅ Aircraft loaded";
@@ -6960,24 +6969,26 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
           // Set the aircraft type
           if (aircraftData?.TYPE)  aircraftField.value = aircraftData.TYPE;
           // Populate aerdromes and aircraft settings
-          // window.aircraft_populate()
-          // window.aircraft_aerodrome_defaults('DEPARTURE')
-          // window.aircraft_aerodrome_defaults('ARRIVAL')
-          // HER
+          aircraft_populate_js()
+          update_aerodrome_weights_js('DEPARTURE')
+          update_aerodrome_weights_js('ARRIVAL')
 
         } catch (err) {
           console.error("Invalid aircraft data in localStorage", err);
         }
       } else {
         callsignLabel.textContent = "⚠ Aircraft unknown";
+        aircraftField.value = ''
       }
     });
+
 
     // Map the aircraft name to the callsign
     document.getElementById('aircraft_field')?.addEventListener('change', (e) => {
       const value = e?.target?.value ?? '';
       document.getElementById('aircraft_callsign').value = value;
     });
+
 
     // Add clear cache button handler
     document.getElementById('aircraft_save_btn')?.addEventListener('click', async () => {
