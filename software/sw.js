@@ -7,10 +7,12 @@ const FILES_TO_CACHE = [
   "./manifest.json",
   // "./libs/core.css",
   // "./libs/core.js",
+
   // SCRIPTS
   "./scripts/weightbalance.js",
-  // "./scripts/utils.js",
+  "./scripts/utils.js",
   "./scripts/maps.js",
+
   // WEATHER SCRIPTS
   "./scripts/metar.js",
   "./scripts/rain.js",
@@ -21,6 +23,7 @@ const FILES_TO_CACHE = [
   "./scripts/dark.js",
   // "./scripts/controls.js",
   // "./scripts/textoverlay.js",
+
   // FIGS
   "./libs/leaflet.css",
   "./libs/leaflet.js",
@@ -29,8 +32,10 @@ const FILES_TO_CACHE = [
   "./figs/default_aerodrome.jpg",
   "./figs/logo_skywalk.png",
   "./figs/logo_skywalk_dark.png",
+
   // ICONS
   "./icons/airplane_gray.png",
+
   // CATAGORY FIGS
   "./icons/sun_VFR.png",
   "./icons/clouds_VFR.png",
@@ -45,6 +50,7 @@ const FILES_TO_CACHE = [
   "./icons/clouds_LIFR.png",
   "./icons/clouds_rain_LIFR.png",
   "./icons/clouds_unknown.png",
+
   // FIGS AIRCRAFT
   "./icons/aircraft_front.png",
   "./icons/aircraft_back.png",

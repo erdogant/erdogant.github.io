@@ -7,6 +7,7 @@ let airportLayer = null;
 let airportData = null;
 let airspaceLayer = null;
 let TMZLayer = null;
+const time_dep = document.getElementById("DEPARTURE_clockField")?.value;
 
 // Define base layers
 const baseLayers = {
@@ -16,8 +17,15 @@ const baseLayers = {
 };
 
 // Initialize map
-function initRouteMap() {
-  console.log("Initializing route map");
+function initRouteMap(initialize = true) {
+  // Initializing route map
+  console.log(">func: initRouteMap()");
+
+  if (!initialize) {
+    console.log("> Map already initialized, skipping initRouteMap()");
+    return;
+  }
+
   if (routeMap) {
     routeMap.remove();
     routeMap = null;
@@ -42,17 +50,20 @@ function initRouteMap() {
   };
 
   // Force resize to render correctly
-  setTimeout(() => routeMap.invalidateSize(), 100);
+  setTimeout(() => routeMap.invalidateSize(), 180);
 }
 
 // Update route
 async function updateRoute() {
-  console.log("Updating route and checking for airport data");
+  // Updating route and checking for airport data
+  console.log("> func: updateRoute()");
+
   // Clear existing route line
   if (routeLine) {
     routeMap.removeLayer(routeLine);
     routeLine = null;
   }
+
   // Clear existing route markers
   routeMarkers.forEach((marker) => routeMap.removeLayer(marker));
   routeMarkers = [];
@@ -104,8 +115,10 @@ async function updateRoute() {
     const eps = 1e-6;
     function coordsEqual(a, b) {
       // return Math.abs(a[0] - b[0]) < eps && Math.abs(a[1] - b[1]) < eps;
-      return a[0] - b[0] < eps && a[1] - b[1] < eps;
+      // return a[0] - b[0] < eps && a[1] - b[1] < eps;
+      return Math.abs(a[0] - b[0]) < eps && Math.abs(a[1] - b[1]) < eps;
     }
+
     // Update departure (first) point if it changed
     if (!coordsEqual(window.waypoints[0], depCoords)) {
       window.waypoints[0] = depCoords;
@@ -156,27 +169,42 @@ async function updateRoute() {
     updateWaypoints();
   });
 
-  const depICAO = window.flight_plan_data?.DEPARTURE_ICAO_CITY || "Departure";
-  const arrICAO = window.flight_plan_data?.ARRIVAL_ICAO_CITY || "Arrival";
+  // ADD MARRKERS FOR DEPARTURE AND ARRIVAL
 
-  routeMarkers.push(
-    L.marker(depCoords, {
-      draggable: false,
-      title: depICAO,
-      zIndexOffset: 7000, // Ensure departure marker stays on top
-    })
-      .addTo(routeMap)
-      .bindPopup(depICAO, { closeButton: false }),
-  );
-  routeMarkers.push(
-    L.marker(arrCoords, {
-      draggable: false,
-      title: arrICAO,
-      zIndexOffset: 7000, // Ensure arrival marker stays on top
-    })
-      .addTo(routeMap)
-      .bindPopup(arrICAO, { closeButton: false }),
-  );
+  // const depICAO = window.flight_plan_data?.DEPARTURE_ICAO_CITY || "Departure";
+  // const arrICAO = window.flight_plan_data?.ARRIVAL_ICAO_CITY || "Arrival";
+
+  // // Create departure marker with custom icon
+  // const depMarker = L.marker(depCoords, {
+  //   draggable: false,
+  //   title: depICAO,
+  //   zIndexOffset: 7000,
+  //   icon: L.divIcon({
+  //     className: "departure-marker",
+  //     html: '<div style="background-color: #4CAF50; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 4px rgba(0,0,0,0.5);"></div>',
+  //     iconSize: [20, 20],
+  //     iconAnchor: [10, 10],
+  //   }),
+  // })
+  //   .addTo(routeMap)
+  //   .bindPopup(depICAO, { closeButton: false });
+
+  // // Create arrival marker with custom icon
+  // const arrMarker = L.marker(arrCoords, {
+  //   draggable: false,
+  //   title: arrICAO,
+  //   zIndexOffset: 7000,
+  //   icon: L.divIcon({
+  //     className: "arrival-marker",
+  //     html: '<div style="background-color: #F44336; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 4px rgba(0,0,0,0.5);"></div>',
+  //     iconSize: [20, 20],
+  //     iconAnchor: [10, 10],
+  //   }),
+  // })
+  //   .addTo(routeMap)
+  //   .bindPopup(arrICAO, { closeButton: false });
+
+  // routeMarkers.push(depMarker, arrMarker);
 
   routeMap.fitBounds(routeLine.getBounds(), {
     padding: [50, 50],
@@ -232,7 +260,8 @@ function pointToSegmentDistance(p, v1, v2) {
 
 // Function to update waypoint markers and route line
 function updateWaypoints() {
-  // Clear existing waypoint markers
+  // Update existing waypoint markers. This script is only run on every click!
+
   waypointMarkers.forEach((marker) => routeMap.removeLayer(marker));
   waypointMarkers = [];
 
@@ -252,6 +281,11 @@ function updateWaypoints() {
       zIndexOffset: 3000,
     }).addTo(routeMap);
 
+    marker.on("dragend", function () {
+      UpdateFlightInfoFields(time_dep, false);
+      console.log("   >DRAG and RELEASE");
+    });
+
     // Add drag and hover handlers
     marker.on("drag", function (e) {
       window.waypoints[i] = [e.latlng.lat, e.latlng.lng];
@@ -261,10 +295,16 @@ function updateWaypoints() {
     marker.on("contextmenu", function () {
       // Remove waypoint on right click
       window.waypoints.splice(i, 1);
+      console.log("   >REMOVE WAYPOINT");
       updateWaypoints();
+      UpdateFlightInfoFields(time_dep, false);
     });
 
     waypointMarkers.push(marker);
+    // console.log("Run on click!");
+    // console.log(window.waypoints);
+    // Update flightinfo when a new marker is created
+    // UpdateFlightInfoFields(time_dep, false);
   }
 }
 
@@ -857,7 +897,7 @@ function initAirspaceLayerGroups(routeMap) {
       opacity: 0.1,
       weight: 1.5,
       layer: layers.CTA_TMA,
-      zindex: 100,
+      zIndex: 100,
     },
     ATZ: { markertype: "polygon", fill: true, fillColor: "#FF69B4", edgeColor: "#FF69B4", opacity: 0.15, weight: 1, layer: layers.ATZ, zIndex: 300 },
     MATZ: { markertype: "circle", fill: true, fillColor: "#8B0000", edgeColor: "#8B0000", opacity: 0.15, weight: 1, layer: layers.MATZ, zIndex: 300 },
@@ -871,7 +911,7 @@ function initAirspaceLayerGroups(routeMap) {
       opacity: 0.3,
       weight: 1,
       layer: layers.prohibited,
-      zindex: 3000,
+      zIndex: 3000,
     },
     danger: {
       markertype: "polygon",
@@ -881,7 +921,7 @@ function initAirspaceLayerGroups(routeMap) {
       opacity: 0.3,
       weight: 1,
       layer: layers.danger,
-      zindex: 50,
+      zIndex: 50,
     },
     restricted: {
       markertype: "polygon",
@@ -891,7 +931,7 @@ function initAirspaceLayerGroups(routeMap) {
       opacity: 0.3,
       weight: 1,
       layer: layers.restricted,
-      zindex: 3000,
+      zIndex: 3000,
     },
     gliding: {
       markertype: "polygon",
@@ -901,7 +941,7 @@ function initAirspaceLayerGroups(routeMap) {
       opacity: 0.3,
       weight: 1,
       layer: layers.gliding,
-      zindex: 1000,
+      zIndex: 1000,
     },
     parachuting: {
       markertype: "circle",
@@ -911,7 +951,7 @@ function initAirspaceLayerGroups(routeMap) {
       opacity: 0.2,
       weight: 1,
       layer: layers.parachuting,
-      zindex: 2500,
+      zIndex: 2500,
     },
     various: {
       markertype: "polygon",
@@ -921,7 +961,7 @@ function initAirspaceLayerGroups(routeMap) {
       opacity: 0.3,
       weight: 1,
       layer: layers.various,
-      zindex: 300,
+      zIndex: 300,
     },
     // NOTAM: { markertype: "marker", fill: false, fillColor: "#EFC238", edgeColor: "#EFC238", opacity: 0, weight: 3, layer: layers.NOTAM },
     // NOTAM_ENROUTE: { markertype: "marker", fill: false, fillColor: "#EFC238", edgeColor: "#EFC238", opacity: 0, weight: 3, layer: layers.NOTAM_ENROUTE },
@@ -1072,7 +1112,7 @@ function createAirspaceLayer(airspaces, routeMap, maxAltitude = 1500) {
             fillColor: areaLayer.fillColor,
             fillOpacity: areaLayer.opacity,
             weight: areaLayer.weight,
-            zIndex: areaLayer.zindex || 400,
+            zIndex: areaLayer.zIndex || 400,
           });
         }
         // Add click handler
@@ -1088,7 +1128,7 @@ function createAirspaceLayer(airspaces, routeMap, maxAltitude = 1500) {
         fillOpacity: areaLayer.opacity,
         weight: areaLayer.weight,
         dashArray: areaLayer.dash || null,
-        zIndex: areaLayer.zindex || 300,
+        zIndex: areaLayer.zIndex || 300,
       });
       // Add click handler
       layer.on("click", function (e) {
@@ -1171,11 +1211,6 @@ document.addEventListener("DOMContentLoaded", () => {
   window.updateRoute = updateRoute;
 });
 
-function createDateTime() {
-  console.log("---> createDateTime()");
-  document.getElementById("DATETIME").value = nowtime(false);
-}
-
 // Add save button functionality
 // document.getElementById('save_fields_btn')?.addEventListener('click', () => {
 //   if (pyscriptReady && window.save_flightplan) {
@@ -1196,9 +1231,68 @@ function createDateTime() {
 //   }
 // });
 
+// Haversine distance in km
+function haversineDistance(coord1, coord2) {
+  const R = 6371;
+  const lat1 = (coord1[0] * Math.PI) / 180;
+  const lon1 = (coord1[1] * Math.PI) / 180;
+  const lat2 = (coord2[0] * Math.PI) / 180;
+  const lon2 = (coord2[1] * Math.PI) / 180;
+
+  const dLat = lat2 - lat1;
+  const dLon = lon2 - lon1;
+
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return R * c;
+}
+
+// Main function: compute distance, time, and arrival
+function computeFlightInfo(waypoints, departureTimeHHMM = null, speedKt = 105) {
+  if (!waypoints || waypoints.length < 2) return null;
+
+  // Total distance
+  let totalDistanceKm = 0;
+  for (let i = 0; i < waypoints.length - 1; i++) {
+    totalDistanceKm += haversineDistance(waypoints[i], waypoints[i + 1]);
+  }
+
+  // const speedKt = 105;
+  const speedKmH = speedKt * 1.852;
+  const timeHours = totalDistanceKm / speedKmH;
+  const timeMinutes = Math.round(timeHours * 60);
+
+  let arrivalTime = "--:--";
+  let departureTime = "--:--";
+
+  if (departureTimeHHMM) {
+    const [depH, depM] = departureTimeHHMM.split(":").map(Number);
+    const depDate = new Date();
+    depDate.setHours(depH, depM, 0, 0);
+    depDate.setMinutes(depDate.getMinutes() + timeMinutes);
+    const arrH = String(depDate.getHours()).padStart(2, "0");
+    const arrM = String(depDate.getMinutes()).padStart(2, "0");
+    arrivalTime = `${arrH}:${arrM}`;
+    departureTime = departureTimeHHMM;
+  } else {
+    departureTime = "--:--";
+  }
+
+  return {
+    distance_km: totalDistanceKm.toFixed(1),
+    flying_time_min: timeMinutes,
+    departure_time: departureTime,
+    arrival_time: arrivalTime,
+  };
+}
+
 function openAerodromeMap(fname) {
+  // Get latlon for departure/ arrival
   const latlon = window.flight_plan_data[`${fname}_LATLON`];
   const icao = window.flight_plan_data[`${fname}_ICAO`];
+
+  // Open in google maps
   if (latlon && latlon[0] != null && latlon[1] != null) {
     const [lat, lon] = [parseFloat(latlon[0]), parseFloat(latlon[1])];
     const url = `https://www.google.com/maps?q=${lat},${lon}&z=14`;
@@ -1208,3 +1302,7 @@ function openAerodromeMap(fname) {
     console.log(`No coordinates available for ${fname} aerodrome`);
   }
 }
+
+// Make globally available
+window.updateRoute = updateRoute;
+window.initRouteMap = initRouteMap;

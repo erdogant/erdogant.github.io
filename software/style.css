@@ -864,3 +864,164 @@ input[type="number"]:disabled {
     text-align: center;
     margin-bottom: 4px;
 }
+
+
+
+/* =================== GENERAL FLIGHT ICON =================== */
+
+.flight-card {
+    background: linear-gradient(to bottom, #e8e8e8 0%, #d5d5d5 100%);
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 500px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border: 2px solid white;
+}
+
+.route-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.airport {
+    flex: 1;
+    text-align: center;
+    margin: 1px;
+}
+
+.airport-code {
+    font-size: 48px;
+    font-weight: bold;
+    color: #2c2c2c;
+    margin-bottom: 5px;
+    margin: 1px;
+}
+
+.airport-name {
+    font-size: 14px;
+    color: #2c2c2c;
+    font-weight: 500;
+    margin-bottom: 3px;
+}
+
+/*.timezone {
+    font-size: 11px;
+    color: #666;
+}*/
+
+.plane-icon {
+    flex-shrink: 0;
+    margin: 0 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.plane-icon:hover {
+    transform: scale(1.1);
+}
+
+.plane-icon:active {
+    transform: scale(0.95);
+}
+
+.plane-icon svg {
+    width: 40px;
+    height: 40px;
+    fill: #f4b400;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
+}
+
+.schedule-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 0 10px;
+}
+
+.schedule-item {
+    text-align: center;
+}
+
+.schedule-label {
+    font-size: 11px;
+    color: #666;
+    text-transform: uppercase;
+    margin-top: 35px;
+    margin-bottom: 5px;
+    font-weight: 500;
+    text-align: center;
+}
+
+
+.divider-general-section {
+    height: 1px;
+    background: #b8b8b8;
+    margin: 15px 0;
+    position: relative;
+}
+
+.divider-plane {
+    position: absolute;
+    top: 50%;
+    left: 20%;
+    transform: translate(-50%, -50%) rotate(90deg);
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(to bottom, #e8e8e8 0%, #d5d5d5 100%);
+    padding: 4px;
+    border-radius: 50%;
+}
+
+.distance-section {
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+}
+
+/*.plane-small {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+    transform: rotate(90deg);
+}*/
+
+.distance-info {
+    display: flex;
+    justify-content: space-between;
+    flex: 1;
+    font-size: 13px;
+    color: #666;
+}
+
+.clock-input {
+    font-size: 26px;
+    font-weight: bold;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto;
+    text-align: center;
+    background-color: transparent;
+    padding: 12px;
+    border-radius: 10px;
+    border: transparent;
+    box-sizing: border-box;
+    /* Remove native picker icon */
+    -webkit-appearance: none;  /* Chrome, Safari, Edge */
+    -moz-appearance: none;     /* Firefox */
+    appearance: none;
+}
+
+.clock-input::-webkit-calendar-picker-indicator {
+    display: none;   /* hides the clock icon in Chrome/Safari */
+}
+
+
+/*.schedule-time {
+    font-size: 26px;
+    font-weight: bold;
+    color: #2c2c2c;
+}*/

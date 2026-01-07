@@ -993,6 +993,71 @@ function parseMetarTime(metar_string) {
   };
 }
 
+// async function fetch_metar(metar_stations, splitlines = true, decoded = false, prefix) {
+//   console.log(`>Func: fetch_metar(${metar_stations})`);
+//   const metarField = document.getElementById("METAR-FIELD-" + prefix);
+//   const stations = Array.isArray(metar_stations) ? metar_stations : [metar_stations];
+
+//   for (const icao of stations) {
+//     console.log(`  >Fetching METAR for ${icao}`);
+//     if (metarField) {
+//       metarField.value = `Be patient while fetching METAR weather information from closest station: ${icao}`;
+//     }
+
+//     let baseUrl;
+//     if (decoded === true) {
+//       baseUrl = `https://aviationweather.gov/api/data/metar?ids=${icao}&format=decoded&hours=1`;
+//       // https://tgftp.nws.noaa.gov/data/observations/metar/decoded/${icao}.TXT
+//     } else {
+//       baseUrl = `https://aviationweather.gov/api/data/metar?ids=${icao}&format=raw&hours=1`;
+//       // https://tgftp.nws.noaa.gov/data/observations/metar/stations/${icao}.TXT
+//     }
+
+//     // Use CORS proxy to avoid CORS errors
+//     const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(baseUrl)}`;
+
+//     try {
+//       const response = await fetch(url);
+
+//       if (!response.ok) {
+//         console.log(`  >${icao}: HTTP error ${response.status}`);
+//         continue;
+//       }
+
+//       const text = await response.text();
+//       console.log(text);
+
+//       if (!text || text.trim() === "") {
+//         console.log(`  >${icao}: No data returned`);
+//         continue;
+//       }
+
+//       // Split into lines and get the first (most recent) METAR
+//       const lines = text.trim().split("\n");
+//       let metar_string = lines[0] || null; // The top line contains the full METAR
+
+//       console.log(`   >Retrieved METAR: ${metar_string}`);
+//       // console.log(`   >Retrieved Time: ${metar_date_str}`);
+//       // console.log(`   >Retrieved Time: ${metar_date_obj}`);
+
+//       // Return when metar_string is successfully found
+//       if (metar_string) {
+//         return [metar_string, icao];
+//       }
+
+//       // Wait 0.5 seconds before continuing to next station
+//       await new Promise((resolve) => setTimeout(resolve, 500));
+//     } catch (err) {
+//       console.log(`  >${icao}: Could not fetch the METAR report: ${url}`);
+//       console.error(err);
+//     }
+//   }
+
+//   // Return when empty and nothing found
+//   return [null, null, null];
+// }
+//
+
 async function fetch_metar(metar_stations, splitlines = true, decoded = false, prefix) {
   console.log(`>Func: fetch_metar(${metar_stations})`);
   const metarField = document.getElementById("METAR-FIELD-" + prefix);
@@ -1004,57 +1069,122 @@ async function fetch_metar(metar_stations, splitlines = true, decoded = false, p
       metarField.value = `Be patient while fetching METAR weather information from closest station: ${icao}`;
     }
 
-    let baseUrl;
-    if (decoded === true) {
-      baseUrl = `https://aviationweather.gov/api/data/metar?ids=${icao}&format=decoded&hours=1`;
-      // https://tgftp.nws.noaa.gov/data/observations/metar/decoded/${icao}.TXT
-    } else {
-      baseUrl = `https://aviationweather.gov/api/data/metar?ids=${icao}&format=raw&hours=1`;
-      // https://tgftp.nws.noaa.gov/data/observations/metar/stations/${icao}.TXT
+    // Try multiple CORS proxies and data sources
+    const sources = [
+      // corsproxy.io - usually more reliable
+      {
+        url: decoded
+          ? `https://corsproxy.io/?${encodeURIComponent(`https://aviationweather.gov/api/data/metar?ids=${icao}&format=decoded&hours=1`)}`
+          : `https://corsproxy.io/?${encodeURIComponent(`https://aviationweather.gov/api/data/metar?ids=${icao}&format=raw&hours=1`)}`,
+        name: "corsproxy.io",
+      },
+      // NOAA TXT files with AllOrigins
+      {
+        url: `https://api.allorigins.win/raw?url=${encodeURIComponent(
+          decoded
+            ? `https://tgftp.nws.noaa.gov/data/observations/metar/decoded/${icao}.TXT`
+            : `https://tgftp.nws.noaa.gov/data/observations/metar/stations/${icao}.TXT`,
+        )}`,
+        name: "NOAA via AllOrigins",
+      },
+      // CheckWX API (no key required for basic usage)
+      {
+        url: `https://api.checkwx.com/metar/${icao}/decoded`,
+        name: "CheckWX",
+        headers: { "X-API-Key": "" },
+      },
+      // Aviation Weather with different proxy
+      {
+        url: `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(
+          decoded
+            ? `https://aviationweather.gov/api/data/metar?ids=${icao}&format=decoded&hours=1`
+            : `https://aviationweather.gov/api/data/metar?ids=${icao}&format=raw&hours=1`,
+        )}`,
+        name: "codetabs proxy",
+      },
+    ];
+
+    for (const source of sources) {
+      try {
+        console.log(`  >Trying: ${source.name}`);
+
+        // Add timeout to fetch request
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+        const fetchOptions = {
+          signal: controller.signal,
+          headers: {
+            Accept: "text/plain",
+            ...(source.headers || {}),
+          },
+        };
+
+        const response = await fetch(source.url, fetchOptions);
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          console.log(`  >${icao}: HTTP error ${response.status} from ${source.name}`);
+          continue; // Try next source
+        }
+
+        const text = await response.text();
+
+        if (!text || text.trim() === "") {
+          console.log(`  >${icao}: No data returned from ${source.name}`);
+          continue; // Try next source
+        }
+
+        // Handle CheckWX JSON response
+        if (source.name === "CheckWX") {
+          try {
+            const json = JSON.parse(text);
+            if (json.data && json.data.length > 0) {
+              const metar_string = json.data[0];
+              console.log(`   >Retrieved METAR from ${source.name}: ${metar_string}`);
+              return [metar_string, icao];
+            }
+          } catch (e) {
+            console.log(`  >${icao}: Invalid JSON from CheckWX`);
+            continue;
+          }
+        }
+
+        // Handle text responses
+        const lines = text.trim().split("\n");
+        let metar_string = lines[0] || null;
+
+        // For NOAA decoded format, the METAR might be on the second line
+        if (decoded && lines.length > 1 && !metar_string.includes(icao)) {
+          metar_string = lines[1];
+        }
+
+        console.log(`   >Retrieved METAR from ${source.name}: ${metar_string}`);
+
+        // Return when metar_string is successfully found and contains ICAO
+        if (metar_string && (metar_string.includes(icao) || metar_string.includes("METAR"))) {
+          return [metar_string, icao];
+        }
+      } catch (err) {
+        if (err.name === "AbortError") {
+          console.log(`  >${icao}: Request timeout for ${source.name}`);
+        } else {
+          console.log(`  >${icao}: Fetch error from ${source.name}`);
+          console.error(err);
+        }
+        // Continue to next source
+      }
     }
 
-    // Use CORS proxy to avoid CORS errors
-    const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(baseUrl)}`;
-
-    try {
-      const response = await fetch(url);
-
-      if (!response.ok) {
-        console.log(`  >${icao}: HTTP error ${response.status}`);
-        continue;
-      }
-
-      const text = await response.text();
-      console.log(text);
-
-      if (!text || text.trim() === "") {
-        console.log(`  >${icao}: No data returned`);
-        continue;
-      }
-
-      // Split into lines and get the first (most recent) METAR
-      const lines = text.trim().split("\n");
-      let metar_string = lines[0] || null; // The top line contains the full METAR
-
-      console.log(`   >Retrieved METAR: ${metar_string}`);
-      // console.log(`   >Retrieved Time: ${metar_date_str}`);
-      // console.log(`   >Retrieved Time: ${metar_date_obj}`);
-
-      // Return when metar_string is successfully found
-      if (metar_string) {
-        return [metar_string, icao];
-      }
-
-      // Wait 0.5 seconds before continuing to next station
-      await new Promise((resolve) => setTimeout(resolve, 500));
-    } catch (err) {
-      console.log(`  >${icao}: Could not fetch the METAR report: ${url}`);
-      console.error(err);
-    }
+    // Wait 0.5 seconds before trying next station
+    await new Promise((resolve) => setTimeout(resolve, 500));
   }
 
   // Return when empty and nothing found
-  return [null, null, null];
+  if (metarField) {
+    metarField.value = `Unable to fetch METAR data. All sources failed.`;
+  }
+  return [null, null];
 }
 
 function updateFlightCatagoryIcon(prefix, remove = false) {

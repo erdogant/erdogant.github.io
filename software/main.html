@@ -48,8 +48,9 @@
     <link rel="manifest" href="/manifest.json">
     <script src="app.js"></script>
 
-    <!--ANIMATIONs-->
-    <!--<script src="./scripts/utils.js" defer></script>-->
+    <!--SCRIPTS-->
+    <script src="./scripts/utils.js" defer></script>
+    <!--ANIMATION SCRIPTS-->
     <script src="./scripts/rain.js" defer></script>
     <script src="./scripts/cloud.js" defer></script>
     <script src="./scripts/fog.js" defer></script>
@@ -135,26 +136,57 @@
         </div>
 
 
-        <div class="border-round-eged">
-            <div class="wind-grid" style="display: block; align-items: center; gap: 1px;">
-                <!-- Inputfield -->
-                <input id="FLIGHTPLAN" type="text" class="tile-value" placeholder="My new flightplan" onchange="createDateTime()" style="background-color:transparent; font-size: 18px; padding: 0.5px; margin:0;">
-                <input id="DATETIME" type="text" readonly style="display:block; margin:0 auto; text-align:center; font-size:12px; background-color:transparent; color:#777; border:none; width:200px;" aria-label="Date time">
+
+        <div class="flight-card">
+            <div class="route-header">
+
+                <div class="airport">
+                    <div class="airport-code">
+                        <input id="DEPARTURE_ICAO_2" type="text" class="UPPERCASE_input sync-departure" title="Departure ICAO" style="font-size: 30px; font-weight: bold; color: #2c2c2c; margin-bottom: 2px; text-align: center;">
+                    </div>
+                    <div id="DEPARTURE_CITY" class="airport-name">DEPARTURE</div>
+                    <div><img id="DEPARTURE_FLAG_2" src="" alt="" style="width:30px; height:auto; vertical-align:middle; margin-left:6px;"></div>
+                    <div class="schedule-label">Scheduled</div>
+                    <input type="time" id="DEPARTURE_clockField" class="clock-input" onclick="this.showPicker?.()" step="300">
+
+                </div>
+
+                <div class="plane-icon" onclick="handlePlaneClick()">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+                    </svg>
+                </div>
+
+                <div class="airport">
+                    <div class="airport-code">
+                        <input id="ARRIVAL_ICAO_2" type="text" class="UPPERCASE_input sync-arrival" title="Arrival ICAO" style="font-size: 30px; font-weight: bold; color: #2c2c2c; margin-bottom: 2px; text-align: center;">
+                    </div>
+                    <div id="ARRIVAL_CITY" class="airport-name">ARRIVAL</div>
+                    <div><img id="ARRIVAL_FLAG_2" src="" alt="" style="width:30px; height:auto; vertical-align:middle; margin-left:6px;"></div>
+                    <div class="schedule-label">Scheduled</div>
+                    <input type="time" id="ARRIVAL_clockField" class="clock-input" onclick="this.showPicker?.()" step="300">
+                </div>
+
             </div>
 
-            <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
-                <!-- Clean Button -->
-                <button id="new_plan_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Create New Flight Plan">🧹</button>
-                <!-- Delete Button -->
-                <button id="delete_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete Flight Plan">🗑️</button>
-                <!-- Spinner -->
-                <select id="plan_spinner" class="tile-value-dropdown" onchange="this.value && window.load_flightplan()" style="flex: 1; font-size: 12px; font-weight: normal;">
-                    <option value="">Select and Load</option>
-                </select>
-                <!-- Save button -->
-                <button id="save_fields_btn" onclick="window.save_flightplan()" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Flight Plan">💾</button>
+            <div class="divider-general-section">
+                <svg class="divider-plane" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#666" d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+                </svg>
+            </div>
+
+            <div class="distance-section">
+                <div class="distance-info">
+                    <span id="DEPARTURE_FLIGHT_DISTANCE_INFO">Departure</span>
+                    <span id="ARRIVAL_FLIGHT_DISTANCE_INFO">- km, - min.</span>
+                </div>
             </div>
         </div>
+
+
+
+
+
 
         <!--<label_h1>Aircraft</label_h1>-->
         <div class="border-round-eged">
@@ -181,18 +213,30 @@
                 </select>
             </div>
 
-            <div class="wind-grid">
-                <div class="tile">
-                    <input id="DEPARTURE_ICAO_2" type="text" class="tile-value UPPERCASE_input sync-departure" title="Departure ICAO">
-                    <span id="DEPARTURE_ICAO_2_LABEL" class="tile-label">Departure (ICAO)</span>
-                </div>
-                <div class="tile">
-                    <input id="ARRIVAL_ICAO_2" type="text" class="tile-value UPPERCASE_input sync-arrival" title="Arrival ICAO">
-                    <span id="ARRIVAL_ICAO_2_LABEL" class="tile-label">Arrival (ICAO)</span>
-                </div>
-            </div>
         </div>
 
+
+
+        <div class="border-round-eged">
+            <div class="wind-grid" style="display: block; align-items: center; gap: 1px;">
+                <!-- Inputfield -->
+                <input id="FLIGHTPLAN" type="text" class="tile-value" placeholder="My new flightplan" onchange="createDateTime()" style="background-color:transparent; font-size: 18px; padding: 0.5px; margin:0;">
+                <input id="DATETIME" type="text" readonly style="display:block; margin:0 auto; text-align:center; font-size:12px; background-color:transparent; color:#777; border:none; width:200px;" aria-label="Date time">
+            </div>
+
+            <div class="wind-grid" style="display: flex; align-items: center; gap: 8px;">
+                <!-- Clean Button -->
+                <button id="new_plan_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Erease all fields and create new flight plan">🧹</button>
+                <!-- Delete Button -->
+                <button id="delete_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete Flight Plan">🗑️</button>
+                <!-- Spinner -->
+                <select id="plan_spinner" class="tile-value-dropdown" onchange="this.value && window.load_flightplan()" style="flex: 1; font-size: 12px; font-weight: normal;">
+                    <option value="">Select and Load</option>
+                </select>
+                <!-- Save button -->
+                <button id="save_fields_btn" onclick="window.save_flightplan()" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Flight Plan">💾</button>
+            </div>
+        </div>
 
 
         <!-- Bottom Buttons Container -->
@@ -269,7 +313,7 @@
 
 
             <div class="button-row">
-                <img id="DEPARTURE_FLAG" src="" alt="" style="width:30px; height:auto; vertical-align:middle; margin-left:6px;">
+                <img id="DEPARTURE_FLAG_1" src="" alt="" style="width:30px; height:auto; vertical-align:middle; margin-left:6px;">
                 <img id="DEPARTURE_CATAGORY_ICON" src="" alt="" style="width:35px; height:auto; vertical-align:middle; margin-left:6px;">
                 <img id="DEPARTURE_VFR_ICON" src="" alt="" style="width:70px; height:auto; vertical-align:middle; margin-left:6px;">
                 <input type="text" id="DEPARTURE_ICAO" class="tile-value UPPERCASE_input sync-departure" placeholder="ICAO">
@@ -1252,36 +1296,30 @@
             </select>
         </div>
 
-        <div class="button-row">
-            <label>
-                <input type="checkbox" id="aviation-toggle" checked> Show Airports
-            </label>
-            <label>
-                <input type="checkbox" id="airspace-toggle" checked> Show Airspaces
-            </label>
-        </div>
-
-        <div class="button-row">
-            <div style="display: flex; align-items: center; margin-top: 5px;">
-                <label style="margin-right: 5px;">Airspaces at altitude (ft):</label>
-                <input type="number" id="airspace-altitude" value="1500" min="150" max="10000" step="150" style="width: 80px;">
+        <div class="border-round-eged">
+            <div class="button-row">
+                <label>
+                    <input type="checkbox" id="aviation-toggle" checked> Show Airports
+                </label>
+                <label>
+                    <input type="checkbox" id="airspace-toggle" checked> Show Airspaces
+                </label>
             </div>
-        </div>
 
-        <div class="button-row">
-            <div style="display: flex; gap: 10px;">
-                <label>
-                    <input type="checkbox" id="TMZ-toggle" unchecked>TMZ
-                </label>
-                <label>
-                    <input type="checkbox" id="CTA_TMA-toggle" unchecked>CTA/TMA
-                </label>
-                <label>
-                    <input type="checkbox" id="danger-toggle" unchecked>Danger
-                </label>
-                <label>
-                    <input type="checkbox" id="prohibited-toggle" unchecked>Prohibited
-                </label>
+            <div class="button-row">
+                <div style="display: flex; align-items: center; margin-top: 5px;">
+                    <label style="margin-right: 5px;">Airspaces at altitude (ft):</label>
+                    <input type="number" id="airspace-altitude" value="1500" min="150" max="10000" step="150" style="width: 80px;">
+                </div>
+            </div>
+
+            <div class="button-row">
+                <div style="display: flex; gap: 10px;">
+                    <label><input type="checkbox" id="TMZ-toggle" unchecked>TMZ</label>
+                    <label><input type="checkbox" id="CTA_TMA-toggle" unchecked>CTA/TMA</label>
+                    <label><input type="checkbox" id="danger-toggle" unchecked>Danger</label>
+                    <label><input type="checkbox" id="prohibited-toggle" unchecked>Prohibited</label>
+                </div>
             </div>
         </div>
 
@@ -1297,6 +1335,13 @@
                     </svg>
                 </button>
             </div>
+        </div>
+
+        <div id="flight-info" style="margin-top: 10px; font-family: sans-serif; font-size: 14px; background: #f5f5f5; padding: 8px; border-radius: 6px;">
+            <div>Distance: <span id="distance-km">0</span> km</div>
+            <div>Flying time: <span id="flying-minutes">0</span> min</div>
+            <div>Estimated arrival: <span id="departure-time">--:--</span></div>
+            <div>Estimated arrival: <span id="arrival-time">--:--</span></div>
         </div>
 
         <label_h1>Warning</label_h1>
@@ -1492,7 +1537,6 @@
                     <option value="">Select and Load</option>
                 </select>
                 <!-- Save button -->
-                <!--<button id="aircraft_save_btn" onclick="window.save_to_json('aircraft_field', 'AIRCRAFT')" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save aircraft">💾</button>-->
                 <button id="aircraft_save_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save aircraft">💾</button>
             </div>
         </div>
@@ -1769,6 +1813,7 @@
     //   }
 
     function populateChecklistCatagories() {
+      // Rebuild sections and categories after loading the dictionary
       console.log(`> func: populateChecklistCatagories()`);
       // Get a reference to the checklist_key_field select element
       const select = document.getElementById("checklist_catagory_field");
@@ -2262,143 +2307,80 @@
 
 
 <script>
-    // const DEFAULT_ICAO_IMAGE = "https://erdogant.github.io/datasets/skywalk/figs/oskar-kadaksoo-f_rLDn5m2XQ-unsplash.jpg";
 
     // Function to cache and set image source
     async function cacheAndSetImage(url, imgElementId) {
-      // Import/save and then load cached image
-      if (pyscriptReady) {
-        await cache_and_display_image(url, imgElementId);
-      }
+        // Import/save and then load cached image
+        if (pyscriptReady) {
+            await cache_and_display_image(url, imgElementId);
+        }
 
     }
 
-  /**
-   * Update a flag image element by country code (2-letter ISO).
-   * - imgId: id of the <img> element
-   * - countryCode: two-letter ISO country code (e.g. 'ua', 'nl'). Can be uppercase; function lower-cases it.
-   *
-   * This function is exposed on window as updateFlag so it can be called from PyScript:
-   *   js.window.updateFlag('DEPARTURE', 'ua')
-   */
-  function updateFlag(prefix, countryCode) {
-    try {
-      console.log(`>func: updateFlag(${prefix}, ${countryCode})`);
+    // Add event listeners for FIC spinners
+    document.getElementById('fic_spinner')?.addEventListener('change', function() {
+        if (this.value && window.load_enroute_fic) {
+            window.load_enroute_fic('fic_spinner');
+        }
+    });
 
-      if (countryCode == null || countryCode === '') {
-          countryCode = window.flight_plan_data?.[`${prefix}_COUNTRY_CODE`];
-      }
+    document.getElementById('fic_spinner2')?.addEventListener('change', function() {
+        if (this.value && window.load_enroute_fic) {
+            window.load_enroute_fic('fic_spinner2');
+        }
+    });
 
-      const img = document.getElementById(`${prefix}_FLAG`);
-      if (!img){
-          console.log(`   >Warning: img element not found: ${img}`)
-          return;
-      }
+    // Add event listeners for checklist spinners
+    document.getElementById('checklist_spinner')?.addEventListener('change', async function() {
+        if (this.value && window.load_spinner_selection) {
+            console.log(`> addEventListener: checklist_spinner`);
+            // Update the checklist using the selection from cache (Python async)
+            await window.load_spinner_selection('checklist_spinner', 'CHECKLIST');
+            // Rebuild sections and categories after loading
+            // createChecklistSections();
+            populateChecklistCatagories();
+            // checklist_populate();
+        }
+    });
 
-      if (!countryCode || String(countryCode).trim() === '' || countryCode==='remove') {
-        console.log(`   >Warning: no Country code`)
-        img.style.display = 'none';
-        img.alt = '';
-        img.src = '';
-        return;
-      }
+    // Add event listeners for aircraft spinners
+    document.getElementById('aircraft_spinner')?.addEventListener('change', async function() {
+        if (this.value && window.load_spinner_selection) {
+            console.log(`> addEventListener: aircraft_spinner`);
+            // Update the checklist using the selection from cache (Python async)
+            await window.load_spinner_selection('aircraft_spinner', 'AIRCRAFT');
+        }
+    });
 
-      // Normalize
-      const code = String(countryCode).trim().toLowerCase();
+    document.getElementById('aircraft_fuel_type')?.addEventListener('change', function() {
+        const fuelDensities = {
+            'avgas': 0.72,        // kg/L (typical range 0.68-0.72)
+            'mogas': 0.76,        // kg/L (typical range 0.74-0.76)
+            'jet_a1': 0.78,      // kg/L (typical range 0.775-0.840)
+            'jet_a': 0.82,       // kg/L (typical range 0.775-0.840)
+            'kerosene': 0.81,    // kg/L (typical range 0.78-0.82)
+            'diesel': 0.82,      // kg/L (typical range 0.82-0.95)
+            'other': 0.75         // Default placeholder
+        };
 
-      // Only accept two-letter codes (basic check); if not 2 letters, hide
-      if (!/^[a-z]{2}$/.test(code)) {
-        console.log(`   >Warning: Country code has more then 2 chars`)
-        img.style.display = 'none';
-        img.alt = '';
-        img.src = '';
-        return;
-      }
-
-      // Build SVG URL (flagcdn). Use svg first; fallback to PNG if error.
-      const svgUrl = `https://flagcdn.com/${code}.svg`;
-      // const pngUrl = `https://flagcdn.com/w80/${code}.png`;
-      cache_and_display_image(svgUrl, `${prefix}_FLAG`)
-
-      console.log(`   >Set Flag to: ${svgUrl}`)
-      // img.src = svgUrl;
-      img.alt = countryCode.toUpperCase();
-      img.style.display = 'inline-block';
-    } catch (e) {
-      console.warn('updateFlag error', e);
-    }
-  }
-
+        if (this.value && fuelDensities[this.value]) {
+            const densityInput = document.getElementById('aircraft_fuel_density');
+            if (densityInput) {
+                densityInput.value = fuelDensities[this.value];
+            }
+        }
+    });
 
 </script>
 
 
-<!--============================================-->
-<!-- PyScript configuration -->
-<!--============================================-->
-
+<!-- =================== ============== ===================-->
+<!-- =================== PYTHON SECTION =================== -->
+<!-- =================== ============== ===================-->
 
 <py-config>
   packages = ["pandas", "numpy", "jinja2", "requests"]
 </py-config>
-
-
-<script>
-// Add event listeners for FIC spinners
-document.getElementById('fic_spinner')?.addEventListener('change', function() {
-    if (this.value && window.load_enroute_fic) {
-        window.load_enroute_fic('fic_spinner');
-    }
-});
-
-document.getElementById('fic_spinner2')?.addEventListener('change', function() {
-    if (this.value && window.load_enroute_fic) {
-        window.load_enroute_fic('fic_spinner2');
-    }
-});
-
-// Add event listeners for checklist spinners
-document.getElementById('checklist_spinner')?.addEventListener('change', async function() {
-    if (this.value && window.load_spinner_selection) {
-        console.log(`> addEventListener: checklist_spinner`);
-        // Update the checklist using the selection from cache (Python async)
-        await window.load_spinner_selection('checklist_spinner', 'CHECKLIST');
-        // Rebuild sections and categories after loading
-        // createChecklistSections();
-        populateChecklistCatagories();
-        // checklist_populate();
-    }
-});
-
-// Add event listeners for aircraft spinners
-document.getElementById('aircraft_spinner')?.addEventListener('change', async function() {
-    if (this.value && window.load_spinner_selection) {
-        console.log(`> addEventListener: aircraft_spinner`);
-        // Update the checklist using the selection from cache (Python async)
-        await window.load_spinner_selection('aircraft_spinner', 'AIRCRAFT');
-    }
-});
-
-document.getElementById('aircraft_fuel_type')?.addEventListener('change', function() {
-    const fuelDensities = {
-        'avgas': 0.72,        // kg/L (typical range 0.68-0.72)
-        'mogas': 0.76,        // kg/L (typical range 0.74-0.76)
-        'jet_a1': 0.78,      // kg/L (typical range 0.775-0.840)
-        'jet_a': 0.82,       // kg/L (typical range 0.775-0.840)
-        'kerosene': 0.81,    // kg/L (typical range 0.78-0.82)
-        'diesel': 0.82,      // kg/L (typical range 0.82-0.95)
-        'other': 0.75         // Default placeholder
-    };
-
-    if (this.value && fuelDensities[this.value]) {
-        const densityInput = document.getElementById('aircraft_fuel_density');
-        if (densityInput) {
-            densityInput.value = fuelDensities[this.value];
-        }
-    }
-});
-</script>
-
 
 
 <!-- PyScript for flightplan functionality -->
@@ -2634,6 +2616,7 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
             # Departure
             'DEPARTURE_ICAO': '',               # ICAO code
             'DEPARTURE_ICAO_CITY': '',          # ICAO code with City
+            'DEPARTURE_CITY': '',               # City
             'DEPARTURE_NAME': '',               # Aerodrome name
             'DEPARTURE_POSITION': '',           # Position at apron
             'DEPARTURE_RUNWAY': '',             # The user selected Runway
@@ -2675,6 +2658,7 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
             # Arrival
             'ARRIVAL_ICAO': '',                   # ICAO code
             'ARRIVAL_ICAO_CITY': '',              # ICAO code with City
+            'ARRIVAL_CITY': '',                   # City
             'ARRIVAL_NAME': '',                   # Aerodrome name
             'ARRIVAL_POSITION': '',               # Position at apron
             'ARRIVAL_RUNWAY': '',                 # The user selected Runway
@@ -3786,6 +3770,8 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
 
         # Get data for specific ICAO
         row_dict = get_icao_data(df, city_icao)
+        print('HERE')
+        print(row_dict['city'])
 
         if not row_dict:
             print(f"   >⚠️ No data found for {city_icao}")
@@ -3800,6 +3786,7 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
         FREQ_TOWER_RADIO = row_dict['freqs.TOWER'] if CTR_BOOL else row_dict['freqs.RADIO']
         js.window.flight_plan_data[f"{fname}_ICAO"] = row_dict['icao']
         js.window.flight_plan_data[f"{fname}_ICAO_CITY"] = city_icao
+        js.window.flight_plan_data[f"{fname}_CITY"] = str(row_dict['city']).upper()
         js.window.flight_plan_data[f"{fname}_RUNWAYS"] = rwy_list
         js.window.flight_plan_data[f"{fname}_RUNWAY"] = clean_string(rwy_ids)
         js.window.flight_plan_data[f"{fname}_NAME"] = row_dict['name']
@@ -3916,6 +3903,9 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
             else:
                 js.window.flight_plan_data[key] = ''
 
+        js.document.getElementById('DEPARTURE_clockField').value = '' # Default is '--:--'
+        js.document.getElementById('ARRIVAL_clockField').value = ''   # Default is '--:--'
+
         # Clear checklist
         js.window.flight_plan_data['CHECKLIST'] = get_default_checklist()
         # Clear aircraft
@@ -3965,6 +3955,7 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
         field_ids = [
             f'{fname}_COUNTRY',
             f'{fname}_ICAO_CITY',
+            f'{fname}_CITY',
             f'{fname}_NAME',
             f'{fname}_ICAO',
             f'{fname}_POSITION',
@@ -4000,6 +3991,8 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
                 'OVERHEAD2',
             ]
 
+        #print(js.window.flight_plan_data)
+
         updated_count = 0
         for field_id in field_ids:
             # Get the value from flight_plan_data
@@ -4016,11 +4009,13 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
                   # Handle boolean for CTR
                     if field_id == f'{fname}_CTR':
                         element.value = 'CTR' if (value or str(value).lower() == 'true') else ''
+                    elif field_id == f'{fname}_CITY':
+                        element.textContent = str(value)
                     else:
                         element.value = str(value)
 
                     updated_count += 1
-                    print(f"  ✓ Updated {field_id}: {element.value}")
+                    print(f"  ✓ Updated {field_id}: {str(value)}")
                 else:
                     # Clear the field if no value
                     element.value = ''
@@ -4032,12 +4027,14 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
         element_icao_2 = js.document.getElementById(f'{fname}_ICAO_2')
         element_icao_2.value = icao_element.value
 
-        # Set a check for the loaded ICAO
-        icao_label = js.document.getElementById(f'{fname}_ICAO_2_LABEL')
+        # Set a checkbox for the loaded ICAO
+        element_label = js.document.getElementById(f'{fname}_CITY')
         if element_icao_2.value == '':
-            icao_label.textContent = f'{fname.title()} (ICAO)'
+            element_label.textContent = f'{fname.upper()}'
         else:
-            icao_label.textContent = f'✅ {fname.title()} (ICAO)'
+            label = element_label.textContent
+            element_label.textContent = f'{label}'
+            # element_label.textContent = f'✅ {label}'
 
         # print(js.window.flight_plan_data.get(f'{fname}_CTR'))
         # print(js.window.flight_plan_data.get(f'{fname}_ATC_TOWER'))
@@ -4080,6 +4077,7 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
         field_ids = [
             f'{fname}_COUNTRY',
             f'{fname}_ICAO_CITY',
+            f'{fname}_CITY',
             f'{fname}_CTR',
             f'{fname}_NAME',
             f'{fname}_ICAO',
@@ -4116,8 +4114,6 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
         # First clear the unique field names
         element = js.document.getElementById(f'{fname}_ICAO_2')
         element.value = ''
-        element = js.document.getElementById(f'{fname}_ICAO_2_LABEL')
-        element.textContent = f'{fname.title()} (ICAO)'
 
         # Clear aerdrome image
         js.document.getElementById(f'{fname}_image_cache').src = js.window.settings['img_default_icao']
@@ -4129,19 +4125,28 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
             element = js.document.getElementById(field_id)
 
             if element:
-                # Check whether it is one of the weight-elements
+                # Check whether it is one of the weight-elements and set value to 0
                 if '_WEIGHT_' in field_id: default_value = 0
-
                 print(f"   >🧹 Clearing {field_id}")
-                element.value = default_value
+
+                if hasattr(element, "value"):
+                    element.value = default_value
+                else:
+                    element.textContent = default_value
+
                 # Trigger change event to update any dependent fields
                 if field_id.endswith('_CTR'):
                     js.document.getElementById(field_id).dispatchEvent(js.Event.new('change'))
 
+
+        # Set label back
+        element = js.document.getElementById(f'{fname}_CITY')
+        element.textContent = f'{fname.upper()}'
+
         # Clear flight_plan_data for aerodrome fields
         keys = [
             f'{fname}_COUNTRY', f'{fname}_COUNTRY_CODE', f'{fname}_ICAO_CITY',
-            f'{fname}_ICAO', f'{fname}_ICAO_CITY', f'{fname}_NAME',
+            f'{fname}_ICAO', f'{fname}_ICAO_CITY', f'{fname}_CITY', f'{fname}_NAME',
             f'{fname}_POSITION', f'{fname}_RUNWAY', f'{fname}_ELEVATION',
             f'{fname}_RUNWAYS', f'{fname}_ROUTE_NAME', f'{fname}_ROUTE_ALTITUDE',
             f'{fname}_CIRCUIT_ALTITUDE', f'{fname}_CTR', f'{fname}_IMAGE',
@@ -4698,6 +4703,8 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
         js.window.METAR_ARRIVAL = ''
 
         js.document.getElementById("CALLSIGN_LABEL").textContent = 'CALLSIGN'
+        js.document.getElementById('DEPARTURE_clockField').value = '' # Default is '--:--'
+        js.document.getElementById('ARRIVAL_clockField').value = ''   # Default is '--:--'
 
         print("✅ New flightplan initialized - all fields cleared")
         return current_time
@@ -4958,6 +4965,10 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
             js.window.retrieve_metar('DEPARTURE', verbose='silent')
             js.window.retrieve_metar('ARRIVAL', verbose='silent')
 
+            # Update flightinfo
+            time_dep = js.document.getElementById('DEPARTURE_clockField').value
+            js.window.UpdateFlightInfoFields(time_dep)
+
             print(f"   >✅ Flightplan '{plan_name}' loaded successfully")
         except Exception as e:
             print(f"   >❗ Error loading flightplan: {e}")
@@ -5136,6 +5147,7 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
                 print(f"Key: {key}, Value: {value}")
                 js.window.flight_plan_data[key] = value
 
+
             # Update GUI fields
             update_aerodrome_gui_fields(fname)
 
@@ -5160,11 +5172,17 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
             # Remove wind envelope
             remove_wind_envelope_plot(fname)
 
-            # Update flag
-            # window.updateFlag(fname)
-
             # Retrieve METAR data during loading of the aerodrome
             await js.window.retrieve_metar(fname, verbose=verbose)
+
+            # Initialize the waypoints when both Departure and arrival location are set.
+            icao_dep = js.document.getElementById('DEPARTURE_ICAO')
+            icao_arr = js.document.getElementById('ARRIVAL_ICAO')
+            time_dep = js.document.getElementById('DEPARTURE_clockField')
+            if icao_dep.value != '' and icao_arr.value != '':
+                js.window.waypoints = [js.window.flight_plan_data['DEPARTURE_LATLON'], js.window.flight_plan_data['ARRIVAL_LATLON']]
+                js.window.UpdateFlightInfoFields(time_dep.value)
+                # print(js.window.waypoints)
 
             print(f"   >✅ Aerodrome {icaoName} successfully loaded from cache: {fname.lower()}")
             # js.window.alert(f"✅ Aerodrome {icaoName} successfully loaded for {fname.lower()}")
@@ -6290,7 +6308,6 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
     # js.window.retrieve_flag = retrieve_flag
     # js.window.updateFlag = updateFlag;
 
-
     # ATC
     js.window.create_summary_atc = create_proxy(create_summary_atc)
     js.window.create_departure_atc = create_proxy(create_departure_atc)
@@ -6316,7 +6333,6 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
     # CLEAR FIELDS
     js.window.clear_aerodrome_fields = clear_aerodrome_fields
     js.window.clear_enroute_fields = clear_enroute_fields
-
     js.window.cache_and_display_image = cache_and_display_image
 
     # DATA FUNCTIONS
@@ -6385,10 +6401,10 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
         if (targetTab === 'Departure' || targetTab === 'Arrival'){
           window.calculateWeightBalance(targetTab.toUpperCase());
         }
-        // WHEN THE TAB MAP IS CLICKED
+        // WHEN THE TAB MAP IS CLICKED, UPDATE THE MAP WITH THE ROUTE AND FILL WINDOW.WAYPOINTS
         if (targetTab === "MAP") {
-          if (typeof initRouteMap === "function") initRouteMap();
-          if (typeof updateRoute === "function") updateRoute();
+          initRouteMap()
+          updateRoute();
         }
         // REPLACE INFORMATION with "INFO" in the ENROUTE TAB.
         updateEnrouteFields();
@@ -6616,7 +6632,7 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
         }
 
         // Clear all input fields and departure fields
-        await clear_general_fields();
+        // await clear_general_fields();
 
         // Set datetime
         DATETIME.value = await window.create_new_flightplan();
@@ -6778,16 +6794,92 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
     });
 
 
-    // Update the aerodrome directly after changing one of the inputfields
+    //
+    function handlePlaneClick() {
+        console.log("> func: handlePlaneClick()");
+
+        // Check whether ICAO fields are filled in
+        const element_dep = document.getElementById('DEPARTURE_ICAO_2');
+        const element_arr = document.getElementById('ARRIVAL_ICAO_2');
+
+        for (const element of [element_dep, element_arr]) {
+            // skip when element not found
+            if (!element) continue;
+            // Get prefix
+            const prefix = element.id.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
+            const elementValue = element.value.trim();
+
+            // check if the field contains characters
+            if (elementValue !== '' && elementValue !== null) {
+              // Check ICAO characters
+              if (elementValue.length < 4) {
+                window.alert(`ICAO for ${prefix.toLowerCase()} requires exactly 4 characters.`);
+                return;
+              }
+
+              // Load the aerodrome from json
+              window.load_aerodrome_from_json(prefix, element.id);
+            }
+        }
+    }
+
+    function UpdateFlightInfoFields(timeValue = null, initialize=true) {
+        // Initialize "MAP" and update route, this will fill the window.waypoints array
+        initRouteMap(initialize);
+        updateRoute();
+        // Compute the flight info
+        const info = computeFlightInfo(window.waypoints, timeValue);
+        if (!info) {
+          console.warn('   >No info for computeFlightInfo() <return>')
+          return;
+        }
+        // Update GUI fields in GENERAL
+        document.getElementById("ARRIVAL_FLIGHT_DISTANCE_INFO").textContent = `${info.distance_km} km, ${info.flying_time_min} min.`;
+        document.getElementById("distance-km").textContent = info.distance_km;
+        document.getElementById("flying-minutes").textContent = info.flying_time_min;
+        if (info.departure_time !== "--:--") {
+            document.getElementById("departure-time").textContent = info.departure_time;
+        }
+        if (info.arrival_time !== "--:--") {
+            document.getElementById("ARRIVAL_clockField").value = info.arrival_time;
+            document.getElementById("arrival-time").textContent = info.arrival_time;
+        }
+    }
+
+    // Update departure clock and compute distance/time/arrival
+    ['DEPARTURE_clockField', 'ARRIVAL_clockField'].forEach(id => {
+        document.getElementById(id)?.addEventListener('change', element => {
+            const prefix = id.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
+            // const timeValue = element.target.value; // "HH:MM" string
+            let timeValue = element ? element.target.value : null;
+            if (timeValue === "--:--") timeValue = null;
+
+            // console.log(prefix, timeValue); // check the value
+            // console.log(window.waypoints)
+
+            // Update only the flight info when departure time is changed
+            if (prefix === 'DEPARTURE') {
+                // Update the flightinfo fields
+                UpdateFlightInfoFields(timeValue)
+            }
+        });
+    });
+
+
+    // Update the aerodrome directly after changing one of the input fields
     ['DEPARTURE_ICAO', 'DEPARTURE_ICAO_2', 'ARRIVAL_ICAO', 'ARRIVAL_ICAO_2'].forEach(id => {
-      document.getElementById(id)?.addEventListener('change', e => {
-        // At least 4 chars is required
-        const field = String(e?.target?.value ?? '').trim();
-        if (field.length < 4) return;
-        // Get prefix
-        const prefix = id.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
-        // Load the aerodrome from json
-        window.load_aerodrome_from_json(prefix, elementId=id)
+      document.getElementById(id)?.addEventListener('change', element => {
+            // Get prefix
+            const prefix = id.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
+            const suffix = id.replace(/^DEPARTURE_/, '').replace(/^ARRIVAL_/, '');
+            // At least 4 chars is required
+            const field = String(element?.target?.value ?? '').trim();
+            if (field.length < 4) {
+                window.alert(`ICAO for ${prefix.toLowerCase()} requires exactly 4 characters.`);
+                return;
+            }
+            // Load the aerodrome from json
+            window.load_aerodrome_from_json(prefix, elementId=id)
       });
     });
 
@@ -6803,8 +6895,11 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
         // At least 4 chars is required for the icao
         element = document.getElementById(`${prefix}_ICAO`);
         const icao = String(element?.value ?? '').trim();
-        if (icao.length < 4) return;
-        // alert(`${prefix} with id: ${id}: field: ${icao}`)
+        if (icao.length < 4) {
+          window.alert(`ICAO for ${prefix.toLowerCase()} requires exactly 4 characters.`);
+          return;
+        }
+        // window.alert(`${prefix} with id: ${id}: field: ${icao}`)
 
         // SAVE when selected but not yet (manually) saved
         countrySelected = document.getElementById(`${prefix}_COUNTRY`).value
@@ -6892,7 +6987,7 @@ document.getElementById('aircraft_fuel_type')?.addEventListener('change', functi
 
         // Access the flight plan data
         const flight_plan_py = window.flight_plan_data;
-        const matching_pairs = aircraft_matching_pairs().toJs();;
+        const matching_pairs = aircraft_matching_pairs().toJs();
 
         for (const key in matching_pairs) {
             const [cat, item] = matching_pairs[key];
@@ -7745,6 +7840,7 @@ const COUNTRIES_DATA = [
         const fields = [
             `${fname}_COUNTRY`,
             `${fname}_ICAO_CITY`,
+            `${fname}_CITY`,
             `${fname}_CTR`,
             `${fname}_NAME`,
             `${fname}_ICAO`,
@@ -7818,25 +7914,6 @@ const COUNTRIES_DATA = [
       }
       return inside;
     }
-
-    // function variableWindRange(variation) {
-    //   if (!variation) return null;
-    //   const parts = variation.split('/');
-    //   if (parts.length !== 2) return null;
-
-    //   const start = parseInt(parts[0]);
-    //   const end = parseInt(parts[1]);
-
-    //   const range = [];
-    //   let current = start;
-    //   while (current !== end) {
-    //     range.push(current);
-    //     current = (current + 10) % 360;
-    //   }
-    //   range.push(end);
-
-    //   return range;
-    // }
 
     function variableWindRange(variation) {
       if (!variation) return null;
