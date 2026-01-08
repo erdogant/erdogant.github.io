@@ -92,14 +92,14 @@ body {
         height: auto;
         min-height: 600px;
         max-height: 90vh;
-        border-radius: 15px;
+        border-radius: 8px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         padding: 10px;
     }
 
     .tab {
         position: relative; /* instead of sticky */
-        border-radius: 10px 10px 0 0;
+        border-radius: 8px 8px 0 0;
         top: 0;
         z-index: 100; /* lower than map fullscreen z-index */
     }
@@ -674,6 +674,7 @@ body.mobile-fullscreen .output-box {
     grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
     gap: 10px;
     margin-top: 10px;
+    border-radius: 8px;
 }
 
 .input-grid-2x2 {
@@ -686,6 +687,7 @@ body.mobile-fullscreen .output-box {
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
     margin-top: 10px;
+    border-radius: 8px;
 }
 
 .grid-one-third-two-thirds {
@@ -693,23 +695,27 @@ body.mobile-fullscreen .output-box {
     grid-template-columns: 1fr 2fr;
     gap: 10px;
     margin-top: 10px;
+    border-radius: 8px;
 }
 .grid-two-thirds-one-third {
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 10px;
     margin-top: 10px;
+    border-radius: 8px;
 }
 .grid-middle-small {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 10px;
     margin-top: 10px;
+    border-radius: 8px;
 }
 .grid-middle-small > .tile {
     grid-column: 2;          /* put the tile in the middle column */
     justify-self: center;    /* center the tile within that column */
     align-self: center;
+    border-radius: 8px;
 }
 
 .tile {
@@ -742,10 +748,19 @@ body.mobile-fullscreen .output-box {
     box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1); /* Subtle glow */
 }
 
-.tile-label {
+/*.tile-label {
     font-size: 11px;
     color: #777;
     display: block;
+}*/
+.tile-label {
+    font-size: 11px;
+    color: #666;
+    /*text-transform: uppercase;*/
+    font-weight: 400;
+    text-align: center;
+    border-radius: 8px;
+
 }
 
 /*DROPDOWN MENU*/
@@ -761,7 +776,7 @@ body.mobile-fullscreen .output-box {
     margin-bottom: 6px; /* Less spacing */
     padding: 8px 6px; /* Comfortable padding */
     border: 1px solid #e0e0e0; /* Subtle border */
-    border-radius: 14px; /* Softer rounded corners */
+    border-radius: 8px; /* Softer rounded corners */
     outline: #f5f5f5;
     transition: all 0.2s ease; /* Smooth transitions */
     cursor: pointer;
@@ -780,10 +795,12 @@ body.mobile-fullscreen .output-box {
 
 /* BORDER WITH ROUNED EDGES */
 .border-round-eged {
+    /*background: linear-gradient(to bottom, #f5f5f5 0%, #e8e8e8 100%);*/
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     background-color: #f5f5f5;
-    border-radius: 14px; /* Rounded edges */
+    border-radius: 8px; /* Rounded edges */
     padding: 8px 6px; /* Comfortable space at the top-down and left-right border */
-    border: 1px solid #ccc;
+    border: 2px solid white;
     margin: 8px 0; /* keep spacing between adjacent elements */
 }
 
@@ -806,7 +823,7 @@ body.mobile-fullscreen .output-box {
 .weight-card {
     background: white;
     border: 1px solid #dcdcdc;
-    border-radius: 14px;
+    border-radius: 8px;
     padding: 12px;
     margin-bottom: 10px;
 }
@@ -829,7 +846,7 @@ input[type="number"] {
     padding: 10px;
     background: #fff;
     border: 1px solid #e0e0e0;
-    border-radius: 14px;
+    border-radius: 8px;
     color: #333;
     font-size: 14px;
     font-weight: 500;
@@ -870,7 +887,8 @@ input[type="number"]:disabled {
 /* =================== GENERAL FLIGHT ICON =================== */
 
 .flight-card {
-    background: linear-gradient(to bottom, #e8e8e8 0%, #d5d5d5 100%);
+    /*background: linear-gradient(to bottom, #e8e8e8 0%, #d5d5d5 100%);*/
+    background: linear-gradient(to bottom, #f5f5f5 0%, #f0f0f0 100%);
     border-radius: 8px;
     padding: 20px;
     max-width: 500px;
@@ -1019,6 +1037,23 @@ input[type="number"]:disabled {
     display: none;
     -webkit-appearance: textfield;
     appearance: textfield;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.info-item {
+    flex: 1;
+}
+.aircraft-value {
+    font-size: 16px;
+    color: #2c2c2c;
+    font-weight: 600;
+    margin-bottom: 15px;
+    text-align: left;
 }
 /* Allow the native picker indicator to show where supported */
 /*.clock-input::-webkit-calendar-picker-indicator { display: inline-block; }*/
