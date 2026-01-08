@@ -2415,6 +2415,7 @@
     from js import Blob, URL, window
     from pyodide.http import pyfetch
     from pyodide.ffi import create_proxy
+    from pyodide.ffi import to_js
 
     import logging
     logger = logging.getLogger('SKYWALK')
@@ -2706,7 +2707,10 @@
             'FIC_NAME2': '',            # Second FIC name
             'FIC_FREQUENCY2': '',       # Second FIC frequency
             'OVERHEAD2': '',            # Second overhead point
-            'SQUAWK2': '',             # Second squawk code
+            'SQUAWK2': '',              # Second squawk code
+
+            # WAYPOINTS
+            'WAYPOINTS': [],            # Waypoint data
 
             # NOTAM data
             'NOTAM': {'data': {}},      # NOTAM data
@@ -2866,10 +2870,6 @@
         # 'elementId'  : flight_plan_data['AIRCRAFT'][cat][item]
 
         return {
-
-          'AIRCRAFT_TYPE': ['', 'TYPE'],
-          'CALLSIGN': ['', 'CALLSIGN'],
-
           'SETTINGS_WEIGHT_FUEL_LITERS': ['WEIGHT', 'fuel_liters'],
           'SETTINGS_WEIGHT_PILOT': ['WEIGHT', 'pilot'],
           'SETTINGS_WEIGHT_COPILOT': ['WEIGHT', 'copilot'],
@@ -2920,7 +2920,7 @@
         js.window.flight_plan_data['AIRCRAFT'] = get_default_aircraft()
 
         # Populate aircraft with defaults
-        js.window.aircraft_populate_js()
+        js.window.aircraft_populate_js(updateGeneralTab=False)
 
         if verbose=='info':
             js.window.alert(f"ℹ️ Default aircraft specifications are loaded.")
@@ -2946,7 +2946,7 @@
             else:
                 js.window.flight_plan_data['AIRCRAFT'][cat][item] = elementId.value
 
-        # Directly populate to all fields. This is required because some fields needs to be updated in general
+        # Directly populate to all fields. This is required because some fields needs to be updated in General tab too.
         js.window.aircraft_populate_js()
 
 
@@ -3770,8 +3770,6 @@
 
         # Get data for specific ICAO
         row_dict = get_icao_data(df, city_icao)
-        print('HERE')
-        print(row_dict['city'])
 
         if not row_dict:
             print(f"   >⚠️ No data found for {city_icao}")
@@ -3903,8 +3901,14 @@
             else:
                 js.window.flight_plan_data[key] = ''
 
-        js.document.getElementById('DEPARTURE_clockField').value = '' # Default is '--:--'
+        js.document.getElementById('DEPARTURE_clockField').value = '00:00'
         js.document.getElementById('ARRIVAL_clockField').value = ''   # Default is '--:--'
+        js.document.getElementById('DEPARTURE_FLIGHT_DISTANCE_INFO').textContent = '- km, - min.'
+        js.document.getElementById('ARRIVAL_FLIGHT_DISTANCE_INFO').textContent = '- km, - min.'
+        js.document.getElementById('distance-km').textContent = '0'
+        js.document.getElementById('flying-minutes').textContent = '0'
+        js.document.getElementById('departure-time').textContent = ''
+        js.document.getElementById('arrival-time').textContent = ''
 
         # Clear checklist
         js.window.flight_plan_data['CHECKLIST'] = get_default_checklist()
@@ -4703,8 +4707,14 @@
         js.window.METAR_ARRIVAL = ''
 
         js.document.getElementById("CALLSIGN_LABEL").textContent = 'CALLSIGN'
-        js.document.getElementById('DEPARTURE_clockField').value = '' # Default is '--:--'
+        js.document.getElementById('DEPARTURE_clockField').value = '00:00'
         js.document.getElementById('ARRIVAL_clockField').value = ''   # Default is '--:--'
+        js.document.getElementById('DEPARTURE_FLIGHT_DISTANCE_INFO').textContent = '- km, - min.'
+        js.document.getElementById('ARRIVAL_FLIGHT_DISTANCE_INFO').textContent = '- km, - min.'
+        js.document.getElementById('distance-km').textContent = '0'
+        js.document.getElementById('flying-minutes').textContent = '0'
+        js.document.getElementById('departure-time').textContent = ''
+        js.document.getElementById('arrival-time').textContent = ''
 
         print("✅ New flightplan initialized - all fields cleared")
         return current_time
@@ -4740,13 +4750,11 @@
         await clear_aerodrome_fields('ARRIVAL')
         await clear_enroute_fields()
 
-        # Set defaults checklist
-        js.window.flight_plan_data['CHECKLIST'] = get_default_checklist()
-        checklist_populate()
+        # Set defaults checklist and reset GUI fields
+        js.window.checklist_clean()
 
-        # Set defaults aircraft
-        js.window.flight_plan_data['AIRCRAFT'] = get_default_aircraft()
-        js.window.aircraft_populate_js()
+        # Set defaults aircraft and reset GUI fields
+        js.window.aircraft_clean()
 
         # Clean flag
         # updateFlag('DEPARTURE', 'remove')
@@ -4923,9 +4931,6 @@
             for key, value in flight_plan_dict.items():
                 js.window.flight_plan_data[key] = value
 
-            print(js.window.flight_plan_data)
-            # js.window.waypoints = window.flight_plan_data['WAYPOINTS']
-
             # Update GUI FIELDS
             update_general_gui_fields(flight_plan_dict)
             update_aerodrome_gui_fields('DEPARTURE')
@@ -4959,13 +4964,14 @@
             # Populate checklist
             checklist_populate()
             # Populate aircraft settings
-            js.window.aircraft_populate_js()
+            js.window.aircraft_populate_js(False)
 
             # Update METAR
             js.window.retrieve_metar('DEPARTURE', verbose='silent')
             js.window.retrieve_metar('ARRIVAL', verbose='silent')
 
             # Update flightinfo
+            js.window.waypoints = to_js(window.flight_plan_data["WAYPOINTS"])
             time_dep = js.document.getElementById('DEPARTURE_clockField').value
             js.window.UpdateFlightInfoFields(time_dep)
 
@@ -5007,13 +5013,14 @@
                 store_field(key)
 
         # STORE WAYPOINTS
-        # js.window.flight_plan_data['WAYPOINTS'] = js.window.waypoints;
+        #print('SAVE WAYPOINTS HERE')
+        print(js.window.waypoints)
+        js.window.flight_plan_data['WAYPOINTS'] = js.window.waypoints;
+
         # ALL OTHER FIELDS SHOULD BE STORE ALREADY IN THE FLIGHTPLAN DATA
 
         # GET FLIGHTPLAN NAME
         flightplan_name = js.window.flight_plan_data["FLIGHTPLAN"]
-        # print('HEEREEE')
-        # print(js.window.flight_plan_data)
 
         if (flightplan_name is None or flightplan_name == ''):
             if verbose:
@@ -6373,6 +6380,7 @@
 
     tabButtons.forEach(btn => {
       btn.addEventListener("click", async () => {
+        // This listeren is tab switch/ swith tabs
         // Get the tab we're switching TO
         const targetTab = btn.getAttribute("data-tab");
 
@@ -6403,9 +6411,14 @@
         }
         // WHEN THE TAB MAP IS CLICKED, UPDATE THE MAP WITH THE ROUTE AND FILL WINDOW.WAYPOINTS
         if (targetTab === "MAP") {
-          initRouteMap()
+          initRouteMap();
           updateRoute();
         }
+        //  CHECKLIST TAB: UPDATE CHECKLISTS
+        if (targetTab === "Checklist") {
+          checklist_populate()
+        }
+
         // REPLACE INFORMATION with "INFO" in the ENROUTE TAB.
         updateEnrouteFields();
         // CHECK MISSING FIELDS AFTER TAB SWITCH AND HIGHLIGHT
@@ -6549,6 +6562,7 @@
        * - Restores cached display settings
        * - Hides loading spinner once complete
        *
+       * Keywords: Startup, loading, app start
        */
       if (typeof window.create_new_flightplan === 'function') {
         pyscriptReady = true;
@@ -6568,10 +6582,10 @@
         window.flight_plan_data = window.get_default_data();
 
         // Populate checklist
-        checklist_populate()
-        populateChecklistCatagories();
+        //checklist_populate()
+        //populateChecklistCatagories();
         // Populate aircraft settings (with default settings in this case)
-        aircraft_populate_js()
+        // aircraft_populate_js()
 
         // Restore settings from cache
         restoreSettingsFromCache();
@@ -6603,7 +6617,6 @@
         animateSnow('SKYWALK_LOGO', process ='start', intensity = "medium", speed = 0.3);
         // animateFlare('SKYWALK_LOGO', "start", null, null, null, intensity=2, pulseSpeed = 0.2, size = 1.1);
         // animateDark('SKYWALK_LOGO', "start", "center", "night");
-
         console.log("   >Settings data is initialized.");
 
       }
@@ -6827,6 +6840,7 @@
         // Initialize "MAP" and update route, this will fill the window.waypoints array
         initRouteMap(initialize);
         updateRoute();
+
         // Compute the flight info
         const info = computeFlightInfo(window.waypoints, timeValue);
         if (!info) {
@@ -6837,10 +6851,10 @@
         document.getElementById("ARRIVAL_FLIGHT_DISTANCE_INFO").textContent = `${info.distance_km} km, ${info.flying_time_min} min.`;
         document.getElementById("distance-km").textContent = info.distance_km;
         document.getElementById("flying-minutes").textContent = info.flying_time_min;
-        if (info.departure_time !== "--:--") {
+        if (info.departure_time !== "--:--" && info.departure_time !== "00:00") {
             document.getElementById("departure-time").textContent = info.departure_time;
         }
-        if (info.arrival_time !== "--:--") {
+        if (info.arrival_time !== "--:--" && info.arrival_time !== "00:00") {
             document.getElementById("ARRIVAL_clockField").value = info.arrival_time;
             document.getElementById("arrival-time").textContent = info.arrival_time;
         }
@@ -6852,7 +6866,9 @@
             const prefix = id.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
             // const timeValue = element.target.value; // "HH:MM" string
             let timeValue = element ? element.target.value : null;
-            if (timeValue === "--:--") timeValue = null;
+            if (timeValue === "--:--" || timeValue === "00:00") {
+              timeValue = null;
+            }
 
             // console.log(prefix, timeValue); // check the value
             // console.log(window.waypoints)
@@ -7004,7 +7020,8 @@
         window.calculateWeightBalance(prefix);
     }
 
-    function aircraft_populate_js() {
+    function aircraft_populate_js(updateGeneralTab=true) {
+        // This function is to populate the aircraft information in the GUI fields.
         console.log('> func: aircraft_populate_js()');
 
         // Check if AIRCRAFT exists in flight_plan_data
@@ -7020,19 +7037,25 @@
         const matching_pairs = window.aircraft_matching_pairs().toJs();
         const aircraft_js = window.flight_plan_data['AIRCRAFT'];
 
+        // Also update the input fields in the General Tab
+        if (updateGeneralTab) {
+            document.getElementById('AIRCRAFT_TYPE').value = aircraft_js['TYPE'];
+            document.getElementById('CALLSIGN').value = aircraft_js['CALLSIGN'];
+        }
+
         // Populate the GUI
         for (const key in matching_pairs) {
             const [cat, item] = matching_pairs[key];
             const element = document.getElementById(key);
             if (!element) continue;
 
-             if (cat === '' || cat === null || cat === undefined) {
-                 console.log(`   >Populate GUI field: [${key}] <- ['AIRCRAFT'][${item}]: ${aircraft_js[item]}`);
-                 element.value = aircraft_js[item] ?? 'aap';
-             } else {
-                 console.log(`   >Populate GUI field: [${key}] <- ['AIRCRAFT'][${cat}][${item}]: ${aircraft_js[cat]?.[item]}`);
-                 element.value = aircraft_js[cat]?.[item] ?? '';
-             }
+            if ((cat === '' || cat === null || cat === undefined) && item !== '' && item !== null && item !== undefined) {
+                console.log(`   >Populate GUI field: [${key}] <- ['AIRCRAFT'][${item}]: ${aircraft_js[item]}`);
+                element.value = aircraft_js[item];
+            } else if (item !== '' && item !== null && item !== undefined) {
+                console.log(`   >Populate GUI field: [${key}] <- ['AIRCRAFT'][${cat}][${item}]: ${aircraft_js[cat]?.[item]}`);
+                element.value = aircraft_js[cat][item];
+            }
         }
         // Calculate weight and balance
         window.calculateWeightBalance('SETTINGS');

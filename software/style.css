@@ -1016,9 +1016,12 @@ input[type="number"]:disabled {
 }
 
 .clock-input::-webkit-calendar-picker-indicator {
-    display: none;   /* hides the clock icon in Chrome/Safari */
+    display: none;
+    -webkit-appearance: textfield;
+    appearance: textfield;
 }
-
+/* Allow the native picker indicator to show where supported */
+/*.clock-input::-webkit-calendar-picker-indicator { display: inline-block; }*/
 
 /*.schedule-time {
     font-size: 26px;
