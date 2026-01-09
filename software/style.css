@@ -669,9 +669,12 @@ body.mobile-fullscreen .output-box {
 
 /* GRID*/
 
+
 .wind-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+    /*grid-auto-flow: column;*/
+    /*align-items: stretch;*/
     gap: 10px;
     margin-top: 10px;
     border-radius: 8px;
@@ -784,7 +787,7 @@ body.mobile-fullscreen .output-box {
 
 .tile-value-dropdown:hover {
     border-color: #b0b0b0; /* Darker border on hover */
-    background: #f9f9f9; /* Subtle background */
+    background: #f5f9ff; /* Subtle background */
 }
 
 .tile-value-dropdown:focus {
@@ -798,6 +801,14 @@ body.mobile-fullscreen .output-box {
     /*background: linear-gradient(to bottom, #f5f5f5 0%, #e8e8e8 100%);*/
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     background-color: #f5f5f5;
+    border-radius: 8px; /* Rounded edges */
+    padding: 8px 6px; /* Comfortable space at the top-down and left-right border */
+    border: 2px solid white;
+    margin: 8px 0; /* keep spacing between adjacent elements */
+}
+.border-round-eged-logo {
+    background-color:transparent;
+    border-color: transparent;
     border-radius: 8px; /* Rounded edges */
     padding: 8px 6px; /* Comfortable space at the top-down and left-right border */
     border: 2px solid white;
@@ -887,8 +898,8 @@ input[type="number"]:disabled {
 /* =================== GENERAL FLIGHT ICON =================== */
 
 .flight-card {
-    /*background: linear-gradient(to bottom, #e8e8e8 0%, #d5d5d5 100%);*/
-    background: linear-gradient(to bottom, #f5f5f5 0%, #f0f0f0 100%);
+    background: linear-gradient(to bottom, #e8e8e8 0%, #d5d5d5 100%);
+    /*background: linear-gradient(to bottom, #f5f5f5 0%, #f0f0f0 100%);*/
     border-radius: 8px;
     padding: 20px;
     max-width: 500px;
@@ -902,6 +913,7 @@ input[type="number"]:disabled {
     justify-content: space-between;
     margin-bottom: 20px;
 }
+
 
 .airport {
     flex: 1;
@@ -940,17 +952,21 @@ input[type="number"]:disabled {
 }
 
 .plane-icon:hover {
-    transform: scale(1.1);
+    transform: scale(1.2);
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
 }
 
 .plane-icon:active {
     transform: scale(0.95);
+    transform: rotate(90deg);
+
 }
 
 .plane-icon svg {
     width: 40px;
     height: 40px;
-    fill: #f4b400;
+    /*fill: #f4b400;*/
+    fill: #00A1DE;
     filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
 }
 
@@ -978,7 +994,7 @@ input[type="number"]:disabled {
 
 
 .divider-general-section {
-    height: 1px;
+    height: 2px;
     background: #b8b8b8;
     margin: 15px 0;
     position: relative;
@@ -1001,13 +1017,6 @@ input[type="number"]:disabled {
     align-items: center;
     padding: 0 10px;
 }
-
-/*.plane-small {
-    width: 24px;
-    height: 24px;
-    margin-right: 10px;
-    transform: rotate(90deg);
-}*/
 
 .distance-info {
     display: flex;
@@ -1055,6 +1064,21 @@ input[type="number"]:disabled {
     margin-bottom: 15px;
     text-align: left;
 }
+.aircraft {
+    display: grid;
+    grid-template-rows: auto 1fr;
+}
+.aircraft .tile-label {
+    align-self: start;
+    font-weight: 500;
+}
+
+.aircraft .tile-value {
+    /*align-self: end;*/ /* 👈 align bottom */
+    align-self: center;   /* 👈 change from end → center */
+
+}
+
 /* Allow the native picker indicator to show where supported */
 /*.clock-input::-webkit-calendar-picker-indicator { display: inline-block; }*/
 
@@ -1063,3 +1087,63 @@ input[type="number"]:disabled {
     font-weight: bold;
     color: #2c2c2c;
 }*/
+
+/* GENEARL TAB*/
+.flight-card-row {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+}
+
+
+.flight-card-icon {
+    position: relative;
+    width: 15%;
+    min-width: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Vertical divider */
+/*.flight-card-icon::after {
+    content: "";
+    position: absolute;
+    top: 8%;
+    bottom: 8%;
+    right: 0;
+    width: 2px;
+    background: #f0f0f0;
+}*/
+
+.flight-card-content {
+    width: 85%;
+    padding-left: 12px;
+}
+
+
+
+
+.plane-small {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    transform: rotate(90deg);
+}
+.plane-small:hover {
+    transform: scale(1.2);
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
+    transform: rotate(90deg);
+}
+.plane-small:active {
+    transform: scale(0.95);
+}
+.plane-small svg {
+    width: 36px;
+    height: 36px;
+    fill: #00A1DE;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
+}

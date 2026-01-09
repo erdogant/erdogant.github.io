@@ -61,7 +61,7 @@ function updateFlag(prefix, countryCode) {
 
 function createDateTime() {
   console.log("---> createDateTime()");
-  document.getElementById("DATETIME").value = nowtime(false);
+  document.getElementById("DATETIME_CREATION").value = nowtime(false);
 }
 
 // Make it globally accessible
