@@ -276,39 +276,29 @@
                                 onchange="createDateTime()"
                                 placeholder="My new flight plan"
                                 title="Flightplan"
-                                style="font-size: 20px; text-align: left">
+                                style="font-size: 20px; text-align: left;">
                         </div>
                     </div>
+
 
                     <div class="divider-general-section" style="background: #f0f0f0"></div>
 
-                    <div class="wind-grid">
-                        <div class="aircraft" style="text-align: left;">
-                            <span class="tile-label" style="text-align: left;">FLIGHT PLAN</span>
-                            <select id="plan_spinner" class="tile-value-dropdown" onchange="this.value && window.load_flightplan()" style="text-align: left; background: transparent; font-size: 12px; font-weight: normal;">
+
+                    <div class="wind-grid" style="display: flex; ">
+                        <!-- Delete Button -->
+                        <button id="delete_btn" style="display: flex; justify-content: left; align-items: left; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete Flight Plan">🗑️</button>
+                        <!-- Spinner -->
+                        <div class="wind-grid">
+                            <!--<span class="tile-label" style="text-align: left;">FLIGHT PLAN</span>-->
+                            <select id="plan_spinner" class="tile-value-dropdown" onchange="this.value && window.load_flightplan()" style="text-align: left; background: lightgray; font-size: 12px; font-weight: normal;">
                                 <option value="">Select and Load</option>
                             </select>
                         </div>
-                    </div>
-
-                    <div class="wind-grid" style="display: flex; justify-content: center; align-items: center; gap: 1px;">
                         <!-- Clean Button -->
-                        <button id="new_plan_btn"
-                                style="width: 30px; height: 30px; background: transparent; border: none; color: #666; cursor: pointer;"
-                                title="Erase all fields and create new flight plan">🧹</button>
-
-                        <!-- Delete Button -->
-                        <button id="delete_btn"
-                                style="width: 30px; height: 30px; background: transparent; border: none; color: #666; cursor: pointer;"
-                                title="Delete Flight Plan">🗑️</button>
-
-                        <!-- Save button -->
-                        <button id="save_fields_btn"
-                                onclick="window.save_flightplan()"
-                                style="width: 30px; height: 30px; background: transparent; border: none; color: #666; cursor: pointer;"
-                                title="Save Flight Plan">💾</button>
+                        <button id="new_plan_btn" style="display: flex; justify-content: right; align-items: right; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Erase all fields and create new flight plan">🧹</button>
                     </div>
-
+                    <!-- Save button -->
+                    <!--<button id="save_fields_btn" onclick="window.save_flightplan()" style="display: flex; justify-content: flex-end; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Flight Plan">💾</button>-->
                 </div>
 
             </div>
@@ -375,11 +365,9 @@
         </div>
 
 
-
-
         <label_h1>Select Departure</label_h1>
 
-        <div class="border-round-eged" id="DEPARTURE_SELECT_AERODROME_BORDER">
+        <div class="border-round-eged" id="DEPARTURE_SELECT_AERODROME_BORDER_1">
             <div class="wind-grid">
                 <select id="DEPARTURE_COUNTRY" class="tile-value-dropdown" style="font-weight: normal;">
                     <option value="">Select Country</option>
@@ -391,19 +379,127 @@
                 </select>
             </div>
 
-
             <div class="button-row">
                 <img id="DEPARTURE_FLAG_1" src="" alt="" style="width:30px; height:auto; vertical-align:middle; margin-left:6px;">
                 <img id="DEPARTURE_CATAGORY_ICON" src="" alt="" style="width:35px; height:auto; vertical-align:middle; margin-left:6px;">
                 <img id="DEPARTURE_VFR_ICON" src="" alt="" style="width:70px; height:auto; vertical-align:middle; margin-left:6px;">
                 <input type="text" id="DEPARTURE_ICAO" class="tile-value UPPERCASE_input sync-departure" placeholder="ICAO">
                 <button id="DEPARTURE_LOAD_ICAO" title="Load ICAO information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>
-                <button onclick="window.save_aerodrome_to_json('DEPARTURE')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 4px 8px 0; flex: 0 0 auto; cursor: pointer; float: right;">💾</button>
+                <!--<button onclick="window.save_aerodrome_to_json('DEPARTURE')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 4px 8px 0; flex: 0 0 auto; cursor: pointer; float: right;">💾</button>-->
             </div>
 
+        </div>
+
+        <!--<label_h1>Aerodrome Information</label_h1>-->
+
+        <div class="collapsible" data-title="AERODROME">
+        <div class="collapsible-header" id='DEPARTURE_AERODROME_MENU'></div>
+        <div class="collapsible-content">
 
             <div class="wind-grid">
 
+                <div class="tile">
+                    <input id="DEPARTURE_NAME" type="text" class="tile-value" title="Name of the aerodrome how it is known on the radio">
+                    <span class="tile-label">Aerodrome name</span>
+                </div>
+            </div>
+
+            <div class="grid-two-thirds-one-third">
+                <div class="tile">
+                    <input id="DEPARTURE_POSITION" type="text" class="tile-value" title="Position of the Aircraft (at the apron)">
+                    <span class="tile-label">Position of the aircraft</span>
+                </div>
+
+                <select id="DEPARTURE_CTR" class="tile-value-dropdown" onchange="highlightMissingFields(); highlightDropdownMenus('DEPARTURE')" style="text-align: center;">
+                    <option value=""></option>
+                    <option value="CTR">CTR</option>
+                </select>
+            </div>
+
+            <div class="wind-grid">
+                <div class="tile">
+                    <input id="DEPARTURE_RUNWAY" type="text" class="tile-value" title="Fill here the runway that is in use.">
+                    <span class="tile-label">
+                        Runway Nr.
+                        <button id="BTN-METAR-ICON-DEPARTURE_2" onclick="window.retrieve_metar('DEPARTURE')"
+                            title="Use METAR weather information to automatically predict the runway. Add multiple runways seperated by / or comma. The most optimal runway will be picked automatically."
+                            style="background-color: transparent; border: none; width: 10px; padding: 1px; cursor: pointer;">
+                                🔄
+                        </button>
+                    </span>
+                </div>
+                <div class="tile">
+                    <input id="DEPARTURE_ELEVATION" type="text" class="tile-value" title="Elevation of the field in feet.">
+                    <span class="tile-label">Field elevation (ft)</span>
+                </div>
+                <div class="tile">
+                    <input id="DEPARTURE_CIRCUIT_ALTITUDE" type="text" class="tile-value" title="The altitude of the circuit in feet.">
+                    <span class="tile-label">Circuit altitude (ft)</span>
+                </div>
+            </div>
+
+            <div class="grid-two-thirds-one-third">
+                <!-- This takes 1/3 of the width -->
+                <div class="tile">
+                    <input id="DEPARTURE_ROUTE_NAME" type="text" class="tile-value UPPERCASE_input" title="The name of the route (e.g., MIKE/ROMEO) for departure.">
+                    <span class="tile-label">Route name</span>
+                </div>
+                <!-- This takes 2/3 of the width -->
+                <div class="tile">
+                    <input id="DEPARTURE_ROUTE_ALTITUDE" type="text" class="tile-value" title="The altitude of the route in feet.">
+                    <span class="tile-label">Route altitude (ft)</span>
+                </div>
+            </div>
+
+            <button onclick="window.save_aerodrome_to_json('DEPARTURE')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 4px 8px 0; flex: 0 0 auto; cursor: pointer; float: right;">💾</button>
+
+        </div>
+        </div>
+
+
+     	  <!--<label_h1>Contact</label_h1>-->
+         <div class="collapsible" data-title="CONTACT">
+         <div class="collapsible-header" id="DEPARTURE_CONTACT_MENU"></div>
+         <div class="collapsible-content">
+
+             <div class="wind-grid">
+                 <div class="tile">
+                     <input id="DEPARTURE_ATC_GROUND" type="text" class="tile-value">
+                     <span class="tile-label">Ground/ delivery (MHz)</span>
+                 </div>
+                 <div class="tile">
+                     <input id="DEPARTURE_ATC_TOWER" type="text" class="tile-value">
+                     <span class="tile-label">Tower/ Radio (MHz)</span>
+                 </div>
+                 <div class="tile">
+                     <input id="DEPARTURE_ATC_ATIS_FREQ" type="text" class="tile-value">
+                     <span class="tile-label">ATIS (MHz)</span>
+                 </div>
+             </div>
+
+             <div class="grid-two-thirds-one-third">
+                 <div class="tile">
+                     <input id="DEPARTURE_ATC_TELEPHONE" type="text" class="tile-value">
+                     <span class="tile-label">Telephone Number</span>
+                 </div>
+                 <div class="tile">
+                     <input id="DEPARTURE_ATC_APPROACH" type="text" class="tile-value">
+                     <span class="tile-label">Approach (MHz)</span>
+                 </div>
+             </div>
+
+             <button onclick="window.save_aerodrome_to_json('DEPARTURE')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 4px 8px 0; flex: 0 0 auto; cursor: pointer; float: right;">💾</button>
+         </div>
+         </div>
+
+
+        <!--<label_h1>Weather Information</label_h1>-->
+
+        <div class="collapsible" data-title="METAR">
+        <div class="collapsible-header" id="DEPARTURE_SELECT_AERODROME_BORDER_2"></div>
+        <div class="collapsible-content" id="DEPARTURE_SELECT_AERODROME_BORDER_3">
+
+            <div class="wind-grid">
                  <div class="tile">
                     <input id="DEPARTURE_WIND_DIRECTION" type="text" class="tile-value">
                     <span class="tile-label">Wind angle (°)</span>
@@ -451,112 +547,13 @@
             </div>
 
         </div>
-
-
-        <label_h1>Aerodrome Information</label_h1>
-
-        <div class="collapsible" data-title="AERODROME">
-        <div class="collapsible-header"></div>
-        <div class="collapsible-content">
-
-            <div class="wind-grid">
-                <div class="tile">
-                    <input id="DEPARTURE_NAME" type="text" class="tile-value" title="Name of the aerodrome how it is known on the radio">
-                    <span class="tile-label">Aerodrome name</span>
-                </div>
-            </div>
-
-            <div class="grid-two-thirds-one-third">
-                <div class="tile">
-                    <input id="DEPARTURE_POSITION" type="text" class="tile-value" title="Position of the Aircraft (at the apron)">
-                    <span class="tile-label">Position of the aircraft</span>
-                </div>
-
-                <select id="DEPARTURE_CTR" class="tile-value-dropdown" onchange="highlightMissingFields()" style="text-align: center;">
-                    <option value=""></option>
-                    <option value="CTR">CTR</option>
-                </select>
-            </div>
-
-            <div class="wind-grid">
-                <div class="tile">
-                    <input id="DEPARTURE_RUNWAY" type="text" class="tile-value" title="Fill here the runway that is in use.">
-                    <span class="tile-label">
-                        Runway Nr.
-                        <button id="BTN-METAR-ICON-DEPARTURE_2" onclick="window.retrieve_metar('DEPARTURE')"
-                            title="Use METAR weather information to automatically predict the runway. Add multiple runways seperated by / or comma. The most optimal runway will be picked automatically."
-                            style="background-color: transparent; border: none; width: 10px; padding: 1px; cursor: pointer;">
-                                🔄
-                        </button>
-                    </span>
-                </div>
-                <div class="tile">
-                    <input id="DEPARTURE_ELEVATION" type="text" class="tile-value" title="Elevation of the field in feet.">
-                    <span class="tile-label">Field elevation (ft)</span>
-                </div>
-                <div class="tile">
-                    <input id="DEPARTURE_CIRCUIT_ALTITUDE" type="text" class="tile-value" title="The altitude of the circuit in feet.">
-                    <span class="tile-label">Circuit altitude (ft)</span>
-                </div>
-            </div>
-
-            <div class="grid-two-thirds-one-third">
-                <!-- This takes 1/3 of the width -->
-                <div class="tile">
-                    <input id="DEPARTURE_ROUTE_NAME" type="text" class="tile-value UPPERCASE_input" title="The name of the route (e.g., MIKE/ROMEO) for departure.">
-                    <span class="tile-label">Route name</span>
-                </div>
-                <!-- This takes 2/3 of the width -->
-                <div class="tile">
-                    <input id="DEPARTURE_ROUTE_ALTITUDE" type="text" class="tile-value" title="The altitude of the route in feet.">
-                    <span class="tile-label">Route altitude (ft)</span>
-                </div>
-            </div>
-
-            <button onclick="window.save_aerodrome_to_json('DEPARTURE')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 4px 8px 0; flex: 0 0 auto; cursor: pointer; float: right;">💾</button>
-
-        </div>
-        </div>
-
-
-    	  <!--<label_h1>Contact</label_h1>-->
-        <div class="collapsible" data-title="CONTACT">
-        <div class="collapsible-header"></div>
-        <div class="collapsible-content">
-
-            <div class="wind-grid">
-                <div class="tile">
-                    <input id="DEPARTURE_ATC_GROUND" type="text" class="tile-value">
-                    <span class="tile-label">Ground/ delivery (MHz)</span>
-                </div>
-                <div class="tile">
-                    <input id="DEPARTURE_ATC_TOWER" type="text" class="tile-value">
-                    <span class="tile-label">Tower/ Radio (MHz)</span>
-                </div>
-                <div class="tile">
-                    <input id="DEPARTURE_ATC_ATIS_FREQ" type="text" class="tile-value">
-                    <span class="tile-label">ATIS (MHz)</span>
-                </div>
-            </div>
-
-            <div class="grid-two-thirds-one-third">
-                <div class="tile">
-                    <input id="DEPARTURE_ATC_TELEPHONE" type="text" class="tile-value">
-                    <span class="tile-label">Telephone Number</span>
-                </div>
-                <div class="tile">
-                    <input id="DEPARTURE_ATC_APPROACH" type="text" class="tile-value">
-                    <span class="tile-label">Approach (MHz)</span>
-                </div>
-            </div>
-
-            <button onclick="window.save_aerodrome_to_json('DEPARTURE')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 4px 8px 0; flex: 0 0 auto; cursor: pointer; float: right;">💾</button>
-        </div>
         </div>
 
 
 
-        <label_h1>METAR WIDGETS</label_h1>
+
+
+        <label_h1>WIDGETS</label_h1>
 
         <!-- METAR Information -->
         <div class="collapsible" data-title="WIND ENVELOPE">
@@ -809,7 +806,7 @@
 
         <label_h1>Select Arrival</label_h1>
 
-        <div class="border-round-eged" id="ARRIVAL_SELECT_AERODROME_BORDER">
+        <div class="border-round-eged" id="ARRIVAL_SELECT_AERODROME_BORDER_1">
             <div class="wind-grid">
                 <select id="ARRIVAL_COUNTRY" class="tile-value-dropdown" style="font-weight: normal;">
                     <option value="">Select Country</option>
@@ -821,7 +818,6 @@
                 </select>
             </div>
 
-
             <div class="button-row">
                 <img id="ARRIVAL_FLAG_1" src="" alt="" style="width:30px; height:auto; vertical-align:middle; margin-left:6px;">
                 <img id="ARRIVAL_CATAGORY_ICON" src="" alt="" style="width:35px; height:auto; vertical-align:middle; margin-left:6px;">
@@ -829,64 +825,15 @@
                 <!--<input type="text" id="ARRIVAL_ICAO" class="tile-value UPPERCASE_input sync-arrival" onchange="window.load_aerodrome_from_json('ARRIVAL')" placeholder="ICAO">-->
                 <input type="text" id="ARRIVAL_ICAO" class="tile-value UPPERCASE_input sync-arrival" placeholder="ICAO">
                 <button id="ARRIVAL_LOAD_ICAO" title="Load ICAO information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>
-                <button onclick="window.save_aerodrome_to_json('ARRIVAL')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 4px 8px 0; flex: 0 0 auto; cursor: pointer; float: right;">💾</button>
-            </div>
-
-
-            <div class="wind-grid">
-
-                 <div class="tile">
-                    <input id="ARRIVAL_WIND_DIRECTION" type="text" class="tile-value">
-                    <span class="tile-label">Wind angle (°)</span>
-                </div>
-
-                <div class="tile">
-                    <input id="ARRIVAL_WIND_SPEED" type="text" class="tile-value">
-                    <span class="tile-label">Strength (kt)</span>
-                </div>
-
-                <div class="tile">
-                    <input id="ARRIVAL_WIND_GUST" type="text" class="tile-value">
-                    <span class="tile-label">Gust (kt)</span>
-                </div>
-            </div>
-
-            <div class="grid-one-third-two-thirds">
-                <div class="tile">
-                    <input id="ARRIVAL_WIND_VARIATION" type="text" class="tile-value">
-                    <span class="tile-label">Variation (°)</span>
-                </div>
-
-                <div class="button-row">
-                    <textarea id="METAR-FIELD-ARRIVAL"
-                        placeholder="METAR Information"
-                        title="METAR weather information"
-                        style="font-size:11px; background-color: transparent; width: 100%; min-height: 80px; max-height: 120px; resize: vertical; padding: 8px; box-sizing: border-box; border-radius: 10px"
-                        aria-label="METAR Information">
-                    </textarea>
-                </div>
-            </div>
-
-            <div style="display: flex; gap: 1px; margin-top: 1px;">
-                <input type="text" id="METAR-TEXT-ARRIVAL" readonly
-                    style="transition: background-color 0.3s; width: 70%;
-                           padding: 0; box-sizing: border-box; font-size: 10px;
-                           border: none; background-color: transparent;
-                           color: #333333; outline: none;">
-
-                <input type="text" id="DATETIME-METAR-ARRIVAL" readonly
-                    style="transition: background-color 0.3s; width: 40%;
-                           padding: 0; box-sizing: border-box; font-size: 10px;
-                           border: none; background-color: transparent;
-                           color: #333333; outline: none;">
+                <!--<button onclick="window.save_aerodrome_to_json('ARRIVAL')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 4px 8px 0; flex: 0 0 auto; cursor: pointer; float: right;">💾</button>-->
             </div>
         </div>
 
 
-        <label_h1>Aerodrome Information</label_h1>
+        <!--<label_h1>Aerodrome Information</label_h1>-->
 
         <div class="collapsible" data-title="AERODROME">
-        <div class="collapsible-header"></div>
+        <div class="collapsible-header" id="ARRIVAL_AERODROME_MENU"></div>
         <div class="collapsible-content">
 
             <div class="wind-grid">
@@ -902,7 +849,7 @@
                     <span class="tile-label">Position of the aircraft</span>
                 </div>
 
-                <select id="ARRIVAL_CTR" class="tile-value-dropdown" onchange="highlightMissingFields()" style="text-align: center;">
+                <select id="ARRIVAL_CTR" class="tile-value-dropdown" onchange="highlightMissingFields(); highlightDropdownMenus('ARRIVAL')" style="text-align: center;">
                     <option value=""></option>
                     <option value="CTR">CTR</option>
                 </select>
@@ -951,7 +898,7 @@
 
         <!--CONTACT-->
         <div class="collapsible" data-title="CONTACT">
-        <div class="collapsible-header"></div>
+        <div class="collapsible-header" id="ARRIVAL_CONTACT_MENU"></div>
         <div class="collapsible-content">
 
             <div class="wind-grid">
@@ -985,6 +932,63 @@
         </div>
 
 
+
+        <div class="collapsible" data-title="METAR">
+        <div class="collapsible-header" id="ARRIVAL_SELECT_AERODROME_BORDER_2"></div>
+        <div class="collapsible-content" id="ARRIVAL_SELECT_AERODROME_BORDER_3">
+
+            <div class="wind-grid">
+
+                <div class="tile">
+                    <input id="ARRIVAL_WIND_DIRECTION" type="text" class="tile-value">
+                    <span class="tile-label">Wind angle (°)</span>
+                </div>
+
+                <div class="tile">
+                    <input id="ARRIVAL_WIND_SPEED" type="text" class="tile-value">
+                    <span class="tile-label">Strength (kt)</span>
+                </div>
+
+                <div class="tile">
+                    <input id="ARRIVAL_WIND_GUST" type="text" class="tile-value">
+                    <span class="tile-label">Gust (kt)</span>
+                </div>
+            </div>
+
+            <div class="grid-one-third-two-thirds">
+                <div class="tile">
+                    <input id="ARRIVAL_WIND_VARIATION" type="text" class="tile-value">
+                    <span class="tile-label">Variation (°)</span>
+                </div>
+
+                <div class="button-row">
+                    <textarea id="METAR-FIELD-ARRIVAL"
+                        placeholder="METAR Information"
+                        title="METAR weather information"
+                        style="font-size:11px; background-color: transparent; width: 100%; min-height: 80px; max-height: 120px; resize: vertical; padding: 8px; box-sizing: border-box; border-radius: 10px"
+                        aria-label="METAR Information">
+                    </textarea>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 1px; margin-top: 1px;">
+                <input type="text" id="METAR-TEXT-ARRIVAL" readonly
+                    style="transition: background-color 0.3s; width: 70%;
+                        padding: 0; box-sizing: border-box; font-size: 10px;
+                        border: none; background-color: transparent;
+                        color: #333333; outline: none;">
+
+                <input type="text" id="DATETIME-METAR-ARRIVAL" readonly
+                    style="transition: background-color 0.3s; width: 40%;
+                        padding: 0; box-sizing: border-box; font-size: 10px;
+                        border: none; background-color: transparent;
+                        color: #333333; outline: none;">
+            </div>
+        </div>
+        </div>
+
+
+
         <!--RUNWAY ARRIVAL-->
         <!--<div class="collapsible" data-title="RUNWAY">
         <div class="collapsible-header"></div>
@@ -1007,7 +1011,7 @@
 
 
         <!-- METAR Information -->
-        <label_h1>METAR WIDGETS</label_h1>
+        <label_h1>WIDGETS</label_h1>
 
         <div class="collapsible" data-title="WIND ENVELOPE">
         <div class="collapsible-header"></div>
@@ -1423,8 +1427,8 @@
         <div id="flight-info" style="margin-top: 10px; font-family: sans-serif; font-size: 14px; background: #f5f5f5; padding: 8px; border-radius: 6px;">
             <div>Distance: <span id="distance-km">0</span> km</div>
             <div>Flying time: <span id="flying-minutes">0</span> min</div>
-            <div>Estimated arrival: <span id="departure-time">--:--</span></div>
-            <div>Estimated arrival: <span id="arrival-time">--:--</span></div>
+            <div>Time Departure: <span id="departure-time">--:--</span></div>
+            <div>Time Arrival: <span id="arrival-time">--:--</span></div>
         </div>
 
         <label_h1>Warning</label_h1>
@@ -2266,70 +2270,6 @@
         // Compute the wind envelope
         console.log(`   >Max limits: Headwind: ${window.settings['MAX_HEADWIND_LIMIT']}, Crosswind: ${window.settings['MAX_CROSSWIND_LIMIT']}`)
 
-    }
-
-
-    async function colorMetarFields(prefix, enable=true) {
-        // const buttonMetar = document.getElementById('BTN-METAR-' + prefix);
-        const metarText = document.getElementById('METAR-TEXT-' + prefix);
-        const dateField = document.getElementById('DATETIME-METAR-' + prefix);
-        const metarField = document.getElementById('METAR-FIELD-' + prefix);
-        const windDirectionField = document.getElementById(prefix + '_WIND_DIRECTION');
-        const windSpeedField = document.getElementById(prefix + '_WIND_SPEED');
-        const windGustField = document.getElementById(prefix + '_WIND_GUST');
-        const windVariationField = document.getElementById(prefix + '_WIND_VARIATION');
-        const windHeadwindField = document.getElementById(prefix + '_WIND_HEADWIND');
-        const windCrosswindField = document.getElementById(prefix + '_WIND_CROSSWIND');
-        const borderFieldAerodrome = document.getElementById(prefix + '_SELECT_AERODROME_BORDER');
-
-        if (enable) {
-          // buttonMetarIcon2.disabled = false;
-          // buttonMetarIcon2.style.cursor = 'pointer';
-
-          // buttonMetarIcon1.disabled = false;
-          // buttonMetarIcon1.style.cursor = 'pointer';
-          // buttonMetar.disabled = false;
-          // buttonMetar.style.cursor = 'pointer';
-          // buttonMetar.setAttribute('aria-disabled', 'false');
-          // buttonMetar.style.opacity = '1';
-          // buttonMetar.style.backgroundColor = '#80B0C0';
-
-          metarField.style.backgroundColor = 'transparent';
-          metarText.style.backgroundColor = 'transparent';
-          dateField.style.backgroundColor = 'transparent';
-          windDirectionField.style.backgroundColor = 'transparent';
-          windSpeedField.style.backgroundColor = 'transparent';
-          windGustField.style.backgroundColor = 'transparent';
-          windVariationField.style.backgroundColor = 'transparent';
-          windHeadwindField.style.backgroundColor = 'transparent';
-          windCrosswindField.style.backgroundColor = 'transparent';
-          borderFieldAerodrome.style.backgroundColor = '#f5f5f5';
-        } else {
-          // buttonMetarIcon2.disabled = true;
-          // buttonMetarIcon2.style.cursor = "not-allowed";
-
-          // buttonMetarIcon1.disabled = true;
-          // buttonMetarIcon1.style.cursor = "not-allowed";
-          // buttonMetar.disabled = true;
-          // buttonMetar.style.cursor = "not-allowed";
-          // buttonMetar.setAttribute('aria-disabled', 'true');
-          // buttonMetar.style.opacity = '0.6';
-
-          metarText.value = ' ';
-          metarField.value = 'Be patient while fetching METAR weather information...';
-
-          // Change background color to light red/pink
-          metarField.style.backgroundColor = '#ffebee';
-          dateField.style.backgroundColor = '#ffebee';
-          metarText.style.backgroundColor = '#ffebee';
-          windDirectionField.style.backgroundColor = '#ffebee';
-          windSpeedField.style.backgroundColor = '#ffebee';
-          windGustField.style.backgroundColor = '#ffebee';
-          windVariationField.style.backgroundColor = '#ffebee';
-          windHeadwindField.style.backgroundColor = '#ffebee';
-          windCrosswindField.style.backgroundColor = '#ffebee';
-
-        }
     }
 
 
@@ -3988,7 +3928,7 @@
                 js.window.flight_plan_data[key] = ''
 
         js.document.getElementById('DEPARTURE_clockField').value = '00:00'
-        js.document.getElementById('ARRIVAL_clockField').value = ''   # Default is '--:--'
+        js.document.getElementById('ARRIVAL_clockField').value = ''   # Default is '00:00'
         js.document.getElementById('DEPARTURE_FLIGHT_DISTANCE_INFO').textContent = '- km, - min.'
         js.document.getElementById('ARRIVAL_FLIGHT_DISTANCE_INFO').textContent = '- km, - min.'
         js.document.getElementById('distance-km').textContent = '0'
@@ -4216,6 +4156,10 @@
 
         # Clear aerdrome image
         js.document.getElementById(f'{fname}_image_cache').src = js.window.settings['img_default_icao']
+        # Reset colors of METAR
+        js.document.getElementById(fname + "_SELECT_AERODROME_BORDER_1").style.backgroundColor = '#E9E9E9'
+        js.document.getElementById(fname + "_SELECT_AERODROME_BORDER_2").style.backgroundColor = '#f5f5f5'
+        js.document.getElementById(fname + "_SELECT_AERODROME_BORDER_3").style.backgroundColor = '#f5f5f5'
 
         # Clear all GUI fields with overlapping names
         for field_id in field_ids:
@@ -4281,6 +4225,7 @@
         js.window.updateFlightCatagoryIcon(fname, remove=True)
         # Update missing fields colors
         js.window.highlightMissingFields()
+        js.window.highlightDropdownMenus()
         # Stop animations
         js.window.animations(fname, "stop")
 
@@ -4800,9 +4745,9 @@
         js.window.METAR_DEPARTURE = ''
         js.window.METAR_ARRIVAL = ''
 
-        js.document.getElementById("CALLSIGN_LABEL").textContent = 'CALLSIGN'
+        js.document.getElementById("CALLSIGN_LABEL").textContent = 'REGISTRATION'
         js.document.getElementById('DEPARTURE_clockField').value = '00:00'
-        js.document.getElementById('ARRIVAL_clockField').value = ''   # Default is '--:--'
+        js.document.getElementById('ARRIVAL_clockField').value = '00:00'   # Default is '00:00'
         js.document.getElementById('DEPARTURE_FLIGHT_DISTANCE_INFO').textContent = '- km, - min.'
         js.document.getElementById('ARRIVAL_FLIGHT_DISTANCE_INFO').textContent = '- km, - min.'
         js.document.getElementById('distance-km').textContent = '0'
@@ -5207,15 +5152,15 @@
         elif not json_data and js.window.flight_plan_data[f'{fname}_ICAO_CITY'] == '':
             # No saved aerodrome but I nothing selected
             # Clean all GUI fields
-            message = f"ℹ️ Please select and save the {icaoName} aerodrome in the {fname.lower()} tab first."
+            message = f"ℹ️ Please select and save the {icaoName} aerodrome in the {fname.lower()} tab or add your custom aerodrome information and save it."
             print(message)
             if verbose == 'info': js.window.alert(message)
-            await clear_aerodrome_fields(fname)
+            # await clear_aerodrome_fields(fname)
             return False
         else:
             # Aerodrome does not exits. Return without clearning all fields.
             # message = f'⚠️ {fname.title()} aerodrome ({icaoName}) not valid or previously saved. Please choose the aerodrome using the selection box first.'
-            message = f"ℹ️ Please select and save the {icaoName} aerodrome in the {fname.lower()} tab first."
+            message = f"ℹ️ Please select and save the {icaoName} aerodrome in the {fname.lower()} tab or add your custom aerodrome information and save it."
             print(message)
             if verbose == 'info': js.window.alert(message)
 
@@ -5227,12 +5172,14 @@
             icao_value = extract_icao_from_string(icaoSelected.value)
 
             # Store previous value back elements and flight plan
-            js.document.getElementById(f'{fname}_ICAO').value = icao_value
-            js.document.getElementById(f'{fname}_ICAO_2').value = icao_value
-            js.window.flight_plan_data[f'{fname}_ICAO'] = icao_value
+            if icao_value != '':
+                js.document.getElementById(f'{fname}_ICAO').value = icao_value
+                # js.window.flight_plan_data[f'{fname}_ICAO'] = icao_value
+                js.document.getElementById(f'{fname}_ICAO_2').value = icao_value
 
             # Update missing fields colors
             js.window.highlightMissingFields()
+            js.window.highlightDropdownMenus()
 
             # Return
             return False
@@ -5270,6 +5217,7 @@
 
             # Update missing fields colors
             js.window.highlightMissingFields()
+            js.window.highlightDropdownMenus()
 
             # Remove METAR widget
             remove_metar_widget(fname)
@@ -6527,7 +6475,7 @@
         updateEnrouteFields();
         // CHECK MISSING FIELDS AFTER TAB SWITCH AND HIGHLIGHT
         highlightMissingFields();
-
+        highlightDropdownMenus();
 
         // // Stop animation when leaving Departure tab
         // if (currentTab !== targetTab && currentTab === 'Departure'){
@@ -6697,6 +6645,7 @@
         update_dropdown('aircraft_spinner', 'AIRCRAFT', keepSelection=false, elementId2='aircraft_field');
         // Set clock to default
         document.getElementById('DEPARTURE_clockField').value = '00:00'
+        document.getElementById('ARRIVAL_clockField').value = '00:00'
 
         // Clear the Flags
         updateFlag('DEPARTURE', 'remove');
@@ -6767,6 +6716,7 @@
 
         // Update missing fields
         highlightMissingFields();
+        highlightDropdownMenus(); // doet niks?
 
         // Show success message to user
         alert("✅ All fields have been cleared and reset to their default values!");
@@ -6932,7 +6882,7 @@
             // check if the field contains characters
             if (elementValue !== '' && elementValue !== null) {
               // Check ICAO characters
-              if (elementValue.length < 4) {
+              if (elementValue.length > 4 && elementValue.length < 4) {
                 window.alert(`ICAO for ${prefix.toLowerCase()} requires exactly 4 characters.`);
                 return;
               }
@@ -6958,10 +6908,10 @@
         document.getElementById("ARRIVAL_FLIGHT_DISTANCE_INFO").textContent = `${info.distance_km} km, ${info.flying_time_min} min.`;
         document.getElementById("distance-km").textContent = info.distance_km;
         document.getElementById("flying-minutes").textContent = info.flying_time_min;
-        if (info.departure_time !== "--:--" && info.departure_time !== "00:00") {
+        if (info.departure_time !== "--:--") {
             document.getElementById("departure-time").textContent = info.departure_time;
         }
-        if (info.arrival_time !== "--:--" && info.arrival_time !== "00:00") {
+        if (info.arrival_time !== "--:--") {
             document.getElementById("ARRIVAL_clockField").value = info.arrival_time;
             document.getElementById("arrival-time").textContent = info.arrival_time;
         }
@@ -6973,7 +6923,7 @@
             const prefix = id.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
             // const timeValue = element.target.value; // "HH:MM" string
             let timeValue = element ? element.target.value : null;
-            if (timeValue === "--:--" || timeValue === "00:00") {
+            if (timeValue === "--:--") {
               timeValue = null;
             }
 
@@ -6999,7 +6949,7 @@
             const value = String(event?.target?.value ?? '').trim();
 
             // At least 4 chars is required
-            if (value.length < 4) {
+            if (value.length > 1 && value.length < 4) {
                 window.alert(`ICAO for ${prefix.toLowerCase()} requires exactly 4 characters.`);
                 return;
             }
@@ -7266,7 +7216,7 @@
         const callsignValue = String(callsignField.value ?? '').trim();
 
         if (!callsignValue) {
-            callsignLabel.textContent = "CALLSIGN";
+            callsignLabel.textContent = "REGISTRATION";
             // aircraftField.value = "";
             return;
         }
@@ -7276,7 +7226,7 @@
         const jsonData = localStorage.getItem(cacheKey);
 
         if (jsonData) {
-            callsignLabel.textContent = "✅ Aircraft loaded";
+            callsignLabel.textContent = "✅ REGISTRATION";
 
             try {
                 const aircraftData = JSON.parse(jsonData);
@@ -7297,7 +7247,7 @@
                 aircraft_populate_js();
                 update_aerodrome_weights_js("DEPARTURE");
                 update_aerodrome_weights_js("ARRIVAL");
-                window.highlightMissingFields();
+                highlightMissingFields();
 
             } catch (err) {
                 console.error("Invalid aircraft data in localStorage", err);
@@ -7935,26 +7885,36 @@
     }
 
     function updateGUIField(item, missing) {
+        // Get fname
+        // let prefix = null;
+        // if (item.required_atc_departure) {
+        //   prefix = 'Departure';
+        // } else if (item.required_atc_arrival) {
+        //   prefix = 'Arrival';
+        // }
+
+        // let elementAerodrome = null;
+        // let elementContact = null;
+        // if (prefix !== null && prefix !== undefined) {
+        //     elementAerodrome = document.getElementById(`${prefix.toUpperCase()}_AERODROME_MENU`);
+        //     elementContact = document.getElementById(`${prefix.toUpperCase()}_CONTACT_MENU`);
+        // }
+
         // Update the GUI field with color and add missing label when required for ATC fields
         if (!item.element.value) {
+
             // If any of the required ATC fields are empty, add the label to the missing array
             if (item.required_atc_departure || item.required_atc_arrival || item.required_atc_enroute) {
-                missing.push(item.name);
+              // Only add unique names to avoid duplicates
+              if (!missing.includes(item.name)) {
+                  missing.push(item.name);
+              }
             }
             item.element.style.backgroundColor = item.color_empty;
+            // Color the drop-down menu in case fields are missing
         } else {
             item.element.style.backgroundColor = item.color_filled;
         }
-
-        // Print the key of the item (use the element's id as the key) for debugging
-        // console.log('GUI field key:', item.element.id ?? '(no id)', 'label name:', item.name ?? '(no name)');
-        // if (item.element && item.element.id && item.element.id.includes('ARRIVAL')) {
-        //     const req = item.element.required_atc_arrival;
-        //     if (req === true) {
-        //         collapseMenu = document.getElementById('COLLAPSIBLE_MENU');
-        //         collapseMenu.style.backgroundColor = '#ffeb3b';
-        //     }
-        // }
 
     }
 
@@ -7967,6 +7927,246 @@
             addTextMissingFields(missing)
         });
     });
+
+    // // Catch keystrokes for specific DEPARTURE fields and alert when all are filled
+    // window.highlightDropdownMenus = (function() {
+    //     const fieldIds = [
+    //         'DEPARTURE_NAME', 'DEPARTURE_POSITION', 'DEPARTURE_RUNWAY', 'DEPARTURE_ROUTE_NAME', 'DEPARTURE_ROUTE_ALTITUDE',
+    //         'ARRIVAL_NAME', 'ARRIVAL_POSITION', 'ARRIVAL_RUNWAY', 'ARRIVAL_ROUTE_NAME', 'ARRIVAL_ROUTE_ALTITUDE'
+    //     ];
+
+    //     const highlightDropdownMenu = (prefix) => {
+    //         // DROPDOWN-MENU
+    //         const elementAerodrome = document.getElementById(`${prefix}_AERODROME_MENU`);
+
+    //         // FIELDS
+    //         const elementName = document.getElementById(`${prefix}_NAME`);
+    //         const elementPosition = document.getElementById(`${prefix}_POSITION`);
+    //         const elementRunway = document.getElementById(`${prefix}_RUNWAY`);
+    //         const elementRoute = document.getElementById(`${prefix}_ROUTE_NAME`);
+    //         const elementAltitude = document.getElementById(`${prefix}_ROUTE_ALTITUDE`);
+
+    //         // Exit early if critical elements don't exist
+    //         if (!elementAerodrome) {
+    //             console.warn(`Missing AERODROME_MENU element for ${prefix}`);
+    //             return;
+    //         }
+
+    //         // Safely read the values (elements may be null)
+    //         const nameVal = elementName?.value ?? '';
+    //         const posVal = elementPosition?.value ?? '';
+    //         const rwyVal = elementRunway?.value ?? '';
+    //         const routeVal = elementRoute?.value ?? '';
+    //         const altVal = elementAltitude?.value ?? '';
+
+    //         // For ARRIVAL, don't check position field
+    //         let allFilled;
+    //         if (prefix === 'ARRIVAL') {
+    //             allFilled = nameVal !== '' && rwyVal !== '' && routeVal !== '' && altVal !== '';
+    //         } else {
+    //             allFilled = nameVal !== '' && posVal !== '' && rwyVal !== '' && routeVal !== '' && altVal !== '';
+    //         }
+
+    //         // Update color
+    //         elementAerodrome.style.backgroundColor = allFilled ? '#E9E9E9' : '#ffeb3b';
+    //     };
+
+    //     const handleEvent = (e) => {
+    //         const targetId = e.target.id;
+    //         const prefix = targetId.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
+    //         highlightDropdownMenu(prefix);
+    //     };
+
+    //     // Attach listeners to each field using the fieldIds array
+    //     fieldIds.forEach(id => {
+    //         const el = document.getElementById(id);
+    //         if (!el) return;
+    //         el.addEventListener('input', handleEvent);
+    //         el.addEventListener('keydown', handleEvent);
+    //     });
+
+    //     // Return a public function to manually trigger updates
+    //     return function(prefix = null) {
+    //         const prefixes = prefix ? [prefix] : ['DEPARTURE', 'ARRIVAL'];
+    //         prefixes.forEach(p => highlightDropdownMenu(p));
+    //     };
+    // })();
+
+
+    // // Catch keystrokes to color CONTACTS dropdown
+    // window.updateContactColors = (function() {
+    //     const fieldIds = [
+    //       'DEPARTURE_ATC_TOWER', 'DEPARTURE_ATC_GROUND', 'DEPARTURE_ATC_ATIS_FREQ',
+    //       'ARRIVAL_ATC_TOWER', 'ARRIVAL_ATC_GROUND', 'ARRIVAL_ATC_ATIS_FREQ',
+    //     ];
+
+    //     const updateContactColor = (prefix) => {
+    //         // DROPDOWN-MENU
+    //         const elementContact = document.getElementById(`${prefix}_CONTACT_MENU`);
+    //         const elementCTR = document.getElementById(`${prefix}_CTR`);
+    //         // FIELDS
+    //         const elementTower = document.getElementById(`${prefix}_ATC_TOWER`);
+    //         const elementGround = document.getElementById(`${prefix}_ATC_GROUND`);
+    //         const elementATIS = document.getElementById(`${prefix}_ATC_ATIS_FREQ`);
+
+    //         // Exit early if critical elements don't exist
+    //         if (!elementContact) {
+    //             console.warn(`Missing CONTACT_MENU element for ${prefix}`);
+    //             return;
+    //         }
+
+    //         // Safely read the values (elements may be null)
+    //         elementTower = elementName?.value ?? '';
+    //         elementGround = elementPosition?.value ?? '';
+    //         elementATIS = elementRunway?.value ?? '';
+
+    //         // For ARRIVAL, don't check position field
+    //         let allFilled;
+    //         const ctrValue = elementCTR?.value ?? '';
+
+    //         if ((prefix === 'DEPARTURE' || prefix === 'ARRIVAL') && ctrValue === 'CTR') {
+    //             allFilled = elementTower !== '' && elementGround !== '' && elementATIS !== '';
+    //         } else if (ctrValue !== 'CTR') {
+    //             // Non-CTR: only tower is required for both DEPARTURE and ARRIVAL
+    //             allFilled = elementTower !== '';
+    //         } else {
+    //             allFilled = false;
+    //         }
+
+    //         // Update color
+    //         elementContact.style.backgroundColor = allFilled ? '#E9E9E9' : '#ffeb3b';
+    //     };
+
+    //     const handleEvent = (e) => {
+    //         const targetId = e.target.id;
+    //         const prefix = targetId.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
+    //         highlightDropdownMenu(prefix);
+    //     };
+
+    //     // Attach listeners to each field using the fieldIds array
+    //     fieldIds.forEach(id => {
+    //         const el = document.getElementById(id);
+    //         if (!el) return;
+    //         el.addEventListener('input', handleEvent);
+    //         el.addEventListener('keydown', handleEvent);
+    //     });
+
+    //     // Return a public function to manually trigger updates
+    //     return function(prefix = null) {
+    //         const prefixes = prefix ? [prefix] : ['DEPARTURE', 'ARRIVAL'];
+    //         prefixes.forEach(p => highlightDropdownMenu(p));
+    //     };
+    // })();
+
+    // Update dropdown menu colors based on required fields
+    window.highlightDropdownMenus = (function() {
+        const aerodromeFieldIds = [
+            'DEPARTURE_NAME', 'DEPARTURE_POSITION', 'DEPARTURE_RUNWAY', 'DEPARTURE_ROUTE_NAME', 'DEPARTURE_ROUTE_ALTITUDE',
+            'ARRIVAL_NAME', 'ARRIVAL_POSITION', 'ARRIVAL_RUNWAY', 'ARRIVAL_ROUTE_NAME', 'ARRIVAL_ROUTE_ALTITUDE'
+        ];
+
+        const contactFieldIds = [
+            'DEPARTURE_ATC_TOWER', 'DEPARTURE_ATC_GROUND', 'DEPARTURE_ATC_ATIS_FREQ',
+            'ARRIVAL_ATC_TOWER', 'ARRIVAL_ATC_GROUND', 'ARRIVAL_ATC_ATIS_FREQ',
+        ];
+
+        const highlightDropdownMenu = (prefix) => {
+            const elementAerodrome = document.getElementById(`${prefix}_AERODROME_MENU`);
+            if (!elementAerodrome) {
+                console.warn(`Missing AERODROME_MENU element for ${prefix}`);
+                return;
+            }
+
+            const elementName = document.getElementById(`${prefix}_NAME`);
+            const elementPosition = document.getElementById(`${prefix}_POSITION`);
+            const elementRunway = document.getElementById(`${prefix}_RUNWAY`);
+            const elementRoute = document.getElementById(`${prefix}_ROUTE_NAME`);
+            const elementAltitude = document.getElementById(`${prefix}_ROUTE_ALTITUDE`);
+
+            const nameVal = elementName?.value ?? '';
+            const posVal = elementPosition?.value ?? '';
+            const rwyVal = elementRunway?.value ?? '';
+            const routeVal = elementRoute?.value ?? '';
+            const altVal = elementAltitude?.value ?? '';
+
+            let allFilled;
+            if (prefix === 'ARRIVAL') {
+                allFilled = nameVal !== '' && rwyVal !== '' && routeVal !== '' && altVal !== '';
+            } else {
+                allFilled = nameVal !== '' && posVal !== '' && rwyVal !== '' && routeVal !== '' && altVal !== '';
+            }
+
+            elementAerodrome.style.backgroundColor = allFilled ? '#E9E9E9' : '#ffeb3b';
+        };
+
+        const updateContactColor = (prefix) => {
+            const elementContact = document.getElementById(`${prefix}_CONTACT_MENU`);
+            if (!elementContact) {
+                console.warn(`Missing CONTACT_MENU element for ${prefix}`);
+                return;
+            }
+
+            const elementCTR = document.getElementById(`${prefix}_CTR`);
+            const elementTower = document.getElementById(`${prefix}_ATC_TOWER`);
+            const elementGround = document.getElementById(`${prefix}_ATC_GROUND`);
+            const elementATIS = document.getElementById(`${prefix}_ATC_ATIS_FREQ`);
+
+            const towerVal = elementTower?.value ?? '';
+            const groundVal = elementGround?.value ?? '';
+            const atisVal = elementATIS?.value ?? '';
+            const ctrValue = elementCTR?.value ?? '';
+
+            let allFilled;
+            if ((prefix === 'DEPARTURE' || prefix === 'ARRIVAL') && ctrValue === 'CTR') {
+                allFilled = towerVal !== '' && groundVal !== '' && atisVal !== '';
+            } else if (ctrValue !== 'CTR') {
+                allFilled = towerVal !== '';
+            } else {
+                allFilled = false;
+            }
+
+            elementContact.style.backgroundColor = allFilled ? '#E9E9E9' : '#ffeb3b';
+        };
+
+        const handleAerodromeEvent = (e) => {
+            const targetId = e.target.id;
+            const prefix = targetId.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
+            highlightDropdownMenu(prefix);
+        };
+
+        const handleContactEvent = (e) => {
+            const targetId = e.target.id;
+            const prefix = targetId.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
+            updateContactColor(prefix);
+        };
+
+        // Attach listeners for aerodrome fields
+        aerodromeFieldIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.addEventListener('input', handleAerodromeEvent);
+            el.addEventListener('keydown', handleAerodromeEvent);
+        });
+
+        // Attach listeners for contact fields
+        contactFieldIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.addEventListener('input', handleContactEvent);
+            el.addEventListener('keydown', handleContactEvent);
+        });
+
+        // Return a public function to manually trigger updates
+        return function(prefix = null) {
+            const prefixes = prefix ? [prefix] : ['DEPARTURE', 'ARRIVAL'];
+            prefixes.forEach(p => {
+                highlightDropdownMenu(p);
+                updateContactColor(p);
+            });
+        };
+    })();
+
+
 
     // Function to check for missing fields and update highlighting
     function highlightMissingFields() {
@@ -8078,6 +8278,7 @@ const COUNTRIES_DATA = [
                 await window.populate_aerodrome_fields_from_icao(fname, city_icao);
                 // Update missing fields
                 highlightMissingFields();
+                highlightDropdownMenus();
             }
         });
 

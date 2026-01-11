@@ -1192,7 +1192,9 @@ function updateFlightCatagoryIcon(prefix, remove = false) {
   // Get elements
   const imgCat = document.getElementById(`${prefix}_CATAGORY_ICON`);
   const imgVFR = document.getElementById(`${prefix}_VFR_ICON`);
-  const borderFieldAerodrome = document.getElementById(prefix + "_SELECT_AERODROME_BORDER");
+  const borderFieldAerodrome1 = document.getElementById(prefix + "_SELECT_AERODROME_BORDER_1");
+  const borderFieldAerodrome2 = document.getElementById(prefix + "_SELECT_AERODROME_BORDER_2");
+  const borderFieldAerodrome3 = document.getElementById(prefix + "_SELECT_AERODROME_BORDER_3");
 
   // Get metar data for aerodrome
   // metarObject = window.flight_plan_data[`${prefix}_METAR`];
@@ -1216,7 +1218,11 @@ function updateFlightCatagoryIcon(prefix, remove = false) {
     // imgVFR.style.display = "none";
 
     // Update border color
-    borderFieldAerodrome.style.backgroundColor = "f5f5f5";
+    console.log();
+    console.log(borderFieldAerodrome1);
+    borderFieldAerodrome1.style.backgroundColor = "E9E9E9";
+    borderFieldAerodrome2.style.backgroundColor = "f5f5f5";
+    borderFieldAerodrome3.style.backgroundColor = "f5f5f5";
     return;
   }
 
@@ -1231,7 +1237,75 @@ function updateFlightCatagoryIcon(prefix, remove = false) {
   imgVFR.alt = metarObject.flightCategory;
   imgVFR.style.display = "inline-block";
   // Color the Div
-  borderFieldAerodrome.style.backgroundColor = metarObject.color;
+  borderFieldAerodrome1.style.backgroundColor = metarObject.color;
+  borderFieldAerodrome2.style.backgroundColor = metarObject.color;
+  borderFieldAerodrome3.style.backgroundColor = metarObject.color;
+}
+
+async function colorMetarFields(prefix, enable = true) {
+  // const buttonMetar = document.getElementById('BTN-METAR-' + prefix);
+  const metarText = document.getElementById("METAR-TEXT-" + prefix);
+  const dateField = document.getElementById("DATETIME-METAR-" + prefix);
+  const metarField = document.getElementById("METAR-FIELD-" + prefix);
+  const windDirectionField = document.getElementById(prefix + "_WIND_DIRECTION");
+  const windSpeedField = document.getElementById(prefix + "_WIND_SPEED");
+  const windGustField = document.getElementById(prefix + "_WIND_GUST");
+  const windVariationField = document.getElementById(prefix + "_WIND_VARIATION");
+  const windHeadwindField = document.getElementById(prefix + "_WIND_HEADWIND");
+  const windCrosswindField = document.getElementById(prefix + "_WIND_CROSSWIND");
+  const borderFieldAerodrome1 = document.getElementById(prefix + "_SELECT_AERODROME_BORDER_1");
+  const borderFieldAerodrome2 = document.getElementById(prefix + "_SELECT_AERODROME_BORDER_2");
+  const borderFieldAerodrome3 = document.getElementById(prefix + "_SELECT_AERODROME_BORDER_3");
+
+  if (enable) {
+    // buttonMetarIcon2.disabled = false;
+    // buttonMetarIcon2.style.cursor = 'pointer';
+
+    // buttonMetarIcon1.disabled = false;
+    // buttonMetarIcon1.style.cursor = 'pointer';
+    // buttonMetar.disabled = false;
+    // buttonMetar.style.cursor = 'pointer';
+    // buttonMetar.setAttribute('aria-disabled', 'false');
+    // buttonMetar.style.opacity = '1';
+    // buttonMetar.style.backgroundColor = '#80B0C0';
+
+    metarField.style.backgroundColor = "transparent";
+    metarText.style.backgroundColor = "transparent";
+    dateField.style.backgroundColor = "transparent";
+    windDirectionField.style.backgroundColor = "transparent";
+    windSpeedField.style.backgroundColor = "transparent";
+    windGustField.style.backgroundColor = "transparent";
+    windVariationField.style.backgroundColor = "transparent";
+    windHeadwindField.style.backgroundColor = "transparent";
+    windCrosswindField.style.backgroundColor = "transparent";
+  } else {
+    // buttonMetarIcon2.disabled = true;
+    // buttonMetarIcon2.style.cursor = "not-allowed";
+
+    // buttonMetarIcon1.disabled = true;
+    // buttonMetarIcon1.style.cursor = "not-allowed";
+    // buttonMetar.disabled = true;
+    // buttonMetar.style.cursor = "not-allowed";
+    // buttonMetar.setAttribute('aria-disabled', 'true');
+    // buttonMetar.style.opacity = '0.6';
+
+    metarText.value = " ";
+    metarField.value = "Be patient while fetching METAR weather information...";
+
+    // Change background color to light red/pink
+    metarField.style.backgroundColor = "#ffebee";
+    dateField.style.backgroundColor = "#ffebee";
+    metarText.style.backgroundColor = "#ffebee";
+    windDirectionField.style.backgroundColor = "#ffebee";
+    windSpeedField.style.backgroundColor = "#ffebee";
+    windGustField.style.backgroundColor = "#ffebee";
+    windVariationField.style.backgroundColor = "#ffebee";
+    windHeadwindField.style.backgroundColor = "#ffebee";
+    windCrosswindField.style.backgroundColor = "#ffebee";
+    borderFieldAerodrome1.style.backgroundColor = "#E9E9E9";
+    borderFieldAerodrome2.style.backgroundColor = "#f5f5f5";
+    borderFieldAerodrome3.style.backgroundColor = "#f5f5f5";
+  }
 }
 
 async function retrieve_metar(prefix, verbose = "info", metar_custom = "") {
@@ -1338,7 +1412,7 @@ async function retrieve_metar(prefix, verbose = "info", metar_custom = "") {
       // Animations
       animations(prefix, "start");
     } catch (error) {
-      console.error(`   >Error: METAR details could not be computed:`, error);
+      console.error(`   >Error: METAR details could not be computed.`);
     }
   }
 
