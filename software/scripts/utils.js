@@ -26,9 +26,10 @@ function updateFlag(prefix, countryCode) {
 
       if (!countryCode || String(countryCode).trim() === "" || countryCode === "remove") {
         console.log(`   >Warning: no Country code or flag is set to be removed: ${countryCode}`);
-        img.style.display = "none";
-        img.alt = "";
-        img.src = "";
+        // img.style.display = "none";
+        img.style.display = "inline-block";
+        img.alt = "Unknown";
+        img.src = "./icons/flag_unknown.svg";
         continue;
       }
 
@@ -38,9 +39,10 @@ function updateFlag(prefix, countryCode) {
       // Only accept two-letter codes (basic check); if not 2 letters, hide
       if (!/^[a-z]{2}$/.test(code)) {
         console.log(`   >Warning: Country code has more then 2 chars`);
-        img.style.display = "none";
-        img.alt = "";
-        img.src = "";
+        // img.style.display = "none";
+        img.style.display = "inline-block";
+        img.alt = "Unknown";
+        img.src = "./icons/flag_unknown.svg";
         continue;
       }
 

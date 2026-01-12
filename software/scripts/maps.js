@@ -1248,45 +1248,6 @@ function haversineDistance(coord1, coord2) {
   return R * c;
 }
 
-// Main function: compute distance, time, and arrival
-function computeFlightInfo(waypoints, departureTimeHHMM = null, speedKt = 105) {
-  if (!waypoints || waypoints.length < 2) return null;
-
-  // Total distance
-  let totalDistanceKm = 0;
-  for (let i = 0; i < waypoints.length - 1; i++) {
-    totalDistanceKm += haversineDistance(waypoints[i], waypoints[i + 1]);
-  }
-
-  // const speedKt = 105;
-  const speedKmH = speedKt * 1.852;
-  const timeHours = totalDistanceKm / speedKmH;
-  const timeMinutes = Math.round(timeHours * 60);
-
-  let arrivalTime = "--:--";
-  let departureTime = "--:--";
-
-  if (departureTimeHHMM) {
-    const [depH, depM] = departureTimeHHMM.split(":").map(Number);
-    const depDate = new Date();
-    depDate.setHours(depH, depM, 0, 0);
-    depDate.setMinutes(depDate.getMinutes() + timeMinutes);
-    const arrH = String(depDate.getHours()).padStart(2, "0");
-    const arrM = String(depDate.getMinutes()).padStart(2, "0");
-    arrivalTime = `${arrH}:${arrM}`;
-    departureTime = departureTimeHHMM;
-  } else {
-    departureTime = "--:--";
-  }
-
-  return {
-    distance_km: totalDistanceKm.toFixed(1),
-    flying_time_min: timeMinutes,
-    departure_time: departureTime,
-    arrival_time: arrivalTime,
-  };
-}
-
 function openAerodromeMap(fname) {
   // Get latlon for departure/ arrival
   const latlon = window.flight_plan_data[`${fname}_LATLON`];

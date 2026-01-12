@@ -51,6 +51,7 @@ const FILES_TO_CACHE = [
   "./icons/clouds_LIFR.png",
   "./icons/clouds_rain_LIFR.png",
   "./icons/clouds_unknown.png",
+  "./icons/flag_unknown.svg",
 
   // FIGS AIRCRAFT
   "./icons/aircraft_front.png",

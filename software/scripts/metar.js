@@ -1218,8 +1218,8 @@ function updateFlightCatagoryIcon(prefix, remove = false) {
     // imgVFR.style.display = "none";
 
     // Update border color
-    console.log();
-    console.log(borderFieldAerodrome1);
+    // console.log();
+    // console.log(borderFieldAerodrome1);
     borderFieldAerodrome1.style.backgroundColor = "E9E9E9";
     borderFieldAerodrome2.style.backgroundColor = "f5f5f5";
     borderFieldAerodrome3.style.backgroundColor = "f5f5f5";

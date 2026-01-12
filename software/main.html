@@ -5126,13 +5126,15 @@
         # Load aerodrome data for departure or arrival from localStorage.
         print(f'> func: load_aerodrome_from_json({fname})')
 
+
         # Get element ID for ICAO
         if elementId is None: elementId = f'{fname}_ICAO'
         element = js.document.getElementById(elementId)
         icaoName = element.value.strip().upper() or ''
+
         if icao is not None:
+            #icaoName = extract_icao_from_string(icaoName)
             icaoName = re.search(r'\(([^)]+)\)', icao).group(1)
-            icaoName = icaoName.strip().upper()
 
         # Get cached aerodrome data
         cache_key = fname + '_' + icaoName
@@ -5150,25 +5152,31 @@
             # Use the user saved aerodrome data
             pass
         elif not json_data and js.window.flight_plan_data[f'{fname}_ICAO_CITY'] == '':
+            # print('HERE 1')
             # No saved aerodrome but I nothing selected
             # Clean all GUI fields
             message = f"ℹ️ Please select and save the {icaoName} aerodrome in the {fname.lower()} tab or add your custom aerodrome information and save it."
             print(message)
-            if verbose == 'info': js.window.alert(message)
-            # await clear_aerodrome_fields(fname)
+            # Add icon below ICAO on the GENERAL TAB
+            js.document.getElementById(f'{fname}_CITY').textContent = f'⚠️ {fname}'
+            # Remove flag
+            js.window.updateFlag(fname, 'remove')
+
+            # if verbose == 'info': js.window.alert(message)
             return False
         else:
+            # print('HERE 2')
             # Aerodrome does not exits. Return without clearning all fields.
-            # message = f'⚠️ {fname.title()} aerodrome ({icaoName}) not valid or previously saved. Please choose the aerodrome using the selection box first.'
             message = f"ℹ️ Please select and save the {icaoName} aerodrome in the {fname.lower()} tab or add your custom aerodrome information and save it."
             print(message)
-            if verbose == 'info': js.window.alert(message)
+            # if verbose == 'info': js.window.alert(message)
+            # Add icon below ICAO on the GENERAL TAB
+            js.document.getElementById(f'{fname}_CITY').textContent = f'⚠️ {fname}'
 
             # Get the original selected ICAO
             icaoSelected = js.document.getElementById(f'{fname}_ICAO_CITY')
 
             # Extract the string that is between parentheses in the alert message (e.g. the ICAO) and set it as the spinner value
-            # icao_value = re.search(r'\(([^)]+)\)', icaoSelected.value).group(1)
             icao_value = extract_icao_from_string(icaoSelected.value)
 
             # Store previous value back elements and flight plan
@@ -5181,74 +5189,73 @@
             js.window.highlightMissingFields()
             js.window.highlightDropdownMenus()
 
+            # Remove flag
+            # js.window.updateFlag(fname, 'remove')
+
             # Return
             return False
 
 
         # Parse JSON
-        try:
-            fname_dict = json.loads(json_data)
-            fname_dict[f'{fname}_RUNWAY'] = ''
+        fname_dict = json.loads(json_data)
+        fname_dict[f'{fname}_RUNWAY'] = ''
 
-            print(f"   >✅ Loaded {len(fname_dict)} fields")
+        print(f"   >✅ Loaded {len(fname_dict)} fields")
 
-            # Clear aerodrome fields but not the aircraft fields
-            await clear_aerodrome_fields(fname, clearAircraftFields=False)
+        # Clear aerodrome fields but not the aircraft fields
+        await clear_aerodrome_fields(fname, clearAircraftFields=False)
 
-            # Overwrite the keys in the flight_plan_data dictionary from the loaded JSON data
-            for key, value in fname_dict.items():
-                print(f"Key: {key}, Value: {value}")
-                js.window.flight_plan_data[key] = value
+        # Overwrite the keys in the flight_plan_data dictionary from the loaded JSON data
+        for key, value in fname_dict.items():
+            print(f"Key: {key}, Value: {value}")
+            js.window.flight_plan_data[key] = value
 
-            # Update GUI fields
-            update_aerodrome_gui_fields(fname, updateAircraftFields=False)
+        # Update GUI fields
+        update_aerodrome_gui_fields(fname, updateAircraftFields=False)
 
-            # Update aerodrome image
-            await update_aerodrome_image(fname)
+        # Update aerodrome image
+        await update_aerodrome_image(fname)
 
-            # Update spinners
-            if fname_dict[f'{fname}_COUNTRY'] != '':
-                # Update the country and load into memory
-                await import_country_selected(fname, fname_dict[f'{fname}_COUNTRY'])
-                # Get the ICAO CITY name
-                element = js.document.getElementById(f'{fname}_ICAO_CITY')
-                # Set the ICAO spinner
-                element.value = fname_dict[f'{fname}_ICAO_CITY']
+        # Update spinners
+        if fname_dict[f'{fname}_COUNTRY'] != '':
+            # Update the country and load into memory
+            await import_country_selected(fname, fname_dict[f'{fname}_COUNTRY'])
+            # Get the ICAO CITY name
+            element = js.document.getElementById(f'{fname}_ICAO_CITY')
+            # Set the ICAO spinner
+            element.value = fname_dict[f'{fname}_ICAO_CITY']
 
-            # Update missing fields colors
-            js.window.highlightMissingFields()
-            js.window.highlightDropdownMenus()
+        # Update missing fields colors
+        js.window.highlightMissingFields()
+        js.window.highlightDropdownMenus()
 
-            # Remove METAR widget
-            remove_metar_widget(fname)
+        # Remove METAR widget
+        remove_metar_widget(fname)
 
-            # Remove wind envelope
-            remove_wind_envelope_plot(fname)
+        # Remove wind envelope
+        remove_wind_envelope_plot(fname)
 
-            # Retrieve METAR data during loading of the aerodrome
-            await js.window.retrieve_metar(fname, verbose=verbose)
+        # Retrieve METAR data during loading of the aerodrome
+        await js.window.retrieve_metar(fname, verbose=verbose)
 
-            # Initialize the waypoints when both Departure and arrival location are set.
-            icao_dep = js.document.getElementById('DEPARTURE_ICAO')
-            icao_arr = js.document.getElementById('ARRIVAL_ICAO')
-            time_dep = js.document.getElementById('DEPARTURE_clockField')
-            if icao_dep.value != '' and icao_arr.value != '':
-                js.window.waypoints = [js.window.flight_plan_data['DEPARTURE_LATLON'], js.window.flight_plan_data['ARRIVAL_LATLON']]
-                js.window.UpdateFlightInfoFields(time_dep.value)
-                # print(js.window.waypoints)
+        # Initialize the waypoints when both Departure and arrival location are set.
+        icao_dep = js.document.getElementById('DEPARTURE_ICAO')
+        icao_arr = js.document.getElementById('ARRIVAL_ICAO')
+        time_dep = js.document.getElementById('DEPARTURE_clockField')
+        if icao_dep.value != '' and icao_arr.value != '':
+            js.window.waypoints = [js.window.flight_plan_data['DEPARTURE_LATLON'], js.window.flight_plan_data['ARRIVAL_LATLON']]
+            js.window.UpdateFlightInfoFields(time_dep.value)
+            # print(js.window.waypoints)
 
-            print(f"   >✅ Aerodrome {icaoName} successfully loaded from cache: {fname.lower()}")
-            # js.window.alert(f"✅ Aerodrome {icaoName} successfully loaded for {fname.lower()}")
-            return True
-        except Exception as e:
-            print(f"   >⚠️ Error loading aerodrome data: {str(e)}")
-            js.window.alert(f"❗ Error loading aerodrome data for {icaoName}: {str(e)}")
-            return False
+        print(f"   >✅ Aerodrome {icaoName} successfully loaded from cache: {fname.lower()}")
+        # js.window.alert(f"✅ Aerodrome {icaoName} successfully loaded for {fname.lower()}")
+        return True
+
 
 
     def extract_icao_from_string(icao_string):
         if not icao_string:
-            return None
+            return ''
 
         match = re.search(r'\(([^)]+)\)', icao_string)
         return match.group(1) if match else ''
@@ -5277,14 +5284,6 @@
         # Get flightplan data from dictionary
         flight_data = js.window.flight_plan_data
 
-        # Create Cache key
-        cache_key = fname + '_' + flight_data[f"{fname}_ICAO"]
-        print(f'   >CACHE KEY: {cache_key}')
-
-        # Keys with DEPARTURE_ OR ARRIVAL_ are stored in the dict: dict_fname
-        # dict_fname = {k: v for k, v in flight_data.items() if k.startswith(fname)}
-        # dict_fname = {k: v for k, v in flight_data.items() if k.startswith(fname) and f'{fname}_WEIGHT' not in k}
-
         dict_fname = {}
         for key, item in flight_data.items():
             if key.startswith(fname) and not key.startswith(f"{fname}_WEIGHT"):
@@ -5298,8 +5297,13 @@
             if element and hasattr(element, 'value'):
                 field_value = element.value
                 if field_value and str(field_value) not in ('nan', 'None', ''):
-                    print(f'Saving to {cache_key} dictionary: {key}: {field_value}')
                     dict_fname[key] = field_value
+
+        print(dict_fname)
+
+        # Create Cache key
+        cache_key = fname + '_' + dict_fname[f"{fname}_ICAO"]
+        print(f'   >CACHE KEY: {cache_key}')
 
         # Save to cache
         message = f"✅ Custom {fname.lower()} field information for {flight_data.get(f'{fname}_ICAO', '')} is saved."
@@ -6442,20 +6446,10 @@
 
         console.log(`>Tab switch from: ${currentTab}, to ${targetTab}`)
 
-        // SAVE ON TAB CHANGE SWITCHING TO GENERAL AND ATC
-        // if (pyscriptReady && window.save_flightplan && (targetTab === "ATC")) {
-        //   try {
-        //     window.save_flightplan(true, false);
-        //   } catch (error) {
-        //     console.error("Error saving data before tab switch:", error);
-        //   }
-        // }
-
-        // Update the checklist when clicking on the more tab
-        // if (targetTab === 'More'){
-        //   checklist_populate()
-        //   window.calculateWeightBalance('SETTINGS');
-        // }
+        // SAVE ON TAB CHANGE SWITCHING TO ATC. THIS IS NEEDED BECAUSE THE DATA IS GATHERED FROM FLIGHTPLAN DICT.
+        if (pyscriptReady && window.save_flightplan && (targetTab === "ATC")) {
+            window.save_flightplan(true, false);
+        }
 
         // Calculate Weight and Balance and Departure tab
         if (targetTab === 'Departure' || targetTab === 'Arrival'){
@@ -6469,6 +6463,7 @@
         //  CHECKLIST TAB: UPDATE CHECKLISTS
         if (targetTab === "Checklist") {
           checklist_populate()
+          // window.calculateWeightBalance('SETTINGS');
         }
 
         // REPLACE INFORMATION with "INFO" in the ENROUTE TAB.
@@ -6827,6 +6822,7 @@
       }
     });
 
+
     ['DEPARTURE_ANIMATION_START', 'ARRIVAL_ANIMATION_START'].forEach(btnId => {
       const el = document.getElementById(btnId);
       if (!el) return;
@@ -6864,35 +6860,6 @@
     });
 
 
-    //
-    function handlePlaneClick() {
-        console.log("> func: handlePlaneClick()");
-
-        // Check whether ICAO fields are filled in
-        const element_dep = document.getElementById('DEPARTURE_ICAO_2');
-        const element_arr = document.getElementById('ARRIVAL_ICAO_2');
-
-        for (const element of [element_dep, element_arr]) {
-            // skip when element not found
-            if (!element) continue;
-            // Get prefix
-            const prefix = element.id.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
-            const elementValue = element.value.trim();
-
-            // check if the field contains characters
-            if (elementValue !== '' && elementValue !== null) {
-              // Check ICAO characters
-              if (elementValue.length > 4 && elementValue.length < 4) {
-                window.alert(`ICAO for ${prefix.toLowerCase()} requires exactly 4 characters.`);
-                return;
-              }
-
-              // Load the aerodrome from json
-              window.load_aerodrome_from_json(prefix, element.id);
-            }
-        }
-    }
-
     function UpdateFlightInfoFields(timeValue = null, initialize=true) {
         // Initialize "MAP" and update route, this will fill the window.waypoints array
         initRouteMap(initialize);
@@ -6908,9 +6875,11 @@
         document.getElementById("ARRIVAL_FLIGHT_DISTANCE_INFO").textContent = `${info.distance_km} km, ${info.flying_time_min} min.`;
         document.getElementById("distance-km").textContent = info.distance_km;
         document.getElementById("flying-minutes").textContent = info.flying_time_min;
+
         if (info.departure_time !== "--:--") {
             document.getElementById("departure-time").textContent = info.departure_time;
         }
+
         if (info.arrival_time !== "--:--") {
             document.getElementById("ARRIVAL_clockField").value = info.arrival_time;
             document.getElementById("arrival-time").textContent = info.arrival_time;
@@ -6939,86 +6908,162 @@
     });
 
 
-    // Update the aerodrome directly after changing one of the input fields
-    ['DEPARTURE_ICAO', 'DEPARTURE_ICAO_2', 'ARRIVAL_ICAO', 'ARRIVAL_ICAO_2'].forEach(id => {
-        const field = document.getElementById(id);
+    // function handlePlaneClick() {
+    //     console.log("> func: handlePlaneClick()");
 
-        const handleICAOUpdate = (event) => {
-            const prefix = id.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
-            const suffix = id.replace(/^DEPARTURE_/, '').replace(/^ARRIVAL_/, '');
-            const value = String(event?.target?.value ?? '').trim();
+    //     // Check whether ICAO fields are filled in
+    //     const element_dep = document.getElementById('DEPARTURE_ICAO_2');
+    //     const element_arr = document.getElementById('ARRIVAL_ICAO_2');
 
-            // At least 4 chars is required
-            if (value.length > 1 && value.length < 4) {
-                window.alert(`ICAO for ${prefix.toLowerCase()} requires exactly 4 characters.`);
-                return;
-            }
-
-            // Load the aerodrome from JSON
-            window.load_aerodrome_from_json(prefix, id);
-        };
-
-        // Trigger on blur
-        field?.addEventListener("blur", handleICAOUpdate);
-        // Trigger on Enter key
-        field.addEventListener('keydown', e => e.key === 'Enter' && handleICAOUpdate(e));
-        // field?.addEventListener("keydown", e => {
-        //     if (e.key === "Enter") handleICAOUpdate(e);
-        // });
-    });
-    // Update the aerodrome directly after changing one of the input fields
-    // ['DEPARTURE_ICAO', 'DEPARTURE_ICAO_2', 'ARRIVAL_ICAO', 'ARRIVAL_ICAO_2'].forEach(id => {
-    //   document.getElementById(id)?.addEventListener('change', element => {
+    //     for (const element of [element_dep, element_arr]) {
+    //         // skip when element not found
+    //         if (!element) continue;
     //         // Get prefix
+    //         const prefix = element.id.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
+    //         const elementValue = element.value.trim();
+
+    //         // check if the field contains characters
+    //         if (elementValue !== '' && elementValue !== null) {
+    //           // Check ICAO characters
+    //           if (elementValue.length > 1 && elementValue.length < 4) {
+    //             window.alert(`ICAO for ${prefix.toLowerCase()} requires exactly 4 characters.`);
+    //             // # element.value = document.getElementById(f'{fname}_ICAO_2');
+    //             document.getElementById(`${prefix}_CITY`).textContent = `⚠️ ${fname}`
+    //             return;
+    //           }
+
+    //           // Load the aerodrome from json
+    //           window.load_aerodrome_from_json(prefix, element.id);
+    //         }
+    //     }
+    // }
+
+
+    // Update the aerodrome directly after changing one of the input fields
+    // ['DEPARTURE_ICAO_2', 'ARRIVAL_ICAO_2'].forEach(id => {
+    //     const field = document.getElementById(id);
+
+    //     const handleICAOUpdate = (element) => {
     //         const prefix = id.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
     //         const suffix = id.replace(/^DEPARTURE_/, '').replace(/^ARRIVAL_/, '');
+    //         const value = String(element?.target?.value ?? '').trim();
+
     //         // At least 4 chars is required
-    //         const field = String(element?.target?.value ?? '').trim();
-    //         if (field.length < 4) {
+    //         if (value.length >= 1 && value.length < 4) {
     //             window.alert(`ICAO for ${prefix.toLowerCase()} requires exactly 4 characters.`);
+    //             console.log('HERE')
+    //             window.clear_aerodrome_fields(prefix);
+    //             document.getElementById(`${prefix}_CITY`).textContent = `⚠️ ${prefix}`
     //             return;
     //         }
-    //         // Load the aerodrome from json
-    //         window.load_aerodrome_from_json(prefix, elementId=id)
-    //   });
+
+    //         // Load the aerodrome from JSON
+    //         window.load_aerodrome_from_json(prefix, id);
+    //     };
+
+    //     // Trigger on blur
+    //     field?.addEventListener("blur", handleICAOUpdate);
+    //     // Trigger on Enter key
+    //     field.addEventListener('keydown', e => e.key === 'Enter' && handleICAOUpdate(e));
     // });
 
-    // Update the aerodrome directly after clicking one the icon
+
+    // Generic ICAO validation and loading function
+    function validateAndLoadICAO(elementOrEvent, forceLoad = false) {
+        const element = elementOrEvent?.target || elementOrEvent;
+        if (!element?.id) return false;
+
+        const prefix = element.id.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
+        const value = String(element.value || '').trim();
+
+        if (value === '' && !forceLoad) return true;
+
+        if (value.length > 0 && value.length < 4) {
+            window.alert(`ICAO for ${prefix.toLowerCase()} requires exactly 4 characters.`);
+            window.clear_aerodrome_fields(prefix);
+            document.getElementById(`${prefix}_CITY`).textContent = `⚠️ ${prefix}`;
+            return false;
+        }
+
+        if (value.length === 4) {
+            window.load_aerodrome_from_json(prefix, element.id);
+        }
+
+        return true;
+    }
+
+    // Setup event listeners for ICAO fields
+    ['DEPARTURE_ICAO_2', 'ARRIVAL_ICAO_2'].forEach(id => {
+        const field = document.getElementById(id);
+        if (!field) return;
+
+        // Trigger on blur
+        field.addEventListener("blur", validateAndLoadICAO);
+
+        // Trigger on Enter key
+        field.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                validateAndLoadICAO(e);
+            }
+        });
+    });
+
+    // Refactored handlePlaneClick
+    function handlePlaneClick() {
+        console.log("> func: handlePlaneClick()");
+
+        const element_dep = document.getElementById('DEPARTURE_ICAO_2');
+        const element_arr = document.getElementById('ARRIVAL_ICAO_2');
+
+        for (const element of [element_dep, element_arr]) {
+            if (!element) continue;
+
+            // Use the generic function with forceLoad = true to check non-empty fields
+            const value = element.value.trim();
+            if (value !== '') {
+                const isValid = validateAndLoadICAO(element, true);
+                if (!isValid) return; // Stop if validation fails
+            }
+        }
+    }
+
+
+
+    // Update the aerodrome only when the load buttons/icons are clicked (do NOT trigger on clicking the ICAO text fields)
     ['DEPARTURE_LOAD_ICAO', 'ARRIVAL_LOAD_ICAO'].forEach(id => {
       const e = document.getElementById(id);
       if (!e) return;
-        e.addEventListener('click', e => {
+      e.addEventListener('click', ev => {
         // Prefer the event's currentTarget id (safe even if a child element was clicked)
-        const field = e?.currentTarget?.id ?? id;
-        const prefix = field.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
+        const fieldId = ev?.currentTarget?.id ?? id;
+        const prefix = fieldId.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
 
         // At least 4 chars is required for the icao
-        element = document.getElementById(`${prefix}_ICAO`);
+        const element = document.getElementById(`${prefix}_ICAO`);
         const icao = String(element?.value ?? '').trim();
-        if (icao.length < 4) {
-          window.alert(`ICAO for ${prefix.toLowerCase()} requires exactly 4 characters.`);
+        if (icao.length >= 1 && icao.length < 4) {
+          // Too short — do nothing
           return;
         }
-        // window.alert(`${prefix} with id: ${id}: field: ${icao}`)
 
         // SAVE when selected but not yet (manually) saved
-        countrySelected = document.getElementById(`${prefix}_COUNTRY`).value
-        icaoSelected = document.getElementById(`${prefix}_ICAO_CITY`).value
-        icoaName = extract_icao_from_string(icaoSelected)
+        const countrySelected = document.getElementById(`${prefix}_COUNTRY`).value;
+        const icaoSelected = document.getElementById(`${prefix}_ICAO_CITY`).value;
+        const icaoName = extract_icao_from_string(icaoSelected);
 
-        // alert(`${prefix} with selection: COUNTRY: ${countrySelected} and ICOA: ${icoaName} and ${icao}`)
-        if (icao === icoaName && countrySelected !== '' && icoaName !== '') {
-          cache_key = `${prefix}_${icoaName}`
-          json_data = localStorage.getItem(cache_key)
+        if (icao === icaoName && countrySelected !== '' && icaoName !== '') {
+          const cache_key = `${prefix}_${icaoName}`;
+          const json_data = localStorage.getItem(cache_key);
           if (json_data === null) {
-            save_aerodrome_to_json(prefix, 'silent')
+            save_aerodrome_to_json(prefix, 'silent');
           }
         }
 
-        // Load the aerodrome from json
-       window.load_aerodrome_from_json(prefix, elementId=`${prefix}_ICAO`);
+        // Load the aerodrome from json — pass element id as a plain string argument
+        window.load_aerodrome_from_json(prefix, `${prefix}_ICAO`);
       });
     });
+
 
     // Update the aerodrome directly after clicking one the icon
     ['DEPARTURE_USE_CACHED', 'ARRIVAL_USE_CACHED'].forEach(id => {
@@ -7037,6 +7082,7 @@
       });
     });
 
+
     // Update the aerodrome directly after clicking one the icon
     ['DEPARTURE_ANIMATION_METARTEXT', 'ARRIVAL_ANIMATION_METARTEXT'].forEach(id => {
       const e = document.getElementById(id);
@@ -7053,33 +7099,6 @@
       });
     });
 
-    // Update the weight and balance directly after changing the value
-    // ['SETTINGS_WEIGHT_FUEL_LITERS', 'SETTINGS_WEIGHT_PILOT', 'SETTINGS_WEIGHT_COPILOT', 'SETTINGS_WEIGHT_REAR_RIGHT', 'SETTINGS_WEIGHT_REAR_LEFT', 'SETTINGS_WEIGHT_BAGAGE',
-    //   'DEPARTURE_WEIGHT_FUEL_LITERS', 'DEPARTURE_WEIGHT_PILOT', 'DEPARTURE_WEIGHT_COPILOT', 'DEPARTURE_WEIGHT_REAR_RIGHT', 'DEPARTURE_WEIGHT_REAR_LEFT', 'DEPARTURE_WEIGHT_BAGAGE',
-    //   'ARRIVAL_WEIGHT_FUEL_LITERS', 'ARRIVAL_WEIGHT_PILOT', 'ARRIVAL_WEIGHT_COPILOT', 'ARRIVAL_WEIGHT_REAR_RIGHT', 'ARRIVAL_WEIGHT_REAR_LEFT', 'ARRIVAL_WEIGHT_BAGAGE',
-    //   'aircraft_fuel_density', 'weight_empty', 'arm_empty', 'arm_pilot', 'arm_copilot', 'arm_rl', 'arm_rr', 'arm_bagage', 'arm_fuel',
-    //   'x1', 'y1', 'x2', 'y2', 'x3', 'y3', 'x4', 'y4', 'x5', 'y5',
-    //   ].forEach(id => {
-    //   const field = document.getElementById(id);
-    //   if (!field) return;
-    //     field.addEventListener('change', element => {
-
-    //     // Prefer the event's currentTarget id
-    //     const field = element?.currentTarget?.id ?? id;
-    //     let prefix = 'SETTINGS';
-    //     if (field.startsWith('DEPARTURE')) prefix = 'DEPARTURE';
-    //     if (field.startsWith('ARRIVAL')) prefix = 'ARRIVAL';
-
-    //     // Ensure the value is non-negative: if less than 0 set to 0
-    //     const input = element.currentTarget;
-    //     const rawValue = parseFloat(input.value);
-    //     if (rawValue < 0 || !Number.isFinite(rawValue)) input.value = 0;
-
-    //     // Compute Weight and balance and update plot
-    //     window.calculateWeightBalance(prefix)
-
-    //   });
-    // });
 
     // Update the weight and balance directly after changing the value
     [

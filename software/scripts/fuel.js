@@ -131,19 +131,129 @@ function computeArrivalFuel() {
   };
 }
 
+// function computeArrivalFuelPerLeg() {
+//   console.log("> func: computeArrivalFuel()");
+
+//   const fuelDeparture = parseFloat(document.getElementById("DEPARTURE_WEIGHT_FUEL_LITERS")?.value) || 0;
+
+//   const aircraft = window.flight_plan_data?.AIRCRAFT;
+//   if (!aircraft) return;
+
+//   const cruiseSpeed = parseFloat(aircraft.CRUISESPEED) || 0;
+//   const fuelConsumption = parseFloat(aircraft.FUEL?.consumption) || 0;
+
+//   const waypoints = window.waypoints;
+//   if (!waypoints || waypoints.length < 2) return;
+
+//   // Wind (simple linear interpolation dep → arr)
+//   const windDirDep = parseFloat(document.getElementById("DEPARTURE_WIND_DIRECTION")?.value) || 0;
+//   const windSpdDep = parseFloat(document.getElementById("DEPARTURE_WIND_SPEED")?.value) || 0;
+//   const windDirArr = parseFloat(document.getElementById("ARRIVAL_WIND_DIRECTION")?.value) || windDirDep;
+//   const windSpdArr = parseFloat(document.getElementById("ARRIVAL_WIND_SPEED")?.value) || windSpdDep;
+
+//   let totalFuelBurned = 0;
+//   let totalTimeH = 0;
+
+//   const nLegs = waypoints.length - 1;
+
+//   for (let i = 0; i < nLegs; i++) {
+//     const t = i / Math.max(1, nLegs - 1);
+
+//     const windDir = windDirDep + t * (windDirArr - windDirDep);
+//     const windSpd = windSpdDep + t * (windSpdArr - windSpdDep);
+
+//     const [lat1, lon1] = waypoints[i];
+//     const [lat2, lon2] = waypoints[i + 1];
+
+//     // If any coordinate is missing or empty, return early
+//     if ([lat1, lon1].some((v) => v === undefined || v === null || v === "")) {
+//       return;
+//     }
+//     if ([lat2, lon2].some((v) => v === undefined || v === null || v === "")) {
+//       return;
+//     }
+
+//     const leg = computeLegInfo({
+//       lat1,
+//       lon1,
+//       lat2,
+//       lon2,
+//       cruiseSpeedKt: cruiseSpeed,
+//       fuelConsumptionLph: fuelConsumption,
+//       windDirDeg: windDir,
+//       windSpeedKt: windSpd,
+//     });
+
+//     console.log(`LEG: ${i}`);
+//     console.log(leg);
+
+//     totalFuelBurned += leg.fuelL;
+//     totalTimeH += leg.timeH;
+//   }
+
+//   const fuelRemaining = fuelDeparture - totalFuelBurned;
+
+//   document.getElementById("ARRIVAL_WEIGHT_FUEL_LITERS").value = Math.max(0, fuelRemaining).toFixed(0);
+
+//   console.log(`totalFuelBurned: ${totalFuelBurned}, fuel remaining: ${fuelRemaining}, Total time: ${totalTimeH}`);
+
+//   showFuelMessage("ARRIVAL_fuelMessage", totalFuelBurned, fuelRemaining, totalTimeH, fuelConsumption);
+
+//   return {
+//     fuelBurned: totalFuelBurned,
+//     fuelRemaining: fuelRemaining,
+//     flightTimeH: totalTimeH,
+//   };
+// }
+
 function computeArrivalFuelPerLeg() {
-  console.log("> func: computeArrivalFuel()");
+  console.log("> func: computeArrivalFuelPerLeg()");
 
   const fuelDeparture = parseFloat(document.getElementById("DEPARTURE_WEIGHT_FUEL_LITERS")?.value) || 0;
 
   const aircraft = window.flight_plan_data?.AIRCRAFT;
-  if (!aircraft) return;
+  if (!aircraft) {
+    console.warn("No aircraft data available");
+    return;
+  }
 
   const cruiseSpeed = parseFloat(aircraft.CRUISESPEED) || 0;
   const fuelConsumption = parseFloat(aircraft.FUEL?.consumption) || 0;
 
   const waypoints = window.waypoints;
-  if (!waypoints || waypoints.length < 2) return;
+  if (!waypoints || waypoints.length < 2) {
+    console.warn("Invalid waypoints");
+    return;
+  }
+
+  // Validate all waypoints have coordinates BEFORE processing
+  const hasInvalidCoordinates = waypoints.some((wp) => {
+    if (!Array.isArray(wp) || wp.length < 2) return true;
+    const [lat, lon] = wp;
+    return (
+      lat === undefined ||
+      lat === null ||
+      lat === "" ||
+      lon === undefined ||
+      lon === null ||
+      lon === "" ||
+      isNaN(parseFloat(lat)) ||
+      isNaN(parseFloat(lon))
+    );
+  });
+
+  if (hasInvalidCoordinates) {
+    console.warn("Invalid coordinates in waypoints - cannot compute fuel");
+    document.getElementById("ARRIVAL_WEIGHT_FUEL_LITERS").value = "--";
+    const messageDiv = document.getElementById("ARRIVAL_fuelMessage");
+    if (messageDiv) {
+      messageDiv.style.display = "block";
+      messageDiv.style.background = "#f8d7da";
+      messageDiv.style.color = "#721c24";
+      messageDiv.innerHTML = "⚠️ Invalid waypoint coordinates";
+    }
+    return;
+  }
 
   // Wind (simple linear interpolation dep → arr)
   const windDirDep = parseFloat(document.getElementById("DEPARTURE_WIND_DIRECTION")?.value) || 0;
@@ -165,22 +275,26 @@ function computeArrivalFuelPerLeg() {
     const [lat1, lon1] = waypoints[i];
     const [lat2, lon2] = waypoints[i + 1];
 
-    const leg = computeLegInfo({
-      lat1,
-      lon1,
-      lat2,
-      lon2,
-      cruiseSpeedKt: cruiseSpeed,
-      fuelConsumptionLph: fuelConsumption,
-      windDirDeg: windDir,
-      windSpeedKt: windSpd,
-    });
+    try {
+      const leg = computeLegInfo({
+        lat1: parseFloat(lat1),
+        lon1: parseFloat(lon1),
+        lat2: parseFloat(lat2),
+        lon2: parseFloat(lon2),
+        cruiseSpeedKt: cruiseSpeed,
+        fuelConsumptionLph: fuelConsumption,
+        windDirDeg: windDir,
+        windSpeedKt: windSpd,
+      });
 
-    console.log(`LEG: ${i}`);
-    console.log(leg);
+      console.log(`LEG ${i}:`, leg);
 
-    totalFuelBurned += leg.fuelL;
-    totalTimeH += leg.timeH;
+      totalFuelBurned += leg.fuelL;
+      totalTimeH += leg.timeH;
+    } catch (error) {
+      console.error(`Error computing leg ${i}:`, error);
+      return;
+    }
   }
 
   const fuelRemaining = fuelDeparture - totalFuelBurned;
@@ -261,8 +375,164 @@ function showFuelMessage(messageId, totalFuelBurned, fuelRemaining, totalTimeH, 
   `;
 }
 
+// Main function: compute distance, time, and arrival
+// function computeFlightInfo(waypoints, departureTimeHHMM = null, speedKt = 105) {
+//   if (!waypoints || waypoints.length < 2) return null;
+
+//   // Total distance
+//   let totalDistanceKm = 0;
+//   for (let i = 0; i < waypoints.length - 1; i++) {
+//     totalDistanceKm += haversineDistance(waypoints[i], waypoints[i + 1]);
+//   }
+
+//   // const speedKt = 105;
+//   const speedKmH = speedKt * 1.852;
+//   const timeHours = totalDistanceKm / speedKmH;
+//   const timeMinutes = Math.round(timeHours * 60);
+
+//   let arrivalTime = "--:--";
+//   let departureTime = "--:--";
+
+//   if (departureTimeHHMM) {
+//     const [depH, depM] = departureTimeHHMM.split(":").map(Number);
+//     const depDate = new Date();
+//     depDate.setHours(depH, depM, 0, 0);
+//     depDate.setMinutes(depDate.getMinutes() + timeMinutes);
+//     const arrH = String(depDate.getHours()).padStart(2, "0");
+//     const arrM = String(depDate.getMinutes()).padStart(2, "0");
+//     arrivalTime = `${arrH}:${arrM}`;
+//     departureTime = departureTimeHHMM;
+//   } else {
+//     departureTime = "--:--";
+//   }
+
+//   // Debug: log computed flight info (avoid referencing undefined variables)
+//   console.log({
+//     totalDistanceKm,
+//     timeMinutes,
+//     departureTime,
+//     arrivalTime,
+//     waypointsCount: waypoints ? waypoints.length : 0,
+//   });
+
+//   if (typeof arrivalTime === "string" && arrivalTime.includes("NaN")) arrivalTime = "--:--";
+//   if (isNaN(totalDistanceKm)) totalDistanceKm = 0;
+//   if (isNaN(timeMinutes)) timeMinutes = 0;
+
+//   return {
+//     distance_km: totalDistanceKm.toFixed(1),
+//     flying_time_min: timeMinutes,
+//     departure_time: departureTime,
+//     arrival_time: arrivalTime,
+//   };
+// }
+
+function computeFlightInfo(waypoints, departureTimeHHMM = null, speedKt = 105) {
+  // Early validation: check waypoints
+  if (!waypoints || waypoints.length < 2) {
+    console.warn("computeFlightInfo: Invalid waypoints");
+    return {
+      distance_km: "-",
+      flying_time_min: "-",
+      departure_time: "--:--",
+      arrival_time: "--:--",
+      error: "Invalid waypoints",
+    };
+  }
+
+  // Validate that all waypoints have valid coordinates
+  const hasInvalidCoordinates = waypoints.some((wp) => {
+    if (!Array.isArray(wp) || wp.length < 2) return true;
+    const [lat, lon] = wp;
+    return (
+      lat === undefined ||
+      lat === null ||
+      lat === "" ||
+      lon === undefined ||
+      lon === null ||
+      lon === "" ||
+      isNaN(parseFloat(lat)) ||
+      isNaN(parseFloat(lon))
+    );
+  });
+
+  if (hasInvalidCoordinates) {
+    console.warn("computeFlightInfo: Invalid coordinates in waypoints");
+    return {
+      distance_km: "-",
+      flying_time_min: "-",
+      departure_time: "--:--",
+      arrival_time: "--:--",
+      error: "Invalid coordinates",
+    };
+  }
+
+  // Compute total distance
+  let totalDistanceKm = 0;
+  try {
+    for (let i = 0; i < waypoints.length - 1; i++) {
+      const dist = haversineDistance(waypoints[i], waypoints[i + 1]);
+      if (isNaN(dist)) {
+        console.warn(`Invalid distance at leg ${i}`);
+        continue;
+      }
+      totalDistanceKm += dist;
+    }
+  } catch (error) {
+    console.error("Error computing distance:", error);
+    return {
+      distance_km: "-",
+      flying_time_min: "-",
+      departure_time: "--:--",
+      arrival_time: "--:--",
+      error: "Distance calculation failed",
+    };
+  }
+
+  // Calculate time
+  const speedKmH = speedKt * 1.852;
+  const timeHours = totalDistanceKm / speedKmH;
+  const timeMinutes = Math.round(timeHours * 60);
+
+  // Calculate departure and arrival times
+  let departureTime = "--:--";
+  let arrivalTime = "--:--";
+
+  if (departureTimeHHMM && typeof departureTimeHHMM === "string" && departureTimeHHMM.includes(":")) {
+    try {
+      const [depH, depM] = departureTimeHHMM.split(":").map(Number);
+      if (!isNaN(depH) && !isNaN(depM)) {
+        const depDate = new Date();
+        depDate.setHours(depH, depM, 0, 0);
+        depDate.setMinutes(depDate.getMinutes() + timeMinutes);
+
+        const arrH = String(depDate.getHours()).padStart(2, "0");
+        const arrM = String(depDate.getMinutes()).padStart(2, "0");
+
+        departureTime = departureTimeHHMM;
+        arrivalTime = `${arrH}:${arrM}`;
+      }
+    } catch (error) {
+      console.warn("Error calculating arrival time:", error);
+    }
+  }
+
+  // Build result object
+  const result = {
+    distance_km: (isNaN(totalDistanceKm) ? 0 : totalDistanceKm).toFixed(1),
+    flying_time_min: isNaN(timeMinutes) ? 0 : timeMinutes,
+    departure_time: departureTime,
+    arrival_time: arrivalTime,
+  };
+
+  console.log("computeFlightInfo result:", result);
+
+  return result;
+}
+
 /* =========================
    GLOBAL EXPORTS
 ========================= */
 window.computeArrivalFuel = computeArrivalFuel;
 window.computeArrivalFuelPerLeg = computeArrivalFuelPerLeg;
+window.computeFlightInfo = computeFlightInfo;
