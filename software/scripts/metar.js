@@ -541,40 +541,42 @@ class Metar {
     return color;
   }
 
-  determineVFRIcon() {
+  determineVFRIcon(flightCategory = null, name = null) {
     // Determine the icon
-    const flightCategory = this.flightCategory;
-    const iconDir = "./icons";
+    flightCategory = flightCategory ?? this.flightCategory;
+    name = name ?? "FLIGHT";
+
+    // const iconDir = "./icons";
 
     // ---- LIFR ----
     if (flightCategory === "LIFR") {
       // return `${iconDir}/LIFR.png`;
       // return "https://img.shields.io/badge/flight-LIFR-purple?style=for-the-badge";
-      return "https://img.shields.io/badge/FLIGHT-LIFR-purple";
+      return `https://img.shields.io/badge/${name}-LIFR-purple`;
     }
     // ---- IFR ----
     if (flightCategory === "IFR") {
       // return `${iconDir}/IFR.png`;
       // return "https://img.shields.io/badge/flight-IFR-red?style=for-the-badge";
-      return "https://img.shields.io/badge/FLIGHT-IFR-red";
+      return `https://img.shields.io/badge/${name}-IFR-red`;
     }
     // ---- MVFR ----
     if (flightCategory === "MVFR") {
       // return `${iconDir}/MVFR.png`;
-      // return "https://img.shields.io/badge/flight-MVFR-blue?style=for-the-badge";
-      return "https://img.shields.io/badge/FLIGHT-MVFR-blue";
+      // return `https://img.shields.io/badge/flight-MVFR-blue?style=for-the-badge";
+      return `https://img.shields.io/badge/${name}-MVFR-blue`;
     }
     // ---- VFR  ----
     if (flightCategory === "VFR") {
       // return `${iconDir}/VFR.png`;
-      // return "https://img.shields.io/badge/flight-VFR-green?style=for-the-badge";
-      return "https://img.shields.io/badge/FLIGHT-VFR-green";
+      // return `https://img.shields.io/badge/flight-VFR-green?style=for-the-badge";
+      return `https://img.shields.io/badge/${name}-VFR-green`;
     }
 
     // ---- Fallback ----
     // return `${iconDir}/label_unknown.png`;
-    // return "https://img.shields.io/badge/flight-UNKNOWN-black?style=for-the-badge";
-    return "https://img.shields.io/badge/FLIGHT-UNKNOWN-black";
+    // return `https://img.shields.io/badge/flight-UNKNOWN-black?style=for-the-badge";
+    return `https://img.shields.io/badge/${name}-UNKNOWN-black`;
   }
 
   calculateSunPosition() {
@@ -1058,7 +1060,7 @@ function parseMetarTime(metar_string) {
 // }
 //
 
-async function fetch_metar(metar_stations, splitlines = true, decoded = false, prefix) {
+async function fetch_metar(metar_stations, decoded = false, prefix) {
   console.log(`>Func: fetch_metar(${metar_stations})`);
   const metarField = document.getElementById("METAR-FIELD-" + prefix);
   const stations = Array.isArray(metar_stations) ? metar_stations : [metar_stations];
@@ -1218,8 +1220,6 @@ function updateFlightCatagoryIcon(prefix, remove = false) {
     // imgVFR.style.display = "none";
 
     // Update border color
-    // console.log();
-    // console.log(borderFieldAerodrome1);
     borderFieldAerodrome1.style.backgroundColor = "E9E9E9";
     borderFieldAerodrome2.style.backgroundColor = "f5f5f5";
     borderFieldAerodrome3.style.backgroundColor = "f5f5f5";
@@ -1349,7 +1349,7 @@ async function retrieve_metar(prefix, verbose = "info", metar_custom = "") {
       console.log("   >Closest METAR stations:");
       console.log(`   >${icao_stations}`);
       // Fetch the METAR data for the closest station (pass decoded flag)
-      metarData = await fetch_metar(icao_stations, true, false, prefix);
+      metarData = await fetch_metar(icao_stations, false, prefix);
       // Store data
       metar_icao = metarData[0];
       stationName = metarData[1];
@@ -1457,5 +1457,38 @@ function animations(prefix, process = "start") {
   }
 }
 
+function retrieveMetars() {
+  console.log(`>func: retrieveMetars()`);
+  metarStations = getMetarStations();
+  console.log(metarStations);
+}
+
+function getMetarStations(prefix = null) {
+  let AERODROME_DATA;
+
+  if (prefix === "DEPARTURE") {
+    AERODROME_DATA = window.AERODROME_DEPARTURE_DATA;
+  } else if (prefix === "ARRIVAL") {
+    AERODROME_DATA = window.AERODROME_ARRIVAL_DATA;
+  } else {
+    AERODROME_DATA = window.AERODROME_DATA;
+  }
+
+  // Dict-like: ICAO → metadata
+  return AERODROME_DATA.reduce((acc, item) => {
+    if (item.metar_station === true) {
+      acc[item.icao] = {
+        lat: item.lat,
+        lon: item.lon,
+        country: item.country,
+        name: item.name,
+      };
+    }
+    return acc;
+  }, {});
+}
+
 // Make it globally accessible
 window.animations = animations;
+window.retrieveMetars = retrieveMetars;
+window.determineVFRIcon = determineVFRIcon;

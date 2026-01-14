@@ -1147,3 +1147,19 @@ input[type="number"]:disabled {
     fill: #00A1DE;
     filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
 }
+
+/*METAR STYLES*/
+.metar-station-icon {
+  background: transparent;
+  border: none;
+}
+
+.metar-popup .leaflet-popup-content-wrapper {
+  border-radius: 8px;
+  box-shadow: 0 3px 14px rgba(0,0,0,0.4);
+}
+
+.metar-popup .leaflet-popup-content {
+  margin: 10px;
+  min-width: 300px;
+}

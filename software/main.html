@@ -1408,6 +1408,33 @@
                     <label><input type="checkbox" id="prohibited-toggle" unchecked>Prohibited</label>
                 </div>
             </div>
+
+            <div class="button-row">
+                <label>
+                    <input type="checkbox" id="metar-toggle"> Show METAR Stations
+                </label>
+                <button id="refresh-metar-btn"
+                        onclick="window.refreshMetarData()"
+                        style="margin-left: 10px; padding: 4px 12px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;"
+                        title="Refresh METAR data">
+                    🔄 Refresh
+                </button>
+            </div>
+
+            <!--<div class="button-row">
+                <label>
+                    <input type="checkbox" id="metar-toggle"> Show METAR Stations
+                </label>
+            </div>-->
+
+            <!--<div class="button-row">
+                <button id="BTN-METAR-RETRIEVE" class="button-style"
+                    onclick="window.retrieveMetars();"
+                    title="Retrieve all METAR for the selected countries"
+                    style="transition: background-color 0.3s; z-index: 1; background-color: #006280; border: 1px solid #333333; color: #ffffff; cursor: pointer;">
+                    Retrieve METAR
+                </button>
+            </div>-->
         </div>
 
         <div id="map-container" style="height: 500px;">
@@ -3454,7 +3481,7 @@
 
         print(f'   >icao: {icao}, lat: {lat}, lon: {lon}')
 
-        # Import METAR data
+        # Import METAR station data
         df_stations = get_metar_stations(todf=True)
         # print(df_stations)
 
@@ -6410,12 +6437,11 @@
 
     # METAR HELPERS
     js.window.expected_runway_number = expected_runway_number
-    # js.window.analyzeWind = analyzeWind
-    # js.window.JsToPy = JsToPy
     js.window.headwind = headwind
     js.window.crosswind = crosswind
     js.window.correctRunwayNumber = correctRunwayNumber
     js.window.compute_wind_envelope = compute_wind_envelope
+    js.window.get_top_metar_stations = get_top_metar_stations
 
   </script>
 

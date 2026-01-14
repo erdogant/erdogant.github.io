@@ -7,6 +7,9 @@ let airportLayer = null;
 let airportData = null;
 let airspaceLayer = null;
 let TMZLayer = null;
+let metarLayer = null;
+let metarDataCache = new Map(); // Cache METAR data with timestamps
+
 const time_dep = document.getElementById("DEPARTURE_clockField")?.value;
 
 // Define base layers
@@ -1264,6 +1267,677 @@ function openAerodromeMap(fname) {
   }
 }
 
+// Function to fetch and display METAR stations on map
+// async function addMetarStationsToMap() {
+//   console.log("> func: addMetarStationsToMap()");
+
+//   if (!routeMap) {
+//     console.warn("Map not initialized");
+//     return;
+//   }
+
+//   // Remove existing METAR layer if present
+//   if (metarLayer) {
+//     routeMap.removeLayer(metarLayer);
+//     metarLayer = null;
+//   }
+
+//   // Get METAR station data
+//   const metarStations = getMetarStations();
+//   if (!metarStations) {
+//     console.warn("No METAR stations available");
+//     return;
+//   }
+
+//   console.log("METAR Stations:", metarStations);
+
+//   // Create feature group for METAR markers
+//   metarLayer = L.featureGroup({
+//     zIndex: 5000, // High z-index to stay above other layers
+//   }).addTo(routeMap);
+
+//   // Loop through each METAR station
+//   const icaoKeys = Object.keys(metarStations);
+
+//   for (const icao of icaoKeys) {
+//     try {
+//       const station = metarStations[icao];
+//       const { lat, lon, country, name } = station;
+
+//       if (!lat || !lon) {
+//         console.warn(`Invalid coordinates for ${icao}`);
+//         continue;
+//       }
+
+//       // Fetch METAR data for this station
+//       console.log(`Fetching METAR for ${icao}...`);
+//       const metarData = await fetch_metar(icao);
+
+//       if (!metarData || metarData.length < 2) {
+//         console.warn(`No METAR data for ${icao}`);
+//         continue;
+//       }
+
+//       const metar_icao = metarData[0];
+//       const stationName = metarData[1];
+
+//       // Create METAR object
+//       const metarObject = new Metar(stationName, metar_icao, lat, lon);
+
+//       // Create custom icon using VFR icon
+//       const metarIcon = L.divIcon({
+//         className: "metar-station-icon",
+//         html: `
+//           <div style="position: relative; width: 40px; height: 40px;">
+//             <img src="${metarObject.icon_vfr}"
+//                  alt="${metarObject.flightCategory}"
+//                  style="width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 0 2px rgba(0,0,0,0.5));"
+//                  title="${icao} - ${metarObject.flightCategory}">
+//             <div style="position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%);
+//                         background: rgba(0,0,0,0.7); color: white; padding: 1px 3px;
+//                         border-radius: 3px; font-size: 8px; font-weight: bold; white-space: nowrap;">
+//               ${icao}
+//             </div>
+//           </div>
+//         `,
+//         iconSize: [40, 40],
+//         iconAnchor: [20, 20],
+//       });
+
+//       // Create popup content with METAR information
+//       const popupContent = createMetarPopup(icao, name, country, metarObject);
+
+//       // Create marker
+//       const marker = L.marker([lat, lon], {
+//         icon: metarIcon,
+//         title: `${icao} - ${name}`,
+//         zIndexOffset: 5000,
+//       })
+//         .bindPopup(popupContent, {
+//           maxWidth: 350,
+//           className: "metar-popup",
+//         })
+//         .addTo(metarLayer);
+
+//       // Add hover tooltip with key information
+//       const tooltipContent = createMetarTooltip(icao, metarObject);
+//       marker.bindTooltip(tooltipContent, {
+//         direction: "top",
+//         offset: [0, -20],
+//         opacity: 0.95,
+//       });
+
+//       console.log(`✅ Added METAR marker for ${icao}`);
+//     } catch (error) {
+//       console.error(`Error processing METAR for ${icao}:`, error);
+//     }
+//   }
+
+//   console.log(`✅ Added ${icaoKeys.length} METAR stations to map`);
+// }
+
+// // Create detailed popup content
+// function createMetarPopup(icao, name, country, metarObject) {
+//   const wind = metarObject.wind || {};
+//   const temps = metarObject.temperatures || {};
+//   const cloud = metarObject.cloud || {};
+
+//   // Format wind information
+//   let windText = "N/A";
+//   if (wind.direction && wind.speed) {
+//     windText = `${wind.direction}° at ${wind.speed} kt`;
+//     if (wind.gust) windText += ` (gust ${wind.gust} kt)`;
+//     if (wind.variation) windText += ` varying ${wind.variation}`;
+//   } else if (wind.direction === "VRB") {
+//     windText = `Variable at ${wind.speed || "?"} kt`;
+//   }
+
+//   // Format cloud information
+//   let cloudText = "N/A";
+//   if (cloud.coverage && cloud.altitude) {
+//     cloudText = `${cloud.coverage} at ${cloud.altitude} ft`;
+//   }
+
+//   // Weather conditions
+//   const weatherConditions = [];
+//   if (metarObject.rain) weatherConditions.push("🌧️ Rain");
+//   if (metarObject.snow) weatherConditions.push("❄️ Snow");
+//   if (metarObject.mist) weatherConditions.push("🌫️ Mist");
+//   const weatherText = weatherConditions.length > 0 ? weatherConditions.join(", ") : "Clear";
+
+//   return `
+//     <div style="font-family: Arial, sans-serif; font-size: 12px;">
+//       <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+//                   color: white; padding: 8px; margin: -10px -10px 10px -10px;
+//                   border-radius: 3px 3px 0 0;">
+//         <div style="font-size: 16px; font-weight: bold;">${icao}</div>
+//         <div style="font-size: 11px; opacity: 0.9;">${name}</div>
+//         <div style="font-size: 10px; opacity: 0.8;">${country}</div>
+//       </div>
+
+//       <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+//         <img src="${metarObject.icon_vfr}"
+//              alt="${metarObject.flightCategory}"
+//              style="width: 40px; height: 40px;">
+//         <div>
+//           <div style="font-weight: bold; font-size: 14px; color: ${metarObject.color};">
+//             ${metarObject.flightCategory}
+//           </div>
+//           <div style="font-size: 10px; color: #666;">Flight Category</div>
+//         </div>
+//       </div>
+
+//       <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+//         <tr style="border-bottom: 1px solid #eee;">
+//           <td style="padding: 4px 0; font-weight: bold;">QNH:</td>
+//           <td style="padding: 4px 0;">${metarObject.qnh || "N/A"} hPa</td>
+//         </tr>
+//         <tr style="border-bottom: 1px solid #eee;">
+//           <td style="padding: 4px 0; font-weight: bold;">Wind:</td>
+//           <td style="padding: 4px 0;">${windText}</td>
+//         </tr>
+//         <tr style="border-bottom: 1px solid #eee;">
+//           <td style="padding: 4px 0; font-weight: bold;">Temperature:</td>
+//           <td style="padding: 4px 0;">${temps.temperature || "N/A"}°C / Dewpoint: ${temps.dewpoint || "N/A"}°C</td>
+//         </tr>
+//         <tr style="border-bottom: 1px solid #eee;">
+//           <td style="padding: 4px 0; font-weight: bold;">Visibility:</td>
+//           <td style="padding: 4px 0;">${metarObject.visibility || "N/A"}</td>
+//         </tr>
+//         <tr style="border-bottom: 1px solid #eee;">
+//           <td style="padding: 4px 0; font-weight: bold;">Cloud:</td>
+//           <td style="padding: 4px 0;">${cloudText}</td>
+//         </tr>
+//         <tr>
+//           <td style="padding: 4px 0; font-weight: bold;">Weather:</td>
+//           <td style="padding: 4px 0;">${weatherText}</td>
+//         </tr>
+//       </table>
+
+//       <div style="margin-top: 10px; padding: 6px; background: #f5f5f5;
+//                   border-radius: 3px; font-size: 10px; font-family: monospace;">
+//         ${metarObject.raw || "No raw METAR data"}
+//       </div>
+//     </div>
+//   `;
+// }
+
+// // Create concise tooltip for hover
+// function createMetarTooltip(icao, metarObject) {
+//   const wind = metarObject.wind || {};
+//   const temps = metarObject.temperatures || {};
+
+//   let windStr = "N/A";
+//   if (wind.direction && wind.speed) {
+//     windStr = `${wind.direction}°/${wind.speed}kt`;
+//     if (wind.gust) windStr += `G${wind.gust}`;
+//   }
+
+//   return `
+//     <div style="font-family: Arial, sans-serif; font-size: 11px; min-width: 150px;">
+//       <div style="font-weight: bold; font-size: 13px; margin-bottom: 3px; color: ${metarObject.color};">
+//         ${icao} - ${metarObject.flightCategory}
+//       </div>
+//       <div><b>Wind:</b> ${windStr}</div>
+//       <div><b>Vis:</b> ${metarObject.visibility || "N/A"}</div>
+//       <div><b>Temp:</b> ${temps.temperature || "?"}°C / ${temps.dewpoint || "?"}°C</div>
+//       <div><b>QNH:</b> ${metarObject.qnh || "N/A"} hPa</div>
+//     </div>
+//   `;
+// }
+
+// // Helper function to get color based on flight category
+// function getFlightCategoryColor(category) {
+//   const colors = {
+//     VFR: "#00AA00",
+//     MVFR: "#0000FF",
+//     IFR: "#FF0000",
+//     LIFR: "#FF00FF",
+//   };
+//   return colors[category] || "#666666";
+// }
+
+// // Toggle METAR layer visibility
+// function toggleMetarLayer() {
+//   const checkbox = document.getElementById("metar-toggle");
+
+//   if (!checkbox) {
+//     console.warn("METAR toggle checkbox not found");
+//     return;
+//   }
+
+//   if (checkbox.checked) {
+//     if (!metarLayer) {
+//       // Load METAR stations if not already loaded
+//       addMetarStationsToMap();
+//     } else {
+//       // Show existing layer
+//       metarLayer.addTo(routeMap);
+//     }
+//   } else {
+//     // Hide layer
+//     if (metarLayer) {
+//       routeMap.removeLayer(metarLayer);
+//     }
+//   }
+// }
+
+// // Add event listener for METAR toggle
+// document.addEventListener("DOMContentLoaded", () => {
+//   const metarCheckbox = document.getElementById("metar-toggle");
+//   if (metarCheckbox) {
+//     metarCheckbox.addEventListener("change", toggleMetarLayer);
+//   }
+// });
+
+// // Expose functions globally
+// window.addMetarStationsToMap = addMetarStationsToMap;
+// window.toggleMetarLayer = toggleMetarLayer;
+
+// Function to clear METAR layer
+function clearMetarLayer() {
+  console.log("> func: clearMetarLayer()");
+
+  if (metarLayer) {
+    routeMap.removeLayer(metarLayer);
+    metarLayer.clearLayers(); // Clear all markers from the layer
+    metarLayer = null;
+  }
+
+  // Clear cache
+  metarDataCache.clear();
+
+  console.log("✅ METAR layer cleared");
+}
+
+// Function to check if cached data is still valid (e.g., 30 minutes)
+function isCacheValid(timestamp, maxAgeMinutes = 30) {
+  const now = Date.now();
+  const age = (now - timestamp) / 1000 / 60; // Age in minutes
+  return age < maxAgeMinutes;
+}
+
+// Function to fetch and display METAR stations on map
+async function addMetarStationsToMap(forceRefresh = false) {
+  console.log(`> func: addMetarStationsToMap(forceRefresh=${forceRefresh})`);
+
+  if (!routeMap) {
+    console.warn("Map not initialized");
+    return;
+  }
+
+  // Clear existing METAR layer if refresh is forced or layer exists
+  if (forceRefresh || metarLayer) {
+    clearMetarLayer();
+  }
+
+  // Get METAR station data
+  const metarStations = getMetarStations();
+  if (!metarStations) {
+    console.warn("No METAR stations available");
+    return;
+  }
+
+  console.log("METAR Stations:", metarStations);
+
+  // Create feature group for METAR markers
+  metarLayer = L.featureGroup({
+    zIndex: 5000, // High z-index to stay above other layers
+  }).addTo(routeMap);
+
+  // Loop through each METAR station
+  const icaoKeys = Object.keys(metarStations);
+  let successCount = 0;
+  let errorCount = 0;
+
+  for (const icao of icaoKeys) {
+    try {
+      const station = metarStations[icao];
+      const { lat, lon, country, name } = station;
+
+      if (!lat || !lon) {
+        console.warn(`Invalid coordinates for ${icao}`);
+        errorCount++;
+        continue;
+      }
+
+      let metarObject;
+
+      // Check cache first
+      const cachedData = metarDataCache.get(icao);
+      if (!forceRefresh && cachedData && isCacheValid(cachedData.timestamp)) {
+        console.log(`Using cached METAR for ${icao}`);
+        metarObject = cachedData.metarObject;
+      } else {
+        // Fetch fresh METAR data
+        console.log(`Fetching METAR for ${icao}...`);
+        const metarData = await fetch_metar(icao);
+
+        if (!metarData || metarData.length < 2) {
+          console.warn(`No METAR data for ${icao}`);
+          errorCount++;
+          continue;
+        }
+
+        const metar_icao = metarData[0];
+        const stationName = metarData[1];
+
+        // Create METAR object
+        metarObject = new Metar(stationName, metar_icao, lat, lon);
+
+        // Cache the data
+        metarDataCache.set(icao, {
+          metarObject: metarObject,
+          timestamp: Date.now(),
+        });
+      }
+
+      // Create custom icon using VFR icon
+      const metarIcon = L.divIcon({
+        className: "metar-station-icon",
+
+        html: `
+          <div style="
+              position: relative;
+              width: 35px;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+          ">
+
+              <!-- ICAO label below icon -->
+              <div style="
+                  margin-top: 2px;
+                  background: rgba(0,0,0,0.7);
+                  color: white;
+                  padding: 1px 3px;
+                  border-radius: 3px;
+                  font-size: 8px;
+                  font-weight: bold;
+                  white-space: nowrap;
+              ">
+                  ${icao}
+              </div>
+
+              <!-- Main station icon -->
+              <img src="${metarObject.icon}"
+                    alt="${metarObject.flightCategory}"
+                    style="
+                      width: 35px;
+                      height: 35px;
+                      object-fit: contain;
+                      filter: drop-shadow(0 0 2px rgba(0,0,0,0.5));
+                    "
+                    title="${icao} - ${metarObject.flightCategory}">
+
+          </div>
+        `,
+        iconSize: [35, 45], // taller to fit label
+        iconAnchor: [17, 35], // anchor at bottom of main icon
+      });
+
+      // Create popup content with METAR information
+      const popupContent = createMetarPopup(icao, name, country, metarObject);
+
+      // Create marker
+      const marker = L.marker([lat, lon], {
+        icon: metarIcon,
+        title: `${icao} - ${name}`,
+        zIndexOffset: 5000,
+      })
+        .bindPopup(popupContent, {
+          maxWidth: 350,
+          className: "metar-popup",
+        })
+        .addTo(metarLayer);
+
+      // Add hover tooltip with key information
+      const tooltipContent = createMetarTooltip(icao, metarObject);
+      marker.bindTooltip(tooltipContent, {
+        direction: "top",
+        offset: [0, -20],
+        opacity: 0.95,
+      });
+
+      successCount++;
+    } catch (error) {
+      console.error(`Error processing METAR for ${icao}:`, error);
+      errorCount++;
+    }
+  }
+
+  console.log(`✅ Added ${successCount} METAR stations to map (${errorCount} errors)`);
+
+  // Show notification to user
+  if (successCount > 0) {
+    showMapNotification(`Loaded ${successCount} METAR stations`, "success");
+  }
+}
+
+// Helper function to show notifications on the map
+function showMapNotification(message, type = "info") {
+  const notification = document.createElement("div");
+  notification.className = `map-notification map-notification-${type}`;
+  notification.textContent = message;
+  notification.style.cssText = `
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000;
+    background: ${type === "success" ? "#4CAF50" : type === "error" ? "#f44336" : "#2196F3"};
+    color: white;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 14px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    animation: slideDown 0.3s ease-out;
+  `;
+
+  document.getElementById("route-map")?.appendChild(notification);
+
+  setTimeout(() => {
+    notification.style.animation = "slideUp 0.3s ease-out";
+    setTimeout(() => notification.remove(), 300);
+  }, 3000);
+}
+
+// Create detailed popup content (same as before)
+function createMetarPopup(icao, name, country, metarObject) {
+  const wind = metarObject.wind || {};
+  const temps = metarObject.temperatures || {};
+  const cloud = metarObject.cloud || {};
+
+  // Get cache age
+  const cachedData = metarDataCache.get(icao);
+  const cacheAge = cachedData ? Math.floor((Date.now() - cachedData.timestamp) / 1000 / 60) : 0;
+
+  // Format wind information
+  let windText = "N/A";
+  if (wind.direction && wind.speed) {
+    windText = `${wind.direction}° at ${wind.speed} kt`;
+    if (wind.gust) windText += ` (gust ${wind.gust} kt)`;
+    if (wind.variation) windText += ` varying ${wind.variation}`;
+  } else if (wind.direction === "VRB") {
+    windText = `Variable at ${wind.speed || "?"} kt`;
+  }
+
+  // Format cloud information
+  let cloudText = "N/A";
+  if (cloud.coverage && cloud.altitude) {
+    cloudText = `${cloud.coverage} at ${cloud.altitude} ft`;
+  }
+
+  // Weather conditions
+  const weatherConditions = [];
+  if (metarObject.rain) weatherConditions.push("🌧️ Rain");
+  if (metarObject.snow) weatherConditions.push("❄️ Snow");
+  if (metarObject.mist) weatherConditions.push("🌫️ Mist");
+  const weatherText = weatherConditions.length > 0 ? weatherConditions.join(", ") : "Clear";
+
+  return `
+    <div style="font-family: Arial, sans-serif; font-size: 12px;">
+      <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                  color: white; padding: 8px; margin: -10px -10px 10px -10px;
+                  border-radius: 3px 3px 0 0;">
+        <div style="font-size: 16px; font-weight: bold;">${icao}</div>
+        <div style="font-size: 11px; opacity: 0.9;">${name}</div>
+        <div style="font-size: 10px; opacity: 0.8;">${country}</div>
+        ${cacheAge > 0 ? `<div style="font-size: 9px; opacity: 0.7; margin-top: 2px;">Updated ${cacheAge} min ago</div>` : ""}
+      </div>
+
+
+
+
+
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+        <img src="${metarObject.icon}"
+             alt="${metarObject.flightCategory}"
+             style="width: 40px; height: 40px;"
+             title="Category Icon">
+        <div>
+          <div style="font-weight: bold; font-size: 14px; color: ${getFlightCategoryColor(metarObject.flightCategory)};">
+            ${metarObject.flightCategory}
+          </div>
+          <div style="font-size: 10px; color: #666;">Flight Category</div>
+        </div>
+      </div>
+
+
+      <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+        <tr style="border-bottom: 1px solid #eee;">
+          <td style="padding: 4px 0; font-weight: bold;">QNH:</td>
+          <td style="padding: 4px 0;">${metarObject.qnh || "N/A"} hPa</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #eee;">
+          <td style="padding: 4px 0; font-weight: bold;">Wind:</td>
+          <td style="padding: 4px 0;">${windText}</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #eee;">
+          <td style="padding: 4px 0; font-weight: bold;">Temperature:</td>
+          <td style="padding: 4px 0;">${temps.temperature || "N/A"}°C / Dewpoint: ${temps.dewpoint || "N/A"}°C</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #eee;">
+          <td style="padding: 4px 0; font-weight: bold;">Visibility:</td>
+          <td style="padding: 4px 0;">${metarObject.visibility || "N/A"}</td>
+        </tr>
+        <tr style="border-bottom: 1px solid #eee;">
+          <td style="padding: 4px 0; font-weight: bold;">Cloud:</td>
+          <td style="padding: 4px 0;">${cloudText}</td>
+        </tr>
+        <tr>
+          <td style="padding: 4px 0; font-weight: bold;">Weather:</td>
+          <td style="padding: 4px 0;">${weatherText}</td>
+        </tr>
+      </table>
+
+      <div style="margin-top: 10px; padding: 6px; background: #f5f5f5;
+                  border-radius: 3px; font-size: 10px; font-family: monospace;">
+        ${metarObject.metar || "No raw METAR data"}
+      </div>
+    </div>
+  `;
+}
+
+// Create concise tooltip for hover (same as before)
+function createMetarTooltip(icao, metarObject) {
+  const wind = metarObject.wind || {};
+  const temps = metarObject.temperatures || {};
+
+  let windStr = "N/A";
+  if (wind.direction && wind.speed) {
+    windStr = `${wind.direction}°/${wind.speed}kt`;
+    if (wind.gust) windStr += `G${wind.gust}`;
+  }
+
+  return `
+    <div style="font-family: Arial, sans-serif; font-size: 11px; min-width: 150px;">
+      <div style="font-weight: bold; font-size: 13px; margin-bottom: 3px; color: ${getFlightCategoryColor(metarObject.flightCategory)};">
+        ${icao} - ${metarObject.flightCategory}
+      </div>
+      <div><b>Wind:</b> ${windStr}</div>
+      <div><b>Vis:</b> ${metarObject.visibility || "N/A"}</div>
+      <div><b>Temp:</b> ${temps.temperature || "?"}°C / ${temps.dewpoint || "?"}°C</div>
+      <div><b>QNH:</b> ${metarObject.qnh || "N/A"} hPa</div>
+    </div>
+  `;
+}
+
+// Helper function to get color based on flight category (same as before)
+function getFlightCategoryColor(category) {
+  const colors = {
+    VFR: "#00AA00",
+    MVFR: "#0000FF",
+    IFR: "#FF0000",
+    LIFR: "#FF00FF",
+  };
+  return colors[category] || "#666666";
+}
+
+// Toggle METAR layer visibility
+function toggleMetarLayer() {
+  const checkbox = document.getElementById("metar-toggle");
+
+  if (!checkbox) {
+    console.warn("METAR toggle checkbox not found");
+    return;
+  }
+
+  if (checkbox.checked) {
+    if (!metarLayer) {
+      // Load METAR stations if not already loaded
+      addMetarStationsToMap(false); // Use cache if available
+    } else {
+      // Show existing layer
+      metarLayer.addTo(routeMap);
+    }
+  } else {
+    // Hide layer (but keep data cached)
+    if (metarLayer) {
+      routeMap.removeLayer(metarLayer);
+    }
+  }
+}
+
+// Refresh METAR data
+function refreshMetarData() {
+  console.log("> func: refreshMetarData()");
+  const checkbox = document.getElementById("metar-toggle");
+
+  if (checkbox && checkbox.checked) {
+    clearMetarLayer();
+    addMetarStationsToMap(true); // Force refresh
+  } else {
+    showMapNotification("Please enable METAR stations first", "info");
+  }
+}
+
+// Clear METAR when country changes
+function onCountryChange() {
+  console.log("> Detected country change, clearing METAR layer");
+  clearMetarLayer();
+
+  // Uncheck the METAR toggle
+  const checkbox = document.getElementById("metar-toggle");
+  if (checkbox) {
+    checkbox.checked = false;
+  }
+}
+
+// Add event listener for METAR toggle
+document.addEventListener("DOMContentLoaded", () => {
+  const metarCheckbox = document.getElementById("metar-toggle");
+  if (metarCheckbox) {
+    metarCheckbox.addEventListener("change", toggleMetarLayer);
+  }
+});
+
+// Expose functions globally
+window.addMetarStationsToMap = addMetarStationsToMap;
+window.toggleMetarLayer = toggleMetarLayer;
+window.clearMetarLayer = clearMetarLayer;
+window.refreshMetarData = refreshMetarData;
+window.onCountryChange = onCountryChange;
 // Make globally available
 window.updateRoute = updateRoute;
 window.initRouteMap = initRouteMap;
