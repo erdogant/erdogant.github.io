@@ -446,6 +446,10 @@ function computeFlightInfo(waypoints, departureTimeHHMM = null, speedKt = 105) {
   let departureTime = "--:--";
   let arrivalTime = "--:--";
 
+  if (departureTimeHHMM === null || departureTimeHHMM === undefined || departureTimeHHMM === "") {
+    departureTimeHHMM = "00:00";
+  }
+
   if (departureTimeHHMM && typeof departureTimeHHMM === "string" && departureTimeHHMM.includes(":")) {
     try {
       const [depH, depM] = departureTimeHHMM.split(":").map(Number);

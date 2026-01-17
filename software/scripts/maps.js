@@ -304,6 +304,8 @@ function updateWaypoints() {
     marker.on("dragend", function () {
       // Call updateRoute without adjusting zoom to prevent unwanted zoom changes
       updateRoute(false);
+      console.log("TIME");
+      console.log(time_dep);
       UpdateFlightInfoFields(time_dep, false, false); // initialize=false, adjustZoom=false
       console.log("   >DRAG and RELEASE");
     });
@@ -1287,13 +1289,6 @@ function openAerodromeMap(fname) {
 }
 
 // Only adjust zoom if explicitly requested (prevents zoom changes during waypoint dragging)
-// if (adjustZoom) {
-//   routeMap.fitBounds(routeLine.getBounds(), {
-//     padding: [50, 50],
-//     maxZoom: 12,
-//   });
-// }
-// Only adjust zoom if explicitly requested (prevents zoom changes during waypoint dragging)
 function adjustZoomMap(fname) {
   console.log("func> adjustZoomMap()");
   let bounds = null;
@@ -1305,7 +1300,7 @@ function adjustZoomMap(fname) {
   if (bounds) {
     routeMap.fitBounds(bounds, {
       padding: [50, 50],
-      maxZoom: 6,
+      maxZoom: 7,
     });
   }
 }
