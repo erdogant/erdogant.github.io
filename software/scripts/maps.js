@@ -23,6 +23,7 @@ const baseLayers = {
 function initRouteMap(initialize = true) {
   // Initializing route map
   console.log(">func: initRouteMap()");
+
   let bounds = [52, 5];
 
   if (!initialize) {
@@ -44,6 +45,17 @@ function initRouteMap(initialize = true) {
   });
 
   routeMap.setView(bounds, 6);
+
+  // Create custom panes for proper z-index layering (ADD THIS HERE)
+  if (!routeMap.getPane("routePane")) {
+    routeMap.createPane("routePane");
+    routeMap.getPane("routePane").style.zIndex = 450;
+  }
+  if (!routeMap.getPane("waypointPane")) {
+    routeMap.createPane("waypointPane");
+    routeMap.getPane("waypointPane").style.zIndex = 650;
+  }
+
   UpdateFlightInfoFields(time_dep, false, true); // initialize=false, adjustZoom=false
 
   // Handle layer selection
@@ -148,7 +160,7 @@ async function updateRoute(adjustZoom = true) {
     opacity: 0.6,
     smoothFactor: 1,
     zIndex: 6000, // Highest z-index to stay above everything
-    pane: "markerPane", // Use marker pane to ensure line stays on top
+    pane: "routePane", // Use marker pane to ensure line stays on top
     interactive: true, // Make line clickable for adding waypoints
   }).addTo(routeMap);
 
@@ -299,6 +311,7 @@ function updateWaypoints() {
         iconAnchor: [8, 8],
       }),
       zIndexOffset: 3000,
+      pane: "waypointPane", // Add this line
     }).addTo(routeMap);
 
     marker.on("dragend", function () {
@@ -392,7 +405,7 @@ function toggleFullscreen() {
     enterIcon.style.display = "inline";
     exitIcon.style.display = "none";
     fullscreenBtn.style.position = "absolute";
-    fullscreenBtn.style.zIndex = "10000";
+    fullscreenBtn.style.zIndex = "1000";
   }
 
   // Ensure map resizes properly
@@ -418,7 +431,7 @@ function handleFullscreenChange() {
     exitIcon.style.display = "none";
     fullscreenBtn.style.position = "absolute";
     // NEW
-    fullscreenBtn.style.zIndex = "10000";
+    fullscreenBtn.style.zIndex = "1000";
   } else {
     enterIcon.style.display = "none";
     exitIcon.style.display = "inline";
@@ -426,9 +439,9 @@ function handleFullscreenChange() {
     // fullscreenBtn.style.zIndex = "2000";
     // NEW
     fullscreenBtn.style.position = "fixed";
-    fullscreenBtn.style.zIndex = "10000"; // Increased from 2000
-    fullscreenBtn.style.bottom = "20px"; // Add explicit bottom positioning
-    fullscreenBtn.style.right = "20px"; // Add explicit right positioning
+    fullscreenBtn.style.zIndex = "1000"; // Increased from 2000
+    // fullscreenBtn.style.bottom = "20px"; // Add explicit bottom positioning
+    // fullscreenBtn.style.right = "20px"; // Add explicit right positioning
   }
 }
 
