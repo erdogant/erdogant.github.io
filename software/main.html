@@ -6968,6 +6968,42 @@
 
 
     // Update the aerodrome only when the load buttons/icons are clicked (do NOT trigger on clicking the ICAO text fields)
+    // ['DEPARTURE_LOAD_ICAO', 'ARRIVAL_LOAD_ICAO'].forEach(id => {
+    //   const e = document.getElementById(id);
+    //   if (!e) return;
+    //   e.addEventListener('click', ev => {
+    //     // Prefer the event's currentTarget id (safe even if a child element was clicked)
+    //     const fieldId = ev?.currentTarget?.id ?? id;
+    //     const prefix = fieldId.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
+
+    //     // At least 4 chars is required for the icao
+    //     const element = document.getElementById(`${prefix}_ICAO`);
+    //     const icao = String(element?.value ?? '').trim();
+    //     if (icao.length >= 1 && icao.length < 4) {
+    //       // Too short — do nothing
+    //       return;
+    //     }
+
+    //     // SAVE when selected but not yet (manually) saved
+    //     const countrySelected = document.getElementById(`${prefix}_COUNTRY`).value;
+    //     const icaoSelected = document.getElementById(`${prefix}_ICAO_CITY`).value;
+    //     const icaoName = extract_icao_from_string(icaoSelected);
+    //     const time_dep = document.getElementById('DEPARTURE_clockField')
+
+    //     if (icao === icaoName && countrySelected !== '' && icaoName !== '') {
+    //       const cache_key = `${prefix}_${icaoName}`;
+    //       const json_data = localStorage.getItem(cache_key);
+    //       if (json_data === null) {
+    //         save_aerodrome_to_json(prefix, 'silent');
+    //       }
+    //     }
+
+    //     // Load the aerodrome from json — pass element id as a plain string argument
+    //     window.load_aerodrome_from_json(prefix, `${prefix}_ICAO`);
+    //   });
+    // });
+
+    // Update the aerodrome only when the load buttons/icons are clicked (do NOT trigger on clicking the ICAO text fields)
     ['DEPARTURE_LOAD_ICAO', 'ARRIVAL_LOAD_ICAO'].forEach(id => {
       const e = document.getElementById(id);
       if (!e) return;
@@ -6979,8 +7015,16 @@
         // At least 4 chars is required for the icao
         const element = document.getElementById(`${prefix}_ICAO`);
         const icao = String(element?.value ?? '').trim();
+
+        // ✅ FIX: Check if ICAO is empty
+        if (!icao || icao.length === 0) {
+          alert("⚠️ Please enter an ICAO code first");
+          return;
+        }
+
         if (icao.length >= 1 && icao.length < 4) {
           // Too short — do nothing
+          alert("⚠️ ICAO code must be at least 4 characters");
           return;
         }
 
@@ -6988,7 +7032,7 @@
         const countrySelected = document.getElementById(`${prefix}_COUNTRY`).value;
         const icaoSelected = document.getElementById(`${prefix}_ICAO_CITY`).value;
         const icaoName = extract_icao_from_string(icaoSelected);
-        const time_dep = document.getElementById('DEPARTURE_clockField')
+        const time_dep = document.getElementById('DEPARTURE_clockField');
 
         if (icao === icaoName && countrySelected !== '' && icaoName !== '') {
           const cache_key = `${prefix}_${icaoName}`;
@@ -7002,7 +7046,6 @@
         window.load_aerodrome_from_json(prefix, `${prefix}_ICAO`);
       });
     });
-
 
     // Update the aerodrome directly after clicking one the icon
     ['DEPARTURE_USE_CACHED', 'ARRIVAL_USE_CACHED'].forEach(id => {
