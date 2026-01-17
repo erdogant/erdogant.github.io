@@ -23,6 +23,7 @@ const baseLayers = {
 function initRouteMap(initialize = true) {
   // Initializing route map
   console.log(">func: initRouteMap()");
+  let bounds = [52, 5];
 
   if (!initialize) {
     console.log("> Map already initialized, skipping initRouteMap()");
@@ -42,7 +43,8 @@ function initRouteMap(initialize = true) {
     layers: [baseLayers["OpenStreetMap"]], // default layer
   });
 
-  routeMap.setView([52, 5], 6);
+  routeMap.setView(bounds, 6);
+  UpdateFlightInfoFields(time_dep, false, true); // initialize=false, adjustZoom=false
 
   // Handle layer selection
   const layerSelect = document.getElementById("layer-select");
@@ -57,7 +59,7 @@ function initRouteMap(initialize = true) {
 }
 
 // Update route
-async function updateRoute() {
+async function updateRoute(adjustZoom = true) {
   // Updating route and checking for airport data
   console.log("> func: updateRoute()");
 
@@ -134,6 +136,9 @@ async function updateRoute() {
     if (window.waypoints.length < 2) {
       window.waypoints = [depCoords, arrCoords];
     }
+
+    // Adust the zoom
+    if (adjustZoom) adjustZoomMap();
   }
 
   // Create the route line with waypoints
@@ -209,11 +214,6 @@ async function updateRoute() {
 
   // routeMarkers.push(depMarker, arrMarker);
 
-  routeMap.fitBounds(routeLine.getBounds(), {
-    padding: [50, 50],
-    maxZoom: 12,
-  });
-
   // Add tooltip to explain right-click functionality
   waypointMarkers.forEach((marker) => {
     marker.bindTooltip("Right-click to remove waypoint", {
@@ -261,6 +261,23 @@ function pointToSegmentDistance(p, v1, v2) {
   return Math.sqrt(dx * dx + dy * dy);
 }
 
+function addWaypoints(waypoints) {
+  if (!Array.isArray(window.waypoints)) {
+    window.waypoints = [];
+  }
+  // Ensure waypoints is an array of arrays (e.g., [[lat, lon], ...])
+  if (!Array.isArray(waypoints[0])) {
+    waypoints = [waypoints];
+  }
+  window.waypoints = window.waypoints.concat(waypoints);
+
+  // Remove duplicates
+  window.waypoints = window.waypoints.filter((wp, idx, arr) => arr.findIndex((p) => p[0] === wp[0] && p[1] === wp[1]) === idx);
+
+  // console.log("HERE IN addWaypoints: WAYPOINTS");
+  // console.log(window.waypoints);
+}
+
 // Function to update waypoint markers and route line
 function updateWaypoints() {
   // Update existing waypoint markers. This script is only run on every click!
@@ -285,7 +302,9 @@ function updateWaypoints() {
     }).addTo(routeMap);
 
     marker.on("dragend", function () {
-      UpdateFlightInfoFields(time_dep, false);
+      // Call updateRoute without adjusting zoom to prevent unwanted zoom changes
+      updateRoute(false);
+      UpdateFlightInfoFields(time_dep, false, false); // initialize=false, adjustZoom=false
       console.log("   >DRAG and RELEASE");
     });
 
@@ -300,7 +319,7 @@ function updateWaypoints() {
       window.waypoints.splice(i, 1);
       console.log("   >REMOVE WAYPOINT");
       updateWaypoints();
-      UpdateFlightInfoFields(time_dep, false);
+      UpdateFlightInfoFields(time_dep, false, false); // initialize=false, adjustZoom=false
     });
 
     waypointMarkers.push(marker);
@@ -1267,6 +1286,30 @@ function openAerodromeMap(fname) {
   }
 }
 
+// Only adjust zoom if explicitly requested (prevents zoom changes during waypoint dragging)
+// if (adjustZoom) {
+//   routeMap.fitBounds(routeLine.getBounds(), {
+//     padding: [50, 50],
+//     maxZoom: 12,
+//   });
+// }
+// Only adjust zoom if explicitly requested (prevents zoom changes during waypoint dragging)
+function adjustZoomMap(fname) {
+  console.log("func> adjustZoomMap()");
+  let bounds = null;
+  if (window.waypoints && window.waypoints.length >= 1) {
+    bounds = L.latLngBounds(window.waypoints);
+  } else if ((window.flight_plan_data && window.flight_plan_data["DEPARTURE_LATLON"]) || window.flight_plan_data["ARRIVAL_LATLON"]) {
+    bounds = L.latLngBounds([window.flight_plan_data["DEPARTURE_LATLON"], window.flight_plan_data["ARRIVAL_LATLON"]]);
+  }
+  if (bounds) {
+    routeMap.fitBounds(bounds, {
+      padding: [50, 50],
+      maxZoom: 6,
+    });
+  }
+}
+
 // Function to fetch and display METAR stations on map
 // async function addMetarStationsToMap() {
 //   console.log("> func: addMetarStationsToMap()");
@@ -1786,10 +1829,6 @@ function createMetarPopup(icao, name, country, metarObject) {
         ${cacheAge > 0 ? `<div style="font-size: 9px; opacity: 0.7; margin-top: 2px;">Updated ${cacheAge} min ago</div>` : ""}
       </div>
 
-
-
-
-
       <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
         <img src="${metarObject.icon}"
              alt="${metarObject.flightCategory}"
@@ -1924,6 +1963,35 @@ function onCountryChange() {
   }
 }
 
+function UpdateFlightInfoFields(timeValue = null, initialize = true, adjustZoom = true) {
+  console.log("> UpdateFlightInfoFields()");
+  // Initialize "MAP" and update route, this will fill the window.waypoints array
+  initRouteMap(initialize);
+  updateRoute(adjustZoom); // Pass adjustZoom parameter to control zoom behavior
+
+  // Compute the flight info
+  const info = computeFlightInfo(window.waypoints, timeValue);
+  console.log(info);
+
+  if (!info) {
+    console.warn("   >No info for computeFlightInfo() <return>");
+    return;
+  }
+  // Update GUI fields in GENERAL
+  document.getElementById("ARRIVAL_FLIGHT_DISTANCE_INFO").textContent = `${info.distance_km} km, ${info.flying_time_min} min.`;
+  document.getElementById("distance-km").textContent = info.distance_km;
+  document.getElementById("flying-minutes").textContent = info.flying_time_min;
+
+  if (info.departure_time !== "--:--") {
+    document.getElementById("departure-time").textContent = info.departure_time;
+  }
+
+  if (info.arrival_time !== "--:--") {
+    document.getElementById("ARRIVAL_clockField").value = info.arrival_time;
+    document.getElementById("arrival-time").textContent = info.arrival_time;
+  }
+}
+
 // Add event listener for METAR toggle
 document.addEventListener("DOMContentLoaded", () => {
   const metarCheckbox = document.getElementById("metar-toggle");
@@ -1941,3 +2009,5 @@ window.onCountryChange = onCountryChange;
 // Make globally available
 window.updateRoute = updateRoute;
 window.initRouteMap = initRouteMap;
+window.UpdateFlightInfoFields = UpdateFlightInfoFields;
+window.addWaypoints = addWaypoints;

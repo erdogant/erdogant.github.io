@@ -3683,7 +3683,7 @@
 
                 country_code = np.unique(df.get('country_code', ['']))
                 country_code = country_code[0]
-                print(country_code)
+                #print(country_code)
 
                 try:
                     # Store data in global variable
@@ -3784,14 +3784,14 @@
             # handle both lists and dicts automatically
             if isinstance(dep, list) and isinstance(arr, list):
                 window.AERODROME_DATA = dep + arr
-                print("OPTION 1")
+                #print("OPTION 1")
             elif isinstance(dep, dict) and isinstance(arr, dict):
                 window.AERODROME_DATA = {**dep, **arr}
-                print("OPTION 2")
+                #print("OPTION 2")
             else:
                 # fallback: convert to list if mixed
                 window.AERODROME_DATA = list(dep) + list(arr)
-                print("OPTION 3")
+                #print("OPTION 3")
         else:
             window.AERODROME_DATA = {}
 
@@ -3884,6 +3884,10 @@
         # Update GUI fields for aerodrome
         update_aerodrome_gui_fields(fname, updateAircraftFields=False)
 
+        # Update departime time and clock
+        time_dep = js.document.getElementById('DEPARTURE_clockField').value
+        js.window.UpdateFlightInfoFields(time_dep, True, True)
+
         # Update images for aerodrome
         await update_aerodrome_image(fname)
 
@@ -3955,7 +3959,7 @@
                 js.window.flight_plan_data[key] = ''
 
         js.document.getElementById('DEPARTURE_clockField').value = '00:00'
-        js.document.getElementById('ARRIVAL_clockField').value = ''   # Default is '00:00'
+        js.document.getElementById('ARRIVAL_clockField').value = '00:00'   # Default is '--:--'
         js.document.getElementById('DEPARTURE_FLIGHT_DISTANCE_INFO').textContent = '- km, - min.'
         js.document.getElementById('ARRIVAL_FLIGHT_DISTANCE_INFO').textContent = '- km, - min.'
         js.document.getElementById('distance-km').textContent = '0'
@@ -3979,7 +3983,6 @@
             if flight_plan_dict.get(field):
                 element = js.document.getElementById(field)
                 if field=='DATETIME_CREATION':
-                    print('HERE')
                     element.textContent = flight_plan_dict[field]
                 else:
                     element.value = flight_plan_dict[field]
@@ -5042,7 +5045,7 @@
             # Update flightinfo
             js.window.waypoints = to_js(window.flight_plan_data["WAYPOINTS"])
             time_dep = js.document.getElementById('DEPARTURE_clockField').value
-            js.window.UpdateFlightInfoFields(time_dep)
+            js.window.UpdateFlightInfoFields(time_dep, True, True)
 
             print(f"   >✅ Flightplan '{plan_name}' loaded successfully")
         except Exception as e:
@@ -5092,6 +5095,9 @@
 
         # GET FLIGHTPLAN NAME
         flightplan_name = js.window.flight_plan_data["FLIGHTPLAN"]
+
+        #print('HERE1')
+        #print(js.window.flight_plan_data)
 
         if (flightplan_name is None or flightplan_name == ''):
             if verbose:
@@ -5179,7 +5185,6 @@
             # Use the user saved aerodrome data
             pass
         elif not json_data and js.window.flight_plan_data[f'{fname}_ICAO_CITY'] == '':
-            # print('HERE 1')
             # No saved aerodrome but I nothing selected
             # Clean all GUI fields
             message = f"ℹ️ Please select and save the {icaoName} aerodrome in the {fname.lower()} tab or add your custom aerodrome information and save it."
@@ -5192,7 +5197,6 @@
             # if verbose == 'info': js.window.alert(message)
             return False
         else:
-            # print('HERE 2')
             # Aerodrome does not exits. Return without clearning all fields.
             message = f"ℹ️ Please select and save the {icaoName} aerodrome in the {fname.lower()} tab or add your custom aerodrome information and save it."
             print(message)
@@ -5269,16 +5273,17 @@
         icao_dep = js.document.getElementById('DEPARTURE_ICAO')
         icao_arr = js.document.getElementById('ARRIVAL_ICAO')
         time_dep = js.document.getElementById('DEPARTURE_clockField')
+
+        if icao_dep.value != '':
+            js.window.addWaypoints([to_js(js.window.flight_plan_data['DEPARTURE_LATLON'])])
+        if icao_arr.value != '':
+            js.window.addWaypoints([to_js(js.window.flight_plan_data['ARRIVAL_LATLON'])])
         if icao_dep.value != '' and icao_arr.value != '':
-            js.window.waypoints = [js.window.flight_plan_data['DEPARTURE_LATLON'], js.window.flight_plan_data['ARRIVAL_LATLON']]
-            js.window.UpdateFlightInfoFields(time_dep.value)
-            # print(js.window.waypoints)
+            js.window.addWaypoints(to_js([js.window.flight_plan_data['DEPARTURE_LATLON'], js.window.flight_plan_data['ARRIVAL_LATLON']]))
+            js.window.UpdateFlightInfoFields(time_dep.value, True, True)
 
         print(f"   >✅ Aerodrome {icaoName} successfully loaded from cache: {fname.lower()}")
-        # js.window.alert(f"✅ Aerodrome {icaoName} successfully loaded for {fname.lower()}")
         return True
-
-
 
     def extract_icao_from_string(icao_string):
         if not icao_string:
@@ -6473,7 +6478,8 @@
         console.log(`>Tab switch from: ${currentTab}, to ${targetTab}`)
 
         // SAVE ON TAB CHANGE SWITCHING TO ATC. THIS IS NEEDED BECAUSE THE DATA IS GATHERED FROM FLIGHTPLAN DICT.
-        if (pyscriptReady && window.save_flightplan && (targetTab === "ATC")) {
+        // if (pyscriptReady && window.save_flightplan && (targetTab === "ATC") || ) {
+        if (pyscriptReady && window.save_flightplan) {
             window.save_flightplan(true, false);
         }
 
@@ -6483,8 +6489,8 @@
         }
         // WHEN THE TAB MAP IS CLICKED, UPDATE THE MAP WITH THE ROUTE AND FILL WINDOW.WAYPOINTS
         if (targetTab === "MAP") {
-          initRouteMap();
-          updateRoute();
+          initRouteMap(true);
+          updateRoute(true); // Add all waypoints
         }
         //  CHECKLIST TAB: UPDATE CHECKLISTS
         if (targetTab === "Checklist") {
@@ -6885,33 +6891,6 @@
       });
     });
 
-
-    function UpdateFlightInfoFields(timeValue = null, initialize=true) {
-        // Initialize "MAP" and update route, this will fill the window.waypoints array
-        initRouteMap(initialize);
-        updateRoute();
-
-        // Compute the flight info
-        const info = computeFlightInfo(window.waypoints, timeValue);
-        if (!info) {
-          console.warn('   >No info for computeFlightInfo() <return>')
-          return;
-        }
-        // Update GUI fields in GENERAL
-        document.getElementById("ARRIVAL_FLIGHT_DISTANCE_INFO").textContent = `${info.distance_km} km, ${info.flying_time_min} min.`;
-        document.getElementById("distance-km").textContent = info.distance_km;
-        document.getElementById("flying-minutes").textContent = info.flying_time_min;
-
-        if (info.departure_time !== "--:--") {
-            document.getElementById("departure-time").textContent = info.departure_time;
-        }
-
-        if (info.arrival_time !== "--:--") {
-            document.getElementById("ARRIVAL_clockField").value = info.arrival_time;
-            document.getElementById("arrival-time").textContent = info.arrival_time;
-        }
-    }
-
     // Update departure clock and compute distance/time/arrival
     ['DEPARTURE_clockField', 'ARRIVAL_clockField'].forEach(id => {
         document.getElementById(id)?.addEventListener('change', element => {
@@ -6928,70 +6907,10 @@
             // Update only the flight info when departure time is changed
             if (prefix === 'DEPARTURE') {
                 // Update the flightinfo fields
-                UpdateFlightInfoFields(timeValue)
+                UpdateFlightInfoFields(timeValue, true, true)  // initialize=true, adjustZoom=true
             }
         });
     });
-
-
-    // function handlePlaneClick() {
-    //     console.log("> func: handlePlaneClick()");
-
-    //     // Check whether ICAO fields are filled in
-    //     const element_dep = document.getElementById('DEPARTURE_ICAO_2');
-    //     const element_arr = document.getElementById('ARRIVAL_ICAO_2');
-
-    //     for (const element of [element_dep, element_arr]) {
-    //         // skip when element not found
-    //         if (!element) continue;
-    //         // Get prefix
-    //         const prefix = element.id.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
-    //         const elementValue = element.value.trim();
-
-    //         // check if the field contains characters
-    //         if (elementValue !== '' && elementValue !== null) {
-    //           // Check ICAO characters
-    //           if (elementValue.length > 1 && elementValue.length < 4) {
-    //             window.alert(`ICAO for ${prefix.toLowerCase()} requires exactly 4 characters.`);
-    //             // # element.value = document.getElementById(f'{fname}_ICAO_2');
-    //             document.getElementById(`${prefix}_CITY`).textContent = `⚠️ ${fname}`
-    //             return;
-    //           }
-
-    //           // Load the aerodrome from json
-    //           window.load_aerodrome_from_json(prefix, element.id);
-    //         }
-    //     }
-    // }
-
-
-    // Update the aerodrome directly after changing one of the input fields
-    // ['DEPARTURE_ICAO_2', 'ARRIVAL_ICAO_2'].forEach(id => {
-    //     const field = document.getElementById(id);
-
-    //     const handleICAOUpdate = (element) => {
-    //         const prefix = id.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
-    //         const suffix = id.replace(/^DEPARTURE_/, '').replace(/^ARRIVAL_/, '');
-    //         const value = String(element?.target?.value ?? '').trim();
-
-    //         // At least 4 chars is required
-    //         if (value.length >= 1 && value.length < 4) {
-    //             window.alert(`ICAO for ${prefix.toLowerCase()} requires exactly 4 characters.`);
-    //             console.log('HERE')
-    //             window.clear_aerodrome_fields(prefix);
-    //             document.getElementById(`${prefix}_CITY`).textContent = `⚠️ ${prefix}`
-    //             return;
-    //         }
-
-    //         // Load the aerodrome from JSON
-    //         window.load_aerodrome_from_json(prefix, id);
-    //     };
-
-    //     // Trigger on blur
-    //     field?.addEventListener("blur", handleICAOUpdate);
-    //     // Trigger on Enter key
-    //     field.addEventListener('keydown', e => e.key === 'Enter' && handleICAOUpdate(e));
-    // });
 
 
     // Generic ICAO validation and loading function
@@ -7076,6 +6995,7 @@
         const countrySelected = document.getElementById(`${prefix}_COUNTRY`).value;
         const icaoSelected = document.getElementById(`${prefix}_ICAO_CITY`).value;
         const icaoName = extract_icao_from_string(icaoSelected);
+        const time_dep = document.getElementById('DEPARTURE_clockField')
 
         if (icao === icaoName && countrySelected !== '' && icaoName !== '') {
           const cache_key = `${prefix}_${icaoName}`;

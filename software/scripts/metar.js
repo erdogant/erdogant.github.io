@@ -1491,4 +1491,3 @@ function getMetarStations(prefix = null) {
 // Make it globally accessible
 window.animations = animations;
 window.retrieveMetars = retrieveMetars;
-window.determineVFRIcon = determineVFRIcon;
