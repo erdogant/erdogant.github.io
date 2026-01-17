@@ -7,22 +7,22 @@ class Metar {
 
     this.airport = code;
     this.dataDate = null;
-    this.metar = text;
     this.lat = lat;
     this.lon = lon;
+    this.metar = text;
     this.metarWithoutChangements = text;
 
     // Parse all components
     this.changements = this.analyzeChangements();
     this.auto = this.analyzeAuto();
     this.dateTime = this.analyzeDateTime();
+    this.qnh = this.analyzeQNH();
+    this.temperatures = this.analyzeTemperatures();
     this.wind = this.analyzeWind();
     this.visibility = this.analyzeVisibility();
     this.rvr = this.analyzeRVR();
     this.weather = this.analyzeWeather();
     this.cloud = this.analyzeCloud();
-    this.temperatures = this.analyzeTemperatures();
-    this.qnh = this.analyzeQNH();
     this.cavok = this.analyzeCAVOK();
     this.vmc = this.verifyVMC();
     this.flightCategory = this.determineFlightCategory();
@@ -36,10 +36,12 @@ class Metar {
     this.sunPosition = this.calculateSunPosition();
     // this.lightingPhase = this.determineLightingPhase();
     this.icon = this.determineMetarIcon();
+    this.colorState = this.colorState();
 
     this.properties = {
       airport: this.airport,
       dateTime: this.dateTime,
+      colorstate: this.colorState,
       metar: this.metar,
       auto: this.auto,
       wind: this.wind,
@@ -66,7 +68,9 @@ class Metar {
     };
 
     // Show the details on screen
+    console.log("\n   >📅 Airport:", this.airport);
     console.log("\n   >📅 Date/Time:", this.dateTime);
+    console.log("\n   >📅 Color state:", this.colorState);
     console.log("   >🤖 Automatic:", this.auto);
     console.log("   >🌬️  Wind:", this.wind);
     console.log("   >👁️  Visibility:", this.visibility, "m");
@@ -93,6 +97,74 @@ class Metar {
 
   analyzeHeadWind() {
     return;
+  }
+
+  colorState() {
+    /**
+     * Extract aerodrome colour state from a METAR string
+     * and return it in a fixed object structure.
+     *
+     * param {string} metar - METAR report
+     * returns {{intensity: number|null, colorState: string|null, description: string|null}}
+     */
+
+    // Search in original METAR to include weather in TEMPO/BECMG sections
+    let searchText = this.metarWithoutChangements;
+    // const searchText = this.metar;
+
+    const colorStates = {
+      BLU: {
+        intensity: 1,
+        description: "Excellent weather – no operational restrictions",
+      },
+      GRN: {
+        intensity: 2,
+        description: "Good weather – minor operational limitations possible",
+      },
+      YLO: {
+        intensity: 3,
+        description: "Marginal weather – increased operational caution",
+      },
+      AMB: {
+        intensity: 4,
+        description: "Poor weather – significant operational limitations",
+      },
+      RED: {
+        intensity: 5,
+        description: "Very poor weather – operations severely restricted or impossible",
+      },
+      WHT: {
+        intensity: 6,
+        description: "Severe winter conditions – snow or ice affecting operations",
+      },
+    };
+
+    if (!searchText || typeof searchText !== "string") {
+      return {
+        intensity: null,
+        colorState: null,
+        description: null,
+      };
+    }
+
+    const tokens = searchText.toUpperCase().split(/\s+/);
+
+    for (const token of tokens) {
+      if (colorStates[token]) {
+        return {
+          intensity: colorStates[token].intensity,
+          colorstate: token,
+          description: colorStates[token].description,
+        };
+      }
+    }
+
+    // No colour state found
+    return {
+      intensity: null,
+      colorState: null,
+      description: null,
+    };
   }
 
   analyzeChangements() {
@@ -137,16 +209,6 @@ class Metar {
     // metar_date_obj.formatted
     // Return
     return metar_date_obj;
-
-    // const regex = /\s(\d{2})(\d{2})(\d{2})Z\s/;
-    // const match = this.metarWithoutChangements.match(regex);
-    // if (!match) return null;
-
-    // return {
-    //   day: parseInt(match[1]),
-    //   hour: parseInt(match[2]),
-    //   minute: parseInt(match[3]),
-    // };
   }
 
   analyzeWind() {
@@ -190,6 +252,7 @@ class Metar {
       speed,
       gust: gustSpeed,
       variation,
+      raw: windTot,
     };
   }
 
@@ -271,18 +334,51 @@ class Metar {
     ];
 
     // Search in original METAR to include weather in TEMPO/BECMG sections
-    const searchText = this.metarWithoutChangements;
+    let searchText = this.metarWithoutChangements;
     // const searchText = this.metar;
+
+    // REMOVE KNOWN FIELDS TO PREVENT FALSE POSITIVES
+    searchText = this.metarWithoutChangements;
+    searchText = searchText.replace(/\bMETAR\b/g, "");
+    searchText = searchText.replace(/\bAUTO\b/g, "");
+    searchText = searchText.replace(/\CAVOK\b/g, "");
+    searchText = searchText.replace(/\NSC\b/g, "");
+    searchText = searchText.replace(new RegExp(`\\b${this.airport}\\b`, "g"), "");
+    searchText = searchText.replace(new RegExp(`\\bQ${String(this.qnh)}\\b`, "g"), "");
+    searchText = searchText.replace(new RegExp(`\\b${this.visibility}\\b`, "g"), "");
+    searchText = searchText.replace(new RegExp(`\\b${this.colorState?.colorstate}\\b`, "g"), "");
+    searchText = searchText.replace(new RegExp(`\\b${this.temperatures?.raw}\\b`, "g"), "");
+    searchText = searchText.replace(new RegExp(`\\b${this.wind?.raw}\\b`, "g"), "");
+    searchText = searchText.replace(new RegExp(`\\b${this.dateTime?.raw}\\b`, "g"), "");
+    searchText = searchText.trim();
 
     // Find intensity
     const intensityMatches = searchText.match(/[-+]/g);
     const intensity = intensityMatches ? intensityMatches.map((i) => (i === "+" ? true : false)) : null;
 
-    // Find prefixes
-    const foundPrefixes = prefixes.filter((p) => new RegExp(p.code + "+").test(searchText)).map((p) => p.meaning);
+    // // Find prefixes
+    // const foundPrefixes = prefixes.filter((p) => new RegExp(p.code + "+").test(searchText)).map((p) => p.meaning);
+    // // Find weather phenomena
+    // const foundWeather = weathers.filter((w) => new RegExp(w.code + "+").test(searchText)).map((w) => w.meaning);
 
-    // Find weather phenomena
-    const foundWeather = weathers.filter((w) => new RegExp(w.code + "+").test(searchText)).map((w) => w.meaning);
+    // Split METAR into tokens (space-separated)
+    const tokens = searchText.split(/\s+/);
+
+    let foundPrefixes = [];
+    let foundWeather = [];
+
+    for (const token of tokens) {
+      // Remove intensity if present
+      const codePart = token.replace(/^[-+]/, "");
+
+      // Check prefix at start of token
+      const prefixMatch = prefixes.find((p) => codePart.startsWith(p.code));
+      if (prefixMatch) foundPrefixes.push(prefixMatch.meaning);
+
+      // Check weather at end of token
+      const weatherMatch = weathers.find((w) => codePart.endsWith(w.code));
+      if (weatherMatch) foundWeather.push(weatherMatch.meaning);
+    }
 
     if (!intensity && foundPrefixes.length === 0 && foundWeather.length === 0) {
       return null;
@@ -362,7 +458,13 @@ class Metar {
     const regex = /\s([M]?\d{2})\/([M]?\d{2})\s/;
     const match = this.metarWithoutChangements.match(regex);
 
-    if (!match) return null;
+    if (!match) {
+      return {
+        raw: null,
+        temperature: null,
+        dewpoint: null,
+      };
+    }
 
     const parseTemp = (str) => {
       const value = parseInt(str.replace("M", ""));
@@ -370,6 +472,7 @@ class Metar {
     };
 
     return {
+      raw: match[0].trim(),
       temperature: parseTemp(match[1]),
       dewpoint: parseTemp(match[2]),
     };
@@ -991,7 +1094,8 @@ function parseMetarTime(metar_string) {
 
   return {
     formatted: `${dd}-${mm}-${yyyy} ${timePart} UTC`,
-    date: dateUTC, // true UTC instant
+    date: dateUTC,
+    raw: metarTime,
   };
 }
 
@@ -1242,7 +1346,7 @@ function updateFlightCatagoryIcon(prefix, remove = false) {
   borderFieldAerodrome3.style.backgroundColor = metarObject.color;
 }
 
-async function colorMetarFields(prefix, enable = true) {
+async function colorMetarFields(prefix, enable) {
   // const buttonMetar = document.getElementById('BTN-METAR-' + prefix);
   const metarText = document.getElementById("METAR-TEXT-" + prefix);
   const dateField = document.getElementById("DATETIME-METAR-" + prefix);
@@ -1260,7 +1364,6 @@ async function colorMetarFields(prefix, enable = true) {
   if (enable) {
     // buttonMetarIcon2.disabled = false;
     // buttonMetarIcon2.style.cursor = 'pointer';
-
     // buttonMetarIcon1.disabled = false;
     // buttonMetarIcon1.style.cursor = 'pointer';
     // buttonMetar.disabled = false;
@@ -1268,7 +1371,6 @@ async function colorMetarFields(prefix, enable = true) {
     // buttonMetar.setAttribute('aria-disabled', 'false');
     // buttonMetar.style.opacity = '1';
     // buttonMetar.style.backgroundColor = '#80B0C0';
-
     metarField.style.backgroundColor = "transparent";
     metarText.style.backgroundColor = "transparent";
     dateField.style.backgroundColor = "transparent";
@@ -1290,8 +1392,7 @@ async function colorMetarFields(prefix, enable = true) {
     // buttonMetar.style.opacity = '0.6';
 
     metarText.value = " ";
-    metarField.value = "Be patient while fetching METAR weather information...";
-
+    // metarField.value = "Be patient while fetching METAR weather information..";
     // Change background color to light red/pink
     metarField.style.backgroundColor = "#ffebee";
     dateField.style.backgroundColor = "#ffebee";
@@ -1308,6 +1409,55 @@ async function colorMetarFields(prefix, enable = true) {
   }
 }
 
+// async function colorMetarFields(prefix, enable = true) {
+//   const metarText = document.getElementById("METAR-TEXT-" + prefix);
+//   const dateField = document.getElementById("DATETIME-METAR-" + prefix);
+//   const metarField = document.getElementById("METAR-FIELD-" + prefix);
+//   const windDirectionField = document.getElementById(prefix + "_WIND_DIRECTION");
+//   const windSpeedField = document.getElementById(prefix + "_WIND_SPEED");
+//   const windGustField = document.getElementById(prefix + "_WIND_GUST");
+//   const windVariationField = document.getElementById(prefix + "_WIND_VARIATION");
+//   const windHeadwindField = document.getElementById(prefix + "_WIND_HEADWIND");
+//   const windCrosswindField = document.getElementById(prefix + "_WIND_CROSSWIND");
+//   const borderFieldAerodrome1 = document.getElementById(prefix + "_SELECT_AERODROME_BORDER_1");
+//   const borderFieldAerodrome2 = document.getElementById(prefix + "_SELECT_AERODROME_BORDER_2");
+//   const borderFieldAerodrome3 = document.getElementById(prefix + "_SELECT_AERODROME_BORDER_3");
+
+//   if (enable) {
+//     // Reset all fields to transparent/normal
+//     if (metarField) metarField.style.setProperty("background-color", "transparent", "important");
+//     if (metarText) metarText.style.setProperty("background-color", "transparent", "important");
+//     if (dateField) dateField.style.setProperty("background-color", "transparent", "important");
+//     if (windDirectionField) windDirectionField.style.setProperty("background-color", "transparent", "important");
+//     if (windSpeedField) windSpeedField.style.setProperty("background-color", "transparent", "important");
+//     if (windGustField) windGustField.style.setProperty("background-color", "transparent", "important");
+//     if (windVariationField) windVariationField.style.setProperty("background-color", "transparent", "important");
+//     if (windHeadwindField) windHeadwindField.style.setProperty("background-color", "transparent", "important");
+//     if (windCrosswindField) windCrosswindField.style.setProperty("background-color", "transparent", "important");
+//   } else {
+//     // Set fields to pink/red to indicate error or outdated data
+//     if (metarText) metarText.value = " ";
+
+//     // METAR fields
+//     if (metarField) metarField.style.setProperty("background-color", "#ffebee", "important");
+//     if (dateField) dateField.style.setProperty("background-color", "#ffebee", "important");
+//     if (metarText) metarText.style.setProperty("background-color", "#ffebee", "important");
+
+//     // Wind fields
+//     if (windDirectionField) windDirectionField.style.setProperty("background-color", "#ffebee", "important");
+//     if (windSpeedField) windSpeedField.style.setProperty("background-color", "#ffebee", "important");
+//     if (windGustField) windGustField.style.setProperty("background-color", "#ffebee", "important");
+//     if (windVariationField) windVariationField.style.setProperty("background-color", "#ffebee", "important");
+//     if (windHeadwindField) windHeadwindField.style.setProperty("background-color", "#ffebee", "important");
+//     if (windCrosswindField) windCrosswindField.style.setProperty("background-color", "#ffebee", "important");
+
+//     // Border fields
+//     if (borderFieldAerodrome1) borderFieldAerodrome1.style.setProperty("background-color", "#E9E9E9", "important");
+//     if (borderFieldAerodrome2) borderFieldAerodrome2.style.setProperty("background-color", "#f5f5f5", "important");
+//     if (borderFieldAerodrome3) borderFieldAerodrome3.style.setProperty("background-color", "#f5f5f5", "important");
+//   }
+// }
+
 async function retrieve_metar(prefix, verbose = "info", metar_custom = "") {
   console.log(`> func: retrieve_metar(${prefix})`);
   // Get the values from the input fields
@@ -1322,12 +1472,10 @@ async function retrieve_metar(prefix, verbose = "info", metar_custom = "") {
   // Set default values
   let metar_icao = "";
   let metar_message = "";
-  let datetimeStr = nowtime(true); // UTC
   let runway_predicted = "";
   let icao_stations = [""];
   let stationName = "";
   let metarObject = {};
-  let metar_plain = {};
 
   // If ICAO is empty or not provided, notify the user and return early
   if (!icao || !country) {
@@ -1335,14 +1483,19 @@ async function retrieve_metar(prefix, verbose = "info", metar_custom = "") {
     return;
   }
 
-  // Update button: Disable
-  colorMetarFields(prefix, (enable = false));
+  // Color button and fields pink: Disable
+  colorMetarFields(prefix, false);
+  // Early return test
+  // return;
 
   // Fetch METAR data from URL
   try {
     // Stop animations
     animations(prefix, "stop");
+    // metar_icao = "METAR EDDH 191350Z AUTO 22009KT 9999 OVC013 12/09 Q1015 TEMPO 4500 -RADZ BKN009";
+    // metar_icao = "METAR EHGR 171825Z AUTO 08003KT 060V150 9999 OVC240 05/05 Q1019 BLU";
 
+    // RETRIEVE METAR FOR ICAO
     if (metar_custom === "" || metar_custom === null) {
       // Retrieve the METAR data for the closest station
       icao_stations = get_top_metar_stations(prefix, 5, false).toJs();
@@ -1353,25 +1506,19 @@ async function retrieve_metar(prefix, verbose = "info", metar_custom = "") {
       // Store data
       metar_icao = metarData[0];
       stationName = metarData[1];
-      // metarStr = "METAR EDDH 191350Z AUTO 22009KT 9999 OVC013 12/09 Q1015 TEMPO 4500 -RADZ BKN009";
     } else {
       console.log("   >Custom  METAR information provided");
       metar_icao = metar_custom;
       stationName = icao;
     }
 
-    if (metarText) {
-      metarText.value = stationName ? `Closest available METAR station is ${stationName}` : "No nearby METAR stations found";
-    }
+    // Update GUI text field for METAR
+    metarText.value = stationName ? `Closest available METAR station is ${stationName}` : "No nearby METAR stations found";
   } catch (error) {
     console.log(`   >Error retrieving METAR data. ${prefix} has likely no weather station. Error:`, error);
-    metar_message = "No METAR weather station available for " + icao;
-    // Enable fields
-    colorMetarFields(prefix, (enable = true));
+    metar_message = `${icao} METAR weather information could not be processed.`;
+    metarField.value = metar_message;
   }
-
-  // Update GUI elements
-  colorMetarFields(prefix, (enable = true));
 
   // Update the expected runway based on wind direction and runway orientation
   // if (typeof metar_icao === "string" && metar_icao.trim() !== "") {
@@ -1408,17 +1555,22 @@ async function retrieve_metar(prefix, verbose = "info", metar_custom = "") {
 
       // Update flight catagory icon (this is also periodically checked in checkMetarAge())
       updateFlightCatagoryIcon(prefix);
-
       // Animations
       animations(prefix, "start");
+      // Update GUI elements
+      colorMetarFields(prefix, true);
     } catch (error) {
-      console.error(`   >Error: METAR details could not be computed.`);
+      console.warn(`   >Warning: METAR information could not be processed.`);
+      colorMetarFields(prefix, false);
+      return;
     }
   }
 
-  // Check METAR age and show
-  checkMetarAge();
-  console.log(`   >✅ METAR information is loaded from the closest station: ${stationName}.\n   >✅ The predicted runway is: ${runway_predicted}`);
+  if (metarObject && metarObject.dateTime) {
+    // Check METAR age and show
+    checkMetarAge();
+    console.log(`   >✅ METAR information is loaded from the closest station: ${stationName}.\n   >✅ The predicted runway is: ${runway_predicted}`);
+  }
 }
 
 function animations(prefix, process = "start") {
@@ -1491,3 +1643,4 @@ function getMetarStations(prefix = null) {
 // Make it globally accessible
 window.animations = animations;
 window.retrieveMetars = retrieveMetars;
+window.updateFlightCatagoryIcon = updateFlightCatagoryIcon;

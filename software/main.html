@@ -390,7 +390,61 @@
 
         </div>
 
-        <!--<label_h1>Aerodrome Information</label_h1>-->
+
+        <div class="collapsible" data-title="METAR">
+        <div class="collapsible-header" id="DEPARTURE_SELECT_AERODROME_BORDER_2"></div>
+        <div class="collapsible-content" id="DEPARTURE_SELECT_AERODROME_BORDER_3">
+
+            <div class="wind-grid">
+                 <div class="tile">
+                    <input id="DEPARTURE_WIND_DIRECTION" type="text" class="tile-value">
+                    <span class="tile-label">Wind angle (°)</span>
+                </div>
+
+                <div class="tile">
+                    <input id="DEPARTURE_WIND_SPEED" type="text" class="tile-value">
+                    <span class="tile-label">Strength (kt)</span>
+                </div>
+
+                <div class="tile">
+                    <input id="DEPARTURE_WIND_GUST" type="text" class="tile-value">
+                    <span class="tile-label">Gust (kt)</span>
+                </div>
+            </div>
+
+            <div class="grid-one-third-two-thirds">
+                <div class="tile">
+                    <input id="DEPARTURE_WIND_VARIATION" type="text" class="tile-value">
+                    <span class="tile-label">Variation (°)</span>
+                </div>
+
+                <div class="button-row">
+                    <textarea id="METAR-FIELD-DEPARTURE"
+                        placeholder="METAR Information"
+                        title="METAR weather information"
+                        style="font-size:11px; background-color: transparent; width: 100%; min-height: 80px; max-height: 120px; resize: vertical; padding: 8px; box-sizing: border-box; border-radius: 10px"
+                        aria-label="METAR Information">
+                    </textarea>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 1px; margin-top: 1px;">
+                <input type="text" id="METAR-TEXT-DEPARTURE" readonly
+                    style="transition: background-color 0.3s; width: 70%;
+                           padding: 0; box-sizing: border-box; font-size: 10px;
+                           border: none; background-color: transparent;
+                           color: #333333; outline: none;">
+
+                <input type="text" id="DATETIME-METAR-DEPARTURE" readonly
+                    style="transition: background-color 0.3s; width: 40%;
+                           padding: 0; box-sizing: border-box; font-size: 10px;
+                           border: none; background-color: transparent;
+                           color: #333333; outline: none;">
+            </div>
+
+        </div>
+        </div>
+
 
         <div class="collapsible" data-title="AERODROME">
         <div class="collapsible-header" id='DEPARTURE_AERODROME_MENU'></div>
@@ -491,66 +545,6 @@
              <button onclick="window.save_aerodrome_to_json('DEPARTURE')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 4px 8px 0; flex: 0 0 auto; cursor: pointer; float: right;">💾</button>
          </div>
          </div>
-
-
-        <!--<label_h1>Weather Information</label_h1>-->
-
-        <div class="collapsible" data-title="METAR">
-        <div class="collapsible-header" id="DEPARTURE_SELECT_AERODROME_BORDER_2"></div>
-        <div class="collapsible-content" id="DEPARTURE_SELECT_AERODROME_BORDER_3">
-
-            <div class="wind-grid">
-                 <div class="tile">
-                    <input id="DEPARTURE_WIND_DIRECTION" type="text" class="tile-value">
-                    <span class="tile-label">Wind angle (°)</span>
-                </div>
-
-                <div class="tile">
-                    <input id="DEPARTURE_WIND_SPEED" type="text" class="tile-value">
-                    <span class="tile-label">Strength (kt)</span>
-                </div>
-
-                <div class="tile">
-                    <input id="DEPARTURE_WIND_GUST" type="text" class="tile-value">
-                    <span class="tile-label">Gust (kt)</span>
-                </div>
-            </div>
-
-            <div class="grid-one-third-two-thirds">
-                <div class="tile">
-                    <input id="DEPARTURE_WIND_VARIATION" type="text" class="tile-value">
-                    <span class="tile-label">Variation (°)</span>
-                </div>
-
-                <div class="button-row">
-                    <textarea id="METAR-FIELD-DEPARTURE"
-                        placeholder="METAR Information"
-                        title="METAR weather information"
-                        style="font-size:11px; background-color: transparent; width: 100%; min-height: 80px; max-height: 120px; resize: vertical; padding: 8px; box-sizing: border-box; border-radius: 10px"
-                        aria-label="METAR Information">
-                    </textarea>
-                </div>
-            </div>
-
-            <div style="display: flex; gap: 1px; margin-top: 1px;">
-                <input type="text" id="METAR-TEXT-DEPARTURE" readonly
-                    style="transition: background-color 0.3s; width: 70%;
-                           padding: 0; box-sizing: border-box; font-size: 10px;
-                           border: none; background-color: transparent;
-                           color: #333333; outline: none;">
-
-                <input type="text" id="DATETIME-METAR-DEPARTURE" readonly
-                    style="transition: background-color 0.3s; width: 40%;
-                           padding: 0; box-sizing: border-box; font-size: 10px;
-                           border: none; background-color: transparent;
-                           color: #333333; outline: none;">
-            </div>
-
-        </div>
-        </div>
-
-
-
 
 
         <label_h1>WIDGETS</label_h1>
@@ -829,8 +823,61 @@
             </div>
         </div>
 
+        <!-- =========== METAR =========== -->
+        <div class="collapsible" data-title="METAR">
+        <div class="collapsible-header" id="ARRIVAL_SELECT_AERODROME_BORDER_2"></div>
+        <div class="collapsible-content" id="ARRIVAL_SELECT_AERODROME_BORDER_3">
 
-        <!--<label_h1>Aerodrome Information</label_h1>-->
+            <div class="wind-grid">
+
+                <div class="tile">
+                    <input id="ARRIVAL_WIND_DIRECTION" type="text" class="tile-value">
+                    <span class="tile-label">Wind angle (°)</span>
+                </div>
+
+                <div class="tile">
+                    <input id="ARRIVAL_WIND_SPEED" type="text" class="tile-value">
+                    <span class="tile-label">Strength (kt)</span>
+                </div>
+
+                <div class="tile">
+                    <input id="ARRIVAL_WIND_GUST" type="text" class="tile-value">
+                    <span class="tile-label">Gust (kt)</span>
+                </div>
+            </div>
+
+            <div class="grid-one-third-two-thirds">
+                <div class="tile">
+                    <input id="ARRIVAL_WIND_VARIATION" type="text" class="tile-value">
+                    <span class="tile-label">Variation (°)</span>
+                </div>
+
+                <div class="button-row">
+                    <textarea id="METAR-FIELD-ARRIVAL"
+                        placeholder="METAR Information"
+                        title="METAR weather information"
+                        style="font-size:11px; background-color: transparent; width: 100%; min-height: 80px; max-height: 120px; resize: vertical; padding: 8px; box-sizing: border-box; border-radius: 10px"
+                        aria-label="METAR Information">
+                    </textarea>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 1px; margin-top: 1px;">
+                <input type="text" id="METAR-TEXT-ARRIVAL" readonly
+                    style="transition: background-color 0.3s; width: 70%;
+                        padding: 0; box-sizing: border-box; font-size: 10px;
+                        border: none; background-color: transparent;
+                        color: #333333; outline: none;">
+
+                <input type="text" id="DATETIME-METAR-ARRIVAL" readonly
+                    style="transition: background-color 0.3s; width: 40%;
+                        padding: 0; box-sizing: border-box; font-size: 10px;
+                        border: none; background-color: transparent;
+                        color: #333333; outline: none;">
+            </div>
+        </div>
+        </div>
+
 
         <div class="collapsible" data-title="AERODROME">
         <div class="collapsible-header" id="ARRIVAL_AERODROME_MENU"></div>
@@ -928,62 +975,6 @@
             </div>
 
             <button onclick="window.save_aerodrome_to_json('ARRIVAL')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 4px 8px 0; flex: 0 0 auto; cursor: pointer; float: right;">💾</button>
-        </div>
-        </div>
-
-
-
-        <div class="collapsible" data-title="METAR">
-        <div class="collapsible-header" id="ARRIVAL_SELECT_AERODROME_BORDER_2"></div>
-        <div class="collapsible-content" id="ARRIVAL_SELECT_AERODROME_BORDER_3">
-
-            <div class="wind-grid">
-
-                <div class="tile">
-                    <input id="ARRIVAL_WIND_DIRECTION" type="text" class="tile-value">
-                    <span class="tile-label">Wind angle (°)</span>
-                </div>
-
-                <div class="tile">
-                    <input id="ARRIVAL_WIND_SPEED" type="text" class="tile-value">
-                    <span class="tile-label">Strength (kt)</span>
-                </div>
-
-                <div class="tile">
-                    <input id="ARRIVAL_WIND_GUST" type="text" class="tile-value">
-                    <span class="tile-label">Gust (kt)</span>
-                </div>
-            </div>
-
-            <div class="grid-one-third-two-thirds">
-                <div class="tile">
-                    <input id="ARRIVAL_WIND_VARIATION" type="text" class="tile-value">
-                    <span class="tile-label">Variation (°)</span>
-                </div>
-
-                <div class="button-row">
-                    <textarea id="METAR-FIELD-ARRIVAL"
-                        placeholder="METAR Information"
-                        title="METAR weather information"
-                        style="font-size:11px; background-color: transparent; width: 100%; min-height: 80px; max-height: 120px; resize: vertical; padding: 8px; box-sizing: border-box; border-radius: 10px"
-                        aria-label="METAR Information">
-                    </textarea>
-                </div>
-            </div>
-
-            <div style="display: flex; gap: 1px; margin-top: 1px;">
-                <input type="text" id="METAR-TEXT-ARRIVAL" readonly
-                    style="transition: background-color 0.3s; width: 70%;
-                        padding: 0; box-sizing: border-box; font-size: 10px;
-                        border: none; background-color: transparent;
-                        color: #333333; outline: none;">
-
-                <input type="text" id="DATETIME-METAR-ARRIVAL" readonly
-                    style="transition: background-color 0.3s; width: 40%;
-                        padding: 0; box-sizing: border-box; font-size: 10px;
-                        border: none; background-color: transparent;
-                        color: #333333; outline: none;">
-            </div>
         </div>
         </div>
 
@@ -1378,8 +1369,9 @@
         <div class="wind-grid">
             <select id="layer-select" class="tile-value-dropdown">
                 <option value="OpenStreetMap">OpenStreetMap</option>
-                <option value="OpenTopoMap">OpenTopoMap</option>
-                <!--<option value="Carto Voyager">Carto Voyager</option>-->
+                <option value="EsriWorldStreetMap">EsriWorldStreetMap</option>
+                <option value="CartoVoyager">CartoVoyager</option>
+                <option value="EsriWorldImagery">EsriWorldImagery</option>
             </select>
         </div>
 
@@ -5274,6 +5266,7 @@
         icao_arr = js.document.getElementById('ARRIVAL_ICAO')
         time_dep = js.document.getElementById('DEPARTURE_clockField')
 
+        js.window.window.waypoints = to_js([])
         if icao_dep.value != '':
             js.window.addWaypoints([to_js(js.window.flight_plan_data['DEPARTURE_LATLON'])])
         if icao_arr.value != '':

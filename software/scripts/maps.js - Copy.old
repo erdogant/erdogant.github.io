@@ -12,21 +12,11 @@ let metarDataCache = new Map(); // Cache METAR data with timestamps
 
 const time_dep = document.getElementById("DEPARTURE_clockField")?.value;
 
+// Define base layers
 const baseLayers = {
   OpenStreetMap: L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "&copy; OpenStreetMap" }),
-  EsriWorldStreetMap: L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", {
-    maxZoom: 19,
-    attribution: "Tiles &copy; Esri",
-  }),
-  CartoVoyager: L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
-    subdomains: "abcd",
-    maxZoom: 19,
-    attribution: "&copy; <a href='https://carto.com/attributions'>CARTO</a>",
-  }),
-  EsriWorldImagery: L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
-    maxZoom: 19,
-    attribution: "Tiles &copy; Esri",
-  }),
+  OpenTopoMap: L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", { maxZoom: 17, attribution: "&copy; OpenTopoMap" }),
+  // 'Carto Voyager': L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { subdomains: 'abcd', attribution: '&copy; CARTO' }),
 };
 
 // Initialize map
@@ -272,8 +262,8 @@ function pointToSegmentDistance(p, v1, v2) {
 }
 
 function addWaypoints(waypoints) {
-  if (!Array.isArray(window["waypoints"])) {
-    window["waypoints"] = [];
+  if (!Array.isArray(window.waypoints)) {
+    window.waypoints = [];
   }
   // Ensure waypoints is an array of arrays (e.g., [[lat, lon], ...])
   if (!Array.isArray(waypoints[0])) {
@@ -427,18 +417,12 @@ function handleFullscreenChange() {
     enterIcon.style.display = "inline";
     exitIcon.style.display = "none";
     fullscreenBtn.style.position = "absolute";
-    // NEW
     fullscreenBtn.style.zIndex = "1000";
   } else {
     enterIcon.style.display = "none";
     exitIcon.style.display = "inline";
-    // fullscreenBtn.style.position = "fixed";
-    // fullscreenBtn.style.zIndex = "2000";
-    // NEW
     fullscreenBtn.style.position = "fixed";
-    fullscreenBtn.style.zIndex = "1000"; // Increased from 2000
-    // fullscreenBtn.style.bottom = "20px"; // Add explicit bottom positioning
-    // fullscreenBtn.style.right = "20px"; // Add explicit right positioning
+    fullscreenBtn.style.zIndex = "2000";
   }
 }
 
@@ -1511,7 +1495,7 @@ function showMapNotification(message, type = "info") {
     top: 10px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 1000;
+    z-index: 10000;
     background: ${type === "success" ? "#4CAF50" : type === "error" ? "#f44336" : "#2196F3"};
     color: white;
     padding: 10px 20px;
