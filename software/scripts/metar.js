@@ -170,7 +170,7 @@ class Metar {
   analyzeChangements() {
     const changementsRecuperation = (marker) => {
       const regex = new RegExp(marker + ".+");
-      const search = this.metar.match(regex);
+      const search = typeof this.metar === "string" ? this.metar.match(regex) : null;
       if (search) {
         const portion = search[0].replace(marker + " ", "");
         this.metarWithoutChangements = this.metarWithoutChangements.replace(regex, "");
@@ -219,14 +219,14 @@ class Metar {
 
     // Try knots first
     for (const regex of regexListKt) {
-      search = this.metarWithoutChangements.match(regex);
+      search = typeof this.metarWithoutChangements === "string" ? this.metarWithoutChangements.match(regex) : null;
       if (search) break;
     }
 
     // Try MPS if knots failed
     if (!search) {
       for (const regex of regexListMps) {
-        search = this.metarWithoutChangements.match(regex);
+        search = typeof this.metarWithoutChangements === "string" ? this.metarWithoutChangements.match(regex) : null;
         if (search) break;
       }
     }
@@ -271,7 +271,7 @@ class Metar {
       regex = /\d{3}V\d{3} (\d{4}|\d{4}[A-Z]+)/;
     }
 
-    const match = this.metarWithoutChangements.match(regex);
+    const match = typeof this.metarWithoutChangements === "string" ? this.metarWithoutChangements.match(regex) : null;
     if (!match) return null;
 
     let visibility = match[1];
@@ -284,9 +284,9 @@ class Metar {
 
   analyzeRVR() {
     const regex = /R(\d{2}[LCR]*)\/([MP]*\d{4})/g;
-    const matches = [...this.metarWithoutChangements.matchAll(regex)];
+    const matches = typeof this.metarWithoutChangements === "string" ? [...this.metarWithoutChangements.matchAll(regex)] : null;
 
-    if (matches.length === 0) return null;
+    if (!matches || matches.length === 0) return null;
 
     return matches.map((match) => ({
       runway: match[1],
@@ -338,7 +338,9 @@ class Metar {
     // const searchText = this.metar;
 
     // REMOVE KNOWN FIELDS TO PREVENT FALSE POSITIVES
-    searchText = this.metarWithoutChangements;
+    searchText = typeof this.metarWithoutChangements === "string" ? this.metarWithoutChangements : null;
+    if (!searchText) return null;
+
     searchText = searchText.replace(/\bMETAR\b/g, "");
     searchText = searchText.replace(/\bAUTO\b/g, "");
     searchText = searchText.replace(/\CAVOK\b/g, "");
@@ -422,7 +424,8 @@ class Metar {
 
     for (const classif of classifications) {
       const regex = new RegExp(classif.code + "(\\d{3})(CB|TCU)?", "g");
-      const matches = [...this.metarWithoutChangements.matchAll(regex)];
+      const matches = typeof this.metarWithoutChangements === "string" ? [...this.metarWithoutChangements.matchAll(regex)] : null;
+      if (!matches) return null;
 
       for (const match of matches) {
         clouds.push({
@@ -456,7 +459,7 @@ class Metar {
 
   analyzeTemperatures() {
     const regex = /\s([M]?\d{2})\/([M]?\d{2})\s/;
-    const match = this.metarWithoutChangements.match(regex);
+    const match = typeof this.metarWithoutChangements === "string" ? this.metarWithoutChangements.match(regex) : null;
 
     if (!match) {
       return {
@@ -479,7 +482,10 @@ class Metar {
   }
 
   analyzeQNH() {
-    const hpaMatch = this.metarWithoutChangements.match(/Q(\d{4})/);
+    const regex = /Q(\d{4})/;
+    const hpaMatch = typeof this.metarWithoutChangements === "string" ? this.metarWithoutChangements.match(regex) : null;
+    if (hpaMatch === null) return null;
+
     if (hpaMatch) {
       return parseInt(hpaMatch[1]);
     }

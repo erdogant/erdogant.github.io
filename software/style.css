@@ -414,6 +414,14 @@ input[type="number"]:disabled {
     text-align: center;
 }
 
+.info-blue {
+    font-size: 12px;
+    font-weight: 400;
+    color: #005082;
+    margin: 4px 0;
+    text-align: center;
+}
+
 .info {
     font-size: 14px;
     color: darkgrey;

@@ -143,7 +143,8 @@
 
                 <div class="airport">
                     <div class="airport-code">
-                        <input id="DEPARTURE_ICAO_2" type="text" class="UPPERCASE_input sync-departure" title="Departure ICAO" style="font-size: 30px; font-weight: bold; color: #2c2c2c; margin-bottom: 2px; text-align: center;">
+                        <input id="DEPARTURE_ICAO_2" type="text" class="UPPERCASE_input sync-departure" title="Departure ICAO"
+                            style="font-size: 30px; font-weight: bold; color: #2c2c2c; margin-bottom: 2px; text-align: center;">
                     </div>
                     <div id="DEPARTURE_CITY" class="airport-name">DEPARTURE</div>
                     <div><img id="DEPARTURE_FLAG_2" src="" alt="" style="width:30px; height:auto; vertical-align:middle; margin-left:6px;"></div>
@@ -160,7 +161,8 @@
 
                 <div class="airport">
                     <div class="airport-code">
-                        <input id="ARRIVAL_ICAO_2" type="text" class="UPPERCASE_input sync-arrival" title="Arrival ICAO" style="font-size: 30px; font-weight: bold; color: #2c2c2c; margin-bottom: 2px; text-align: center;">
+                        <input id="ARRIVAL_ICAO_2" type="text" class="UPPERCASE_input sync-arrival" title="Arrival ICAO"
+                            style="font-size: 30px; font-weight: bold; color: #2c2c2c; margin-bottom: 2px; text-align: center;">
                     </div>
                     <div id="ARRIVAL_CITY" class="airport-name">ARRIVAL</div>
                     <div><img id="ARRIVAL_FLAG_2" src="" alt="" style="width:30px; height:auto; vertical-align:middle; margin-left:6px;"></div>
@@ -211,7 +213,7 @@
                                 <span id="CALLSIGN_LABEL" class="tile-label" style="text-align: left;">REGISTRATION</span>
                                 <input id="CALLSIGN" type="text" class="tile-value UPPERCASE_input"
                                        title="Registration of the aircraft"
-                                       style="font-size: 20px; text-align: left">
+                                       style="font-size: 14px; text-align: left">
 
                             </div>
 
@@ -233,7 +235,7 @@
                             <input id="POB" type="text"
                                    class="tile-value UPPERCASE_input"
                                    title="Persons on Board"
-                                   style="font-size: 20px; text-align: left">
+                                   style="font-size: 14px; text-align: left">
                         </div>
 
                         <div class="aircraft" style="text-align: left;">
@@ -594,38 +596,42 @@
        </div>
 
 
-       <!--WEIGHT AND BALANCE ENVELOPE-->
-       <div class="collapsible" data-title="WEIGHT AND BALANCE">
-       <div class="collapsible-header"></div>
-       <div class="collapsible-content">
+        <!--WEIGHT AND BALANCE ENVELOPE-->
+        <div class="collapsible" data-title="WEIGHT AND BALANCE">
+        <div class="collapsible-header"></div>
+        <div class="collapsible-content">
 
-           <div style="border: 1px solid lightgrey; border-radius: 10px; padding: 10px;">
-               <div id="bottom-container">
-                   <div class="warning">
-                       Fill in the weights of the paggengers in kg, and the fuel in liters. The weight of the fuel is automatically normalized into kg based on the fuel type (see aircraft information).
-                       Use this information only as an educational aid. Always do your own research, check the weight and balance from official sources.
-                   </div>
-               </div>
-           </div>
+            <div style="border: 1px solid lightgrey; border-radius: 10px; padding: 10px;">
+                <div id="bottom-container">
+                    <div class="warning">
+                        Fill in the weights in kg, and the fuel in liters. The weight of the fuel is automatically normalized into kg based on the fuel type (see aircraft information).
+                        Use this information only as an educational aid. Always do your own research, check the weight and balance from official sources.
+                    </div>
+                </div>
+            </div>
 
+            <div class="border-round-eged">
+                <div id="DEPARTURE_envelopeMessage" style="margin-top: 12px; padding: 10px; border-radius: 8px; font-size: 14px; text-align: center; display: none;"></div>
+                <div id="DEPARTURE_fuelMessage" style="margin-top: 12px; padding: 10px; border-radius: 8px; font-size: 14px; text-align: center; display: none;"></div>
+            </div>
 
-           <!-- Totals Section -->
-           <div class="border-round-eged">
-               <div class="weight-card-header">Totals</div>
-               <div class="wind-grid_3">
+            <!-- Totals Section -->
+            <div class="border-round-eged">
+                <div class="weight-card-header">Totals</div>
+                <div class="wind-grid_3">
                     <input type="number" class="tile-value" id="DEPARTURE_total_moment" value="0" disabled>
                     <input type="number" class="tile-value" id="DEPARTURE_total_weight" value="0" disabled>
                     <input type="number" class="tile-value" id="DEPARTURE_takeoff_cg" value="0" disabled>
-               </div>
-               <div class="wind-grid_3">
+                </div>
+                <div class="wind-grid_3">
                     <span class="tile-label">Total Moment</span>
                     <span class="tile-label">Total Weight (kg)</span>
                     <span class="tile-label">Take off CG</span>
-               </div>
-           </div>
+                </div>
+            </div>
 
 
-           <div class="border-round-eged" style="background-color: #ffffff;">
+            <div class="border-round-eged" style="background-color: #ffffff;">
 
                 <div class="grid-middle-small">
                     <div class="tile" style="border-color: transparent">
@@ -671,23 +677,45 @@
                 <div class="logo-container">
                     <img id="AIRCRAFT_BACK_IMAGE" src="./figs/aircraft_back.png">
                 </div>
+
+                <!-- checkbox -->
+                <div class="button-row" style="justify-content: center; align-items: center;">
+                    <input type="checkbox" id="DEPARTURE_WEIGHT_CHECKBOX" checked style="font-size: 10px;"> <span style="font-size: 12px;">Sync departure and arrival weights.</span>
+                </div>
+                <button id="DEPARTURE_BTN_WEIGHTS" onclick="update_aerodrome_weights_js('DEPARTURE'); update_aerodrome_weights_js('ARRIVAL'); computeArrivalFuelPerLeg();">
+                    Load pre-defined weights
+                </button>
+            </div>
+
+            <!-- Weight Balance Chart -->
+            <div class="section-title">Weight & Balance Envelope</div>
+            <div class="border-round-eged">
+                <canvas id="DEPARTURE_weightBalanceChart"></canvas>
+            </div>
+
+
+
+       </div>
+       </div>
+
+
+       <!--RUNWAY DEPARTURE-->
+       <div class="collapsible" data-title="RUNWAY">
+       <div class="collapsible-header"></div>
+       <div class="collapsible-content">
+
+           <div class="wind-grid">
+               <div class="tile">
+                   <input id="DEPARTURE_RUNWAY_LENGTH" type="text" class="tile-value">
+                   <span class="tile-label">Runway length</span>
+               </div>
+               <div class="tile">
+                   <input id="DEPARTURE_ATC_TOWER" type="text" class="tile-value">
+                   <span class="tile-label">Tower/ Radio (MHz)</span>
+               </div>
            </div>
 
-           <div class="button-row">
-               <button id="DEPARTURE_BTN_WEIGHTS" class="button-style" onclick="update_aerodrome_weights_js('DEPARTURE'); update_aerodrome_weights_js('ARRIVAL')">
-                   Set to custom weights
-               </button>
-           </div>
-
-           <!-- Weight Balance Chart -->
-           <div class="section-title">Weight & Balance Envelope</div>
-           <div class="border-round-eged">
-               <canvas id="DEPARTURE_weightBalanceChart"></canvas>
-               <div id="DEPARTURE_envelopeMessage" style="margin-top: 12px; padding: 10px; border-radius: 8px; font-size: 14px; text-align: center; display: none;"></div>
-           </div>
-
-
-
+           <!--<button onclick="window.save_aerodrome_to_json('DEPARTURE')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 4px 8px 0; flex: 0 0 auto; cursor: pointer; float: right;">💾</button>-->
        </div>
        </div>
 
@@ -1057,12 +1085,16 @@
            <div style="border: 1px solid lightgrey; border-radius: 10px; padding: 10px;">
                <div id="bottom-container">
                    <div class="warning">
-                       Fill in the weights of the paggengers in kg, and the fuel in liters. The weight of the fuel is automatically normalized into kg based on the fuel type (see aircraft information).
+                       Fill in the weights in kg, and the fuel in liters. The weight of the fuel is automatically normalized into kg based on the fuel type (see aircraft information).
                        Use this information only as an educational aid. Always do your own research, check the weight and balance from official sources.
                    </div>
                </div>
            </div>
 
+           <div class="border-round-eged">
+                <div id="ARRIVAL_envelopeMessage" style="margin-top: 12px; padding: 10px; border-radius: 8px; font-size: 14px; text-align: center; display: none;"></div>
+                <div id="ARRIVAL_fuelMessage" style="margin-top: 12px; padding: 10px; border-radius: 8px; font-size: 14px; text-align: center; display: none;"></div>
+           </div>
 
            <!-- Totals Section -->
            <div class="border-round-eged">
@@ -1124,20 +1156,21 @@
                 <div class="logo-container">
                     <img id="AIRCRAFT_BACK_IMAGE" src="./figs/aircraft_back.png">
                 </div>
-           </div>
 
-           <div class="button-row">
-               <button id="ARRIVAL_BTN_WEIGHTS" class="button-style" onclick="update_aerodrome_weights_js('ARRIVAL')">
-                   Set to custom weights
-               </button>
+                <!-- checkbox -->
+                <div class="button-row" style="justify-content: center; align-items: center;">
+                    <input type="checkbox" id="ARRIVAL_WEIGHT_CHECKBOX" checked style="font-size: 10px;"> <span style="font-size: 12px;">Sync departure and arrival weights.</span>
+                </div>
+                <button id="ARRIVAL_BTN_WEIGHTS" onclick="update_aerodrome_weights_js('ARRIVAL'); computeArrivalFuelPerLeg(); ">
+                    Load pre-defined weights
+                </button>
+
            </div>
 
            <!-- Weight Balance Chart -->
            <div class="section-title">Weight & Balance Envelope</div>
            <div class="border-round-eged">
                <canvas id="ARRIVAL_weightBalanceChart"></canvas>
-               <div id="ARRIVAL_envelopeMessage" style="margin-top: 12px; padding: 10px; border-radius: 8px; font-size: 14px; text-align: center; display: none;"></div>
-               <div id="ARRIVAL_fuelMessage" style="margin-top: 12px; padding: 10px; border-radius: 8px; font-size: 14px; text-align: center; display: none;"></div>
            </div>
 
 
@@ -1627,6 +1660,7 @@
             </div>
         </div>
 
+
         <div class="border-round-eged">
             <div class="wind-grid" style="display: flex; align-items: center; gap: 1px;">
                 <!-- Inputfield -->
@@ -1643,7 +1677,7 @@
                     <option value="">Select and Load</option>
                 </select>
                 <!-- Save button -->
-                <button id="aircraft_save_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save aircraft">💾</button>
+                <button id="aircraft_save_btn" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Save Aircraft Specifications">💾</button>
             </div>
         </div>
 
@@ -1757,6 +1791,11 @@
         <div class="collapsible-content">
 
             <div class="container">
+                <div class="border-round-eged">
+                    <div class="warning">
+                        Set the ranges for the aircraft's ARM, and empty weight. The take-off center of gravity (CG) is then shown at the bottom.
+                    </div>
+                </div>
 
                 <div class="weight-card">
                     <div class="grid-two-thirds-one-third">
@@ -1838,46 +1877,54 @@
                 </div>
             </div>
 
+
         </div>
         </div>
 
 
-        <!-- WEIGHT AND BALANCE -->
-        <div class="collapsible" data-title="Envelope">
+        <!-- WIND ENVELOPPE -->
+        <div class="collapsible" data-title="Weight and Balance Envelope">
         <div class="collapsible-header"></div>
         <div class="collapsible-content">
 
             <div class="container">
+                <div class="border-round-eged">
+                    <div class="warning">
+                        The weight and balance envelope is drawn as a polygon on a chart, with weight on one axis and CG (moment arm) on the other.
+                        Enter the coordinates of the envelope points below according to the POH.
+                    </div>
+                </div>
 
                 <div class="weight-card">
+
                     <div class="wind-grid">
                         <div class="input-label" style="text-align: center;">x</div>
                         <div class="input-label" style="text-align: center;">y</div>
                     </div>
 
                     <div class="wind-grid">
-                        <input type="number" id="x1" value="205" min="0">
-                        <input type="number" id="y1" value="660" min="0">
+                        <input type="number" id="x1" value="205" min="0" step="5">
+                        <input type="number" id="y1" value="660" min="0" step="5">
                     </div>
 
                     <div class="wind-grid">
-                        <input type="number" id="x2" value="205" min="0">
-                        <input type="number" id="y2" value="725" min="0">
+                        <input type="number" id="x2" value="205" min="0" step="5">
+                        <input type="number" id="y2" value="725" min="0" step="5">
                     </div>
 
                     <div class="wind-grid">
-                        <input type="number" id="x3" value="400" min="0">
-                        <input type="number" id="y3" value="975" min="0">
+                        <input type="number" id="x3" value="400" min="0" step="5">
+                        <input type="number" id="y3" value="975" min="0" step="5">
                     </div>
 
                     <div class="wind-grid">
-                        <input type="number" id="x4" value="570" min="0">
-                        <input type="number" id="y4" value="975" min="0">
+                        <input type="number" id="x4" value="570" min="0" step="5">
+                        <input type="number" id="y4" value="975" min="0" step="5">
                     </div>
 
                     <div class="wind-grid">
-                        <input type="number" id="x5" value="570" min="0">
-                        <input type="number" id="y5" value="660" min="0">
+                        <input type="number" id="x5" value="570" min="0" step="5">
+                        <input type="number" id="y5" value="660" min="0" step="5">
                     </div>
 
                 </div>
@@ -1890,9 +1937,255 @@
                 <div id="SETTINGS_envelopeMessage" style="margin-top: 12px; padding: 10px; border-radius: 8px; font-size: 14px; text-align: center; display: none;"></div>
             </div>
 
+        </div>
+        </div>
+
+
+
+        <!--TAKEOFF PERFORMANCE POH -->
+        <div class="collapsible" data-title="Takeoff Performance POH">
+        <div class="collapsible-header"></div>
+        <div class="collapsible-content">
+
+            <div class="container">
+
+                <div class="border-round-eged">
+                    <div class="warning">
+                        The takeoff performance of an aircraft depends on various conditions.
+                        Set the parameters for weather, runway type, slope over here.
+                        Use your POH to get the information. You can load default settings to get an idea of the ranges.
+                    </div>
+                </div>
+
+
+                <div class="weight-card">
+                    <div class="info-blue">
+                        Correction factors for takeoff, given the wind (multiply per <i>n</i> kts).
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="wind-grid">
+                        <div class="input-label" style="text-align: center;">Headwind (kts)</div>
+                        <div class="input-label" style="text-align: center;">Correction Factor</div>
+                    </div>
+
+                    <div class="wind-grid">
+                        <input type="number" id="takeoff_headwind_kts_0" value="0", min="0">
+                        <input type="number" id="takeoff_headwind_cor_0" value="0.85" min="0" step="0.05">
+                    </div>
+
+                    <div class="wind-grid">
+                        <input type="number" id="takeoff_headwind_kts_1" value="10", min="0">
+                        <input type="number" id="takeoff_headwind_cor_1" value="0.85" min="0" step="0.05">
+                    </div>
+
+                    <div class="wind-grid">
+                        <input type="number" id="takeoff_headwind_kts_2" value="20", min="0">
+                        <input type="number" id="takeoff_headwind_cor_2" value="0.65" min="0" step="0.05">
+                    </div>
+
+                    <div class="wind-grid">
+                        <input type="number" id="takeoff_headwind_kts_3" value="30", min="0">
+                        <input type="number" id="takeoff_headwind_cor_3" value="0.55" min="0" step="0.05">
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="wind-grid">
+                        <div class="input-label" style="text-align: center;">Tailwind (kts)</div>
+                        <div class="input-label" style="text-align: center;">Correction Factor</div>
+                    </div>
+                    <div class="wind-grid">
+                        <input type="number" id="takeoff_tailwind_kts" value="2" min="0" step="1">
+                        <input type="number" id="takeoff_tailwind_cor" value="1.1" min="0" step="0.05">
+                    </div>
+                </div>
+            </div>
+
+            <!--RUNWAY CORRECTION FACTORS-->
+            <div class="weight-card">
+                <div class="info-blue">
+                    Take into account the takeoff performance on hard, soft, or other surfaces, and whether the runway is dry or wet.
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="wind-grid_3">
+                    <div class="input-label" style="text-align: center;">Runway Type</div>
+                    <div class="input-label" style="text-align: center;">Dry Surface</div>
+                    <div class="input-label" style="text-align: center;">Wet Surface</div>
+                </div>
+
+                <div class="wind-grid_3">
+                    <div class="weight-card-header">Hard</div>
+                    <input type="number" id="takeoff_runway_hard_dry" value="1" min="0" step="0.05">
+                    <input type="number" id="takeoff_runway_hard_wet" value="1.05" min="0" step="0.05">
+                </div>
+                <div class="wind-grid_3">
+                    <div class="weight-card-header">Soft</div>
+                    <input type="number" id="takeoff_runway_soft_dry" value="1.15" min="0" step="0.05">
+                    <input type="number" id="takeoff_runway_soft_wet" value="1.25" min="0" step="0.05">
+                </div>
+                <div class="wind-grid_3">
+                    <div class="weight-card-header">Other</div>
+                    <input type="number" id="takeoff_runway_custom_dry" value="1" min="0" step="0.05">
+                    <input type="number" id="takeoff_runway_custom_wet" value="1.05" min="0" step="0.05">
+                </div>
+            </div>
+
+            <div class="weight-card">
+                <div class="info-blue">
+                    Correction factor for runway slope (per percent gradient).
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="wind-grid">
+                    <div class="input-label" style="text-align: center;">Runway Slope (%)</div>
+                    <div class="input-label" style="text-align: center;">Correction Factor</div>
+                </div>
+                <div class="wind-grid">
+                    <input type="number" id="takeoff_runway_slope_paved" value="0.05" min="0" step="0.05">
+                    <input type="number" id="takeoff_runway_slope_correction" value="1.25" min="0" step="0.05">
+                </div>
+
+                <div class="wind-grid">
+                    <div class="input-label" style="text-align: center;">Minimum Takeoff Distance (% runway)</div>
+                </div>
+                <div class="wind-grid">
+                    <input type="number" id="takeoff_runway_minimum_distance" value="1" min="0" step="0.1">
+                </div>
+
+            </div>
 
         </div>
         </div>
+
+        <!--LANDING PERFORMANCE POH -->
+        <div class="collapsible" data-title="Landing Performance POH">
+        <div class="collapsible-header"></div>
+        <div class="collapsible-content">
+
+            <div class="container">
+
+                <div class="border-round-eged">
+                    <div class="warning">
+                        The landing performance of an aircraft depends on various conditions.
+                        Set the parameters for weather, runway type, slope over here.
+                        Use your POH to get the information. You can load default settings to get an idea of the ranges.
+                    </div>
+                </div>
+
+
+                <div class="weight-card">
+                    <div class="info-blue">
+                        Correction factors for landing, given the wind (multiply per <i>n</i> kts).
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="wind-grid">
+                        <div class="input-label" style="text-align: center;">Headwind (kts)</div>
+                        <div class="input-label" style="text-align: center;">Correction Factor</div>
+                    </div>
+
+                    <div class="wind-grid">
+                        <input type="number" id="landing_headwind_kts_0" value="0", min="0">
+                        <input type="number" id="landing_headwind_cor_0" value="0.85" min="0" step="0.05">
+                    </div>
+
+                    <div class="wind-grid">
+                        <input type="number" id="landing_headwind_kts_1" value="10", min="0">
+                        <input type="number" id="landing_headwind_cor_1" value="0.85" min="0" step="0.05">
+                    </div>
+
+                    <div class="wind-grid">
+                        <input type="number" id="landing_headwind_kts_2" value="20", min="0">
+                        <input type="number" id="landing_headwind_cor_2" value="0.65" min="0" step="0.05">
+                    </div>
+
+                    <div class="wind-grid">
+                        <input type="number" id="landing_headwind_kts_3" value="30", min="0">
+                        <input type="number" id="landing_headwind_cor_3" value="0.55" min="0" step="0.05">
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="wind-grid">
+                        <div class="input-label" style="text-align: center;">Tailwind (kts)</div>
+                        <div class="input-label" style="text-align: center;">Correction Factor</div>
+                    </div>
+                    <div class="wind-grid">
+                        <input type="number" id="landing_tailwind_kts" value="2", min="0">
+                        <input type="number" id="landing_tailwind_cor" value="1.1", min="0">
+                    </div>
+                </div>
+            </div>
+
+            <!--RUNWAY CORRECTION FACTORS-->
+            <div class="weight-card">
+                <div class="info-blue">
+                    Take into account the takeoff performance on hard, soft, or other surfaces, and whether the runway is dry or wet.
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="wind-grid_3">
+                    <div class="input-label" style="text-align: center;">Runway Type</div>
+                    <div class="input-label" style="text-align: center;">Dry Surface</div>
+                    <div class="input-label" style="text-align: center;">Wet Surface</div>
+                </div>
+                <div class="wind-grid_3">
+                    <div class="weight-card-header">Hard</div>
+                    <input type="number" id="landing_runway_hard_dry" value="1" min="0" step="0.05">
+                    <input type="number" id="landing_runway_hard_wet" value="1.05" min="0" step="0.05">
+                </div>
+                <div class="wind-grid_3">
+                    <div class="weight-card-header">Soft</div>
+                    <input type="number" id="landing_runway_soft_dry" value="1.15" min="0" step="0.05">
+                    <input type="number" id="landing_runway_soft_wet" value="1.25" min="0" step="0.05">
+                </div>
+                <div class="wind-grid_3">
+                    <div class="weight-card-header">Other</div>
+                    <input type="number" id="landing_runway_custom_dry" value="1" min="0" step="0.1">
+                    <input type="number" id="landing_runway_custom_wet" value="1.05" min="0" step="0.05">
+                </div>
+            </div>
+
+            <div class="weight-card">
+                <div class="info-blue">
+                    Correction factor for runway slope (per percent gradient).
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="wind-grid">
+                    <div class="input-label" style="text-align: center;">Runway Slope (%)</div>
+                    <div class="input-label" style="text-align: center;">Correction Factor</div>
+                </div>
+                <div class="wind-grid">
+                    <input type="number" id="landing_runway_slope_paved" value="0.05" min="0" step="0.05">
+                    <input type="number" id="landing_runway_slope_correction" value="1.25" min="0" step="0.05">
+                </div>
+
+                <div class="wind-grid">
+                    <div class="input-label" style="text-align: center;">Minimum Landing Distance (% runway)</div>
+                </div>
+                <div class="wind-grid">
+                    <input type="number" id="landing_runway_minimum_distance" value="0.7" min="0" step="0.1">
+                </div>
+
+            </div>
+        </div>
+        </div>
+
+        <div class="border-round-eged">
+            <div class="disclaimer">
+                This tool is for educational purposes only and does not replace procedures. Always verify your calculations and consult official aircraft documentation before flight.
+            </div>
+        </div>
+
 
     </div>
 
@@ -2028,7 +2321,6 @@
 
 </script>
 
-<!-- MAPS WAS HERE-->
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -2052,20 +2344,6 @@
             });
         });
     });
-
-    // function toggleCollapsibleMenu(fieldId) {
-    //     const block = document.getElementById(fieldId);
-    //     if (!block) return;
-    //     const content = block.querySelector('.collapsible-content');
-    //     block.classList.toggle('open');
-    //     if (block.classList.contains('open')) {
-    //         content.style.maxHeight = content.scrollHeight + "px";
-    //     } else {
-    //         content.style.maxHeight = null;
-    //     }
-    // }
-    // window.toggleCollapsibleMenu = toggleCollapsibleMenu;
-
 
     function syncFields(className) {
         // SYNC FIELDS OF DEPARTURE_ICAO AND DEPARTURE_ICAO_2
@@ -2482,31 +2760,47 @@
                     'ENVELOPE': {'x1': 0, 'x2': 0, 'x3': 0, 'x4': 0, 'x5': 0, 'y1': 0, 'y2': 0, 'y3': 0, 'y4': 0, 'y5': 0},
                     'POH_RUNWAY_TAKEOFF': {"altitude": '', "temperature": '', "weigth": '', 'distance': '', '50ft': ''},
                     'POH_RUNWAY_LANDING': {"altitude": '', "temperature": '', "weigth": '', 'distance': '', '50ft': ''},
-                    'PERFORMANCE_TAKEOFF': {
-                      'soft_dry': '',
-                      'soft_wet': '',
-                      'hard_dry': 1,
-                      'hard_wet': '',
-                      'other_dry': 1,
-                      'other_wet': '',
-                      'paved_slope': '',
-                      'safety_correction': '',
-                      'minimum_distance_available': '',
-                      'tailwind_influence': {'item_0': ['', '']},
-                      'headwind_influence': {'item_0': ['', ''], 'item_1': ['', ''], 'item_2': ['', ''], 'item_3': ['', '']},
+                    'TAKEOFF': {
+                      'headwind_kts_0': '',
+                      'headwind_kts_1': '',
+                      'headwind_kts_2': '',
+                      'headwind_kts_3': '',
+                      'headwind_cor_0': '',
+                      'headwind_cor_1': '',
+                      'headwind_cor_2': '',
+                      'headwind_cor_3': '',
+                      'tailwind_kts': '',
+                      'tailwind_cor': '',
+                      'runway_hard_dry': '',
+                      'runway_hard_wet': '',
+                      'runway_soft_dry': '',
+                      'runway_soft_wet': '',
+                      'runway_custom_dry': '',
+                      'runway_custom_wet': '',
+                      'runway_slope_paved': '',
+                      'runway_slope_correction': '',
+                      'runway_minimum_distance': '',
                     },
-                    'PERFORMANCE_LANDING': {
-                      'soft_dry': '',
-                      'soft_wet': '',
-                      'hard_dry': 1,
-                      'hard_wet': '',
-                      'other_dry': 1,
-                      'other_wet': '',
-                      'paved_slope': '',
-                      'safety_correction': '',
-                      'minimum_distance_available': '',
-                      'tailwind_influence': {'item_0': ['', '']},
-                      'headwind_influence': {'item_0': ['', ''], 'item_1': ['', ''], 'item_2': ['', ''], 'item_3': ['', '']},
+                    'LANDING': {
+                      'headwind_kts_0': '',
+                      'headwind_kts_1': '',
+                      'headwind_kts_2': '',
+                      'headwind_kts_3': '',
+                      'headwind_cor_0': '',
+                      'headwind_cor_1': '',
+                      'headwind_cor_2': '',
+                      'headwind_cor_3': '',
+                      'tailwind_kts': '',
+                      'tailwind_cor': '',
+                      'runway_hard_dry': '',
+                      'runway_hard_wet': '',
+                      'runway_soft_dry': '',
+                      'runway_soft_wet': '',
+                      'runway_custom_dry': '',
+                      'runway_custom_wet': '',
+                      'runway_slope_paved': '',
+                      'runway_slope_correction': '',
+                      'runway_minimum_distance': '',
                     },
         }
 
@@ -2945,9 +3239,51 @@
           'aircraft_cruisespeed': ['', 'CRUISESPEED'],
           'aircraft_mtow': ['', 'MTOW'],
           'aircraft_costs_per_hour': ['', 'COSTS_PER_HOUR'],
+
           'aircraft_fuel_type': ['FUEL', 'type'],
           'aircraft_fuel_density': ['FUEL', 'density'],
           'aircraft_fuel_consumption': ['FUEL', 'consumption'],
+
+          'takeoff_headwind_kts_0': ['TAKEOFF', 'headwind_kts_0'],
+          'takeoff_headwind_kts_1': ['TAKEOFF', 'headwind_kts_1'],
+          'takeoff_headwind_kts_2': ['TAKEOFF', 'headwind_kts_2'],
+          'takeoff_headwind_kts_3': ['TAKEOFF', 'headwind_kts_3'],
+          'takeoff_headwind_cor_0': ['TAKEOFF', 'headwind_cor_0'],
+          'takeoff_headwind_cor_1': ['TAKEOFF', 'headwind_cor_1'],
+          'takeoff_headwind_cor_2': ['TAKEOFF', 'headwind_cor_2'],
+          'takeoff_headwind_cor_3': ['TAKEOFF', 'headwind_cor_3'],
+          'takeoff_tailwind_kts': ['TAKEOFF', 'tailwind_kts'],
+          'takeoff_tailwind_cor': ['TAKEOFF', 'tailwind_cor'],
+          'takeoff_runway_hard_dry': ['TAKEOFF', 'runway_hard_dry'],
+          'takeoff_runway_hard_wet': ['TAKEOFF', 'runway_hard_wet'],
+          'takeoff_runway_soft_dry': ['TAKEOFF', 'runway_soft_dry'],
+          'takeoff_runway_soft_wet': ['TAKEOFF', 'runway_soft_wet'],
+          'takeoff_runway_custom_dry': ['TAKEOFF', 'runway_custom_dry'],
+          'takeoff_runway_custom_wet': ['TAKEOFF', 'runway_custom_wet'],
+          'takeoff_runway_slope_paved': ['TAKEOFF', 'runway_slope_paved'],
+          'takeoff_runway_slope_correction': ['TAKEOFF', 'runway_slope_correction'],
+          'takeoff_runway_minimum_distance': ['TAKEOFF', 'runway_minimum_distance'],
+
+          'landing_headwind_kts_0': ['LANDING', 'headwind_kts_0'],
+          'landing_headwind_kts_1': ['LANDING', 'headwind_kts_1'],
+          'landing_headwind_kts_2': ['LANDING', 'headwind_kts_2'],
+          'landing_headwind_kts_3': ['LANDING', 'headwind_kts_3'],
+          'landing_headwind_cor_0': ['LANDING', 'headwind_cor_0'],
+          'landing_headwind_cor_1': ['LANDING', 'headwind_cor_1'],
+          'landing_headwind_cor_2': ['LANDING', 'headwind_cor_2'],
+          'landing_headwind_cor_3': ['LANDING', 'headwind_cor_3'],
+          'landing_tailwind_kts': ['LANDING', 'tailwind_kts'],
+          'landing_tailwind_cor': ['LANDING', 'tailwind_cor'],
+          'landing_runway_hard_dry': ['LANDING', 'runway_hard_dry'],
+          'landing_runway_hard_wet': ['LANDING', 'runway_hard_wet'],
+          'landing_runway_soft_dry': ['LANDING', 'runway_soft_dry'],
+          'landing_runway_soft_wet': ['LANDING', 'runway_soft_wet'],
+          'landing_runway_custom_dry': ['LANDING', 'runway_custom_dry'],
+          'landing_runway_custom_wet': ['LANDING', 'runway_custom_wet'],
+          'landing_runway_slope_paved': ['LANDING', 'runway_slope_paved'],
+          'landing_runway_slope_correction': ['LANDING', 'runway_slope_correction'],
+          'landing_runway_minimum_distance': ['TAKEOFF', 'runway_minimum_distance'],
+
         }
 
     def aircraft_clean(verbose='info'):
@@ -4066,6 +4402,8 @@
                     if field_id == f'{fname}_CTR':
                         element.value = 'CTR' if (value or str(value).lower() == 'true') else ''
                     elif field_id == f'{fname}_CITY':
+                        # Do this trick to make sure the length of both cities are similar to keep the GUI alignment
+                        #element.textContent = str(value[:15].ljust(15, ' '))
                         element.textContent = str(value)
                     else:
                         element.value = str(value)
@@ -4083,18 +4421,14 @@
         element_icao_2 = js.document.getElementById(f'{fname}_ICAO_2')
         element_icao_2.value = icao_element.value
 
-        # Set a checkbox for the loaded ICAO
         element_label = js.document.getElementById(f'{fname}_CITY')
         if element_icao_2.value == '':
+          # Show DEPARTURE OR ARRIVAL
             element_label.textContent = f'{fname.upper()}'
         else:
+          # Show city name when loading the ICAO with a maximum of 10 chars
             label = element_label.textContent
             element_label.textContent = f'{label}'
-            # element_label.textContent = f'✅ {label}'
-
-        # print(js.window.flight_plan_data.get(f'{fname}_CTR'))
-        # print(js.window.flight_plan_data.get(f'{fname}_ATC_TOWER'))
-        # print(js.window.flight_plan_data.get(f'{fname}_ATC_TOWER'))
 
         print(f"   >✅ Updated {updated_count} GUI fields")
 
@@ -6478,8 +6812,11 @@
 
         // Calculate Weight and Balance and Departure tab
         if (targetTab === 'Departure' || targetTab === 'Arrival'){
-          window.calculateWeightBalance(targetTab.toUpperCase());
+          // Sync checkboxes and fields on startup
+           syncWeightCheckboxesAndFields(`${targetTab.toUpperCase()}_WEIGHT_CHECKBOX`);
+           window.calculateWeightBalance(targetTab.toUpperCase());
         }
+
         // WHEN THE TAB MAP IS CLICKED, UPDATE THE MAP WITH THE ROUTE AND FILL WINDOW.WAYPOINTS
         if (targetTab === "MAP") {
           initRouteMap(true);
@@ -6488,7 +6825,6 @@
         //  CHECKLIST TAB: UPDATE CHECKLISTS
         if (targetTab === "Checklist") {
           checklist_populate()
-          // window.calculateWeightBalance('SETTINGS');
         }
 
         // REPLACE INFORMATION with "INFO" in the ENROUTE TAB.
@@ -6634,7 +6970,7 @@
        * - Restores cached display settings
        * - Hides loading spinner once complete
        *
-       * Keywords: Startup, loading, app start
+       * Keywords: Startup, loading, app start, start app, load app
        */
       if (typeof window.create_new_flightplan === 'function') {
         pyscriptReady = true;
@@ -6686,10 +7022,10 @@
 
         animateCloud('SKYWALK_LOGO', process = "start", density=8, speed=0.3, direction='right', color='dark');
         // animateSnow('SKYWALK_LOGO', process ='start', intensity = "medium", speed = 0.3);
-
         // animateFog('SKYWALK_LOGO', process = "start", intensity = "light");
         // animateFlare('SKYWALK_LOGO', "start", null, null, null, intensity=2, pulseSpeed = 0.2, size = 1.1);
         // animateDark('SKYWALK_LOGO', "start", "center", "night");
+
         console.log("   >Settings data is initialized.");
 
       }
@@ -6847,6 +7183,16 @@
       }
     });
 
+    ['DEPARTURE_WEIGHT_CHECKBOX', 'ARRIVAL_WEIGHT_CHECKBOX'].forEach(btnId => {
+      const element = document.getElementById(btnId);
+      if (!element) return;
+      element.addEventListener('click', field => {
+        const id = field?.currentTarget?.id ?? btnId;
+        // Pass the triggering checkbox id to the sync function
+        syncWeightCheckboxesAndFields(id);
+      });
+    });
+
 
     ['DEPARTURE_ANIMATION_START', 'ARRIVAL_ANIMATION_START'].forEach(btnId => {
       const el = document.getElementById(btnId);
@@ -6894,9 +7240,6 @@
               timeValue = null;
             }
 
-            // console.log(prefix, timeValue); // check the value
-            // console.log(window.waypoints)
-
             // Update only the flight info when departure time is changed
             if (prefix === 'DEPARTURE') {
                 // Update the flightinfo fields
@@ -6937,11 +7280,10 @@
 
         // Trigger on blur
         field.addEventListener("blur", validateAndLoadICAO);
-
         // Trigger on Enter key
-        field.addEventListener('keydown', e => {
-            if (e.key === 'Enter') {
-                validateAndLoadICAO(e);
+        field.addEventListener('keydown', field => {
+            if (field.key === 'Enter') {
+                validateAndLoadICAO(field);
             }
         });
     });
@@ -6949,7 +7291,6 @@
     // Refactored handlePlaneClick
     function handlePlaneClick() {
         console.log("> func: handlePlaneClick()");
-
         const element_dep = document.getElementById('DEPARTURE_ICAO_2');
         const element_arr = document.getElementById('ARRIVAL_ICAO_2');
 
@@ -6960,48 +7301,11 @@
             const value = element.value.trim();
             if (value !== '') {
                 const isValid = validateAndLoadICAO(element, true);
-                if (!isValid) return; // Stop if validation fails
+                if (!isValid) return;
             }
         }
     }
 
-
-
-    // Update the aerodrome only when the load buttons/icons are clicked (do NOT trigger on clicking the ICAO text fields)
-    // ['DEPARTURE_LOAD_ICAO', 'ARRIVAL_LOAD_ICAO'].forEach(id => {
-    //   const e = document.getElementById(id);
-    //   if (!e) return;
-    //   e.addEventListener('click', ev => {
-    //     // Prefer the event's currentTarget id (safe even if a child element was clicked)
-    //     const fieldId = ev?.currentTarget?.id ?? id;
-    //     const prefix = fieldId.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
-
-    //     // At least 4 chars is required for the icao
-    //     const element = document.getElementById(`${prefix}_ICAO`);
-    //     const icao = String(element?.value ?? '').trim();
-    //     if (icao.length >= 1 && icao.length < 4) {
-    //       // Too short — do nothing
-    //       return;
-    //     }
-
-    //     // SAVE when selected but not yet (manually) saved
-    //     const countrySelected = document.getElementById(`${prefix}_COUNTRY`).value;
-    //     const icaoSelected = document.getElementById(`${prefix}_ICAO_CITY`).value;
-    //     const icaoName = extract_icao_from_string(icaoSelected);
-    //     const time_dep = document.getElementById('DEPARTURE_clockField')
-
-    //     if (icao === icaoName && countrySelected !== '' && icaoName !== '') {
-    //       const cache_key = `${prefix}_${icaoName}`;
-    //       const json_data = localStorage.getItem(cache_key);
-    //       if (json_data === null) {
-    //         save_aerodrome_to_json(prefix, 'silent');
-    //       }
-    //     }
-
-    //     // Load the aerodrome from json — pass element id as a plain string argument
-    //     window.load_aerodrome_from_json(prefix, `${prefix}_ICAO`);
-    //   });
-    // });
 
     // Update the aerodrome only when the load buttons/icons are clicked (do NOT trigger on clicking the ICAO text fields)
     ['DEPARTURE_LOAD_ICAO', 'ARRIVAL_LOAD_ICAO'].forEach(id => {
@@ -7109,34 +7413,26 @@
 
             // Ensure non-negative numeric value
             if (rawValue < 0 || !Number.isFinite(rawValue)) input.value = 0;
-
-            // Compute fuel on arrival
-            window.computeArrivalFuelPerLeg();
-            // window.computeArrivalFuel();
             // Compute Weight and Balance and update plot
             window.calculateWeightBalance(prefix);
         };
-
         // Trigger on blur
         field.addEventListener("blur", handleWeightInput);
         // Trigger on Enter key
         field.addEventListener('keydown', e => e.key === 'Enter' && handleWeightInput(e));
-        // field.addEventListener("keydown", e => {
-        //   if (e.key === "Enter") handleWeightInput(e);
-        // });
+        // Trigger when value is increased/decreased using the button (arrow keys or spinner)
+        field.addEventListener('input', handleWeightInput);
     });
+
 
 
     function update_aerodrome_weights_js(prefix) {
         console.log('> func: update_aerodrome_weights_js()');
-
         // Access the flight plan data
-        const flight_plan_py = window.flight_plan_data;
         const matching_pairs = aircraft_matching_pairs().toJs();
 
         for (const key in matching_pairs) {
             const [cat, item] = matching_pairs[key];
-
             if (cat === 'WEIGHT') {
                 const keyTarget = `${key.replace('SETTINGS', prefix)}`;
                 const value = window.flight_plan_data['AIRCRAFT'][cat][item];
@@ -7144,11 +7440,7 @@
                 if (element) element.value = value;
                 console.log(`   >Populate GUI field: [${keyTarget}] <- ['AIRCRAFT'][${cat}][${item}]: ${window.flight_plan_data['AIRCRAFT'][cat][item]}`);
             }
-
         }
-        // Compute fuel on arrival
-        // window.computeArrivalFuel();
-        window.computeArrivalFuelPerLeg();
         // Calculate weight and balance
         window.calculateWeightBalance(prefix);
     }
@@ -7190,8 +7482,6 @@
                 element.value = aircraft_js[cat][item];
             }
         }
-        // Comptue fuel on arrival
-        // window.computeArrivalFuel();
         // Calculate weight and balance
         window.calculateWeightBalance('SETTINGS');
     }

@@ -28,6 +28,7 @@ const baseLayers = {
     attribution: "Tiles &copy; Esri",
   }),
 };
+let currentBaseLayer = null;
 
 // Initialize map
 function initRouteMap(initialize = true) {
@@ -52,6 +53,7 @@ function initRouteMap(initialize = true) {
     scrollWheelZoom: true,
     layers: [baseLayers["OpenStreetMap"]], // default layer
   });
+  currentBaseLayer = baseLayers["OpenStreetMap"];
 
   routeMap.setView(bounds, 6);
   UpdateFlightInfoFields(time_dep, false, true); // initialize=false, adjustZoom=false
@@ -60,8 +62,11 @@ function initRouteMap(initialize = true) {
   const layerSelect = document.getElementById("layer-select");
   layerSelect.onchange = function () {
     const selectedLayer = this.value;
-    Object.values(baseLayers).forEach((layer) => routeMap.removeLayer(layer));
-    baseLayers[selectedLayer].addTo(routeMap);
+    if (currentBaseLayer) {
+      routeMap.removeLayer(currentBaseLayer);
+    }
+    currentBaseLayer = baseLayers[selectedLayer] || currentBaseLayer;
+    currentBaseLayer.addTo(routeMap);
   };
 
   // Force resize to render correctly
@@ -1344,6 +1349,22 @@ function isCacheValid(timestamp, maxAgeMinutes = 30) {
   return age < maxAgeMinutes;
 }
 
+// Small helper to throttle async work; prevents UI jank when many stations exist
+async function runWithConcurrency(items, limit, worker) {
+  const results = [];
+  let index = 0;
+  const runners = Array(Math.min(limit, items.length))
+    .fill(null)
+    .map(async () => {
+      while (index < items.length) {
+        const current = items[index++];
+        results.push(await worker(current));
+      }
+    });
+  await Promise.allSettled(runners);
+  return results;
+}
+
 // Function to fetch and display METAR stations on map
 async function addMetarStationsToMap(forceRefresh = false) {
   console.log(`> func: addMetarStationsToMap(forceRefresh=${forceRefresh})`);
@@ -1377,7 +1398,7 @@ async function addMetarStationsToMap(forceRefresh = false) {
   let successCount = 0;
   let errorCount = 0;
 
-  for (const icao of icaoKeys) {
+  const processStation = async (icao) => {
     try {
       const station = metarStations[icao];
       const { lat, lon, country, name } = station;
@@ -1385,7 +1406,7 @@ async function addMetarStationsToMap(forceRefresh = false) {
       if (!lat || !lon) {
         console.warn(`Invalid coordinates for ${icao}`);
         errorCount++;
-        continue;
+        return;
       }
 
       let metarObject;
@@ -1393,17 +1414,15 @@ async function addMetarStationsToMap(forceRefresh = false) {
       // Check cache first
       const cachedData = metarDataCache.get(icao);
       if (!forceRefresh && cachedData && isCacheValid(cachedData.timestamp)) {
-        console.log(`Using cached METAR for ${icao}`);
         metarObject = cachedData.metarObject;
       } else {
         // Fetch fresh METAR data
-        console.log(`Fetching METAR for ${icao}...`);
         const metarData = await fetch_metar(icao);
 
         if (!metarData || metarData.length < 2) {
           console.warn(`No METAR data for ${icao}`);
           errorCount++;
-          continue;
+          return;
         }
 
         const metar_icao = metarData[0];
@@ -1491,7 +1510,10 @@ async function addMetarStationsToMap(forceRefresh = false) {
       console.error(`Error processing METAR for ${icao}:`, error);
       errorCount++;
     }
-  }
+  };
+
+  // Run station fetch/render with limited concurrency to keep UI responsive
+  await runWithConcurrency(icaoKeys, 6, processStation);
 
   console.log(`✅ Added ${successCount} METAR stations to map (${errorCount} errors)`);
 

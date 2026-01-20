@@ -67,145 +67,6 @@ function computeLegInfo({ lat1, lon1, lat2, lon2, cruiseSpeedKt, fuelConsumption
   };
 }
 
-function computeArrivalFuel() {
-  console.log("> func: computeArrivalFuel()");
-  // Get input values
-  let headwind = parseFloat(document.getElementById("DEPARTURE_WIND_HEADWIND")?.value) || 0;
-  let fuelDeparture = parseFloat(document.getElementById("DEPARTURE_WEIGHT_FUEL_LITERS")?.value) || 0;
-
-  // Compute flight distance
-  info = computeFlightInfo(window.waypoints);
-
-  // Aircraft data
-  const aircraft = window.flight_plan_data?.AIRCRAFT;
-  if (!aircraft) return;
-
-  const cruiseSpeed = parseFloat(aircraft.CRUISESPEED) || 0; // in knots
-  const fuelConsumption = parseFloat(aircraft.FUEL?.consumption) || 0; // liters per hour
-
-  // Adjust cruise speed for headwind based on the waypoints
-  // 1. Use the waypoints to compute the headwind for each leg.
-  // 2. Compute per leg the angle
-  // 3. Compute the headwind per leg
-  // 4. compute the time needed per leg
-  // 5. compute the fuel needed per leg
-  // 6. Sum the total fuel burned and substract
-  // the first [lat1, lon1] is departure coordinates and the last [lat-k, lon-k] is the arrival
-
-  // Waypoints are stored like this:
-  // window.waypoints = [[lat1, lon1], [lat2, lon2], .., [lat-k, lon-k]]
-  // const groundSpeed = cruiseSpeed - headwind;
-  // Wind direction and speed (kt) can be get here:
-  // windDirectionFieldDep = document.getElementById("DEPARTURE_WIND_DIRECTION").value;
-  // windSpeedFieldDep = document.getElementById("DEPARTURE_WIND_SPEED"); // in kt
-  // windDirectionFieldArr = document.getElementById("ARRIVAL_WIND_DIRECTION");
-  // windSpeedFieldArr = document.getElementById("ARRIVAL_WIND_SPEED"); // in kt
-  // Compute headwind with:
-  // const headwind_value = headwind(direction, speed, runwayField.value);
-
-  const groundSpeed = cruiseSpeed;
-
-  if (groundSpeed <= 0) {
-    console.warn("Ground speed <= 0! Check headwind or cruise speed.");
-    document.getElementById("ARRIVAL_WEIGHT_FUEL_LITERS").value = "Error";
-    return;
-  }
-
-  // Compute flight distance from window.flight_plan_data (km)
-  const distanceKm = parseFloat(info.distance_km) || 0;
-  // Flight time in hours
-  const flightTimeH = distanceKm / (groundSpeed * 1.852); // knots * 1.852 = km/h
-  // Fuel needed
-  const fuelNeeded = flightTimeH * fuelConsumption;
-  // Remaining fuel
-  const fuelRemaining = fuelDeparture - fuelNeeded;
-  // Update output field
-  console.log(`${flightTimeH}, ${distanceKm}, ${groundSpeed}`);
-  console.log(`${fuelRemaining}, ${fuelDeparture}, ${fuelNeeded}`);
-  document.getElementById("ARRIVAL_WEIGHT_FUEL_LITERS").value = fuelRemaining.toFixed(0);
-
-  // Optionally return the values
-  return {
-    fuelNeeded: fuelNeeded,
-    fuelRemaining: fuelRemaining,
-  };
-}
-
-// function computeArrivalFuelPerLeg() {
-//   console.log("> func: computeArrivalFuel()");
-
-//   const fuelDeparture = parseFloat(document.getElementById("DEPARTURE_WEIGHT_FUEL_LITERS")?.value) || 0;
-
-//   const aircraft = window.flight_plan_data?.AIRCRAFT;
-//   if (!aircraft) return;
-
-//   const cruiseSpeed = parseFloat(aircraft.CRUISESPEED) || 0;
-//   const fuelConsumption = parseFloat(aircraft.FUEL?.consumption) || 0;
-
-//   const waypoints = window.waypoints;
-//   if (!waypoints || waypoints.length < 2) return;
-
-//   // Wind (simple linear interpolation dep → arr)
-//   const windDirDep = parseFloat(document.getElementById("DEPARTURE_WIND_DIRECTION")?.value) || 0;
-//   const windSpdDep = parseFloat(document.getElementById("DEPARTURE_WIND_SPEED")?.value) || 0;
-//   const windDirArr = parseFloat(document.getElementById("ARRIVAL_WIND_DIRECTION")?.value) || windDirDep;
-//   const windSpdArr = parseFloat(document.getElementById("ARRIVAL_WIND_SPEED")?.value) || windSpdDep;
-
-//   let totalFuelBurned = 0;
-//   let totalTimeH = 0;
-
-//   const nLegs = waypoints.length - 1;
-
-//   for (let i = 0; i < nLegs; i++) {
-//     const t = i / Math.max(1, nLegs - 1);
-
-//     const windDir = windDirDep + t * (windDirArr - windDirDep);
-//     const windSpd = windSpdDep + t * (windSpdArr - windSpdDep);
-
-//     const [lat1, lon1] = waypoints[i];
-//     const [lat2, lon2] = waypoints[i + 1];
-
-//     // If any coordinate is missing or empty, return early
-//     if ([lat1, lon1].some((v) => v === undefined || v === null || v === "")) {
-//       return;
-//     }
-//     if ([lat2, lon2].some((v) => v === undefined || v === null || v === "")) {
-//       return;
-//     }
-
-//     const leg = computeLegInfo({
-//       lat1,
-//       lon1,
-//       lat2,
-//       lon2,
-//       cruiseSpeedKt: cruiseSpeed,
-//       fuelConsumptionLph: fuelConsumption,
-//       windDirDeg: windDir,
-//       windSpeedKt: windSpd,
-//     });
-
-//     console.log(`LEG: ${i}`);
-//     console.log(leg);
-
-//     totalFuelBurned += leg.fuelL;
-//     totalTimeH += leg.timeH;
-//   }
-
-//   const fuelRemaining = fuelDeparture - totalFuelBurned;
-
-//   document.getElementById("ARRIVAL_WEIGHT_FUEL_LITERS").value = Math.max(0, fuelRemaining).toFixed(0);
-
-//   console.log(`totalFuelBurned: ${totalFuelBurned}, fuel remaining: ${fuelRemaining}, Total time: ${totalTimeH}`);
-
-//   showFuelMessage("ARRIVAL_fuelMessage", totalFuelBurned, fuelRemaining, totalTimeH, fuelConsumption);
-
-//   return {
-//     fuelBurned: totalFuelBurned,
-//     fuelRemaining: fuelRemaining,
-//     flightTimeH: totalTimeH,
-//   };
-// }
-
 function computeArrivalFuelPerLeg() {
   console.log("> func: computeArrivalFuelPerLeg()");
 
@@ -246,6 +107,7 @@ function computeArrivalFuelPerLeg() {
     console.warn("Invalid coordinates in waypoints - cannot compute fuel");
     document.getElementById("ARRIVAL_WEIGHT_FUEL_LITERS").value = "--";
     const messageDiv = document.getElementById("ARRIVAL_fuelMessage");
+
     if (messageDiv) {
       messageDiv.style.display = "block";
       messageDiv.style.background = "#f8d7da";
@@ -255,7 +117,7 @@ function computeArrivalFuelPerLeg() {
     return;
   }
 
-  // Wind (simple linear interpolation dep → arr)
+  // Wind (linear interpolation dep -> arr)
   const windDirDep = parseFloat(document.getElementById("DEPARTURE_WIND_DIRECTION")?.value) || 0;
   const windSpdDep = parseFloat(document.getElementById("DEPARTURE_WIND_SPEED")?.value) || 0;
   const windDirArr = parseFloat(document.getElementById("ARRIVAL_WIND_DIRECTION")?.value) || windDirDep;
@@ -263,15 +125,12 @@ function computeArrivalFuelPerLeg() {
 
   let totalFuelBurned = 0;
   let totalTimeH = 0;
-
   const nLegs = waypoints.length - 1;
 
   for (let i = 0; i < nLegs; i++) {
     const t = i / Math.max(1, nLegs - 1);
-
     const windDir = windDirDep + t * (windDirArr - windDirDep);
     const windSpd = windSpdDep + t * (windSpdArr - windSpdDep);
-
     const [lat1, lon1] = waypoints[i];
     const [lat2, lon2] = waypoints[i + 1];
 
@@ -287,8 +146,9 @@ function computeArrivalFuelPerLeg() {
         windSpeedKt: windSpd,
       });
 
+      // Show per leg
       console.log(`LEG ${i}:`, leg);
-
+      // Add to total
       totalFuelBurned += leg.fuelL;
       totalTimeH += leg.timeH;
     } catch (error) {
@@ -297,14 +157,21 @@ function computeArrivalFuelPerLeg() {
     }
   }
 
+  // Compute remaining fuell
   const fuelRemaining = fuelDeparture - totalFuelBurned;
+  // Store remaining fuel into Arrival if the checkbox is not set
+  const arrCheckbox = document.getElementById("ARRIVAL_WEIGHT_CHECKBOX");
+  if (arrCheckbox.checked) {
+    document.getElementById("ARRIVAL_WEIGHT_FUEL_LITERS").value = Math.max(0, fuelRemaining).toFixed(0);
+  }
 
-  document.getElementById("ARRIVAL_WEIGHT_FUEL_LITERS").value = Math.max(0, fuelRemaining).toFixed(0);
-
+  // Show message
   console.log(`totalFuelBurned: ${totalFuelBurned}, fuel remaining: ${fuelRemaining}, Total time: ${totalTimeH}`);
-
+  // Create information text for GUI
   showFuelMessage("ARRIVAL_fuelMessage", totalFuelBurned, fuelRemaining, totalTimeH, fuelConsumption);
+  showFuelMessage("DEPARTURE_fuelMessage", totalFuelBurned, fuelRemaining, totalTimeH, fuelConsumption);
 
+  // Return
   return {
     fuelBurned: totalFuelBurned,
     fuelRemaining: fuelRemaining,
@@ -441,26 +308,24 @@ function computeFlightInfo(waypoints, departureTimeHHMM = null, speedKt = 105) {
   const speedKmH = speedKt * 1.852;
   const timeHours = totalDistanceKm / speedKmH;
   const timeMinutes = Math.round(timeHours * 60);
-
-  // Calculate departure and arrival times
   let departureTime = "--:--";
   let arrivalTime = "--:--";
-
+  // Set defaults
   if (departureTimeHHMM === null || departureTimeHHMM === undefined || departureTimeHHMM === "") {
     departureTimeHHMM = "00:00";
   }
 
+  // Calculate departure and arrival times
   if (departureTimeHHMM && typeof departureTimeHHMM === "string" && departureTimeHHMM.includes(":")) {
     try {
       const [depH, depM] = departureTimeHHMM.split(":").map(Number);
       if (!isNaN(depH) && !isNaN(depM)) {
         const depDate = new Date();
-        depDate.setHours(depH, depM, 0, 0);
-        depDate.setMinutes(depDate.getMinutes() + timeMinutes);
-
         const arrH = String(depDate.getHours()).padStart(2, "0");
         const arrM = String(depDate.getMinutes()).padStart(2, "0");
-
+        // Set times
+        depDate.setHours(depH, depM, 0, 0);
+        depDate.setMinutes(depDate.getMinutes() + timeMinutes);
         departureTime = departureTimeHHMM;
         arrivalTime = `${arrH}:${arrM}`;
       }
@@ -485,6 +350,6 @@ function computeFlightInfo(waypoints, departureTimeHHMM = null, speedKt = 105) {
 /* =========================
    GLOBAL EXPORTS
 ========================= */
-window.computeArrivalFuel = computeArrivalFuel;
+// window.computeArrivalFuel = computeArrivalFuel;
 window.computeArrivalFuelPerLeg = computeArrivalFuelPerLeg;
 window.computeFlightInfo = computeFlightInfo;

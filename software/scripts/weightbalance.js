@@ -65,9 +65,10 @@ function calculateWeightBalance(prefix) {
     ARRIVAL_weightBalanceChart = updateWeightBalancePlot(prefix, "ARRIVAL_weightBalanceChart", "ARRIVAL_envelopeMessage");
   } else if (prefix === "SETTINGS") {
     // Only draw the envelope
-    // SETTINGS_weightBalanceChart = updateWeightBalancePlot(prefix, "SETTINGS_weightBalanceChart", "", false);
     SETTINGS_weightBalanceChart = updateWeightBalancePlot(prefix, "SETTINGS_weightBalanceChart", "SETTINGS_envelopeMessage");
   }
+  // Compute Fuel and show message
+  computeArrivalFuelPerLeg();
 }
 
 /* =========================
@@ -115,8 +116,10 @@ function showEnvelopeMessage(isInside, pointX, pointY, messageId) {
 function updateWeightBalancePlot(prefix, canvasId, messageId, showCG = true, marker_y_override = null) {
   const canvas = document.getElementById(canvasId);
   const ctx = canvas.getContext("2d");
+  let marker_x = 0;
+  let marker_y = 0;
 
-  // 🔥 Destroy any chart already attached to this canvas
+  // Destroy any chart already attached to this canvas
   const existingChart = Chart.getChart(canvas);
   if (existingChart) {
     existingChart.destroy();
@@ -125,14 +128,13 @@ function updateWeightBalancePlot(prefix, canvasId, messageId, showCG = true, mar
   // Envelope coordinates
   const xcoord = ["x1", "x2", "x3", "x4", "x5"].map((id) => parseFloat(document.getElementById(id).value) || 0);
   const ycoord = ["y1", "y2", "y3", "y4", "y5"].map((id) => parseFloat(document.getElementById(id).value) || 0);
-  // Declare marker variables BEFORE the if block
-  let marker_x = 0;
-  let marker_y = 0;
 
+  // Show the aircraft in the envellope as red star
   if (messageId && showCG) {
     marker_x = parseFloat(document.getElementById(`${prefix}_takeoff_cg`).value) || 0;
     marker_y = marker_y_override !== null ? marker_y_override : parseFloat(document.getElementById(`${prefix}_total_weight`).value) || 0;
     const isInside = isPointInPolygon(xcoord, ycoord, marker_x, marker_y);
+    // Show info about weight and balance
     showEnvelopeMessage(isInside, marker_x, marker_y, messageId);
   }
 
