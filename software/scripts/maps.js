@@ -1734,6 +1734,7 @@ function UpdateFlightInfoFields(timeValue = null, initialize = true, adjustZoom 
   // Initialize "MAP" and update route, this will fill the window.waypoints array
   initRouteMap(initialize);
   updateRoute(adjustZoom); // Pass adjustZoom parameter to control zoom behavior
+  computeArrivalFuelPerLeg();
 
   // Compute the flight info
   const info = computeFlightInfo(window.waypoints, timeValue);
@@ -1751,13 +1752,11 @@ function UpdateFlightInfoFields(timeValue = null, initialize = true, adjustZoom 
   if (info.departure_time !== "--:--") {
     document.getElementById("departure-time").textContent = info.departure_time;
   }
-
   if (info.arrival_time !== "--:--") {
     document.getElementById("ARRIVAL_clockField").value = info.arrival_time;
     document.getElementById("arrival-time").textContent = info.arrival_time;
   }
 }
-
 // Add event listener for METAR toggle
 document.addEventListener("DOMContentLoaded", () => {
   const metarCheckbox = document.getElementById("metar-toggle");

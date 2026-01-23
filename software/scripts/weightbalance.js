@@ -69,6 +69,8 @@ function calculateWeightBalance(prefix) {
   }
   // Compute Fuel and show message
   computeArrivalFuelPerLeg();
+  // Update colors of the Weight and Balance menu
+  colorWeightBalanceMenu(prefix);
 }
 
 /* =========================

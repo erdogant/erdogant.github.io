@@ -22,6 +22,12 @@ function computeHeadwind(trackDeg, windDirDeg, windSpeedKt) {
   return windSpeedKt * Math.cos(angle); // + headwind, − tailwind
 }
 
+function computeCrosswind(trackDeg, windDirDeg, windSpeedKt) {
+  const angle = toRad(windDirDeg - trackDeg);
+  let crosswindComponent = Math.sin(angle) * windSpeedKt;
+  return crosswindComponent;
+}
+
 function computeLegInfo({ lat1, lon1, lat2, lon2, cruiseSpeedKt, fuelConsumptionLph, windDirDeg, windSpeedKt }) {
   /* Compute fuel per leg
 
@@ -36,14 +42,21 @@ function computeLegInfo({ lat1, lon1, lat2, lon2, cruiseSpeedKt, fuelConsumption
   Compute fuel
   Sum fuel burned and subtract from departure fuel
   */
+  let groundSpeed = 0;
+  let wcaDeg = 0;
+  let heading = 0;
+  let fuelL = 0;
+  let timeH = 0;
 
   const bearing = computeBearing(lat1, lon1, lat2, lon2);
-
   const headwind = computeHeadwind(bearing, windDirDeg, windSpeedKt);
-  const groundSpeed = cruiseSpeedKt - headwind;
-
-  if (groundSpeed <= 0) {
-    throw new Error("Ground speed <= 0 on leg");
+  const crosswind = computeCrosswind(bearing, windDirDeg, windSpeedKt);
+  if (cruiseSpeedKt > 0) {
+    groundSpeed = cruiseSpeedKt - headwind;
+    // Wind correction angle (radians)
+    wcaRad = Math.asin(Math.max(-1, Math.min(1, crosswind / cruiseSpeedKt)));
+    wcaDeg = (wcaRad * 180) / Math.PI;
+    heading = (bearing + wcaDeg + 360) % 360;
   }
 
   // Distance (km)
@@ -53,13 +66,17 @@ function computeLegInfo({ lat1, lon1, lat2, lon2, cruiseSpeedKt, fuelConsumption
   const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   const distanceKm = R * c;
-
-  const timeH = distanceKm / (groundSpeed * 1.852);
-  const fuelL = timeH * fuelConsumptionLph;
+  if (groundSpeed > 0) {
+    timeH = distanceKm / (groundSpeed * 1.852);
+    fuelL = timeH * fuelConsumptionLph;
+  }
 
   return {
-    bearing,
+    bearing, // where you want to go (over the ground)
+    heading, // heading to fly
+    wcaDeg, // wind correction angle - Correction in degrees
     headwind,
+    crosswind,
     groundSpeed,
     distanceKm,
     timeH,
@@ -126,6 +143,7 @@ function computeArrivalFuelPerLeg() {
   let totalFuelBurned = 0;
   let totalTimeH = 0;
   const nLegs = waypoints.length - 1;
+  const legsInfo = [];
 
   for (let i = 0; i < nLegs; i++) {
     const t = i / Math.max(1, nLegs - 1);
@@ -146,8 +164,15 @@ function computeArrivalFuelPerLeg() {
         windSpeedKt: windSpd,
       });
 
+      // Store leg info together with the starting waypoint
+      legsInfo.push({
+        ...leg,
+        LatLonStart: [parseFloat(lat1), parseFloat(lon1)],
+        LatLonStop: [parseFloat(lat2), parseFloat(lon2)],
+      });
+
       // Show per leg
-      console.log(`LEG ${i}:`, leg);
+      // console.log(`LEG ${i}:`, leg);
       // Add to total
       totalFuelBurned += leg.fuelL;
       totalTimeH += leg.timeH;
@@ -156,6 +181,9 @@ function computeArrivalFuelPerLeg() {
       return;
     }
   }
+  // Store the leg info
+  window.leginfo = legsInfo;
+  console.log(window.leginfo);
 
   // Compute remaining fuell
   const fuelRemaining = fuelDeparture - totalFuelBurned;
@@ -179,11 +207,35 @@ function computeArrivalFuelPerLeg() {
   };
 }
 
+function colorWeightBalanceMenu(prefix) {
+  const elementWB = document.getElementById(`${prefix}_WB_MENU`);
+  const messageDivFuel = document.getElementById(`${prefix}_fuelMessage`);
+  const messageDivWB = document.getElementById(`${prefix}_envelopeMessage`);
+  let icon = "";
+  let color = "#E9E9E9";
+
+  if (messageDivWB && messageDivWB.innerHTML.toLowerCase().includes("outside")) {
+    icon = "⚠";
+    color = "#ffeb3b";
+  }
+  if (messageDivFuel && messageDivFuel.innerHTML.toLowerCase().includes("insufficient")) {
+    icon = icon + "⛽";
+    color = "#ffeb3b";
+  } else if (messageDivFuel && messageDivFuel.innerHTML.toLowerCase().includes("below")) {
+    icon = icon + "⛽";
+    color = "#ffeb3b";
+  }
+
+  if (elementWB) {
+    elementWB.style.backgroundColor = color;
+    elementWB.textContent = `${icon} WEIGHT AND BALANCE`;
+  }
+}
+
 function showFuelMessage(messageId, totalFuelBurned, fuelRemaining, totalTimeH, fuelConsumption) {
   const messageDiv = document.getElementById(messageId);
-  if (!messageDiv) return;
-
   messageDiv.style.display = "block";
+  if (!messageDiv) return;
 
   const burned = Number(totalFuelBurned) || 0;
   const remaining = Number(fuelRemaining) || 0;
@@ -195,7 +247,7 @@ function showFuelMessage(messageId, totalFuelBurned, fuelRemaining, totalTimeH, 
   const reserveLimitH = 0.75; // 45 minutes
 
   // ❌ Not enough fuel to arrive
-  if (remaining < 0) {
+  if (remaining <= 0) {
     messageDiv.style.background = "#f8d7da";
     messageDiv.style.color = "#721c24";
     messageDiv.style.border = "1px solid #f5c6cb";
@@ -306,8 +358,8 @@ function computeFlightInfo(waypoints, departureTimeHHMM = null, speedKt = 105) {
 
   // Calculate time
   const speedKmH = speedKt * 1.852;
-  const timeHours = totalDistanceKm / speedKmH;
-  const timeMinutes = Math.round(timeHours * 60);
+  const flyingTimeHours = totalDistanceKm / speedKmH;
+  const flyingTimeMin = Math.round(flyingTimeHours * 60);
   let departureTime = "--:--";
   let arrivalTime = "--:--";
   // Set defaults
@@ -321,11 +373,10 @@ function computeFlightInfo(waypoints, departureTimeHHMM = null, speedKt = 105) {
       const [depH, depM] = departureTimeHHMM.split(":").map(Number);
       if (!isNaN(depH) && !isNaN(depM)) {
         const depDate = new Date();
-        const arrH = String(depDate.getHours()).padStart(2, "0");
-        const arrM = String(depDate.getMinutes()).padStart(2, "0");
-        // Set times
-        depDate.setHours(depH, depM, 0, 0);
-        depDate.setMinutes(depDate.getMinutes() + timeMinutes);
+        depDate.setHours(depH, depM, 0, 0); // Sets to 00:00
+        depDate.setMinutes(depDate.getMinutes() + flyingTimeMin); // Adds 21 minutes → 00:21
+        const arrH = String(depDate.getHours()).padStart(2, "0"); // ✅ Now gets 00
+        const arrM = String(depDate.getMinutes()).padStart(2, "0"); // ✅ Now gets 21
         departureTime = departureTimeHHMM;
         arrivalTime = `${arrH}:${arrM}`;
       }
@@ -337,7 +388,7 @@ function computeFlightInfo(waypoints, departureTimeHHMM = null, speedKt = 105) {
   // Build result object
   const result = {
     distance_km: (isNaN(totalDistanceKm) ? 0 : totalDistanceKm).toFixed(1),
-    flying_time_min: isNaN(timeMinutes) ? 0 : timeMinutes,
+    flying_time_min: isNaN(flyingTimeMin) ? 0 : flyingTimeMin,
     departure_time: departureTime,
     arrival_time: arrivalTime,
   };
@@ -353,3 +404,4 @@ function computeFlightInfo(waypoints, departureTimeHHMM = null, speedKt = 105) {
 // window.computeArrivalFuel = computeArrivalFuel;
 window.computeArrivalFuelPerLeg = computeArrivalFuelPerLeg;
 window.computeFlightInfo = computeFlightInfo;
+window.colorWeightBalanceMenu = colorWeightBalanceMenu;
