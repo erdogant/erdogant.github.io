@@ -1,4 +1,4 @@
-const CACHE_NAME = "skywalk-v0.9";
+const CACHE_NAME = "skywalk-v0.1";
 
 const FILES_TO_CACHE = [
   "./main.html",

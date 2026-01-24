@@ -1,3 +1,67 @@
+function getCountryForIcao(icao) {
+  console.log("> func: getIcaoByIcao()");
+  const cache_key = "ICAO_LOOKUP_TABLE";
+  try {
+    const cached = localStorage.getItem(cache_key);
+    if (cached) {
+      // Parse and verify it's valid
+      const ICAO_LOOKUP = JSON.parse(cached);
+      console.log(`   >Loading cached lookup from lookup ${cache_key}`);
+      const getICAO = ICAO_LOOKUP[icao?.toUpperCase().trim()] || null;
+      return getICAO;
+    }
+  } catch (e) {
+    console.info(`   >Cache invalid or empty, creating new ICAO lookup table`);
+  }
+}
+
+async function initIcaoLookup(url, countries = [], loadCache = true) {
+  console.log("> func: initIcaoLookup()");
+  const cache_key = "ICAO_LOOKUP_TABLE";
+
+  if (loadCache) {
+    try {
+      const cached = localStorage.getItem(cache_key);
+      if (cached) {
+        // Parse and verify it's valid
+        const ICAO_LOOKUP = JSON.parse(cached);
+        console.log(`   >Loading cached lookup from ${cache_key}`);
+        return;
+      }
+    } catch (e) {
+      console.info(`   >Cache invalid or empty, creating new ICAO lookup table`);
+    }
+  }
+
+  const allowed = new Set(countries);
+  const response = await fetch(url);
+  const text = await response.text();
+  const lines = text.trim().split("\n");
+  const headers = lines[0].split(";");
+  const ICAO_LOOKUP = {};
+
+  for (let i = 1; i < lines.length; i++) {
+    const values = lines[i].split(";");
+    if (values.length !== headers.length) continue;
+    if (countries.length > 0 && !allowed.has(values[0])) continue;
+
+    const row = {};
+    headers.forEach((h, idx) => {
+      row[h] = values[idx];
+    });
+
+    const icao = row.icao?.toUpperCase().trim();
+    if (icao) {
+      ICAO_LOOKUP[icao] = row;
+    }
+  }
+
+  console.log(`   >Saving cached lookup: ${cache_key}`);
+  // Convert object to JSON string before saving
+  localStorage.setItem(cache_key, JSON.stringify(ICAO_LOOKUP));
+  return;
+}
+
 function updateFlag(prefix, countryCode) {
   /**
    * Update a flag image element by country code (2-letter ISO).
@@ -109,7 +173,72 @@ function syncWeightCheckboxesAndFields(triggerId) {
   }
 }
 
+// ======================== CONFIG COUNTRIES SELECTION ===========================
+
+function moveCountries(fromId, toId) {
+  const fromSelect = document.getElementById(fromId);
+  const toSelect = document.getElementById(toId);
+
+  const selectedOptions = Array.from(fromSelect.selectedOptions);
+
+  if (selectedOptions.length === 0) {
+    return;
+  }
+
+  selectedOptions.forEach((option) => {
+    // Remove the hidden attribute when moving
+    option.style.display = "";
+    toSelect.appendChild(option);
+  });
+
+  // Sort options alphabetically
+  sortSelect(toSelect);
+
+  // Clear search filters
+  if (fromId === "available-countries") {
+    document.getElementById("search-available").value = "";
+    filterCountry("available-countries", "");
+  } else {
+    document.getElementById("search-selected").value = "";
+    filterCountry("selected-countries", "");
+  }
+}
+
+function sortSelect(selectElement) {
+  const options = Array.from(selectElement.options);
+  options.sort((a, b) => a.text.localeCompare(b.text));
+  selectElement.innerHTML = "";
+  options.forEach((option) => selectElement.appendChild(option));
+}
+
+function filterCountry(selectId, searchText) {
+  const select = document.getElementById(selectId);
+  const options = select.options;
+  const search = searchText.toLowerCase();
+
+  for (let i = 0; i < options.length; i++) {
+    const option = options[i];
+    const text = option.text.toLowerCase();
+    const value = option.value.toLowerCase();
+
+    if (text.includes(search) || value.includes(search)) {
+      option.style.display = "";
+    } else {
+      option.style.display = "none";
+    }
+  }
+}
+
+function getSelectedCountries() {
+  const selected = document.getElementById("selected-countries");
+  return Array.from(selected.options).map((opt) => opt.value);
+}
+
 // Make it globally accessible
 window.updateFlag = updateFlag;
 window.createDateTime = createDateTime;
 window.syncWeightCheckboxesAndFields = syncWeightCheckboxesAndFields;
+window.initIcaoLookup = initIcaoLookup;
+window.getCountryForIcao = getCountryForIcao;
+window.moveCountries = moveCountries;
+window.filterCountry = filterCountry;

@@ -1,12 +1,48 @@
+<!--
+SkyWalk Application
+
+Copyright (c) 2025 Erdogan Taskesen
+Author: Erdogan Taskesen
+
+License: Non-Commercial Source-Available License
+
+Permission is hereby granted to use, copy, and modify this software
+for non-commercial purposes only.
+
+Commercial use is strictly prohibited without prior written permission
+from the author. Commercial use includes, but is not limited to:
+- Use by for-profit entities
+- Internal business use
+- Software-as-a-Service (SaaS)
+- Consulting, client work, or service delivery
+- Redistribution as part of a paid product
+- Resale or monetization in any form
+
+Any commercial use requires an explicit, separate commercial license
+obtained from the author.
+
+DISCLAIMER OF WARRANTY AND LIABILITY
+
+This software is provided "AS IS", without warranty of any kind,
+express or implied, including but not limited to the warranties of
+merchantability, fitness for a particular purpose, accuracy, or
+non-infringement.
+
+The entire risk arising out of the use or performance of this software
+is assumed by the user. In no event shall the author be liable for any
+claim, damages, or other liability, whether in an action of contract,
+tort, or otherwise, arising from, out of, or in connection with the
+software or the use or other dealings in the software.
+
+Non-commercial use includes academic, educational, and personal use.
+
+Contact:
+For commercial licensing requests, contact:
+<motel_voluten_7n@icloud.com>
+-->
+
 <!DOCTYPE html>
 <html lang="en">
-
-<!--
-    This is the JavaScript widget for SkyWalk.
-    @copyright Copyright (c) 2025 Erdogan Taskesen
-    @license
-    @author Erdogan Taskesen <erdogant@gmail.com>
--->
 
 <head>
     <meta charset="UTF-8">
@@ -106,6 +142,23 @@
         <!--CHECK FOR UPDATES-->
         <button id="updateBtn" onclick="updateApp()">Check for updates</button>
         <!--<script src="app.js"></script>-->
+
+        <label_h1>Disclaimer</label_h1>
+        <div class="disclaimer" style="margin-bottom: 20px; border: 2px solid red; border-radius: 10px; padding: 10px;">
+            SkyWalk is provided "AS IS", without warranty of any kind,
+            express or implied, including but not limited to the warranties of
+            merchantability, fitness for a particular purpose, accuracy, or
+            non-infringement.
+
+            The entire risk arising out of the use or performance of this software
+            is assumed by the user. In no event shall the author be liable for any
+            claim, damages, or other liability, whether in an action of contract,
+            tort, or otherwise, arising from, out of, or in connection with the
+            software or the use or other dealings in the software.
+
+            Skywalk is for academic, educational, and personal use only.
+            Commercial use is strictly prohibited without prior written permission from the author.
+        </div>
 
 	</div>
 
@@ -1330,31 +1383,6 @@
 
     <div id="ATC" class="tabcontent">
 
-        <!-- ATC -->
-        <label_h1>Display Settings</label_h1>
-
-        <!--<div class="border-round-eged">-->
-            <div class="wind-grid">
-                <div class="tile">
-                    <select id="atc_fontsize" class="tile-value-dropdown">
-                        <option value="small">Small</option>
-                        <option value="medium">Medium</option>
-                        <option value="large" selected>Large</option>
-                        <option value="xl">Extra Large</option>
-                        <option value="xxl">XXL</option>
-                    </select>
-                    <span class="tile-label">Choose Font Size</span>
-                </div>
-                <div class="tile">
-                    <select id="atc_columns" class="tile-value-dropdown">
-                        <option value="1">1</option>
-                        <option value="2" selected>2</option>
-                        <option value="3">3</option>
-                    </select>
-                    <span class="tile-label">Choose Columns</span>
-                </div>
-            </div>
-
         <label_h1>Required Fields</label_h1>
         <div style="border: 1px solid lightgrey; border-radius: 10px; padding: 10px;">
             <div id="bottom-container">
@@ -1366,7 +1394,33 @@
        <label_h1>Air Traffic Control (ATC)</label_h1>
 
        <div style="border: 1px solid lightgrey; border-radius: 10px; padding: 10px;">
-           <div class="button-row">
+
+            <div class="wind-grid">
+                 <div class="tile", style="border: none">
+                     <select id="atc_fontsize" class="tile-value-dropdown">
+                         <option value="small">Small</option>
+                         <option value="medium">Medium</option>
+                         <option value="large" selected>Large</option>
+                         <option value="xl">Extra Large</option>
+                         <option value="xxl">XXL</option>
+                     </select>
+                     <span class="tile-label">Choose Font Size</span>
+                </div>
+                <div class="tile", style="border: none">
+                    <select id="atc_columns" class="tile-value-dropdown">
+                        <option value="1">1</option>
+                        <option value="2" selected>2</option>
+                        <option value="3">3</option>
+                    </select>
+                    <span class="tile-label">Choose Columns</span>
+                </div>
+            </div>
+
+
+
+            <div class="divider-general-section" style="background: #f5f5f5;"></div>
+
+            <div class="button-row">
                <button id="BTN_HTML_SUMMARY">Summary ATC</button>
                 <button id="BTN_HTML_SUMMARY_REV">Reverse</button>
             </div>
@@ -1388,21 +1442,20 @@
 
 
 
-
     <!-- =============== TAB MAP =============== -->
     <div id="MAP" class="tabcontent">
         <label_h1>MAP</label_h1>
 
-        <div class="wind-grid">
-            <select id="layer-select" class="tile-value-dropdown">
-                <option value="OpenStreetMap">OpenStreetMap</option>
-                <option value="EsriWorldStreetMap">EsriWorldStreetMap</option>
-                <option value="CartoVoyager">CartoVoyager</option>
-                <option value="EsriWorldImagery">EsriWorldImagery</option>
-            </select>
-        </div>
-
         <div class="border-round-eged">
+            <div class="wind-grid">
+                <select id="layer-select" class="tile-value-dropdown">
+                    <option value="OpenStreetMap">OpenStreetMap</option>
+                    <option value="EsriWorldStreetMap">EsriWorldStreetMap</option>
+                    <option value="CartoVoyager">CartoVoyager</option>
+                    <option value="EsriWorldImagery">EsriWorldImagery</option>
+                </select>
+            </div>
+
             <div class="button-row">
                 <label>
                     <input type="checkbox" id="aviation-toggle" checked> Show Airports
@@ -1439,21 +1492,22 @@
                     🔄 Refresh
                 </button>
             </div>
+        </div>
 
-            <!--<div class="button-row">
-                <label>
-                    <input type="checkbox" id="metar-toggle"> Show METAR Stations
-                </label>
-            </div>-->
-
-            <!--<div class="button-row">
-                <button id="BTN-METAR-RETRIEVE" class="button-style"
-                    onclick="window.retrieveMetars();"
-                    title="Retrieve all METAR for the selected countries"
-                    style="transition: background-color 0.3s; z-index: 1; background-color: #006280; border: 1px solid #333333; color: #ffffff; cursor: pointer;">
-                    Retrieve METAR
-                </button>
-            </div>-->
+        <div class="border-round-eged">
+            <div class="divider-general-section">
+                <svg class="divider-plane" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#666" d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+                </svg>
+            </div>
+            <div class="distance-section">
+                <div class="distance-info">
+                    <span style="white-space: nowrap;"><span id="distance-km">0</span> km</span> |
+                    <span style="white-space: nowrap;"><span id="flying-minutes">0</span> min</span> |
+                    <span id="departure-time">--:--</span> →
+                    <span id="arrival-time">--:--</span>
+                </div>
+            </div>
         </div>
 
         <div id="map-container" style="height: 500px;">
@@ -1470,17 +1524,11 @@
             </div>
         </div>
 
-        <div id="flight-info" style="margin-top: 10px; font-family: sans-serif; font-size: 14px; background: #f5f5f5; padding: 8px; border-radius: 6px;">
-            <div>Distance: <span id="distance-km">0</span> km</div>
-            <div>Flying time: <span id="flying-minutes">0</span> min</div>
-            <div>Time Departure: <span id="departure-time">--:--</span></div>
-            <div>Time Arrival: <span id="arrival-time">--:--</span></div>
+        <div class="border-round-eged">
+            <div class="disclaimer">
+                The airspace projections on the map are based on data that can be outdated or inaccurate. Do not navigate using the map but only use it for educational purposes.
+            </div>
         </div>
-
-        <label_h1>Warning</label_h1>
-        <div class="warning" style="margin-bottom: 20px; border: 2px solid orange; border-radius: 10px; padding: 10px;">The airspace projections on the map are based on data that can be outdated or inaccurate. Do not navigate using the map but only use it for educational purposes.</div>
-
-
 
     </div>
 
@@ -1489,16 +1537,82 @@
     <div id="Config" class="tabcontent">
         <!-- CONFIGURATIONS -->
         <label_h1>Information</label_h1>
-        <div class="info" style="margin-bottom: 20px;">SkyWalk is a web-based tool designed to help pilots communicate effectively with Air Traffic Control (ATC). The app is free for use, is for educational purposes and does not require any registration or login. If you enjoy using SkyWalk, please consider supporting by donating a coffee.</div>
+        <div class="border-round-eged">
+            <div class="info" style="margin-bottom: 20px;">SkyWalk is a web-based tool designed to help pilots communicate effectively with Air Traffic Control (ATC). The app is free for use, is for educational purposes and does not require any registration or login. If you enjoy using SkyWalk, please consider supporting by donating a coffee.</div>
+        </div>
+
+
+
+        <div class="border-round-eged">
+            <label style="display: block; margin-bottom: 10px; font-weight: bold; color: #333;">Select countries of interest</label>
+
+            <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 15px; align-items: center;">
+                <!-- Available Countries -->
+                <div>
+                    <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #666;">Available</label>
+                    <input type="text" id="search-available" placeholder="Search..."
+                        style="width: 100%; padding: 8px; border: 2px solid #e0e0e0; border-radius: 6px; margin-bottom: 8px; font-size: 14px; box-sizing: border-box;"
+                        oninput="filterCountry('available-countries', this.value)">
+
+                    <select id="available-countries" size="10" multiple
+                        style="width: 100%; padding: 5px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px;">
+                        <option value="NL">🇳🇱 Netherlands</option>
+                        <option value="BE">🇧🇪 Belgium</option>
+                        <option value="DE">🇩🇪 Germany</option>
+                        <option value="FR">🇫🇷 France</option>
+                        <option value="GB">🇬🇧 United Kingdom</option>
+                        <option value="ES">🇪🇸 Spain</option>
+                        <option value="IT">🇮🇹 Italy</option>
+                        <option value="PL">🇵🇱 Poland</option>
+                        <option value="AT">🇦🇹 Austria</option>
+                        <option value="CH">🇨🇭 Switzerland</option>
+                        <option value="DK">🇩🇰 Denmark</option>
+                        <option value="SE">🇸🇪 Sweden</option>
+                        <option value="NO">🇳🇴 Norway</option>
+                        <option value="FI">🇫🇮 Finland</option>
+                        <option value="CZ">🇨🇿 Czech Republic</option>
+                        <option value="PT">🇵🇹 Portugal</option>
+                        <option value="IE">🇮🇪 Ireland</option>
+                        <option value="GR">🇬🇷 Greece</option>
+                    </select>
+                </div>
+
+                <!-- Arrow Buttons -->
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <button onclick="moveCountries('available-countries', 'selected-countries')"
+                        style="width: 50px; height: 40px; background: #4CAF50; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 20px;"
+                        title="Add selected countries">
+                        →
+                    </button>
+                    <button onclick="moveCountries('selected-countries', 'available-countries')"
+                        style="width: 50px; height: 40px; background: #f44336; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 20px;"
+                        title="Remove selected countries">
+                        ←
+                    </button>
+                </div>
+
+                <!-- Selected Countries -->
+                <div>
+                    <label style="display: block; margin-bottom: 8px; font-size: 13px; color: #666;">Selected</label>
+                    <input type="text" id="search-selected" placeholder="Search..."
+                        style="width: 100%; padding: 8px; border: 2px solid #e0e0e0; border-radius: 6px; margin-bottom: 8px; font-size: 14px; box-sizing: border-box;"
+                        oninput="filterCountry('selected-countries', this.value)">
+                    <select id="selected-countries" size="10" multiple
+                        style="width: 100%; padding: 5px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px; background: #f8f9fa;">
+                    </select>
+                </div>
+            </div>
+        </div>
+
+
 
         <label_h1>Cleaning</label_h1>
-        <div class="button-row" style="margin-top: 20px;">
-            <button id="clear_cache_btn" style="background-color: #ff4444; color: white; cursor: pointer;">Clear Cache</button>
+        <div class="border-round-eged">
+            <div class="warning" style="margin-bottom: 20px;">Warning: This will permanently delete all saved flightplans and aerodrome images from your local browser storage. The reason for using this is when you want to start fresh or when you suspect that your flightplans or images are corrupted or the ATC page does not show or update. This action cannot be undone.</div>
+            <div class="button-row" style="margin-top: 20px;">
+                <button id="clear_cache_btn" style="background-color: #ff4444; color: white; cursor: pointer;">Clear Cache</button>
+            </div>
         </div>
-        <div class="warning" style="margin-bottom: 20px;">Warning: This will permanently delete all saved flightplans and aerodrome images from your local browser storage. The reason for using this is when you want to start fresh or when you suspect that your flightplans or images are corrupted or the ATC page does not show or update. This action cannot be undone.</div>
-
-        <label_h1>Disclaimer</label_h1>
-         <div class="disclaimer" style="margin-bottom: 20px; border: 2px solid red; border-radius: 10px; padding: 10px;">SkyWalk is provided “as is,” without any warranties, express or implied. SkyWalk is intended for educational use. The developers assume no liability for any damages arising from using this application.</div>
 
     </div>
 
@@ -1965,23 +2079,23 @@
                     </div>
 
                     <div class="wind-grid">
-                        <input type="number" id="takeoff_headwind_kts_0" value="0", min="0">
-                        <input type="number" id="takeoff_headwind_cor_0" value="0.85" min="0" step="0.05">
+                        <input type="number" id="takeoff_headwind_kts_0" value="", min="0">
+                        <input type="number" id="takeoff_headwind_cor_0" value="" min="0" step="0.05">
                     </div>
 
                     <div class="wind-grid">
-                        <input type="number" id="takeoff_headwind_kts_1" value="10", min="0">
-                        <input type="number" id="takeoff_headwind_cor_1" value="0.85" min="0" step="0.05">
+                        <input type="number" id="takeoff_headwind_kts_1" value="", min="0">
+                        <input type="number" id="takeoff_headwind_cor_1" value="" min="0" step="0.05">
                     </div>
 
                     <div class="wind-grid">
-                        <input type="number" id="takeoff_headwind_kts_2" value="20", min="0">
-                        <input type="number" id="takeoff_headwind_cor_2" value="0.65" min="0" step="0.05">
+                        <input type="number" id="takeoff_headwind_kts_2" value="", min="0">
+                        <input type="number" id="takeoff_headwind_cor_2" value="" min="0" step="0.05">
                     </div>
 
                     <div class="wind-grid">
-                        <input type="number" id="takeoff_headwind_kts_3" value="30", min="0">
-                        <input type="number" id="takeoff_headwind_cor_3" value="0.55" min="0" step="0.05">
+                        <input type="number" id="takeoff_headwind_kts_3" value="", min="0">
+                        <input type="number" id="takeoff_headwind_cor_3" value="" min="0" step="0.05">
                     </div>
 
                     <div class="divider"></div>
@@ -1991,10 +2105,11 @@
                         <div class="input-label" style="text-align: center;">Correction Factor</div>
                     </div>
                     <div class="wind-grid">
-                        <input type="number" id="takeoff_tailwind_kts" value="2" min="0" step="1">
-                        <input type="number" id="takeoff_tailwind_cor" value="1.1" min="0" step="0.05">
+                        <input type="number" id="takeoff_tailwind_kts" value="" min="0" step="1">
+                        <input type="number" id="takeoff_tailwind_cor" value="" min="0" step="0.05">
                     </div>
                 </div>
+
             </div>
 
             <!--RUNWAY CORRECTION FACTORS-->
@@ -2013,18 +2128,18 @@
 
                 <div class="wind-grid_3">
                     <div class="weight-card-header">Hard</div>
-                    <input type="number" id="takeoff_runway_hard_dry" value="1" min="0" step="0.05">
-                    <input type="number" id="takeoff_runway_hard_wet" value="1.05" min="0" step="0.05">
+                    <input type="number" id="takeoff_runway_hard_dry" value="" min="0" step="0.05">
+                    <input type="number" id="takeoff_runway_hard_wet" value="" min="0" step="0.05">
                 </div>
                 <div class="wind-grid_3">
                     <div class="weight-card-header">Soft</div>
-                    <input type="number" id="takeoff_runway_soft_dry" value="1.15" min="0" step="0.05">
-                    <input type="number" id="takeoff_runway_soft_wet" value="1.25" min="0" step="0.05">
+                    <input type="number" id="takeoff_runway_soft_dry" value="" min="0" step="0.05">
+                    <input type="number" id="takeoff_runway_soft_wet" value="" min="0" step="0.05">
                 </div>
                 <div class="wind-grid_3">
                     <div class="weight-card-header">Other</div>
-                    <input type="number" id="takeoff_runway_custom_dry" value="1" min="0" step="0.05">
-                    <input type="number" id="takeoff_runway_custom_wet" value="1.05" min="0" step="0.05">
+                    <input type="number" id="takeoff_runway_custom_dry" value="" min="0" step="0.05">
+                    <input type="number" id="takeoff_runway_custom_wet" value="" min="0" step="0.05">
                 </div>
             </div>
 
@@ -2040,18 +2155,22 @@
                     <div class="input-label" style="text-align: center;">Correction Factor</div>
                 </div>
                 <div class="wind-grid">
-                    <input type="number" id="takeoff_runway_slope_paved" value="0.05" min="0" step="0.05">
-                    <input type="number" id="takeoff_runway_slope_correction" value="1.25" min="0" step="0.05">
+                    <input type="number" id="takeoff_runway_slope_paved" value="" min="0" step="0.05">
+                    <input type="number" id="takeoff_runway_slope_correction" value="" min="0" step="0.05">
                 </div>
 
                 <div class="wind-grid">
                     <div class="input-label" style="text-align: center;">Minimum Takeoff Distance (% runway)</div>
                 </div>
                 <div class="wind-grid">
-                    <input type="number" id="takeoff_runway_minimum_distance" value="1" min="0" step="0.1">
+                    <input type="number" id="takeoff_runway_minimum_distance" value="" min="0" step="0.1">
                 </div>
 
             </div>
+
+            <button id="takeoff_load_defaults" onclick="load_performance_defaults('takeoff')" style="border: 2px solid #f5f5f5; color: #333333; padding: 8px 12px; border-radius: 8px; cursor: pointer;">
+                Load Default Takeoff Settings
+            </button>
 
         </div>
         </div>
@@ -2085,23 +2204,23 @@
                     </div>
 
                     <div class="wind-grid">
-                        <input type="number" id="landing_headwind_kts_0" value="0", min="0">
-                        <input type="number" id="landing_headwind_cor_0" value="0.85" min="0" step="0.05">
+                        <input type="number" id="landing_headwind_kts_0" value="", min="0">
+                        <input type="number" id="landing_headwind_cor_0" value="" min="0" step="0.05">
                     </div>
 
                     <div class="wind-grid">
-                        <input type="number" id="landing_headwind_kts_1" value="10", min="0">
-                        <input type="number" id="landing_headwind_cor_1" value="0.85" min="0" step="0.05">
+                        <input type="number" id="landing_headwind_kts_1" value="", min="0">
+                        <input type="number" id="landing_headwind_cor_1" value="" min="0" step="0.05">
                     </div>
 
                     <div class="wind-grid">
-                        <input type="number" id="landing_headwind_kts_2" value="20", min="0">
-                        <input type="number" id="landing_headwind_cor_2" value="0.65" min="0" step="0.05">
+                        <input type="number" id="landing_headwind_kts_2" value="", min="0">
+                        <input type="number" id="landing_headwind_cor_2" value="" min="0" step="0.05">
                     </div>
 
                     <div class="wind-grid">
-                        <input type="number" id="landing_headwind_kts_3" value="30", min="0">
-                        <input type="number" id="landing_headwind_cor_3" value="0.55" min="0" step="0.05">
+                        <input type="number" id="landing_headwind_kts_3" value="", min="0">
+                        <input type="number" id="landing_headwind_cor_3" value="" min="0" step="0.05">
                     </div>
 
                     <div class="divider"></div>
@@ -2111,8 +2230,8 @@
                         <div class="input-label" style="text-align: center;">Correction Factor</div>
                     </div>
                     <div class="wind-grid">
-                        <input type="number" id="landing_tailwind_kts" value="2", min="0">
-                        <input type="number" id="landing_tailwind_cor" value="1.1", min="0">
+                        <input type="number" id="landing_tailwind_kts" value="", min="0">
+                        <input type="number" id="landing_tailwind_cor" value="", min="0">
                     </div>
                 </div>
             </div>
@@ -2132,18 +2251,18 @@
                 </div>
                 <div class="wind-grid_3">
                     <div class="weight-card-header">Hard</div>
-                    <input type="number" id="landing_runway_hard_dry" value="1" min="0" step="0.05">
-                    <input type="number" id="landing_runway_hard_wet" value="1.05" min="0" step="0.05">
+                    <input type="number" id="landing_runway_hard_dry" value="" min="0" step="0.05">
+                    <input type="number" id="landing_runway_hard_wet" value="" min="0" step="0.05">
                 </div>
                 <div class="wind-grid_3">
                     <div class="weight-card-header">Soft</div>
-                    <input type="number" id="landing_runway_soft_dry" value="1.15" min="0" step="0.05">
-                    <input type="number" id="landing_runway_soft_wet" value="1.25" min="0" step="0.05">
+                    <input type="number" id="landing_runway_soft_dry" value="" min="0" step="0.05">
+                    <input type="number" id="landing_runway_soft_wet" value="" min="0" step="0.05">
                 </div>
                 <div class="wind-grid_3">
                     <div class="weight-card-header">Other</div>
-                    <input type="number" id="landing_runway_custom_dry" value="1" min="0" step="0.1">
-                    <input type="number" id="landing_runway_custom_wet" value="1.05" min="0" step="0.05">
+                    <input type="number" id="landing_runway_custom_dry" value="" min="0" step="0.1">
+                    <input type="number" id="landing_runway_custom_wet" value="" min="0" step="0.05">
                 </div>
             </div>
 
@@ -2159,24 +2278,29 @@
                     <div class="input-label" style="text-align: center;">Correction Factor</div>
                 </div>
                 <div class="wind-grid">
-                    <input type="number" id="landing_runway_slope_paved" value="0.05" min="0" step="0.05">
-                    <input type="number" id="landing_runway_slope_correction" value="1.25" min="0" step="0.05">
+                    <input type="number" id="landing_runway_slope_paved" value="" min="0" step="0.05">
+                    <input type="number" id="landing_runway_slope_correction" value="" min="0" step="0.05">
                 </div>
 
                 <div class="wind-grid">
                     <div class="input-label" style="text-align: center;">Minimum Landing Distance (% runway)</div>
                 </div>
                 <div class="wind-grid">
-                    <input type="number" id="landing_runway_minimum_distance" value="0.7" min="0" step="0.1">
+                    <input type="number" id="landing_runway_minimum_distance" value="" min="0" step="0.1">
                 </div>
 
             </div>
+
+            <button id="landing_load_defaults" onclick="load_performance_defaults('landing')" style="border: 2px solid #f5f5f5; color: #333333; padding: 8px 12px; border-radius: 8px; cursor: pointer;">
+                Load Default Landing Settings
+            </button>
+
         </div>
         </div>
 
         <div class="border-round-eged">
             <div class="disclaimer">
-                This tool is for educational purposes only and does not replace procedures. Always verify your calculations and consult official aircraft documentation before flight.
+                The calculations are for educational purposes only and does not replace procedures. Always verify your calculations and consult official aircraft documentation before flight.
             </div>
         </div>
 
@@ -2187,6 +2311,46 @@
 
 
 <!-- Javascript functionality -->
+
+<script>
+    function load_performance_defaults(name) {
+      // Default values for takeoff performance
+      const defaults = {};
+      defaults[`${name}_headwind_kts_0`] = 0;
+      defaults[`${name}_headwind_cor_0`] = 0.85;
+      defaults[`${name}_headwind_kts_1`] = 10;
+      defaults[`${name}_headwind_cor_1`] = 0.85;
+      defaults[`${name}_headwind_kts_2`] = 20;
+      defaults[`${name}_headwind_cor_2`] = 0.65;
+      defaults[`${name}_headwind_kts_3`] = 30;
+      defaults[`${name}_headwind_cor_3`] = 0.55;
+      defaults[`${name}_tailwind_kts`] = 2;
+      defaults[`${name}_tailwind_cor`] = 1.1;
+      defaults[`${name}_runway_slope_paved`] = 0.05;
+      defaults[`${name}_runway_hard_dry`] = 1;
+      defaults[`${name}_runway_hard_wet`] = 1.05;
+      defaults[`${name}_runway_soft_dry`] = 1.15;
+      defaults[`${name}_runway_soft_wet`] = 1.25;
+      defaults[`${name}_runway_custom_dry`] = 1.15;
+      defaults[`${name}_runway_custom_wet`] = 1.25;
+
+      if (name==='landing')
+        {
+          defaults[`${name}_runway_slope_correction`] = 1.43;
+          defaults[`${name}_runway_minimum_distance`] = 0.7;
+        } else {
+          defaults[`${name}_runway_slope_correction`] = 1.25;
+          defaults[`${name}_runway_minimum_distance`] = 1;
+        }
+
+        for (const [id, value] of Object.entries(defaults)) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.value = value;
+            }
+        }
+    }
+</script>
 
 <script>
     // MAKE REAL OFFLINE APP WITH SERVICEWORK AND SW.JS
@@ -5484,7 +5648,6 @@
         # Load aerodrome data for departure or arrival from localStorage.
         print(f'> func: load_aerodrome_from_json({fname})')
 
-
         # Get element ID for ICAO
         if elementId is None: elementId = f'{fname}_ICAO'
         element = js.document.getElementById(elementId)
@@ -7027,6 +7190,11 @@
         // animateFlare('SKYWALK_LOGO', "start", null, null, null, intensity=2, pulseSpeed = 0.2, size = 1.1);
         // animateDark('SKYWALK_LOGO', "start", "center", "night");
 
+        const DATASET_URL = "https://erdogant.github.io/datasets/skywalk/aerodromes_lookup.csv";
+        const COUNTRIES = ["Netherlands", "Belgium"];
+        // preload on app startup
+        initIcaoLookup(DATASET_URL, COUNTRIES);
+
         console.log("   >Settings data is initialized.");
 
       }
@@ -7258,8 +7426,10 @@
         const prefix = element.id.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
         const value = String(element.value || '').trim();
 
+        // Return if no icoa name is available
         if (value === '' && !forceLoad) return true;
 
+        // Show warning if icoa length is incorrect
         if (value.length > 0 && value.length < 4) {
             window.alert(`ICAO for ${prefix.toLowerCase()} requires exactly 4 characters.`);
             window.clear_aerodrome_fields(prefix);
@@ -7267,7 +7437,37 @@
             return false;
         }
 
+        // If the length of ICAO is correct
         if (value.length === 4) {
+            // later, anywhere:
+            const ICAO = getCountryForIcao(element.value)
+            // Load ICAO data
+            if (ICAO) {
+              // Download the country and populate the selectionboxes
+              import_country_selected(prefix, ICAO.country)
+              // Set the selection to the country
+              select = document.getElementById(`${prefix}_COUNTRY`);
+              for (let i = 0; i < select.options.length; i++) {
+                  if (select.options[i].value === ICAO.country) {
+                      select.selectedIndex = i;
+                      break;
+                  }
+              }
+
+              // Download and populate the ICAO information
+              populate_aerodrome_fields_from_icao(prefix, ICAO.city_icao)
+              // Set the selection to the country
+              select = document.getElementById(`${prefix}_ICAO_CITY`);
+              for (let i = 0; i < select.options.length; i++) {
+                  console.log(select.options[i].value)
+                  if (select.options[i].value === ICAO.city_icao) {
+                      select.selectedIndex = i;
+                      break;
+                  }
+              }
+            }
+
+            // Load aerodrome from json
             window.load_aerodrome_from_json(prefix, element.id);
         }
 
@@ -7333,7 +7533,7 @@
           return;
         }
 
-        // SAVE when selected but not yet (manually) saved
+        // AUTOSAVE when selected but not yet (manually) saved
         const countrySelected = document.getElementById(`${prefix}_COUNTRY`).value;
         const icaoSelected = document.getElementById(`${prefix}_ICAO_CITY`).value;
         const icaoName = extract_icao_from_string(icaoSelected);
