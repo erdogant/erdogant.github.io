@@ -6,8 +6,8 @@ Author: Erdogan Taskesen
 
 License: Non-Commercial Source-Available License
 
-Permission is hereby granted to use, copy, and modify this software
-for non-commercial purposes only.
+Permission is hereby granted for non-commercial purposes only.
+Non-commercial use includes academic, educational, and personal use.
 
 Commercial use is strictly prohibited without prior written permission
 from the author. Commercial use includes, but is not limited to:
@@ -33,8 +33,6 @@ is assumed by the user. In no event shall the author be liable for any
 claim, damages, or other liability, whether in an action of contract,
 tort, or otherwise, arising from, out of, or in connection with the
 software or the use or other dealings in the software.
-
-Non-commercial use includes academic, educational, and personal use.
 
 Contact:
 For commercial licensing requests, contact:
@@ -101,7 +99,6 @@ For commercial licensing requests, contact:
     <script src="./scripts/weightbalance.js" defer></script>
     <script src="./scripts/fuel.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-
 
 </head>
 
@@ -1543,8 +1540,9 @@ For commercial licensing requests, contact:
 
 
 
+        <label_h1>COUNTRIES OF INTEREST</label_h1>
         <div class="border-round-eged">
-            <label style="display: block; margin-bottom: 10px; font-weight: bold; color: #333;">Select countries of interest</label>
+            <!--<label style="display: block; margin-bottom: 10px; font-weight: bold; color: #333;">Select countries of interest</label>-->
 
             <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 15px; align-items: center;">
                 <!-- Available Countries -->
@@ -1556,35 +1554,18 @@ For commercial licensing requests, contact:
 
                     <select id="available-countries" size="10" multiple
                         style="width: 100%; padding: 5px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px;">
-                        <option value="NL">🇳🇱 Netherlands</option>
-                        <option value="BE">🇧🇪 Belgium</option>
-                        <option value="DE">🇩🇪 Germany</option>
-                        <option value="FR">🇫🇷 France</option>
-                        <option value="GB">🇬🇧 United Kingdom</option>
-                        <option value="ES">🇪🇸 Spain</option>
-                        <option value="IT">🇮🇹 Italy</option>
-                        <option value="PL">🇵🇱 Poland</option>
-                        <option value="AT">🇦🇹 Austria</option>
-                        <option value="CH">🇨🇭 Switzerland</option>
-                        <option value="DK">🇩🇰 Denmark</option>
-                        <option value="SE">🇸🇪 Sweden</option>
-                        <option value="NO">🇳🇴 Norway</option>
-                        <option value="FI">🇫🇮 Finland</option>
-                        <option value="CZ">🇨🇿 Czech Republic</option>
-                        <option value="PT">🇵🇹 Portugal</option>
-                        <option value="IE">🇮🇪 Ireland</option>
-                        <option value="GR">🇬🇷 Greece</option>
+                            <!--automatically populated in populateAvailableCountries()-->
                     </select>
                 </div>
 
                 <!-- Arrow Buttons -->
                 <div style="display: flex; flex-direction: column; gap: 10px;">
-                    <button onclick="moveCountries('available-countries', 'selected-countries')"
+                    <button onclick="moveCountries('available-countries', 'selected-countries', 'add')"
                         style="width: 50px; height: 40px; background: #4CAF50; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 20px;"
                         title="Add selected countries">
                         →
                     </button>
-                    <button onclick="moveCountries('selected-countries', 'available-countries')"
+                    <button onclick="moveCountries('selected-countries', 'available-countries', 'remove')"
                         style="width: 50px; height: 40px; background: #f44336; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 20px;"
                         title="Remove selected countries">
                         ←
@@ -1606,9 +1587,11 @@ For commercial licensing requests, contact:
 
 
 
-        <label_h1>Cleaning</label_h1>
+        <label_h1>CLEAR CACHE</label_h1>
         <div class="border-round-eged">
-            <div class="warning" style="margin-bottom: 20px;">Warning: This will permanently delete all saved flightplans and aerodrome images from your local browser storage. The reason for using this is when you want to start fresh or when you suspect that your flightplans or images are corrupted or the ATC page does not show or update. This action cannot be undone.</div>
+            <div class="disclaimer" style="margin-bottom: 20px;">
+                Warning: This will permanently delete all saved flightplans and aerodrome images from your local browser storage. The reason for using this is when you want to start fresh or when you suspect that your flightplans or images are corrupted or the ATC page does not show or update. This action cannot be undone.
+            </div>
             <div class="button-row" style="margin-top: 20px;">
                 <button id="clear_cache_btn" style="background-color: #ff4444; color: white; cursor: pointer;">Clear Cache</button>
             </div>
@@ -6974,21 +6957,25 @@ For commercial licensing requests, contact:
         }
 
         // Calculate Weight and Balance and Departure tab
-        if (targetTab === 'Departure' || targetTab === 'Arrival'){
+        if (targetTab.toUpperCase() === 'DEPARTURE' || targetTab.toUpperCase() === 'ARRIVAL'){
           // Sync checkboxes and fields on startup
            syncWeightCheckboxesAndFields(`${targetTab.toUpperCase()}_WEIGHT_CHECKBOX`);
            window.calculateWeightBalance(targetTab.toUpperCase());
         }
 
         // WHEN THE TAB MAP IS CLICKED, UPDATE THE MAP WITH THE ROUTE AND FILL WINDOW.WAYPOINTS
-        if (targetTab === "MAP") {
+        if (targetTab.toUpperCase() === "MAP") {
           initRouteMap(true);
           updateRoute(true); // Add all waypoints
         }
         //  CHECKLIST TAB: UPDATE CHECKLISTS
-        if (targetTab === "Checklist") {
+        if (targetTab.toUpperCase() === "CHECKLIST") {
           checklist_populate()
         }
+
+        // if (targetTab.toUpperCase() === "CONFIG") {
+        //   populateAvailableCountries()
+        // }
 
         // REPLACE INFORMATION with "INFO" in the ENROUTE TAB.
         updateEnrouteFields();
@@ -7140,6 +7127,13 @@ For commercial licensing requests, contact:
         console.log("> func: checkPyScriptReady()");
         console.log("   >Default data is initialized.");
 
+        // METAR defaults
+        window.METAR_DEPARTURE = '';
+        window.METAR_ARRIVAL = '';
+        window.waypoints = [];
+        window.leginfo = {};
+        // window.COUNTRIES_SELECTED = ['Netherlands'];
+
         // Get default settings
         window.settings = window.get_default_settings();
         // Set default images
@@ -7172,11 +7166,6 @@ For commercial licensing requests, contact:
         // Clear the VFR icon
         updateFlightCatagoryIcon('DEPARTURE', remove=true);
         updateFlightCatagoryIcon('ARRIVAL', remove=true);
-        // METAR defaults
-        window.METAR_DEPARTURE = '';
-        window.METAR_ARRIVAL = '';
-        window.waypoints = []
-        window.leginfo = {}
 
         // Hide loading spinner once everything is ready
         // document.getElementById('loading-spinner').style.display = 'none';
@@ -7190,12 +7179,12 @@ For commercial licensing requests, contact:
         // animateFlare('SKYWALK_LOGO', "start", null, null, null, intensity=2, pulseSpeed = 0.2, size = 1.1);
         // animateDark('SKYWALK_LOGO', "start", "center", "night");
 
-        const DATASET_URL = "https://erdogant.github.io/datasets/skywalk/aerodromes_lookup.csv";
-        const COUNTRIES = ["Netherlands", "Belgium"];
-        // preload on app startup
-        initIcaoLookup(DATASET_URL, COUNTRIES);
+        // Create lookup tables for countries
+        // COUNTRIES_SELECTED = ["Netherlands", "Belgium"];
+        CreateLookupTableCountries();
 
-        console.log("   >Settings data is initialized.");
+        // All env. variables are initialized
+        console.log("   >Environmental variables are initialized.");
 
       }
     }
@@ -7440,8 +7429,9 @@ For commercial licensing requests, contact:
         // If the length of ICAO is correct
         if (value.length === 4) {
             // later, anywhere:
-            const ICAO = getCountryForIcao(element.value)
+            const ICAO = getIcaoInformation(element.value)
             // Load ICAO data
+            // console.log(ICAO)
             if (ICAO) {
               // Download the country and populate the selectionboxes
               import_country_selected(prefix, ICAO.country)
@@ -8540,49 +8530,27 @@ For commercial licensing requests, contact:
 
 
 <script>
-const COUNTRIES_DATA = [
-  // Europe
-  'Albania', 'Austria', 'Belarus', 'Belgium',
-  'Bulgaria', 'Croatia', 'Cyprus', 'Czech Republic', 'Denmark', 'Estonia',
-  'Finland', 'France', 'Germany', 'Greece', 'Hungary', 'Iceland', 'Ireland',
-  'Italy', 'Luxembourg', 'Malta',
-  'Moldova  Republic Of', 'Montenegro', 'Netherlands',
-  'Norway', 'Poland', 'Portugal', 'Romania',
-  'Spain', 'Sweden', 'Switzerland', 'Turkey',
-  'United Kingdom',
 
-  // Other
-  'Maldives',
+  // Populate during startup: available-countries select from COUNTRIES_DATA
+  window.addEventListener('DOMContentLoaded', () => {
+    // Populate the multipdropbox in the config screen
+    populateAvailableCountries()
+    // Load from previously stored countries from cache
+    const uniqueCountries = LoadCountriesOfInterest();
+    // Set the multibox items
+    console.log(uniqueCountries)
+    moveCountries('available-countries', 'selected-countries', 'initialize', uniqueCountries)
+  });
 
-  // Americas (North, Central, South, Caribbean)
-  'Canada', 'Curacao', 'United States',
-
-  // Oceania
-  'Australia', 'New Zealand',
-];
-
-  function populateDropdown(selectId, dataArray) {
-    const select = document.getElementById(selectId);
-    if (!select) {
-      console.warn(`Select element with ID '${selectId}' not found`);
-      return;
-    }
-    dataArray.forEach(item => {
-      const option = document.createElement('option');
-      option.value = item;
-      option.textContent = item;
-      select.appendChild(option);
-    });
-  }
 </script>
 
 
 <script>
     function initializeAerodromeFields(fname) {
         // Populate ICAO dropdown on page load
-        window.addEventListener('DOMContentLoaded', () => {
-            populateDropdown(`${fname}_COUNTRY`, COUNTRIES_DATA);
-        });
+        // window.addEventListener('DOMContentLoaded', () => {
+        //     populateDropdown(`${fname}_COUNTRY`, window.COUNTRIES_SELECTED);
+        // });
 
         // Download the aerodrome data when the country changes
         document.getElementById(`${fname}_COUNTRY`).addEventListener('change', async function() {

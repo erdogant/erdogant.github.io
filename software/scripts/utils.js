@@ -1,13 +1,139 @@
-function getCountryForIcao(icao) {
-  console.log("> func: getIcaoByIcao()");
-  const cache_key = "ICAO_LOOKUP_TABLE";
+const LOOKUPTABLE_URL = "https://erdogant.github.io/datasets/skywalk/aerodromes_lookup.csv";
+const LOOKUPTABLE_COUNTRIES_CACHE = "LOOKUPTABLE_COUNTRIES"; // Name of the lookup table that is stored in cache
+const LOOKUPTABLE_ICAO_CACHE = "LOOKUPTABLE_ICAO"; // Name of the lookup table that is stored in cache
+
+function populateDropdown(elementId, countries) {
+  console.log("> func: populateDropdown()");
+  // Populate the departure/ arrival drowndown countries
+
+  const element = document.getElementById(elementId);
+  if (!element) {
+    console.warn(`Select element with ID '${elementId}' not found`);
+    return;
+  }
+
+  // Get existing options
+  const existingOptions = Array.from(element.options);
+
+  // Remove options that are not in the new countries list (except "Select Country")
+  existingOptions.forEach((option) => {
+    if (option.value !== "Select Country" && !countries.includes(option.value)) {
+      element.removeChild(option);
+    }
+  });
+
+  // Get updated existing values after removal
+  const existingValues = Array.from(element.options).map((option) => option.value);
+
+  // Add "Select Country" as first option if it doesn't exist
+  if (!existingValues.includes("Select Country")) {
+    const selectOption = document.createElement("option");
+    selectOption.value = "Select Country";
+    selectOption.textContent = "Select Country";
+    element.insertBefore(selectOption, element.firstChild);
+    existingValues.unshift("Select Country");
+  }
+
+  // Add new countries that don't already exist
+  countries.forEach((item) => {
+    // Skip if item already exists in the dropdown
+    if (existingValues.includes(item)) {
+      return;
+    }
+
+    const option = document.createElement("option");
+    option.value = item;
+    option.textContent = item;
+    element.appendChild(option);
+  });
+}
+
+function getUniqueCountries(icaoDict) {
+  // Extract unique countries from the ICAO lookup table
+  const uniqueCountries = Array.from(
+    new Set(
+      Object.values(icaoDict)
+        .map((entry) => entry.country)
+        .filter(Boolean),
+    ),
+  );
+  return uniqueCountries;
+}
+
+function LoadCountriesOfInterest() {
+  console.log("> func: LoadCountriesOfInterest()");
+  // Default
+  let uniqueCountries = ["Netherlands", "Belgium"];
+
   try {
-    const cached = localStorage.getItem(cache_key);
+    const cached = localStorage.getItem(LOOKUPTABLE_ICAO_CACHE);
+    if (cached) {
+      // Parse and verify the cache
+      const lookupTableIcao = JSON.parse(cached);
+      // Overwrite with new countries
+      uniqueCountries = getUniqueCountries(lookupTableIcao);
+    }
+  } catch (e) {
+    console.info(`   >Cached lookup table for ICAO is invalid or empty, creating new lookup tables`);
+  }
+
+  // Show log
+  return uniqueCountries;
+}
+
+async function CreateLookupTableIcaoSelected(countries) {
+  // Create new lookup table for all countries with country_code and seperately for user-filtered countries for fast lookup.
+  console.log("> func: CreateLookupTableIcaoSelected()");
+  const allowed = new Set(countries);
+  const countriesSelect = {};
+  const uniqueCountries = [];
+
+  // Fetch data from url
+  const response = await fetch(LOOKUPTABLE_URL);
+  const text = await response.text();
+  const lines = text.trim().split("\n");
+  const headers = lines[0].split(";");
+  const idxCountry = headers.indexOf("country");
+
+  // Create dict with all countries
+  for (let i = 1; i < lines.length; i++) {
+    const values = lines[i].split(";");
+    if (values.length !== headers.length) continue;
+    if (countries.length > 0 && !allowed.has(values[idxCountry])) continue;
+
+    const row = {};
+    headers.forEach((h, idx) => {
+      row[h] = values[idx];
+    });
+
+    // Only store the countries of interest
+    const icao = row.icao?.toUpperCase().trim();
+    if (icao) {
+      countriesSelect[icao] = row;
+    }
+  }
+
+  console.log(countriesSelect);
+
+  // Store in cache
+  localStorage.setItem(LOOKUPTABLE_ICAO_CACHE, JSON.stringify(countriesSelect));
+  // Get unique countries
+  // uniqueCountries = getUniqueCountries(countriesSelect);
+  console.log("   >Unique countries:", countries);
+  // Return
+  return countries;
+}
+
+function getIcaoInformation(icao) {
+  // Return icoa information; country, country_code and city_icao
+  console.log("> func: getIcaoInformation()");
+  try {
+    const cached = localStorage.getItem(LOOKUPTABLE_ICAO_CACHE);
     if (cached) {
       // Parse and verify it's valid
-      const ICAO_LOOKUP = JSON.parse(cached);
-      console.log(`   >Loading cached lookup from lookup ${cache_key}`);
-      const getICAO = ICAO_LOOKUP[icao?.toUpperCase().trim()] || null;
+      const LookupTable = JSON.parse(cached);
+      console.log(`   >Loading cached lookup from lookup ${LOOKUPTABLE_ICAO_CACHE}`);
+      const getICAO = LookupTable[icao?.toUpperCase().trim()] || null;
       return getICAO;
     }
   } catch (e) {
@@ -15,53 +141,308 @@ function getCountryForIcao(icao) {
   }
 }
 
-async function initIcaoLookup(url, countries = [], loadCache = true) {
-  console.log("> func: initIcaoLookup()");
-  const cache_key = "ICAO_LOOKUP_TABLE";
+// ======================== CREATE ONE BIG COUNTRY TABLE ===========================
+async function CreateLookupTableCountries(loadCache = true) {
+  // Create new lookup table for all countries with country_code.
+  // This only needs to be done the very first time. The stored cache data is used in all other sessions.
 
+  console.log("> func: CreateLookupTableCountries()");
+  const lookupTableCountries = {};
+
+  // Check whether cache exists, and return early.
   if (loadCache) {
     try {
-      const cached = localStorage.getItem(cache_key);
+      const cached = localStorage.getItem(LOOKUPTABLE_COUNTRIES_CACHE);
       if (cached) {
         // Parse and verify it's valid
-        const ICAO_LOOKUP = JSON.parse(cached);
-        console.log(`   >Loading cached lookup from ${cache_key}`);
+        const tmp = JSON.parse(cached);
+        console.log(`   >Cached country lookup tables is OK: ${LOOKUPTABLE_COUNTRIES_CACHE}`);
         return;
       }
     } catch (e) {
-      console.info(`   >Cache invalid or empty, creating new ICAO lookup table`);
+      console.info(`   >Cached lookup table for countries is invalid or empty, creating new lookup tables`);
     }
   }
 
-  const allowed = new Set(countries);
-  const response = await fetch(url);
+  // Fetch data from url
+  const response = await fetch(LOOKUPTABLE_URL);
   const text = await response.text();
   const lines = text.trim().split("\n");
   const headers = lines[0].split(";");
-  const ICAO_LOOKUP = {};
+  const idxCountry = headers.indexOf("country");
 
+  // Create dict with all countries
+  const idxCountryCode = headers.indexOf("country_code");
   for (let i = 1; i < lines.length; i++) {
     const values = lines[i].split(";");
-    if (values.length !== headers.length) continue;
-    if (countries.length > 0 && !allowed.has(values[0])) continue;
+    const country = values[idxCountry];
+    const country_code = values[idxCountryCode];
 
-    const row = {};
-    headers.forEach((h, idx) => {
-      row[h] = values[idx];
-    });
-
-    const icao = row.icao?.toUpperCase().trim();
-    if (icao) {
-      ICAO_LOOKUP[icao] = row;
+    // Only add if not already present and both fields exist
+    if (country && country_code && !(country in lookupTableCountries)) {
+      lookupTableCountries[country] = country_code;
     }
   }
+  // Store countries in lookup table for later usage.
+  console.log(`   >Saving cached country lookup: ${LOOKUPTABLE_COUNTRIES_CACHE}`);
+  console.log(lookupTableCountries);
+  localStorage.setItem(LOOKUPTABLE_COUNTRIES_CACHE, JSON.stringify(lookupTableCountries));
+}
 
-  console.log(`   >Saving cached lookup: ${cache_key}`);
-  // Convert object to JSON string before saving
-  localStorage.setItem(cache_key, JSON.stringify(ICAO_LOOKUP));
+// ======================== CONFIG COUNTRIES SELECTION ===========================
+
+function moveCountries(fromId, toId, action, defaultSelected = []) {
+  console.log("> func: moveCountries()");
+  // console.log(defaultSelected);
+  // Get multiselectbox elements
+  const fromSelect = document.getElementById(fromId);
+  const toSelect = document.getElementById(toId);
+
+  // Handle initialization with default selected items
+  if (defaultSelected.length > 0 && action === "initialize") {
+    console.log(`   > Initialize with: ${defaultSelected}`);
+
+    // Get cache
+    const cached = localStorage.getItem(LOOKUPTABLE_COUNTRIES_CACHE);
+    const uniqueCountries = JSON.parse(cached);
+
+    // Format the country names with flags
+    const countryFormatted = [];
+    for (let i = 0; i < defaultSelected.length; i++) {
+      const countryCode = uniqueCountries[defaultSelected[i]];
+      const flag = getFlagEmoji(countryCode);
+      countryFormatted.push(`${flag} ${defaultSelected[i]}`);
+    }
+
+    // Move default items from fromSelect to toSelect
+    Array.from(fromSelect.options).forEach((option) => {
+      // console.log("Checking option text:", option.text);
+      const countryText = option.text; // Keep full text with flag
+      if (countryFormatted.includes(countryText)) {
+        console.log("MATCH FOUND - Moving:", countryText);
+        option.style.display = "";
+        toSelect.appendChild(option);
+      } else {
+        // console.log("NO MATCH for:", countryText);
+      }
+    });
+
+    // Sort both selects
+    sortSelect(fromSelect);
+    sortSelect(toSelect);
+
+    // Update dropdowns with remaining selected countries
+    populateDropdown("DEPARTURE_COUNTRY", defaultSelected);
+    populateDropdown("ARRIVAL_COUNTRY", defaultSelected);
+    // Return
+    return;
+  }
+  // Handle initialization with default selected items
+  // if (defaultSelected.length > 0 && action === "initialize") {
+  //   console.log(`   > Initialize with: ${defaultSelected}`);
+
+  //   // Update the selected countries
+  //   populateDropdown("DEPARTURE_COUNTRY", defaultSelected);
+  //   populateDropdown("ARRIVAL_COUNTRY", defaultSelected);
+
+  //   // Get cache
+  //   const cached = localStorage.getItem(LOOKUPTABLE_COUNTRIES_CACHE);
+  //   const uniqueCountries = JSON.parse(cached);
+
+  //   // Format
+  //   const countryFormatted = [];
+  //   for (let i = 0; i < defaultSelected.length; i++) {
+  //     // Get country code
+  //     const countryCode = uniqueCountries[defaultSelected[i]];
+  //     // Get FLAG emoji
+  //     const flag = getFlagEmoji(countryCode);
+  //     // Store
+  //     countryFormatted.push(`${flag} ${defaultSelected[i]}`);
+  //     // Get options menu and populate
+  //     // const option = document.createElement("option");
+  //     // option.value = countryCode;
+  //     // option.textContent = `${flag} ${defaultSelected[i]}`;
+  //     // element.appendChild(option);
+  //   }
+  //   console.log("FORMATTED HERE");
+  //   console.log(countryFormatted);
+
+  //   // Move default items from fromSelect to toSelect
+  //   Array.from(fromSelect.options).forEach((option) => {
+  //     const countryName = option.text.replace(/^.*?\s/, "");
+  //     if (countryFormatted.includes(countryName)) {
+  //       option.style.display = "";
+  //       toSelect.appendChild(option);
+  //     }
+  //   });
+
+  //   // Sort both selects
+  //   sortSelect(fromSelect);
+  //   sortSelect(toSelect);
+
+  //   // Return
+  //   return;
+  // }
+
+  // Original logic for user interactions
+  const selectedOptions = Array.from(fromSelect.selectedOptions);
+  if (selectedOptions.length === 0) {
+    return;
+  }
+
+  selectedOptions.forEach((option) => {
+    // Remove the hidden attribute when moving
+    option.style.display = "";
+    toSelect.appendChild(option);
+  });
+
+  // Sort options alphabetically
+  sortSelect(toSelect);
+
+  // Clear search filters
+  if (fromId === "available-countries") {
+    document.getElementById("search-available").value = "";
+    filterCountry("available-countries", "");
+  } else {
+    document.getElementById("search-selected").value = "";
+    filterCountry("selected-countries", "");
+  }
+
+  // Store all selected countries in a list
+  let selectedCountries;
+  if (action === "add") {
+    selectedCountries = Array.from(toSelect.options).map((option) => option.text.replace(/^.*?\s/, ""));
+  } else if (action === "remove") {
+    selectedCountries = Array.from(fromSelect.options).map((option) => option.text.replace(/^.*?\s/, ""));
+  }
+
+  console.log(`Store selected countries in cache: ${selectedCountries}`);
+  // Store ICAO in cache for selected countries
+  CreateLookupTableIcaoSelected(selectedCountries);
+  // populate dropdown
+  populateDropdown("DEPARTURE_COUNTRY", selectedCountries);
+  populateDropdown("ARRIVAL_COUNTRY", selectedCountries);
+  // Return
   return;
 }
 
+function sortSelect(selectElement) {
+  const options = Array.from(selectElement.options);
+  options.sort((a, b) => a.text.localeCompare(b.text));
+  selectElement.innerHTML = "";
+  options.forEach((option) => selectElement.appendChild(option));
+}
+
+function filterCountry(selectId, searchText) {
+  const select = document.getElementById(selectId);
+  const options = select.options;
+  const search = searchText.toLowerCase();
+
+  for (let i = 0; i < options.length; i++) {
+    const option = options[i];
+    const text = option.text.toLowerCase();
+    const value = option.value.toLowerCase();
+
+    if (text.includes(search) || value.includes(search)) {
+      option.style.display = "";
+    } else {
+      option.style.display = "none";
+    }
+  }
+}
+
+function getSelectedCountries() {
+  const selected = document.getElementById("selected-countries");
+  return Array.from(selected.options).map((opt) => opt.value);
+}
+
+// Helper function to get country code from country name (simplified mapping)
+function getCountryCode(countryName) {
+  console.log(`> func: getCountryCode("${countryName}")`);
+  try {
+    const cached = localStorage.getItem(LOOKUPTABLE_COUNTRIES_CACHE);
+    if (cached) {
+      // Parse and verify it's valid
+      const LookupTable = JSON.parse(cached);
+      // Loop through LookupTable to find a row where the 'country' matches countryName
+      for (const key in LookupTable) {
+        if (
+          LookupTable.hasOwnProperty(key) &&
+          LookupTable[key].country &&
+          LookupTable[key].country.trim().toLowerCase() === countryName.trim().toLowerCase()
+        ) {
+          return LookupTable[key].country_code ? LookupTable[key].country_code.toLowerCase() : null;
+        }
+      }
+    }
+  } catch (e) {
+    console.info(`   >Cache invalid or empty.`);
+  }
+}
+
+// Helper function to get flag emoji from country code
+function getFlagEmoji(countryCode) {
+  const codePoints = countryCode
+    .toUpperCase()
+    .split("")
+    .map((char) => 127397 + char.charCodeAt());
+  return String.fromCodePoint(...codePoints);
+}
+
+// Helper function to format a country option
+function formatCountryOption(countryName) {
+  const countryCode = getCountryCode(countryName);
+  const flag = getFlagEmoji(countryCode);
+  return { value: countryCode, text: `${flag} ${countryName}` };
+}
+
+// Function to populate available-countries select with COUNTRIES_DATA
+function populateAvailableCountries() {
+  console.log("> func: populateAvailableCountries()");
+  let uniqueCountries;
+
+  // Get selectionbox element
+  const element = document.getElementById("available-countries");
+  if (!element) {
+    console.warn("element element with ID 'available-countries' not found");
+    return;
+  }
+
+  // Load cached country data
+  try {
+    const cached = localStorage.getItem(LOOKUPTABLE_COUNTRIES_CACHE);
+    if (cached) {
+      uniqueCountries = JSON.parse(cached);
+    }
+  } catch (e) {
+    console.info(`   >Cache invalid or empty, creating new ICAO lookup table`);
+  }
+
+  // Clear existing options
+  element.innerHTML = "";
+
+  console.log(uniqueCountries);
+  // Populate the select box with uniqueCountries dict
+  if (uniqueCountries && typeof uniqueCountries === "object") {
+    Object.keys(uniqueCountries).forEach((countryName) => {
+      // Get country code
+      const countryCode = uniqueCountries[countryName];
+      // Get FLAG emoji
+      const flag = getFlagEmoji(countryCode);
+      // Get options menu and populate
+      const option = document.createElement("option");
+      option.value = countryCode;
+      option.textContent = `${flag} ${countryName}`;
+      element.appendChild(option);
+    });
+  }
+
+  console.log(`   >populated ${element.options.length} countries in available-countries`);
+}
+
+// ==============================================================================
+// ======================= VARIOUS OTHER FUNCTIONS ==============================
+// ==============================================================================
 function updateFlag(prefix, countryCode) {
   /**
    * Update a flag image element by country code (2-letter ISO).
@@ -173,72 +554,19 @@ function syncWeightCheckboxesAndFields(triggerId) {
   }
 }
 
-// ======================== CONFIG COUNTRIES SELECTION ===========================
-
-function moveCountries(fromId, toId) {
-  const fromSelect = document.getElementById(fromId);
-  const toSelect = document.getElementById(toId);
-
-  const selectedOptions = Array.from(fromSelect.selectedOptions);
-
-  if (selectedOptions.length === 0) {
-    return;
-  }
-
-  selectedOptions.forEach((option) => {
-    // Remove the hidden attribute when moving
-    option.style.display = "";
-    toSelect.appendChild(option);
-  });
-
-  // Sort options alphabetically
-  sortSelect(toSelect);
-
-  // Clear search filters
-  if (fromId === "available-countries") {
-    document.getElementById("search-available").value = "";
-    filterCountry("available-countries", "");
-  } else {
-    document.getElementById("search-selected").value = "";
-    filterCountry("selected-countries", "");
-  }
-}
-
-function sortSelect(selectElement) {
-  const options = Array.from(selectElement.options);
-  options.sort((a, b) => a.text.localeCompare(b.text));
-  selectElement.innerHTML = "";
-  options.forEach((option) => selectElement.appendChild(option));
-}
-
-function filterCountry(selectId, searchText) {
-  const select = document.getElementById(selectId);
-  const options = select.options;
-  const search = searchText.toLowerCase();
-
-  for (let i = 0; i < options.length; i++) {
-    const option = options[i];
-    const text = option.text.toLowerCase();
-    const value = option.value.toLowerCase();
-
-    if (text.includes(search) || value.includes(search)) {
-      option.style.display = "";
-    } else {
-      option.style.display = "none";
-    }
-  }
-}
-
-function getSelectedCountries() {
-  const selected = document.getElementById("selected-countries");
-  return Array.from(selected.options).map((opt) => opt.value);
-}
+// Make helper functions globally accessible
+window.getCountryCode = getCountryCode;
+window.getFlagEmoji = getFlagEmoji;
+window.formatCountryOption = formatCountryOption;
+window.populateAvailableCountries = populateAvailableCountries;
 
 // Make it globally accessible
 window.updateFlag = updateFlag;
 window.createDateTime = createDateTime;
 window.syncWeightCheckboxesAndFields = syncWeightCheckboxesAndFields;
-window.initIcaoLookup = initIcaoLookup;
-window.getCountryForIcao = getCountryForIcao;
+window.CreateLookupTableCountries = CreateLookupTableCountries;
+window.CreateLookupTableIcaoSelected = CreateLookupTableIcaoSelected;
+window.getIcaoInformation = getIcaoInformation;
 window.moveCountries = moveCountries;
 window.filterCountry = filterCountry;
+window.populateDropdown = populateDropdown;
