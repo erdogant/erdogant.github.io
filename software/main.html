@@ -98,6 +98,7 @@ For commercial licensing requests, contact:
     <script src="./scripts/maps.js" defer></script>
     <script src="./scripts/weightbalance.js" defer></script>
     <script src="./scripts/fuel.js" defer></script>
+    <script src="./scripts/runway.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 
 </head>
@@ -142,7 +143,7 @@ For commercial licensing requests, contact:
 
         <label_h1>Disclaimer</label_h1>
         <div class="disclaimer" style="margin-bottom: 20px; border: 2px solid red; border-radius: 10px; padding: 10px;">
-            SkyWalk is provided "AS IS", without warranty of any kind,
+            SkyWalk is provided "as is", without warranty of any kind,
             express or implied, including but not limited to the warranties of
             merchantability, fitness for a particular purpose, accuracy, or
             non-infringement.
@@ -238,9 +239,7 @@ For commercial licensing requests, contact:
 
 
         <!-- AIRCRAFT SECTION -->
-
         <div class="divider-general-section" style="background: #f5f5f5;"></div>
-
 
         <div class="flight-card">
             <div class="flight-card-row">
@@ -506,7 +505,7 @@ For commercial licensing requests, contact:
 
             <div class="grid-two-thirds-one-third">
                 <div class="tile">
-                    <input id="DEPARTURE_POSITION" type="text" class="tile-value" title="Position of the Aircraft (at the apron)">
+                    <input id="DEPARTURE_POSITION" type="text" class="tile-value UPPERCASE_input" title="Position of the Aircraft (at the apron)">
                     <span class="tile-label">Position of the aircraft</span>
                 </div>
 
@@ -518,20 +517,21 @@ For commercial licensing requests, contact:
 
             <div class="wind-grid">
                 <div class="tile">
-                    <input id="DEPARTURE_RUNWAY" type="text" class="tile-value" title="Fill here the runway that is in use.">
+                    <input id="DEPARTURE_RUNWAY_NR"
+                           type="text"
+                           class="tile-value"
+                           title="Fill here the runway that is in use."
+                           style="font-size: 48px; font-family: 'Aeroport', 'Aviation', 'Consolas', 'Monaco', 'Menlo', 'Liberation Mono', 'Courier New', monospace; letter-spacing: 2px; text-align: center; height: 64px; line-height: 64px;">
                     <span class="tile-label">
                         Runway Nr.
-                        <button id="BTN-METAR-ICON-DEPARTURE_2" onclick="window.retrieve_metar('DEPARTURE')"
+                        <!--<button id="BTN-METAR-ICON-DEPARTURE_2" onclick="window.predict_runway_number('DEPARTURE'); window.setRunwaySurface('DEPARTURE')"
                             title="Use METAR weather information to automatically predict the runway. Add multiple runways seperated by / or comma. The most optimal runway will be picked automatically."
                             style="background-color: transparent; border: none; width: 10px; padding: 1px; cursor: pointer;">
                                 🔄
-                        </button>
+                        </button>-->
                     </span>
                 </div>
-                <div class="tile">
-                    <input id="DEPARTURE_ELEVATION" type="text" class="tile-value" title="Elevation of the field in feet.">
-                    <span class="tile-label">Field elevation (ft)</span>
-                </div>
+
                 <div class="tile">
                     <input id="DEPARTURE_CIRCUIT_ALTITUDE" type="text" class="tile-value" title="The altitude of the circuit in feet.">
                     <span class="tile-label">Circuit altitude (ft)</span>
@@ -743,23 +743,63 @@ For commercial licensing requests, contact:
        </div>
 
 
-       <!--RUNWAY DEPARTURE-->
-       <div class="collapsible" data-title="RUNWAY">
-       <div class="collapsible-header"></div>
-       <div class="collapsible-content">
+        <!--RUNWAY DEPARTURE-->
+        <div class="collapsible" data-title="RUNWAY">
+        <div class="collapsible-header"></div>
+        <div class="collapsible-content">
 
            <div class="wind-grid">
-               <div class="tile">
+               <div class="tile" style="text-align: center;">
                    <input id="DEPARTURE_RUNWAY_LENGTH" type="text" class="tile-value">
-                   <span class="tile-label">Runway length</span>
+                   <span class="tile-label" style="text-align: center;">Length (ft)</span>
+               </div>
+               <div class="tile" style="text-align: center;">
+                   <input id="DEPARTURE_RUNWAY_SLOPE" type="text" class="tile-value">
+                   <span class="tile-label" style="text-align: center;">Slope (°)</span>
                </div>
                <div class="tile">
-                   <input id="DEPARTURE_ATC_TOWER" type="text" class="tile-value">
-                   <span class="tile-label">Tower/ Radio (MHz)</span>
+                   <input id="DEPARTURE_ELEVATION" type="text" class="tile-value" title="Elevation of the field in feet.">
+                   <span class="tile-label">Elevation (ft)</span>
                </div>
            </div>
 
-           <!--<button onclick="window.save_aerodrome_to_json('DEPARTURE')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 4px 8px 0; flex: 0 0 auto; cursor: pointer; float: right;">💾</button>-->
+           <div class="divider-general-section" style="background: #f5f5f5;"></div>
+
+           <div class="wind-grid">
+                <div class="tile" style="text-align: center;">
+                    <select id="DEPARTURE_RUNWAY_SURFACE" class="tile-value-dropdown" style="text-align: left; background: transparent; ">
+                        <option value="">Select</option>
+                        <option value="hard">Hard</option>
+                        <option value="soft">Soft</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <span class="tile-label" style="text-align: center;">Surface</span>
+                </div>
+                <div class="tile" style="text-align: center;">
+                     <select id="DEPARTURE_RUNWAY_SLIPPERY" class="tile-value-dropdown" style="text-align: left; background: transparent; ">
+                         <option value="">Select</option>
+                         <option value="dry">Dry</option>
+                         <option value="wet">Wet</option>
+                     </select>
+                     <span class="tile-label" style="text-align: center;">Condition</span>
+                 </div>
+           </div>
+
+           <!--<div class="border-round-eged">
+               <div id="DEPARTURE_RUNWAY_SVG"></div>
+           </div>-->
+
+
+           <div class="wind-grid">
+               <textarea id="DEPARTURE_RUNWAY_CONDITION" class="tile-value" title="Runway condition." style="background-color: transparent; font-size: 12px; font-weight: normal; resize: vertical; min-height: 32px; max-height: 80px; width: 100%; box-sizing: border-box; white-space: pre-wrap; word-break: break-word; overflow-wrap: break-word;"></textarea>
+           </div>
+
+           <button id="DEPARTURE_LOAD_DEFAULTS" onclick="window.setRunwaySurface('DEPARTURE', true)"
+               title="Load the default runway information."
+               style="background-color: transparent; border: none; width: 10px; padding: 1px; cursor: pointer;">
+                   🔄
+           </button>
+           <button onclick="window.save_aerodrome_to_json('DEPARTURE')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 4px 8px 0; flex: 0 0 auto; cursor: pointer; float: right;">💾</button>
        </div>
        </div>
 
@@ -964,7 +1004,7 @@ For commercial licensing requests, contact:
 
             <div class="grid-two-thirds-one-third">
                 <div class="tile">
-                    <input id="ARRIVAL_POSITION" type="text" class="tile-value" title="Position of the Aircraft (at the apron)">
+                    <input id="ARRIVAL_POSITION" type="text" class="tile-value UPPERCASE_input" title="Position of the Aircraft (at the apron)">
                     <span class="tile-label">Position of the aircraft</span>
                 </div>
 
@@ -976,19 +1016,19 @@ For commercial licensing requests, contact:
 
             <div class="wind-grid">
                 <div class="tile">
-                    <input id="ARRIVAL_RUNWAY" type="text" class="tile-value" title="Fill here the runway that is in use.">
+                    <input id="ARRIVAL_RUNWAY_NR"
+                           type="text"
+                           class="tile-value"
+                           title="Fill here the runway that is in use."
+                           style="font-size: 48px; font-family: 'Aeroport', 'Aviation', 'Consolas', 'Monaco', 'Menlo', 'Liberation Mono', 'Courier New', monospace; letter-spacing: 2px; text-align: center; height: 64px; line-height: 64px;">
                     <span class="tile-label">
                         Runway Nr.
-                        <button id="BTN-METAR-ICON-ARRIVAL_2" onclick="window.retrieve_metar('ARRIVAL')"
+                        <!--<button id="BTN-METAR-ICON-ARRIVAL_2" onclick="window.predict_runway_number('ARRIVAL'); window.setRunwaySurface('ARRIVAL')"
                             title="Use METAR weather information to automatically predict the runway. Add multiple runways seperated by / or comma. The most optimal runway will be picked automatically."
                             style="background-color: transparent; border: none; width: 10px; padding: 1px; cursor: pointer;">
                                 🔄
-                        </button>
+                        </button>-->
                     </span>
-                </div>
-                <div class="tile">
-                    <input id="ARRIVAL_ELEVATION" type="text" class="tile-value" title="Elevation of the field in feet.">
-                    <span class="tile-label">Field elevation (ft)</span>
                 </div>
                 <div class="tile">
                     <input id="ARRIVAL_CIRCUIT_ALTITUDE" type="text" class="tile-value" title="The altitude of the circuit in feet.">
@@ -1049,28 +1089,6 @@ For commercial licensing requests, contact:
             <button onclick="window.save_aerodrome_to_json('ARRIVAL')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 4px 8px 0; flex: 0 0 auto; cursor: pointer; float: right;">💾</button>
         </div>
         </div>
-
-
-
-        <!--RUNWAY ARRIVAL-->
-        <!--<div class="collapsible" data-title="RUNWAY">
-        <div class="collapsible-header"></div>
-        <div class="collapsible-content">
-
-            <div class="wind-grid">
-                <div class="tile">
-                    <input id="ARRIVAL_RUNWAY_LENGTH" type="text" class="tile-value">
-                    <span class="tile-label">Runway length</span>
-                </div>
-                <div class="tile">
-                    <input id="ARRIVAL_ATC_TOWER" type="text" class="tile-value">
-                    <span class="tile-label">Tower/ Radio (MHz)</span>
-                </div>
-            </div>
-
-            <button onclick="window.save_aerodrome_to_json('ARRIVAL')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 4px 8px 0; flex: 0 0 auto; cursor: pointer; float: right;">💾</button>
-        </div>
-        </div>-->
 
 
         <!-- METAR Information -->
@@ -1217,10 +1235,71 @@ For commercial licensing requests, contact:
                <canvas id="ARRIVAL_weightBalanceChart"></canvas>
            </div>
 
+       </div>
+       </div>
 
+
+       <!--RUNWAY ARRIVAL-->
+       <div class="collapsible" data-title="RUNWAY">
+       <div class="collapsible-header"></div>
+       <div class="collapsible-content">
+
+          <div class="wind-grid">
+              <div class="tile" style="text-align: center;">
+                  <input id="ARRIVAL_RUNWAY_LENGTH" type="text" class="tile-value">
+                  <span class="tile-label" style="text-align: center;">Length (ft)</span>
+              </div>
+              <div class="tile" style="text-align: center;">
+                  <input id="ARRIVAL_RUNWAY_SLOPE" type="text" class="tile-value">
+                  <span class="tile-label" style="text-align: center;">Slope (°)</span>
+              </div>
+              <div class="tile">
+                  <input id="ARRIVAL_ELEVATION" type="text" class="tile-value" title="Elevation of the field in feet.">
+                  <span class="tile-label">Elevation (ft)</span>
+              </div>
+          </div>
+
+          <div class="divider-general-section" style="background: #f5f5f5;"></div>
+
+          <div class="wind-grid">
+               <div class="tile" style="text-align: center;">
+                   <select id="ARRIVAL_RUNWAY_SURFACE" class="tile-value-dropdown" style="text-align: left; background: transparent; ">
+                       <option value="">Select</option>
+                       <option value="hard">Hard</option>
+                       <option value="soft">Soft</option>
+                       <option value="other">Other</option>
+                   </select>
+                   <span class="tile-label" style="text-align: center;">Surface</span>
+               </div>
+               <div class="tile" style="text-align: center;">
+                    <select id="ARRIVAL_RUNWAY_SLIPPERY" class="tile-value-dropdown" style="text-align: left; background: transparent; ">
+                        <option value="">Select</option>
+                        <option value="dry">Dry</option>
+                        <option value="wet">Wet</option>
+                    </select>
+                    <span class="tile-label" style="text-align: center;">Condition</span>
+                </div>
+          </div>
+
+
+          <!--<div class="border-round-eged">
+              <div id="ARRIVAL_RUNWAY_SVG"></div>
+          </div>-->
+
+          <div class="wind-grid">
+              <textarea id="ARRIVAL_RUNWAY_CONDITION" class="tile-value" title="Runway condition." style="background-color: transparent; font-size: 12px; font-weight: normal; resize: vertical; min-height: 32px; max-height: 80px; width: 100%; box-sizing: border-box; white-space: pre-wrap; word-break: break-word; overflow-wrap: break-word;"></textarea>
+          </div>
+
+          <button id="ARRIVAL_LOAD_DEFAULTS" onclick="window.setRunwaySurface('ARRIVAL', true)"
+              title="Load the default runway information."
+              style="background-color: transparent; border: none; width: 10px; padding: 1px; cursor: pointer;">
+                  🔄
+          </button>
+          <button onclick="window.save_aerodrome_to_json('ARRIVAL')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 4px 8px 0; flex: 0 0 auto; cursor: pointer; float: right;">💾</button>
 
        </div>
        </div>
+
 
 
         <!-- METAR-TAF WIDGET -->
@@ -2343,15 +2422,6 @@ For commercial licensing requests, contact:
         .catch(err => console.error('SW registration failed', err));
     }
 
-    // // Create collapsible sections for each checklist category and wire up lazy population
-    // function createChecklistSections(containerId = 'checklist_sections') {
-    //   console.log('> func: createChecklistSections()');
-    //   const container = document.getElementById(containerId);
-    //   if (!container) {
-    //     console.warn(`Checklist container "${containerId}" not found`);
-    //     return;
-    //   }
-
     function populateChecklistCatagories() {
       // Rebuild sections and categories after loading the dictionary
       console.log(`> func: populateChecklistCatagories()`);
@@ -2650,7 +2720,7 @@ For commercial licensing requests, contact:
     async function update_wind_gui_fields(prefix, metar_icao, metar_obj) {
         console.log(`>func: update_wind_gui_fields(${prefix})`);
         // Get the values from the input fields
-        const runwayField = document.getElementById(prefix + '_RUNWAY');
+        const runwayField = document.getElementById(prefix + '_RUNWAY_NR');
         const windDirectionField = document.getElementById(prefix + '_WIND_DIRECTION');
         const windSpeedField = document.getElementById(prefix + '_WIND_SPEED');
         const windGustField = document.getElementById(prefix + '_WIND_GUST');
@@ -3097,11 +3167,17 @@ For commercial licensing requests, contact:
             'DEPARTURE_CITY': '',               # City
             'DEPARTURE_NAME': '',               # Aerodrome name
             'DEPARTURE_POSITION': '',           # Position at apron
-            'DEPARTURE_RUNWAY': '',             # The user selected Runway
+
             'DEPARTURE_RUNWAYS': '',            # All available Runways
-            'DEPARTURE_RUNWAY_LENGTH': '',      # The length of the Runway
-            'DEPARTURE_RUNWAY_SURFACE': '',     # The surface of the Runway
-            'DEPARTURE_ELEVATION': '',          # The Runway ELEVATION
+            'DEPARTURE_RUNWAY_PROPERTIES': '',  # The runway properties
+            'DEPARTURE_RUNWAY_NR': '',             # GUI - The user selected Runway
+            'DEPARTURE_RUNWAY_LENGTH': '',      # GUI - The length of the Runway
+            'DEPARTURE_RUNWAY_SLOPE': '',       # GUI - The slope of the runway
+            'DEPARTURE_RUNWAY_SURFACE': '',     # GUI - The surface of the Runway
+            'DEPARTURE_RUNWAY_CONDITION': '',   # GUI - The condition
+            'DEPARTURE_RUNWAY_SLIPPERY': '',    # GUI - The weather condition (dry/wet)
+            'DEPARTURE_ELEVATION': '',          # GUI - The Runway ELEVATION
+
             'DEPARTURE_ROUTE_NAME': '',         # Departure route name
             'DEPARTURE_ROUTE_ALTITUDE': '',     # Departure route altitude
             'DEPARTURE_CIRCUIT_ALTITUDE': '',   # Departure circuit altitude
@@ -3139,11 +3215,17 @@ For commercial licensing requests, contact:
             'ARRIVAL_CITY': '',                   # City
             'ARRIVAL_NAME': '',                   # Aerodrome name
             'ARRIVAL_POSITION': '',               # Position at apron
-            'ARRIVAL_RUNWAY': '',                 # The user selected Runway
+
             'ARRIVAL_RUNWAYS': '',                # All available Runways
-            'ARRIVAL_RUNWAY_LENGTH': '',          # The length of the Runway
-            'ARRIVAL_RUNWAY_SURFACE': '',         # The surface of the Runway
-            'ARRIVAL_ELEVATION': '',              # The Runway ELEVATION
+            'ARRIVAL_RUNWAY_PROPERTIES': '',      # The runway properties
+            'ARRIVAL_RUNWAY_NR': '',                 # GUI - The user selected Runway
+            'ARRIVAL_RUNWAY_LENGTH': '',          # GUI - The length of the Runway
+            'ARRIVAL_RUNWAY_SLOPE': '',           # GUI - The slope of the runway
+            'ARRIVAL_RUNWAY_SURFACE': '',         # GUI - The surface of the Runway
+            'ARRIVAL_RUNWAY_CONDITION': '',       # GUI - The condition
+            'ARRIVAL_RUNWAY_SLIPPERY': '',        # GUI - The surface condition (dry/wet)
+            'ARRIVAL_ELEVATION': '',              # GUI - The Runway ELEVATION
+
             'ARRIVAL_ROUTE_NAME': '',             # Arrival route name
             'ARRIVAL_ROUTE_ALTITUDE': '',         # Arrival route altitude
             'ARRIVAL_CIRCUIT_ALTITUDE': '',       # Arrival circuit altitude
@@ -3186,19 +3268,11 @@ For commercial licensing requests, contact:
             'OVERHEAD2': '',            # Second overhead point
             'SQUAWK2': '',              # Second squawk code
 
-            # WAYPOINTS
             'WAYPOINTS': [],            # Waypoint data
             'LEGINFO': {},              # Leg info
-
-            # NOTAM data
             'NOTAM': {'data': {}},      # NOTAM data
-
-            # CHECKLIST
             'CHECKLIST': copy.deepcopy(get_default_checklist()),
-
-            # AIRCRAFT
             'AIRCRAFT': copy.deepcopy(get_default_aircraft()),
-
         }
 
     # ================================================
@@ -4296,18 +4370,28 @@ For commercial licensing requests, contact:
 
         # Get runway data
         rwy_ids, rwy_list = retrieve_runways(row_dict)
-        # print(rwy_ids)
+        #print('HERE')
+        #print(row_dict)
 
         # Store data
         CTR_BOOL = row_dict['AERODROME_CTR']
         FREQ_TOWER_RADIO = row_dict['freqs.TOWER'] if CTR_BOOL else row_dict['freqs.RADIO']
+
         js.window.flight_plan_data[f"{fname}_ICAO"] = row_dict['icao']
         js.window.flight_plan_data[f"{fname}_ICAO_CITY"] = city_icao
         js.window.flight_plan_data[f"{fname}_CITY"] = str(row_dict['city']).upper()
+
         js.window.flight_plan_data[f"{fname}_RUNWAYS"] = rwy_list
-        js.window.flight_plan_data[f"{fname}_RUNWAY"] = clean_string(rwy_ids)
-        js.window.flight_plan_data[f"{fname}_NAME"] = row_dict['name']
+        js.window.flight_plan_data[f"{fname}_RUNWAY_PROPERTIES"] = row_dict['runways']
+        js.window.flight_plan_data[f"{fname}_RUNWAY_NR"] = clean_string(rwy_ids)
+        js.window.flight_plan_data[f"{fname}_RUNWAY_LENGTH"] = ''
+        js.window.flight_plan_data[f"{fname}_RUNWAY_SLOPE"] = ''
+        js.window.flight_plan_data[f"{fname}_RUNWAY_SURFACE"] = ''
+        js.window.flight_plan_data[f"{fname}_RUNWAY_CONDITION"] = ''
+        js.window.flight_plan_data[f"{fname}_RUNWAY_SLIPPERY"] = ''
         js.window.flight_plan_data[f"{fname}_ELEVATION"] = str(row_dict['elevation_aerodrome']).split('.')[0]
+
+        js.window.flight_plan_data[f"{fname}_NAME"] = row_dict['name']
         js.window.flight_plan_data[f"{fname}_METAR"] = ''
         js.window.flight_plan_data[f"{fname}_METAR_ICAO"] = ''
         js.window.flight_plan_data[f"{fname}_WIND_ENVELOPE"] = ''
@@ -4366,6 +4450,12 @@ For commercial licensing requests, contact:
 
         # remove wind envelope plot
         remove_wind_envelope_plot(fname)
+
+        # Set runway surface
+        js.window.setRunwaySurface(fname)
+
+        # Create runway image
+        # js.window.buildRunwayOverviewSvg(fname)
 
         # Retrieve METAR
         await js.window.retrieve_metar(fname)
@@ -4494,7 +4584,12 @@ For commercial licensing requests, contact:
             f'{fname}_NAME',
             f'{fname}_ICAO',
             f'{fname}_POSITION',
-            f'{fname}_RUNWAY',
+            f'{fname}_RUNWAY_NR',
+            f'{fname}_RUNWAY_LENGTH',
+            f'{fname}_RUNWAY_SLOPE',
+            f'{fname}_RUNWAY_SURFACE',
+            f'{fname}_RUNWAY_CONDITION',
+            f'{fname}_RUNWAY_SLIPPERY',
             f'{fname}_ELEVATION',
             f'{fname}_ROUTE_NAME',
             f'{fname}_ROUTE_ALTITUDE',
@@ -4614,7 +4709,12 @@ For commercial licensing requests, contact:
             f'{fname}_NAME',
             f'{fname}_ICAO',
             f'{fname}_POSITION',
-            f'{fname}_RUNWAY',
+            f'{fname}_RUNWAY_NR',
+            f'{fname}_RUNWAY_LENGTH',
+            f'{fname}_RUNWAY_SLOPE',
+            f'{fname}_RUNWAY_SURFACE',
+            f'{fname}_RUNWAY_CONDITION',
+            f'{fname}_RUNWAY_SLIPPERY',
             f'{fname}_ELEVATION',
             f'{fname}_ROUTE_NAME',
             f'{fname}_ROUTE_ALTITUDE',
@@ -4688,14 +4788,17 @@ For commercial licensing requests, contact:
         keys = [
             f'{fname}_COUNTRY', f'{fname}_COUNTRY_CODE', f'{fname}_ICAO_CITY',
             f'{fname}_ICAO', f'{fname}_ICAO_CITY', f'{fname}_CITY', f'{fname}_NAME',
-            f'{fname}_POSITION', f'{fname}_RUNWAY', f'{fname}_ELEVATION',
-            f'{fname}_RUNWAYS', f'{fname}_ROUTE_NAME', f'{fname}_ROUTE_ALTITUDE',
+            f'{fname}_POSITION',
+            f'{fname}_RUNWAYS', f'{fname}_RUNWAY_PROPERTIES', f'{fname}_RUNWAY_NR'
+            f'{fname}_RUNWAY_LENGTH', f'{fname}_RUNWAY_SLOPE', f'{fname}_RUNWAY_SURFACE',
+            f'{fname}_RUNWAY_CONDITION', f'{fname}_RUNWAY_SLIPPERY', f'{fname}_ELEVATION',
+            f'{fname}_ROUTE_NAME', f'{fname}_ROUTE_ALTITUDE',
             f'{fname}_CIRCUIT_ALTITUDE', f'{fname}_CTR', f'{fname}_IMAGE',
             f'{fname}_URL_WEBSITE', f'{fname}_URL_WIKIPEDIA', f'{fname}_LATLON',
             f'{fname}_METAR_ICAO', f'{fname}_METAR', f'{fname}_WIND_ENVELOPE',
             f'{fname}_CLOUD', f'{fname}_TIMEZONE', f'{fname}_ATC_TOWER',
             f'{fname}_ATC_ATIS_FREQ', f'{fname}_ATC_GROUND', f'{fname}_ATC_APPROACH',
-            f'{fname}_ATC_TELEPHONE', f'{fname}_RUNWAY_LENGTH', f'{fname}_RUNWAY_SURFACE',
+            f'{fname}_ATC_TELEPHONE',
         ]
 
         if clearAircraftFields:
@@ -4833,12 +4936,12 @@ For commercial licensing requests, contact:
         logger.info(f"func: compute_wind_envelope() - {fname}")
         # In case the user has changed the runway input, update the flightplan data
         #  js.window.flight_plan_data.update(
-        #     {f"{fname}_RUNWAY": self.RUNWAY_input.text.strip()}
+        #     {f"{fname}_RUNWAY_NR": self.RUNWAY_input.text.strip()}
         # )
 
         # Get the METAR data and runway number
         METAR_DATA = js.window.flight_plan_data.get(f"{fname}_METAR_ICAO", {})
-        RUNWAY = js.window.flight_plan_data.get(f"{fname}_RUNWAY", "")
+        RUNWAY = js.window.flight_plan_data.get(f"{fname}_RUNWAY_NR", "")
         # Check if the runway and METAR data are set, otherwise show a popup and return
         if RUNWAY == "" or METAR_DATA == {}:
             logger.warning(f"Set the runway.")
@@ -4903,40 +5006,33 @@ For commercial licensing requests, contact:
         # Return
         return runways
 
-
-    # def JsToPy(js_object):
-    #     """Convert javascript dictionary object to python.
-    #       Example
-    #       -------
-    #       >>> js_object = {'test': true}
-    #       >>> JsToPy(js_object)
-    #     """
-    #     # return json.loads(js_string)
-    #     return js_object.to_py()
-
-
-    def expected_runway_number(fname, wind_direction='', wind_strength=''):
+    def predict_runway_number(fname, wind_direction='', wind_strength=''):
         """Compute the expected runway based on wind information for a given aerodrome."""
-        print(f'> func: expected_runway_number({fname})')
+        print(f'> func: predict_runway_number({fname})')
         # Defaults
         expect_runway = ''
-        runwayField = js.document.getElementById(fname + "_RUNWAY")
-        extra_runways = runwayField.value.strip()
+        runwayField = js.document.getElementById(fname + "_RUNWAY_NR")
+        runwaysGUI = runwayField.value.strip()
+
+        # Get information from GUI when wind fields are not forced
+        if wind_direction == '' or wind_strength == '':
+            wind_direction = js.document.getElementById(fname + "_WIND_DIRECTION").value
+            wind_strength = js.document.getElementById(fname + "_WIND_SPEED").value
+            if is_numeric(wind_direction): wind_direction = int(wind_direction)
+            if is_numeric(wind_strength): wind_strength = int(wind_strength)
 
         # Get all runways for the aerodrome. We need to copy the list to avoid modifying the original data
-        runways = js.window.flight_plan_data[f"{fname}_RUNWAYS"].copy()
+        try:
+            runways = js.window.flight_plan_data[f"{fname}_RUNWAYS"].copy()
+        except Exception:
+            return
 
         # Add more runways if provided
-        if extra_runways is not None and extra_runways.strip() != '':
-            rwys_clean = re.findall(r'\d+', extra_runways)
+        if runwaysGUI is not None and runwaysGUI.strip() != '':
+            rwys_clean = re.findall(r'\d+', runwaysGUI)
             runways.extend(rwys_clean)
             runways = list(set(runways))
         print(f'   >All available runways: {runways}')
-
-        # Extract wind information from METAR data
-        # wind_dict = analyzeWind(metar_icao)
-        # wind_direction = wind_dict.get('direction', '')
-        # wind_strength = wind_dict.get('speed', '')
 
         # Compute the expected runway number
         if (len(runways) > 0) and (wind_direction is not None) and is_numeric(wind_direction):
@@ -4952,8 +5048,10 @@ For commercial licensing requests, contact:
             # Set new runway
             runwayField.value = expect_runway
             # Change color
-            runwayField.style.backgroundColor = "#e6f0ff";
+            # runwayField.style.backgroundColor = "#e6f0ff";
             # metarText.value = js.window.messages;
+            # Update runway properties
+            js.window.setRunwaySurface(fname)
 
         # Return
         print(f'   >Predicted runway: {expect_runway}')
@@ -5700,7 +5798,7 @@ For commercial licensing requests, contact:
 
         # Parse JSON
         fname_dict = json.loads(json_data)
-        fname_dict[f'{fname}_RUNWAY'] = ''
+        fname_dict[f'{fname}_RUNWAY_NR'] = ''
 
         print(f"   >✅ Loaded {len(fname_dict)} fields")
 
@@ -5789,22 +5887,22 @@ For commercial licensing requests, contact:
         # Get flightplan data from dictionary
         flight_data = js.window.flight_plan_data
 
-        dict_fname = {}
+        # Store all fname_ except for the weights
         for key, item in flight_data.items():
             if key.startswith(fname) and not key.startswith(f"{fname}_WEIGHT"):
                 dict_fname[key] = item
 
-        # Update the dictionary with data from GUI
+        # Collect all information from the GUI-fields and update the dictionary
         for key in dict_fname.keys():
             # Do not store RUNWAY keys because runways are determined by the weather conditions
             element = js.document.getElementById(key)
-            # Check whether field GUI exists using truthiness check which handles JsNull
             if element and hasattr(element, 'value'):
                 field_value = element.value
                 if field_value and str(field_value) not in ('nan', 'None', ''):
                     dict_fname[key] = field_value
 
-        print(dict_fname)
+        # print('HERE')
+        # print(dict_fname)
 
         # Create Cache key
         cache_key = fname + '_' + dict_fname[f"{fname}_ICAO"]
@@ -5979,7 +6077,7 @@ For commercial licensing requests, contact:
                 'CTR_REGION_BOOL_ARRIVAL': 'true' if flight_data.get(f'{ARRIVAL}_CTR', False) else 'false',
 
                 'DEPARTURE_POSITION': flight_data.get(f'{DEPARTURE}_POSITION', '') or 'at the Apron',
-                'DEPARTURE_RUNWAY': flight_data.get(f'{DEPARTURE}_RUNWAY', '') or empty_field,
+                'DEPARTURE_RUNWAY_NR': flight_data.get(f'{DEPARTURE}_RUNWAY_NR', '') or empty_field,
                 'DEPARTURE_NAME': flight_data.get(f'{DEPARTURE}_NAME', '') or empty_field,
                 'DEPARTURE_ROUTE_NAME': flight_data.get(f'{DEPARTURE}_ROUTE_NAME', '') or empty_field,
                 'DEPARTURE_ROUTE_ALTITUDE': flight_data.get(f'{DEPARTURE}_ROUTE_ALTITUDE', '') or empty_field,
@@ -6004,7 +6102,7 @@ For commercial licensing requests, contact:
                 'ARRIVAL_ROUTE_NAME': flight_data.get(f'{ARRIVAL}_ROUTE_NAME', ''),
                 'ATC_TOWER_ARR': ATC_TOWER_FREQ_ARR,
                 'ATC_TOWER_NAME': ATC_TOWER_NAME_ARR,
-                'ARRIVAL_RUNWAY': flight_data.get(f'{ARRIVAL}_RUNWAY', '') or empty_field,
+                'ARRIVAL_RUNWAY_NR': flight_data.get(f'{ARRIVAL}_RUNWAY_NR', '') or empty_field,
 
                 'GRID_COLUMNS': settings.get('atc_columns', 1),
             }
@@ -6064,13 +6162,13 @@ For commercial licensing requests, contact:
                 'POB': flight_data.get('POB', '') or empty_field,
 
                 'ARRIVAL_NAME': flight_data.get(f'{ARRIVAL}_NAME', '') or empty_field,
-                'ARRIVAL_RUNWAY': flight_data.get(f'{ARRIVAL}_RUNWAY', '') or empty_field,
+                'ARRIVAL_RUNWAY_NR': flight_data.get(f'{ARRIVAL}_RUNWAY_NR', '') or empty_field,
                 'ARRIVAL_ROUTE_ALTITUDE': str(flight_data.get(f'{ARRIVAL}_ROUTE_ALTITUDE', '')) or empty_field,
                 'ARRIVAL_ICAO': flight_data.get(f'{ARRIVAL}_ICAO', '') or empty_field,
 
                 'CTR_REGION_BOOL': 'true' if flight_data.get(f'{DEPARTURE}_CTR', False) else 'false',
                 'DEPARTURE_POSITION': flight_data.get(f'{DEPARTURE}_POSITION', '') or 'at the Apron',
-                'DEPARTURE_RUNWAY': flight_data.get(f'{DEPARTURE}_RUNWAY', '') or empty_field,
+                'DEPARTURE_RUNWAY_NR': flight_data.get(f'{DEPARTURE}_RUNWAY_NR', '') or empty_field,
                 'DEPARTURE_NAME': flight_data.get(f'{DEPARTURE}_NAME', '') or empty_field,
                 'DEPARTURE_ROUTE_NAME': flight_data.get(f'{DEPARTURE}_ROUTE_NAME', '') or empty_field,
                 'DEPARTURE_ROUTE_ALTITUDE': flight_data.get(f'{DEPARTURE}_ROUTE_ALTITUDE', '') or empty_field,
@@ -6142,7 +6240,7 @@ For commercial licensing requests, contact:
                 'POB': flight_data.get('POB', '') or empty_field,
 
                 'ARRIVAL_NAME': flight_data.get(f'{ARRIVAL}_NAME', '') or empty_field,
-                'ARRIVAL_RUNWAY': flight_data.get(f'{ARRIVAL}_RUNWAY', '') or empty_field,
+                'ARRIVAL_RUNWAY_NR': flight_data.get(f'{ARRIVAL}_RUNWAY_NR', '') or empty_field,
                 'ARRIVAL_ROUTE_NAME': flight_data.get(f'{ARRIVAL}_ROUTE_NAME', '') or empty_field,
                 'ARRIVAL_ROUTE_ALTITUDE': flight_data.get(f'{ARRIVAL}_ROUTE_ALTITUDE', '') or empty_field,
 
@@ -6914,7 +7012,7 @@ For commercial licensing requests, contact:
     js.window.altitude_restriction = altitude_restriction
 
     # METAR HELPERS
-    js.window.expected_runway_number = expected_runway_number
+    js.window.predict_runway_number = predict_runway_number
     js.window.headwind = headwind
     js.window.crosswind = crosswind
     js.window.correctRunwayNumber = correctRunwayNumber
@@ -7120,7 +7218,7 @@ For commercial licensing requests, contact:
        * - Restores cached display settings
        * - Hides loading spinner once complete
        *
-       * Keywords: Startup, loading, app start, start app, load app
+       * Keywords: Startup, loading, app start, start app, load app, startup app
        */
       if (typeof window.create_new_flightplan === 'function') {
         pyscriptReady = true;
@@ -7180,8 +7278,14 @@ For commercial licensing requests, contact:
         // animateDark('SKYWALK_LOGO', "start", "center", "night");
 
         // Create lookup tables for countries
-        // COUNTRIES_SELECTED = ["Netherlands", "Belgium"];
         CreateLookupTableCountries();
+        // Populate the multipdropbox in the config screen
+        populateAvailableCountries()
+        // Load from previously stored countries from cache
+        const uniqueCountries = LoadCountriesOfInterest();
+        // Set the multibox items
+        console.log(uniqueCountries)
+        moveCountries('available-countries', 'selected-countries', 'initialize', uniqueCountries)
 
         // All env. variables are initialized
         console.log("   >Environmental variables are initialized.");
@@ -7406,6 +7510,28 @@ For commercial licensing requests, contact:
         });
     });
 
+    function updateRunwayGUIfields(elementOrEvent) {
+      console.log('> func: updateRunwayGUIfields()')
+      // Determine prefix based on the field's id
+      let element = elementOrEvent?.target || elementOrEvent;
+      let prefix = element.id.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
+      setRunwaySurface(prefix);
+    }
+
+    // Setup event listeners for RUNWAY fields
+    ['DEPARTURE_RUNWAY_NR', 'ARRIVAL_RUNWAY_NR'].forEach(id => {
+        const field = document.getElementById(id);
+        if (!field) return;
+
+        // Trigger on blur
+        field.addEventListener("blur", updateRunwayGUIfields);
+        // Trigger on Enter key
+        field.addEventListener('keydown', fieldEvent => {
+            if (fieldEvent.key === 'Enter') {
+                updateRunwayGUIfields(fieldEvent);
+            }
+        });
+    });
 
     // Generic ICAO validation and loading function
     function validateAndLoadICAO(elementOrEvent, forceLoad = false) {
@@ -7527,8 +7653,9 @@ For commercial licensing requests, contact:
         const countrySelected = document.getElementById(`${prefix}_COUNTRY`).value;
         const icaoSelected = document.getElementById(`${prefix}_ICAO_CITY`).value;
         const icaoName = extract_icao_from_string(icaoSelected);
-        const time_dep = document.getElementById('DEPARTURE_clockField');
+        // const time_dep = document.getElementById('DEPARTURE_clockField');
 
+        // Automatically save to cache for later usage!
         if (icao === icaoName && countrySelected !== '' && icaoName !== '') {
           const cache_key = `${prefix}_${icaoName}`;
           const json_data = localStorage.getItem(cache_key);
@@ -7909,8 +8036,8 @@ For commercial licensing requests, contact:
                 required_atc_arrival: false,
                 required_atc_enroute: false,
             },
-            'DEPARTURE_RUNWAY': {
-                element: document.getElementById('DEPARTURE_RUNWAY'),
+            'DEPARTURE_RUNWAY_NR': {
+                element: document.getElementById('DEPARTURE_RUNWAY_NR'),
                 name: 'Departure Runway',
                 color_empty: '#ffeb3b',
                 color_filled: 'transparent',
@@ -7990,8 +8117,8 @@ For commercial licensing requests, contact:
                 required_atc_arrival: false,
                 required_atc_enroute: false,
             },
-            'ARRIVAL_RUNWAY': {
-                element: document.getElementById('ARRIVAL_RUNWAY'),
+            'ARRIVAL_RUNWAY_NR': {
+                element: document.getElementById('ARRIVAL_RUNWAY_NR'),
                 name: 'Arrival Runway',
                 color_empty: '#ffeb3b',
                 color_filled: 'transparent',
@@ -8109,10 +8236,60 @@ For commercial licensing requests, contact:
                 required_atc_enroute: true,
             },
 
-            // THE NOT-ATC FIELDS
+            // THE RUNWAY FIELDS
+            'DEPARTURE_RUNWAY_LENGTH': {
+                element: document.getElementById('DEPARTURE_RUNWAY_LENGTH'),
+                name: 'Runway Length (departure)',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+
+            'DEPARTURE_RUNWAY_SLOPE': {
+                element: document.getElementById('DEPARTURE_RUNWAY_SLOPE'),
+                name: 'Runway Slope (departure)',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+
+            'DEPARTURE_RUNWAY_SURFACE': {
+                element: document.getElementById('DEPARTURE_RUNWAY_SURFACE'),
+                name: 'Runway Surface (departure)',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+
+            'DEPARTURERUNWAY_SLIPPERY': {
+                element: document.getElementById('DEPARTURE_RUNWAY_SLIPPERY'),
+                name: 'Runway Condition (departure)',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+
+            'DEPARTURE_RUNWAY_SLIPPERY': {
+                element: document.getElementById('DEPARTURE_RUNWAY_SLIPPERY'),
+                name: 'Runway Condition (departure)',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+
             'DEPARTURE_ELEVATION': {
                 element: document.getElementById('DEPARTURE_ELEVATION'),
-                name: 'Departure Elevation',
+                name: 'Runway Elevation (departure)',
                 color_empty: '',
                 color_filled: 'transparent',
                 required_atc_departure: false,
@@ -8130,16 +8307,67 @@ For commercial licensing requests, contact:
                 required_atc_enroute: false,
             },
 
-            //ARRIVAL NOT ATC FIELDS
-            'ARRIVAL_ELEVATION': {
-                element: document.getElementById('ARRIVAL_ELEVATION'),
-                name: 'Arrival Elevation',
+            // THE RUNWAY FIELDS
+            'ARRIVAL_RUNWAY_LENGTH': {
+                element: document.getElementById('DEPARTURE_RUNWAY_LENGTH'),
+                name: 'Runway Length (arrival)',
                 color_empty: '',
                 color_filled: 'transparent',
                 required_atc_departure: false,
                 required_atc_arrival: false,
                 required_atc_enroute: false,
             },
+
+            'ARRIVAL_RUNWAY_SLOPE': {
+                element: document.getElementById('DEPARTURE_RUNWAY_SLOPE'),
+                name: 'Runway Slope (arrival)',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+
+            'ARRIVAL_RUNWAY_SURFACE': {
+                element: document.getElementById('DEPARTURE_RUNWAY_SURFACE'),
+                name: 'Runway Surface (arrival)',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+
+            'ARRIVAL_RUNWAY_SLIPPERY': {
+                element: document.getElementById('DEPARTURE_RUNWAY_SLIPPERY'),
+                name: 'Runway Condition (arrival)',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+
+            'ARRIVAL_RUNWAY_SLIPPERY': {
+                element: document.getElementById('DEPARTURE_RUNWAY_SLIPPERY'),
+                name: 'Runway Condition (arrival)',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+
+            'ARRIVAL_ELEVATION': {
+                element: document.getElementById('ARRIVAL_ELEVATION'),
+                name: 'Runway Elevation (arrival)',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+
             'ARRIVAL_ATC_APPROACH': {
                 element: document.getElementById('ARRIVAL_ATC_APPROACH'),
                 name: 'Arrival Frequency Approach',
@@ -8400,8 +8628,8 @@ For commercial licensing requests, contact:
     // Update dropdown menu colors based on required fields
     window.highlightDropdownMenus = (function() {
         const aerodromeFieldIds = [
-            'DEPARTURE_NAME', 'DEPARTURE_POSITION', 'DEPARTURE_RUNWAY', 'DEPARTURE_ROUTE_NAME', 'DEPARTURE_ROUTE_ALTITUDE',
-            'ARRIVAL_NAME', 'ARRIVAL_POSITION', 'ARRIVAL_RUNWAY', 'ARRIVAL_ROUTE_NAME', 'ARRIVAL_ROUTE_ALTITUDE'
+            'DEPARTURE_NAME', 'DEPARTURE_POSITION', 'DEPARTURE_RUNWAY_NR', 'DEPARTURE_ROUTE_NAME', 'DEPARTURE_ROUTE_ALTITUDE',
+            'ARRIVAL_NAME', 'ARRIVAL_POSITION', 'ARRIVAL_RUNWAY_NR', 'ARRIVAL_ROUTE_NAME', 'ARRIVAL_ROUTE_ALTITUDE'
         ];
 
         const contactFieldIds = [
@@ -8418,7 +8646,7 @@ For commercial licensing requests, contact:
 
             const elementName = document.getElementById(`${prefix}_NAME`);
             const elementPosition = document.getElementById(`${prefix}_POSITION`);
-            const elementRunway = document.getElementById(`${prefix}_RUNWAY`);
+            const elementRunway = document.getElementById(`${prefix}_RUNWAY_NR`);
             const elementRoute = document.getElementById(`${prefix}_ROUTE_NAME`);
             const elementAltitude = document.getElementById(`${prefix}_ROUTE_ALTITUDE`);
 
@@ -8532,26 +8760,23 @@ For commercial licensing requests, contact:
 <script>
 
   // Populate during startup: available-countries select from COUNTRIES_DATA
-  window.addEventListener('DOMContentLoaded', () => {
-    // Populate the multipdropbox in the config screen
-    populateAvailableCountries()
-    // Load from previously stored countries from cache
-    const uniqueCountries = LoadCountriesOfInterest();
-    // Set the multibox items
-    console.log(uniqueCountries)
-    moveCountries('available-countries', 'selected-countries', 'initialize', uniqueCountries)
-  });
+  // window.addEventListener('DOMContentLoaded', () => {
+  //   // Create lookup tables for countries
+  //   CreateLookupTableCountries();
+  //   // Populate the multipdropbox in the config screen
+  //   populateAvailableCountries()
+  //   // Load from previously stored countries from cache
+  //   const uniqueCountries = LoadCountriesOfInterest();
+  //   // Set the multibox items
+  //   console.log(uniqueCountries)
+  //   moveCountries('available-countries', 'selected-countries', 'initialize', uniqueCountries)
+  // });
 
 </script>
 
 
 <script>
     function initializeAerodromeFields(fname) {
-        // Populate ICAO dropdown on page load
-        // window.addEventListener('DOMContentLoaded', () => {
-        //     populateDropdown(`${fname}_COUNTRY`, window.COUNTRIES_SELECTED);
-        // });
-
         // Download the aerodrome data when the country changes
         document.getElementById(`${fname}_COUNTRY`).addEventListener('change', async function() {
             const country = this.value;
@@ -8608,7 +8833,12 @@ For commercial licensing requests, contact:
             `${fname}_NAME`,
             `${fname}_ICAO`,
             `${fname}_POSITION`,
-            `${fname}_RUNWAY`,
+            `${fname}_RUNWAY_NR`,
+            `${fname}_RUNWAY_LENGTH`,
+            `${fname}_RUNWAY_SLOPE`,
+            `${fname}_RUNWAY_SURFACE`,
+            `${fname}_RUNWAY_CONDITION`,
+            `${fname}_RUNWAY_SLIPPERY`,
             `${fname}_ELEVATION`,
             `${fname}_ROUTE_NAME`,
             `${fname}_ROUTE_ALTITUDE`,
@@ -8709,7 +8939,7 @@ For commercial licensing requests, contact:
     async function windEnvelope_js(prefix, maxHeadwind = 25, maxCrosswind = 15, update_gui_fields = true) {
       console.log(`>func: windEnvelope_js(${prefix})`);
       // Get the values from the input fields
-      const runwayNumberField = document.getElementById(prefix + '_RUNWAY');
+      const runwayNumberField = document.getElementById(prefix + '_RUNWAY_NR');
       const windDirectionField = document.getElementById(prefix + '_WIND_DIRECTION');
       const windSpeedField = document.getElementById(prefix + '_WIND_SPEED');
       const windGustField = document.getElementById(prefix + '_WIND_GUST');
@@ -8752,7 +8982,7 @@ For commercial licensing requests, contact:
 
       // Runway direction is required
       if (runwayDirection == '') {
-          alert("⚠️ No valid runway information available. Set the runway number manually to compute the wind envelope.");
+          console.warn("⚠️ No valid runway information available. Set the runway number manually to compute the wind envelope.");
           return results;
       }
 
@@ -8877,7 +9107,8 @@ For commercial licensing requests, contact:
       polyX.push(0, polyX[0]);
       polyY.push(0, polyY[0]);
 
-      if (!pointInPolygon(p1X, p1Y, polyX, polyY, p2X, p2Y)) {
+      // Check pointInPolygon and include points on the line except for point 0,0
+      if (!(p1X === 0 && p1Y === 0) && !pointInPolygon(p1X, p1Y, polyX, polyY, p2X, p2Y)) {
         results.line_intersection = 'outside envelope';
         results.xy_inside_envelope = false;
       }

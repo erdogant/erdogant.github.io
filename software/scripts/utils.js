@@ -209,6 +209,7 @@ function moveCountries(fromId, toId, action, defaultSelected = []) {
     // Format the country names with flags
     const countryFormatted = [];
     for (let i = 0; i < defaultSelected.length; i++) {
+      console.log(defaultSelected[i]);
       const countryCode = uniqueCountries[defaultSelected[i]];
       const flag = getFlagEmoji(countryCode);
       countryFormatted.push(`${flag} ${defaultSelected[i]}`);
@@ -219,7 +220,7 @@ function moveCountries(fromId, toId, action, defaultSelected = []) {
       // console.log("Checking option text:", option.text);
       const countryText = option.text; // Keep full text with flag
       if (countryFormatted.includes(countryText)) {
-        console.log("MATCH FOUND - Moving:", countryText);
+        console.log("   >MATCH FOUND - Moving:", countryText);
         option.style.display = "";
         toSelect.appendChild(option);
       } else {
@@ -231,58 +232,14 @@ function moveCountries(fromId, toId, action, defaultSelected = []) {
     sortSelect(fromSelect);
     sortSelect(toSelect);
 
+    // Store ICAO in cache for selected countries
+    CreateLookupTableIcaoSelected(defaultSelected);
     // Update dropdowns with remaining selected countries
     populateDropdown("DEPARTURE_COUNTRY", defaultSelected);
     populateDropdown("ARRIVAL_COUNTRY", defaultSelected);
     // Return
     return;
   }
-  // Handle initialization with default selected items
-  // if (defaultSelected.length > 0 && action === "initialize") {
-  //   console.log(`   > Initialize with: ${defaultSelected}`);
-
-  //   // Update the selected countries
-  //   populateDropdown("DEPARTURE_COUNTRY", defaultSelected);
-  //   populateDropdown("ARRIVAL_COUNTRY", defaultSelected);
-
-  //   // Get cache
-  //   const cached = localStorage.getItem(LOOKUPTABLE_COUNTRIES_CACHE);
-  //   const uniqueCountries = JSON.parse(cached);
-
-  //   // Format
-  //   const countryFormatted = [];
-  //   for (let i = 0; i < defaultSelected.length; i++) {
-  //     // Get country code
-  //     const countryCode = uniqueCountries[defaultSelected[i]];
-  //     // Get FLAG emoji
-  //     const flag = getFlagEmoji(countryCode);
-  //     // Store
-  //     countryFormatted.push(`${flag} ${defaultSelected[i]}`);
-  //     // Get options menu and populate
-  //     // const option = document.createElement("option");
-  //     // option.value = countryCode;
-  //     // option.textContent = `${flag} ${defaultSelected[i]}`;
-  //     // element.appendChild(option);
-  //   }
-  //   console.log("FORMATTED HERE");
-  //   console.log(countryFormatted);
-
-  //   // Move default items from fromSelect to toSelect
-  //   Array.from(fromSelect.options).forEach((option) => {
-  //     const countryName = option.text.replace(/^.*?\s/, "");
-  //     if (countryFormatted.includes(countryName)) {
-  //       option.style.display = "";
-  //       toSelect.appendChild(option);
-  //     }
-  //   });
-
-  //   // Sort both selects
-  //   sortSelect(fromSelect);
-  //   sortSelect(toSelect);
-
-  //   // Return
-  //   return;
-  // }
 
   // Original logic for user interactions
   const selectedOptions = Array.from(fromSelect.selectedOptions);
@@ -421,7 +378,7 @@ function populateAvailableCountries() {
   // Clear existing options
   element.innerHTML = "";
 
-  console.log(uniqueCountries);
+  // console.log(uniqueCountries);
   // Populate the select box with uniqueCountries dict
   if (uniqueCountries && typeof uniqueCountries === "object") {
     Object.keys(uniqueCountries).forEach((countryName) => {
@@ -554,6 +511,21 @@ function syncWeightCheckboxesAndFields(triggerId) {
   }
 }
 
+function Py2Js(dictString) {
+  try {
+    // Replace single quotes with double quotes, and False/True/None with JS equivalents
+    const jsonStr = dictString
+      .replace(/'/g, '"')
+      .replace(/\bFalse\b/g, "false")
+      .replace(/\bTrue\b/g, "true")
+      .replace(/\bNone\b/g, "null");
+    return JSON.parse(jsonStr);
+  } catch (e) {
+    console.warn("Failed to parse DEPARTURE_RUNWAY_PROPERTIES:", e, dictString);
+    return null;
+  }
+}
+
 // Make helper functions globally accessible
 window.getCountryCode = getCountryCode;
 window.getFlagEmoji = getFlagEmoji;
@@ -570,3 +542,4 @@ window.getIcaoInformation = getIcaoInformation;
 window.moveCountries = moveCountries;
 window.filterCountry = filterCountry;
 window.populateDropdown = populateDropdown;
+window.Py2Js = Py2Js;

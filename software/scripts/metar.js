@@ -1541,14 +1541,14 @@ async function retrieve_metar(prefix, verbose = "info", metar_custom = "") {
       metarField.value = metar_icao || metar_message;
 
       // Compute expected runway number based on wind direction and runway orientation
-      runway_predicted = expected_runway_number(prefix, metarObject.wind.direction, metarObject.wind.speed);
+      runway_predicted = predict_runway_number(prefix, metarObject.wind.direction, metarObject.wind.speed);
       // Compute wind parameters from METAR data and update wind GUI fields
       window.update_wind_gui_fields(prefix, metar_icao, metarObject);
       // Create wind envelope plot
       window.windEnvelope_js(prefix, 25, 15, false);
 
       // Store RUNWAY number in flight plan data
-      window.flight_plan_data[`${prefix}_RUNWAY`] = runway_predicted;
+      window.flight_plan_data[`${prefix}_RUNWAY_NR`] = runway_predicted;
       // Store METAR in flight plan data
       window.flight_plan_data[`${prefix}_METAR_ICAO`] = metar_icao;
       // Store METAR in flight plan data. This will break the saving functionality!
@@ -1559,6 +1559,8 @@ async function retrieve_metar(prefix, verbose = "info", metar_custom = "") {
         window.METAR_ARRIVAL = metarObject.getAll();
       }
 
+      // Update runway settings
+      setRunwaySlippery(prefix, metarObject.rain, metarObject.snow);
       // Update flight catagory icon (this is also periodically checked in checkMetarAge())
       updateFlightCatagoryIcon(prefix);
       // Animations
@@ -1566,7 +1568,7 @@ async function retrieve_metar(prefix, verbose = "info", metar_custom = "") {
       // Update GUI elements
       colorMetarFields(prefix, true);
     } catch (error) {
-      console.warn(`   >Warning: METAR information could not be processed.`);
+      console.warn(`   >Warning: METAR information could not be processed: ${error}`);
       colorMetarFields(prefix, false);
       return;
     }
