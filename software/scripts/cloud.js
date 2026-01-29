@@ -321,7 +321,7 @@ function animateCloud(prefix, process = "auto", density = 10, speed = 1.0, direc
   // Get variables from GUI
   const crossWind = document.getElementById(prefix + "_WIND_CROSSWIND").value;
   const headWind = document.getElementById(prefix + "_WIND_HEADWIND").value;
-  const speedWind = document.getElementById(prefix + "_WIND_SPEED").value;
+  const speedWind = document.getElementById(prefix + "_WIND_STRENGTH").value;
   const maxCrosswind = window.settings["MAX_CROSSWIND_LIMIT"];
 
   // Compute left or right direction with respect to the runway. Note that this is the other way arround over here!

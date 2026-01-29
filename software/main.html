@@ -99,6 +99,7 @@ For commercial licensing requests, contact:
     <script src="./scripts/weightbalance.js" defer></script>
     <script src="./scripts/fuel.js" defer></script>
     <script src="./scripts/runway.js" defer></script>
+    <script src="./scripts/runway_visualization.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 
 </head>
@@ -447,7 +448,7 @@ For commercial licensing requests, contact:
                 </div>
 
                 <div class="tile">
-                    <input id="DEPARTURE_WIND_SPEED" type="text" class="tile-value">
+                    <input id="DEPARTURE_WIND_STRENGTH" type="text" class="tile-value">
                     <span class="tile-label">Strength (kt)</span>
                 </div>
 
@@ -457,17 +458,27 @@ For commercial licensing requests, contact:
                 </div>
             </div>
 
-            <div class="grid-one-third-two-thirds">
+            <div class="wind-grid">
                 <div class="tile">
                     <input id="DEPARTURE_WIND_VARIATION" type="text" class="tile-value">
                     <span class="tile-label">Variation (°)</span>
                 </div>
+                <div class="tile">
+                    <input id="DEPARTURE_TEMPERATURE" type="text" class="tile-value">
+                    <span class="tile-label">Temp. (C°)</span>
+                </div>
+                <div class="tile">
+                    <input id="DEPARTURE_QNH" type="text" class="tile-value">
+                    <span class="tile-label">QNH</span>
+                </div>
+            </div>
 
+            <div class="wind-grid">
                 <div class="button-row">
                     <textarea id="METAR-FIELD-DEPARTURE"
                         placeholder="METAR Information"
                         title="METAR weather information"
-                        style="font-size:11px; background-color: transparent; width: 100%; min-height: 80px; max-height: 120px; resize: vertical; padding: 8px; box-sizing: border-box; border-radius: 10px"
+                        style="font-size:12px; background-color: transparent; width: 100%; min-height: 80px; max-height: 120px; resize: vertical; padding: 8px; box-sizing: border-box; border-radius: 10px"
                         aria-label="METAR Information">
                     </textarea>
                 </div>
@@ -744,7 +755,7 @@ For commercial licensing requests, contact:
 
 
         <!--RUNWAY DEPARTURE-->
-        <div class="collapsible" data-title="RUNWAY">
+        <div class="collapsible" data-title="RUNWAY" data-section="DEPARTURE_RUNWAY">
         <div class="collapsible-header"></div>
         <div class="collapsible-content">
 
@@ -785,14 +796,24 @@ For commercial licensing requests, contact:
                  </div>
            </div>
 
-           <!--<div class="border-round-eged">
-               <div id="DEPARTURE_RUNWAY_SVG"></div>
-           </div>-->
-
+           <div class="divider-general-section" style="background: #ffffff;"></div>
 
            <div class="wind-grid">
-               <textarea id="DEPARTURE_RUNWAY_CONDITION" class="tile-value" title="Runway condition." style="background-color: transparent; font-size: 12px; font-weight: normal; resize: vertical; min-height: 32px; max-height: 80px; width: 100%; box-sizing: border-box; white-space: pre-wrap; word-break: break-word; overflow-wrap: break-word;"></textarea>
+               <!--<div id="DEPARTURE_RUNWAY_MINDISTANCE"></div>-->
+               <div id="DEPARTURE_RUNWAY_THRESHOLD"></div>
+               <div id="DEPARTURE_RUNWAY_THRESHOLD_50ft"></div>
            </div>
+           <div class="border-round-eged">
+               <textarea id="DEPARTURE_RUNWAY_CONDITION" class="tile-value" title="Runway condition." style="background-color: transparent; font-size: 12px; font-weight: normal; resize: vertical; min-height: 32px; max-height: 80px; width: 100%; box-sizing: border-box; white-space: pre-wrap; word-break: break-word; overflow-wrap: break-word;"></textarea>
+               <div id="DEPARTURE_RUNWAY_BAR"></div>
+           </div>
+           <div class="wind-grid">
+               <div id="DEPARTURE_RUNWAY_DETAILS"></div>
+           </div>
+           <!-- Add a button to calculate -->
+           <button class="button" onclick="window.displayRunwayResultsDiv('DEPARTURE')">
+               Calculate Runway Performance
+           </button>
 
            <button id="DEPARTURE_LOAD_DEFAULTS" onclick="window.setRunwaySurface('DEPARTURE', true)"
                title="Load the default runway information."
@@ -948,7 +969,7 @@ For commercial licensing requests, contact:
                 </div>
 
                 <div class="tile">
-                    <input id="ARRIVAL_WIND_SPEED" type="text" class="tile-value">
+                    <input id="ARRIVAL_WIND_STRENGTH" type="text" class="tile-value">
                     <span class="tile-label">Strength (kt)</span>
                 </div>
 
@@ -958,17 +979,27 @@ For commercial licensing requests, contact:
                 </div>
             </div>
 
-            <div class="grid-one-third-two-thirds">
+            <div class="wind-grid">
                 <div class="tile">
                     <input id="ARRIVAL_WIND_VARIATION" type="text" class="tile-value">
                     <span class="tile-label">Variation (°)</span>
                 </div>
+                <div class="tile">
+                    <input id="ARRIVAL_TEMPERATURE" type="text" class="tile-value">
+                    <span class="tile-label">Temp. (C°)</span>
+                </div>
+                <div class="tile">
+                    <input id="ARRIVAL_QNH" type="text" class="tile-value">
+                    <span class="tile-label">QNH</span>
+                </div>
+            </div>
 
+            <div class="wind-grid">
                 <div class="button-row">
                     <textarea id="METAR-FIELD-ARRIVAL"
                         placeholder="METAR Information"
                         title="METAR weather information"
-                        style="font-size:11px; background-color: transparent; width: 100%; min-height: 80px; max-height: 120px; resize: vertical; padding: 8px; box-sizing: border-box; border-radius: 10px"
+                        style="font-size:12px; background-color: transparent; width: 100%; min-height: 80px; max-height: 120px; resize: vertical; padding: 8px; box-sizing: border-box; border-radius: 10px"
                         aria-label="METAR Information">
                     </textarea>
                 </div>
@@ -1240,7 +1271,7 @@ For commercial licensing requests, contact:
 
 
        <!--RUNWAY ARRIVAL-->
-       <div class="collapsible" data-title="RUNWAY">
+       <div class="collapsible" data-title="RUNWAY" data-section="ARRIVAL_RUNWAY_RESULTS">
        <div class="collapsible-header"></div>
        <div class="collapsible-content">
 
@@ -1281,6 +1312,36 @@ For commercial licensing requests, contact:
                 </div>
           </div>
 
+          <div class="divider-general-section" style="background: #ffffff;"></div>
+
+          <div class="wind-grid">
+              <!--<div id="ARRIVAL_RUNWAY_MINDISTANCE"></div>-->
+              <div id="ARRIVAL_RUNWAY_THRESHOLD"></div>
+              <div id="ARRIVAL_RUNWAY_THRESHOLD_50ft"></div>
+          </div>
+          <div class="border-round-eged">
+              <div id="ARRIVAL_RUNWAY_BAR"></div>
+          </div>
+          <div class="wind-grid">
+              <textarea id="ARRIVAL_RUNWAY_CONDITION" class="tile-value" title="Runway condition." style="background-color: transparent; font-size: 12px; font-weight: normal; resize: vertical; min-height: 32px; max-height: 80px; width: 100%; box-sizing: border-box; white-space: pre-wrap; word-break: break-word; overflow-wrap: break-word;"></textarea>
+          </div>
+          <div class="wind-grid">
+              <div id="ARRIVAL_RUNWAY_DETAILS"></div>
+          </div>
+          <!-- Add a button to calculate -->
+          <button class="button" onclick="window.displayRunwayResultsDiv('ARRIVAL')">
+              Calculate Runway Performance
+          </button>
+
+          <!--<div class="divider-general-section" style="background: #f5f5f5;"></div>-->
+
+          <!-- Add a button to calculate -->
+          <!--<button class="button" onclick="window.displayRunwayResultsDiv('ARRIVAL')">
+              🔄 Calculate Runway Performance
+          </button>
+          <div class="border-round-eged">
+              <div id="ARRIVAL_RUNWAY_RESULTS"></div>
+          </div>-->
 
           <!--<div class="border-round-eged">
               <div id="ARRIVAL_RUNWAY_SVG"></div>
@@ -2722,17 +2783,14 @@ For commercial licensing requests, contact:
         // Get the values from the input fields
         const runwayField = document.getElementById(prefix + '_RUNWAY_NR');
         const windDirectionField = document.getElementById(prefix + '_WIND_DIRECTION');
-        const windSpeedField = document.getElementById(prefix + '_WIND_SPEED');
+        const windSpeedField = document.getElementById(prefix + '_WIND_STRENGTH');
         const windGustField = document.getElementById(prefix + '_WIND_GUST');
         const windVariationField = document.getElementById(prefix + '_WIND_VARIATION');
         const windHeadwindField = document.getElementById(prefix + '_WIND_HEADWIND');
         const windCrosswindField = document.getElementById(prefix + '_WIND_CROSSWIND');
+        const TempField = document.getElementById(prefix + '_TEMPERATURE');
+        const QNHField = document.getElementById(prefix + '_QNH');
 
-        // Runway number is required
-        if (runwayField == '') {
-            alert("⚠️ No valid runway information available. Unable to compute the wind envelope.");
-            return;
-        }
         // METAR information is required
         if (metar_icao == '' || metar_icao == null) {
             alert("⚠️ METAR data was not retrieved. Please try to retrieve METAR information again.");
@@ -2741,9 +2799,21 @@ For commercial licensing requests, contact:
 
         // Compute the wind direction, strength, gust and variation
         // const wind_dict = analyzeWind(metar_icao).toJs();
+        // console.log('HERE3')
+        // console.log(metar_obj)
         const wind_dict = metar_obj.wind;
         const headwind_value = headwind(wind_dict.direction, wind_dict.speed, runwayField.value);
         const crosswind_value = crosswind(wind_dict.direction, wind_dict.speed, runwayField.value);
+
+        // Update temperature field
+        TempField.value = (metar_obj.temperatures == null || metar_obj.temperatures.temperature === '' || metar_obj.temperatures.temperature === null || metar_obj.temperatures.temperature === undefined || metar_obj.temperatures.temperature === 'None')
+            ? ''
+            : metar_obj.temperatures.temperature;
+
+        // Update QNH field
+        QNHField.value = (metar_obj.qnh === '' || metar_obj.qnh === null || metar_obj.qnh === undefined || metar_obj.qnh === 'None')
+            ? ''
+            : metar_obj.qnh;
 
         // Update wind-related fields
         windDirectionField.value = (wind_dict.direction === '' || wind_dict.direction === null || wind_dict.direction === undefined || wind_dict.direction === 'None')
@@ -4124,11 +4194,13 @@ For commercial licensing requests, contact:
         metarText = js.document.getElementById(f'METAR-TEXT-{fname}')
 
         windDirectionField = js.document.getElementById(fname + '_WIND_DIRECTION');
-        windSpeedField = js.document.getElementById(fname + '_WIND_SPEED');
+        windSpeedField = js.document.getElementById(fname + '_WIND_STRENGTH');
         windGustField = js.document.getElementById(fname + '_WIND_GUST');
         windVariationField = js.document.getElementById(fname + '_WIND_VARIATION');
         windHeadwindField = js.document.getElementById(fname + '_WIND_HEADWIND');
         windCrosswindField = js.document.getElementById(fname + '_WIND_CROSSWIND');
+        tempField = js.document.getElementById(fname + '_TEMPERATURE');
+        QNHField = js.document.getElementById(fname + '_QNH');
 
         # button.style.backgroundColor = '#006280';
         datetime_field.style.backgroundColor = 'transparent';
@@ -4144,6 +4216,8 @@ For commercial licensing requests, contact:
         windVariationField.value = '';
         windHeadwindField.value = '';
         windCrosswindField.value = '';
+        tempField.value = '';
+        QNHField.value = '';
 
         # Clear datetime
         js.window.flight_plan_data[f'{fname.upper()}_METAR'] = ''
@@ -4725,7 +4799,9 @@ For commercial licensing requests, contact:
             f'{fname}_ATC_GROUND',
             f'{fname}_ATC_TELEPHONE',
             f'{fname}_WIND_DIRECTION',
-            f'{fname}_WIND_SPEED',
+            f'{fname}_TEMPERATURE',
+            f'{fname}_QNH',
+            f'{fname}_WIND_STRENGTH',
             f'{fname}_WIND_GUST',
             f'{fname}_WIND_VARIATION',
             f'{fname}_WIND_HEADWIND',
@@ -5017,7 +5093,7 @@ For commercial licensing requests, contact:
         # Get information from GUI when wind fields are not forced
         if wind_direction == '' or wind_strength == '':
             wind_direction = js.document.getElementById(fname + "_WIND_DIRECTION").value
-            wind_strength = js.document.getElementById(fname + "_WIND_SPEED").value
+            wind_strength = js.document.getElementById(fname + "_WIND_STRENGTH").value
             if is_numeric(wind_direction): wind_direction = int(wind_direction)
             if is_numeric(wind_strength): wind_strength = int(wind_strength)
 
@@ -7481,7 +7557,7 @@ For commercial licensing requests, contact:
     });
 
       // Update the wind envelope directly after chaning the inputfields
-    ['ARRIVAL_WIND_VARIATION', 'DEPARTURE_WIND_VARIATION', 'ARRIVAL_WIND_GUST', 'DEPARTURE_WIND_GUST', 'DEPARTURE_WIND_SPEED', 'DEPARTURE_WIND_DIRECTION', 'ARRIVAL_WIND_SPEED', 'ARRIVAL_WIND_DIRECTION'].forEach(id => {
+    ['ARRIVAL_WIND_VARIATION', 'DEPARTURE_WIND_VARIATION', 'ARRIVAL_WIND_GUST', 'DEPARTURE_WIND_GUST', 'DEPARTURE_WIND_STRENGTH', 'DEPARTURE_WIND_DIRECTION', 'ARRIVAL_WIND_STRENGTH', 'ARRIVAL_WIND_DIRECTION'].forEach(id => {
       document.getElementById(id)?.addEventListener('change', e => {
         const num = Number(String(e?.target?.value ?? '').trim());
         if (!Number.isFinite(num)) return;
@@ -8396,8 +8472,8 @@ For commercial licensing requests, contact:
                 required_atc_arrival: false,
                 required_atc_enroute: false,
             },
-            'DEPARTURE_WIND_SPEED': {
-                element: document.getElementById('DEPARTURE_WIND_SPEED'),
+            'DEPARTURE_WIND_STRENGTH': {
+                element: document.getElementById('DEPARTURE_WIND_STRENGTH'),
                 name: 'Departure Wind Speed',
                 color_empty: '',
                 color_filled: 'transparent',
@@ -8417,6 +8493,24 @@ For commercial licensing requests, contact:
             'DEPARTURE_WIND_VARIATION': {
                 element: document.getElementById('DEPARTURE_WIND_VARIATION'),
                 name: 'Departure Wind Variation',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            'DEPARTURE_TEMPERATURE': {
+                element: document.getElementById('DEPARTURE_TEMPERATURE'),
+                name: 'Departure Temperature',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            'DEPARTURE_QNH': {
+                element: document.getElementById('DEPARTURE_QNH'),
+                name: 'Departure QNH',
                 color_empty: '',
                 color_filled: 'transparent',
                 required_atc_departure: false,
@@ -8451,8 +8545,8 @@ For commercial licensing requests, contact:
                 required_atc_arrival: false,
                 required_atc_enroute: false,
             },
-            'ARRIVAL_WIND_SPEED': {
-                element: document.getElementById('ARRIVAL_WIND_SPEED'),
+            'ARRIVAL_WIND_STRENGTH': {
+                element: document.getElementById('ARRIVAL_WIND_STRENGTH'),
                 name: 'Arrival Wind Speed',
                 color_empty: '',
                 color_filled: 'transparent',
@@ -8472,6 +8566,24 @@ For commercial licensing requests, contact:
             'ARRIVAL_WIND_VARIATION': {
                 element: document.getElementById('ARRIVAL_WIND_VARIATION'),
                 name: 'Arrival Wind Variation',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            'ARRIVAL_TEMPERATURE': {
+                element: document.getElementById('ARRIVAL_TEMPERATURE'),
+                name: 'Arrival Temperature',
+                color_empty: '',
+                color_filled: 'transparent',
+                required_atc_departure: false,
+                required_atc_arrival: false,
+                required_atc_enroute: false,
+            },
+            'ARRIVAL_QNH': {
+                element: document.getElementById('ARRIVAL_QNH'),
+                name: 'Arrival QNH',
                 color_empty: '',
                 color_filled: 'transparent',
                 required_atc_departure: false,
@@ -8941,7 +9053,7 @@ For commercial licensing requests, contact:
       // Get the values from the input fields
       const runwayNumberField = document.getElementById(prefix + '_RUNWAY_NR');
       const windDirectionField = document.getElementById(prefix + '_WIND_DIRECTION');
-      const windSpeedField = document.getElementById(prefix + '_WIND_SPEED');
+      const windSpeedField = document.getElementById(prefix + '_WIND_STRENGTH');
       const windGustField = document.getElementById(prefix + '_WIND_GUST');
       const windVariationField = document.getElementById(prefix + '_WIND_VARIATION');
       const elementMenu = document.getElementById(`${prefix}_WIND_MENU`);

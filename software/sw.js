@@ -1,4 +1,4 @@
-const CACHE_NAME = "skywalk-v0.4";
+const CACHE_NAME = "skywalk-v0.5";
 
 const FILES_TO_CACHE = [
   "./main.html",
@@ -11,6 +11,7 @@ const FILES_TO_CACHE = [
   // SCRIPTS
   "./scripts/weightbalance.js",
   "./scripts/runway.js",
+  "./scripts/runway_visualization.js",
   "./scripts/fuel.js",
   "./scripts/utils.js",
   "./scripts/maps.js",

@@ -1358,11 +1358,13 @@ async function colorMetarFields(prefix, enable) {
   const dateField = document.getElementById("DATETIME-METAR-" + prefix);
   const metarField = document.getElementById("METAR-FIELD-" + prefix);
   const windDirectionField = document.getElementById(prefix + "_WIND_DIRECTION");
-  const windSpeedField = document.getElementById(prefix + "_WIND_SPEED");
+  const windSpeedField = document.getElementById(prefix + "_WIND_STRENGTH");
   const windGustField = document.getElementById(prefix + "_WIND_GUST");
   const windVariationField = document.getElementById(prefix + "_WIND_VARIATION");
   const windHeadwindField = document.getElementById(prefix + "_WIND_HEADWIND");
   const windCrosswindField = document.getElementById(prefix + "_WIND_CROSSWIND");
+  const TempField = document.getElementById(prefix + "_TEMPERATURE");
+  const QNHField = document.getElementById(prefix + "_QNH");
   const borderFieldAerodrome1 = document.getElementById(prefix + "_SELECT_AERODROME_BORDER_1");
   const borderFieldAerodrome2 = document.getElementById(prefix + "_SELECT_AERODROME_BORDER_2");
   const borderFieldAerodrome3 = document.getElementById(prefix + "_SELECT_AERODROME_BORDER_3");
@@ -1386,6 +1388,8 @@ async function colorMetarFields(prefix, enable) {
     windVariationField.style.backgroundColor = "transparent";
     windHeadwindField.style.backgroundColor = "transparent";
     windCrosswindField.style.backgroundColor = "transparent";
+    TempField.style.backgroundColor = "transparent";
+    QNHField.style.backgroundColor = "transparent";
   } else {
     // buttonMetarIcon2.disabled = true;
     // buttonMetarIcon2.style.cursor = "not-allowed";
@@ -1409,6 +1413,8 @@ async function colorMetarFields(prefix, enable) {
     windVariationField.style.backgroundColor = "#ffebee";
     windHeadwindField.style.backgroundColor = "#ffebee";
     windCrosswindField.style.backgroundColor = "#ffebee";
+    TempField.style.backgroundColor = "#ffebee";
+    QNHField.style.backgroundColor = "#ffebee";
     borderFieldAerodrome1.style.backgroundColor = "#E9E9E9";
     borderFieldAerodrome2.style.backgroundColor = "#f5f5f5";
     borderFieldAerodrome3.style.backgroundColor = "#f5f5f5";
@@ -1420,7 +1426,7 @@ async function colorMetarFields(prefix, enable) {
 //   const dateField = document.getElementById("DATETIME-METAR-" + prefix);
 //   const metarField = document.getElementById("METAR-FIELD-" + prefix);
 //   const windDirectionField = document.getElementById(prefix + "_WIND_DIRECTION");
-//   const windSpeedField = document.getElementById(prefix + "_WIND_SPEED");
+//   const windSpeedField = document.getElementById(prefix + "_WIND_STRENGTH");
 //   const windGustField = document.getElementById(prefix + "_WIND_GUST");
 //   const windVariationField = document.getElementById(prefix + "_WIND_VARIATION");
 //   const windHeadwindField = document.getElementById(prefix + "_WIND_HEADWIND");

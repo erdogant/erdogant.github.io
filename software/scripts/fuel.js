@@ -136,9 +136,9 @@ function computeArrivalFuelPerLeg() {
 
   // Wind (linear interpolation dep -> arr)
   const windDirDep = parseFloat(document.getElementById("DEPARTURE_WIND_DIRECTION")?.value) || 0;
-  const windSpdDep = parseFloat(document.getElementById("DEPARTURE_WIND_SPEED")?.value) || 0;
+  const windSpdDep = parseFloat(document.getElementById("DEPARTURE_WIND_STRENGTH")?.value) || 0;
   const windDirArr = parseFloat(document.getElementById("ARRIVAL_WIND_DIRECTION")?.value) || windDirDep;
-  const windSpdArr = parseFloat(document.getElementById("ARRIVAL_WIND_SPEED")?.value) || windSpdDep;
+  const windSpdArr = parseFloat(document.getElementById("ARRIVAL_WIND_STRENGTH")?.value) || windSpdDep;
 
   let totalFuelBurned = 0;
   let totalTimeH = 0;
