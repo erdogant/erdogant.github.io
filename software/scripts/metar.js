@@ -1567,6 +1567,8 @@ async function retrieve_metar(prefix, verbose = "info", metar_custom = "") {
 
       // Update runway settings
       setRunwaySlippery(prefix, metarObject.rain, metarObject.snow);
+      // Compute runway length
+      displayRunwayResultsDiv(prefix);
       // Update flight catagory icon (this is also periodically checked in checkMetarAge())
       updateFlightCatagoryIcon(prefix);
       // Animations

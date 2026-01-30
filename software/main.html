@@ -83,6 +83,7 @@ For commercial licensing requests, contact:
     <script src="app.js"></script>
 
     <!--SCRIPTS-->
+    <script src="./scripts/config.js" defer></script>
     <script src="./scripts/utils.js" defer></script>
     <!--ANIMATION SCRIPTS-->
     <script src="./scripts/rain.js" defer></script>
@@ -99,7 +100,7 @@ For commercial licensing requests, contact:
     <script src="./scripts/weightbalance.js" defer></script>
     <script src="./scripts/fuel.js" defer></script>
     <script src="./scripts/runway.js" defer></script>
-    <script src="./scripts/runway_visualization.js" defer></script>
+    <script src="./scripts/runwayHTML.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 
 </head>
@@ -799,6 +800,9 @@ For commercial licensing requests, contact:
            <div class="divider-general-section" style="background: #ffffff;"></div>
 
            <div class="wind-grid">
+               <div id="DEPARTURE_RUNWAY_MESSAGE"></div>
+           </div>
+           <div class="wind-grid">
                <!--<div id="DEPARTURE_RUNWAY_MINDISTANCE"></div>-->
                <div id="DEPARTURE_RUNWAY_THRESHOLD"></div>
                <div id="DEPARTURE_RUNWAY_THRESHOLD_50ft"></div>
@@ -815,7 +819,7 @@ For commercial licensing requests, contact:
                Calculate Runway Performance
            </button>
 
-           <button id="DEPARTURE_LOAD_DEFAULTS" onclick="window.setRunwaySurface('DEPARTURE', true)"
+           <button id="DEPARTURE_LOAD_DEFAULTS" onclick="window.setRunwaySurface('DEPARTURE', true); window.displayRunwayResultsDiv('DEPARTURE')"
                title="Load the default runway information."
                style="background-color: transparent; border: none; width: 10px; padding: 1px; cursor: pointer;">
                    🔄
@@ -1315,15 +1319,16 @@ For commercial licensing requests, contact:
           <div class="divider-general-section" style="background: #ffffff;"></div>
 
           <div class="wind-grid">
+              <div id="ARRIVAL_RUNWAY_MESSAGE"></div>
+          </div>
+          <div class="wind-grid">
               <!--<div id="ARRIVAL_RUNWAY_MINDISTANCE"></div>-->
               <div id="ARRIVAL_RUNWAY_THRESHOLD"></div>
               <div id="ARRIVAL_RUNWAY_THRESHOLD_50ft"></div>
           </div>
           <div class="border-round-eged">
-              <div id="ARRIVAL_RUNWAY_BAR"></div>
-          </div>
-          <div class="wind-grid">
               <textarea id="ARRIVAL_RUNWAY_CONDITION" class="tile-value" title="Runway condition." style="background-color: transparent; font-size: 12px; font-weight: normal; resize: vertical; min-height: 32px; max-height: 80px; width: 100%; box-sizing: border-box; white-space: pre-wrap; word-break: break-word; overflow-wrap: break-word;"></textarea>
+              <div id="ARRIVAL_RUNWAY_BAR"></div>
           </div>
           <div class="wind-grid">
               <div id="ARRIVAL_RUNWAY_DETAILS"></div>
@@ -1347,11 +1352,7 @@ For commercial licensing requests, contact:
               <div id="ARRIVAL_RUNWAY_SVG"></div>
           </div>-->
 
-          <div class="wind-grid">
-              <textarea id="ARRIVAL_RUNWAY_CONDITION" class="tile-value" title="Runway condition." style="background-color: transparent; font-size: 12px; font-weight: normal; resize: vertical; min-height: 32px; max-height: 80px; width: 100%; box-sizing: border-box; white-space: pre-wrap; word-break: break-word; overflow-wrap: break-word;"></textarea>
-          </div>
-
-          <button id="ARRIVAL_LOAD_DEFAULTS" onclick="window.setRunwaySurface('ARRIVAL', true)"
+          <button id="ARRIVAL_LOAD_DEFAULTS" onclick="window.setRunwaySurface('ARRIVAL', true); window.displayRunwayResultsDiv('ARRIVAL')"
               title="Load the default runway information."
               style="background-color: transparent; border: none; width: 10px; padding: 1px; cursor: pointer;">
                   🔄
@@ -2436,46 +2437,6 @@ For commercial licensing requests, contact:
 <!-- Javascript functionality -->
 
 <script>
-    function load_performance_defaults(name) {
-      // Default values for takeoff performance
-      const defaults = {};
-      defaults[`${name}_headwind_kts_0`] = 0;
-      defaults[`${name}_headwind_cor_0`] = 0.85;
-      defaults[`${name}_headwind_kts_1`] = 10;
-      defaults[`${name}_headwind_cor_1`] = 0.85;
-      defaults[`${name}_headwind_kts_2`] = 20;
-      defaults[`${name}_headwind_cor_2`] = 0.65;
-      defaults[`${name}_headwind_kts_3`] = 30;
-      defaults[`${name}_headwind_cor_3`] = 0.55;
-      defaults[`${name}_tailwind_kts`] = 2;
-      defaults[`${name}_tailwind_cor`] = 1.1;
-      defaults[`${name}_runway_slope_paved`] = 0.05;
-      defaults[`${name}_runway_hard_dry`] = 1;
-      defaults[`${name}_runway_hard_wet`] = 1.05;
-      defaults[`${name}_runway_soft_dry`] = 1.15;
-      defaults[`${name}_runway_soft_wet`] = 1.25;
-      defaults[`${name}_runway_custom_dry`] = 1.15;
-      defaults[`${name}_runway_custom_wet`] = 1.25;
-
-      if (name==='landing')
-        {
-          defaults[`${name}_runway_slope_correction`] = 1.43;
-          defaults[`${name}_runway_minimum_distance`] = 0.7;
-        } else {
-          defaults[`${name}_runway_slope_correction`] = 1.25;
-          defaults[`${name}_runway_minimum_distance`] = 1;
-        }
-
-        for (const [id, value] of Object.entries(defaults)) {
-            const el = document.getElementById(id);
-            if (el) {
-                el.value = value;
-            }
-        }
-    }
-</script>
-
-<script>
     // MAKE REAL OFFLINE APP WITH SERVICEWORK AND SW.JS
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js')
@@ -2850,6 +2811,63 @@ For commercial licensing requests, contact:
 
     }
 
+
+    /**
+     * Auto-update results when inputs change: NEED FIX!!!
+     */
+
+     function AutoUpdateRunwayResults(elementOrEvent) {
+       console.log('> func: AutoUpdateRunwayResults()')
+       // Determine prefix based on the field's id
+       let element = elementOrEvent?.target || elementOrEvent;
+       let prefix = element.id.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
+       displayRunwayResultsDiv(prefix)
+     }
+
+     // Setup event listeners for RUNWAY fields
+     ['DEPARTURE_RUNWAY_LENGTH', 'DEPARTURE_RUNWAY_SLOPE', 'DEPARTURE_TEMPERATURE', 'DEPARTURE_ELEVATION', 'DEPARTURE_total_weight',
+       'DEPARTURE_WIND_DIRECTION', 'DEPARTURE_WIND_STRENGTH', 'DEPARTURE_RUNWAY_SURFACE', 'DEPARTURE_RUNWAY_SLIPPERY'].forEach(id => {
+         const field = document.getElementById(id);
+         if (!field) return;
+
+         // Trigger on blur
+         field.addEventListener("blur", AutoUpdateRunwayResults);
+         // Trigger on Enter key
+         field.addEventListener('keydown', fieldEvent => {
+             if (fieldEvent.key === 'Enter') {
+                 // Determine prefix based on the field's id
+                 let prefix = field.id.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
+                 displayRunwayResultsDiv(prefix);
+             }
+         });
+     });
+
+    /**
+     * Auto-update results when inputs change
+     */
+    // function AutoUpdateRunwayResults(prefix, containerId, useCanvas = false) {
+    //   console.log(`>func: AutoUpdateRunwayResults(${prefix})`);
+    //   const updateFunc = useCanvas ? displayRunwayResults : displayRunwayResultsDiv;
+
+    //   const inputIds = [
+    //     `${prefix}_total_weight`,
+    //   ];
+
+    //   let timeout = null;
+
+    //   inputIds.forEach((id) => {
+    //     const element = document.getElementById(id);
+    //     if (element) {
+    //       element.addEventListener("change", () => {
+    //         clearTimeout(timeout);
+    //         timeout = setTimeout(() => updateFunc(prefix, containerId), 300);
+    //       });
+    //     }
+    //   });
+
+    //   // Initial display
+    //   updateFunc(prefix, containerId);
+    // }
 
     async function set_widget(prefix, widgetname) {
         console.log(`Retrieving ${widgetname} widget for ${prefix}`);
@@ -3588,7 +3606,6 @@ For commercial licensing requests, contact:
         if verbose=='info':
             js.window.alert(f"ℹ️ Default aircraft specifications are loaded.")
             print(js.window.flight_plan_data['AIRCRAFT'])
-
 
     def aircraft_update_flightplan():
         """Update the flightplan: js.window.flight_plan_data['AIRCRAFT'] with the values from the GUI."""
@@ -5128,6 +5145,7 @@ For commercial licensing requests, contact:
             # metarText.value = js.window.messages;
             # Update runway properties
             js.window.setRunwaySurface(fname)
+            js.window.displayRunwayResultsDiv(fname)
 
         # Return
         print(f'   >Predicted runway: {expect_runway}')
@@ -5660,6 +5678,10 @@ For commercial licensing requests, contact:
             js.window.updateFlag('DEPARTURE', 'remove')
             js.window.updateFlag('ARRIVAL', 'remove')
 
+            # Clean runway info
+            js.window.displayRunwayResultsDiv('DEPARTURE', 'remove')
+            js.window.displayRunwayResultsDiv('ARRIVAL', 'remove')
+
             # Update VFR icon
             js.window.updateFlightCatagoryIcon('DEPARTURE', remove=True)
             js.window.updateFlightCatagoryIcon('ARRIVAL', remove=True)
@@ -5910,6 +5932,9 @@ For commercial licensing requests, contact:
 
         # Remove wind envelope
         remove_wind_envelope_plot(fname)
+
+        # Remove runway plot
+        js.window.displayRunwayResultsDiv(fname, 'remove')
 
         # Retrieve METAR data during loading of the aerodrome
         await js.window.retrieve_metar(fname, verbose=verbose)
@@ -7592,6 +7617,7 @@ For commercial licensing requests, contact:
       let element = elementOrEvent?.target || elementOrEvent;
       let prefix = element.id.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
       setRunwaySurface(prefix);
+      displayRunwayResultsDiv(prefix)
     }
 
     // Setup event listeners for RUNWAY fields
@@ -9230,6 +9256,7 @@ For commercial licensing requests, contact:
       // Set message and xy
       if (headwindY < 0) {
         results.message = `❗ Warning: Tail wind for runway ${runwayDirection}.`;
+        results.line_intersection = 'tailwind'
         results.xy = [x, y];
         icon = '❗';
         color = "#ffeb3b";
@@ -9420,6 +9447,11 @@ For commercial licensing requests, contact:
         windEnvelopeField.style.border = "1px solid #c3e6cb";
         windEnvelopeField.innerHTML = results.message;
       } else if (results.line_intersection === 'outside envelope') {
+        windEnvelopeField.style.background = "#f8d7da";
+        windEnvelopeField.style.color = "#721c24";
+        windEnvelopeField.style.border = "1px solid #f5c6cb";
+        windEnvelopeField.innerHTML = results.message;
+      } else if (results.line_intersection === 'tailwind') {
         windEnvelopeField.style.background = "#f8d7da";
         windEnvelopeField.style.color = "#721c24";
         windEnvelopeField.style.border = "1px solid #f5c6cb";

@@ -598,6 +598,43 @@ function getRunwaySettings(prefix) {
   return { condition, surface };
 }
 
+function load_performance_defaults(name) {
+  // Default values for takeoff performance
+  const defaults = {};
+  defaults[`${name}_headwind_kts_0`] = 0;
+  defaults[`${name}_headwind_cor_0`] = 0.85;
+  defaults[`${name}_headwind_kts_1`] = 10;
+  defaults[`${name}_headwind_cor_1`] = 0.85;
+  defaults[`${name}_headwind_kts_2`] = 20;
+  defaults[`${name}_headwind_cor_2`] = 0.65;
+  defaults[`${name}_headwind_kts_3`] = 30;
+  defaults[`${name}_headwind_cor_3`] = 0.55;
+  defaults[`${name}_tailwind_kts`] = 2;
+  defaults[`${name}_tailwind_cor`] = 1.1;
+  defaults[`${name}_runway_slope_paved`] = 0.05;
+  defaults[`${name}_runway_hard_dry`] = 1;
+  defaults[`${name}_runway_hard_wet`] = 1.05;
+  defaults[`${name}_runway_soft_dry`] = 1.15;
+  defaults[`${name}_runway_soft_wet`] = 1.25;
+  defaults[`${name}_runway_custom_dry`] = 1.15;
+  defaults[`${name}_runway_custom_wet`] = 1.25;
+
+  if (name === "landing") {
+    defaults[`${name}_runway_slope_correction`] = 1.43;
+    defaults[`${name}_runway_minimum_distance`] = 0.7;
+  } else {
+    defaults[`${name}_runway_slope_correction`] = 1.25;
+    defaults[`${name}_runway_minimum_distance`] = 1;
+  }
+
+  for (const [id, value] of Object.entries(defaults)) {
+    const el = document.getElementById(id);
+    if (el) {
+      el.value = value;
+    }
+  }
+}
+
 // ========================== BUILD RUNWAY SVG ==========================
 //
 // const RUNWAY_HALF_WIDTH = 2; // rect width = 4
@@ -792,6 +829,7 @@ function getRunwaySettings(prefix) {
 
 window.getRunwaySettings = getRunwaySettings;
 window.setRunwaySurface = setRunwaySurface;
+window.load_performance_defaults = load_performance_defaults;
 // window.buildRunwayOverviewSvg = buildRunwayOverviewSvg;
 // window.setRunwayProperties = setRunwayProperties;
 

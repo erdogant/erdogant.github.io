@@ -1,6 +1,7 @@
-const LOOKUPTABLE_URL = "https://erdogant.github.io/datasets/skywalk/aerodromes_lookup.csv";
-const LOOKUPTABLE_COUNTRIES_CACHE = "LOOKUPTABLE_COUNTRIES"; // Name of the lookup table that is stored in cache
-const LOOKUPTABLE_ICAO_CACHE = "LOOKUPTABLE_ICAO"; // Name of the lookup table that is stored in cache
+// THESE ARE DEFINED IN: CONFIG.js
+// const LOOKUPTABLE_URL;
+// const LOOKUPTABLE_COUNTRIES_CACHE
+// const LOOKUPTABLE_ICAO_CACHE
 
 function populateDropdown(elementId, countries) {
   console.log("> func: populateDropdown()");

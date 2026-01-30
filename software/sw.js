@@ -9,9 +9,10 @@ const FILES_TO_CACHE = [
   // "./libs/core.js",
 
   // SCRIPTS
+  "./scripts/config.js",
   "./scripts/weightbalance.js",
   "./scripts/runway.js",
-  "./scripts/runway_visualization.js",
+  "./scripts/runwayHTML.js",
   "./scripts/fuel.js",
   "./scripts/utils.js",
   "./scripts/maps.js",
