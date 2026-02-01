@@ -469,64 +469,149 @@ function createDateTime() {
   document.getElementById("DATETIME_CREATION").value = nowtime(false);
 }
 
-// Function to synchronize weight checkboxes and fields
-function syncWeightCheckboxesAndFields(triggerId) {
-  console.log("> func: syncWeightCheckboxesAndFields()");
-  const depCheckbox = document.getElementById("DEPARTURE_WEIGHT_CHECKBOX");
-  const arrCheckbox = document.getElementById("ARRIVAL_WEIGHT_CHECKBOX");
+// function Py2Js(dictString) {
+//   try {
+//     if (dictString === null || dictString === "" || dictString === "undefined") {
+//       return null;
+//     }
 
-  // Sync the other checkbox to match the one that was clicked
-  if (triggerId === "DEPARTURE_WEIGHT_CHECKBOX") {
-    arrCheckbox.checked = depCheckbox.checked;
-  } else if (triggerId === "ARRIVAL_WEIGHT_CHECKBOX") {
-    depCheckbox.checked = arrCheckbox.checked;
+//     // Replace single quotes with double quotes, and False/True/None with JS equivalents
+//     const jsonStr = dictString
+//       .replace(/'/g, '"')
+//       .replace(/\bFalse\b/g, "false")
+//       .replace(/\bTrue\b/g, "true")
+//       .replace(/\bNone\b/g, "null");
+//     return JSON.parse(jsonStr);
+//   } catch (e) {
+//     console.warn("Failed to parse DEPARTURE_RUNWAY_PROPERTIES:", e, dictString);
+//     return null;
+//   }
+
+// }
+// function Py2Js(value) {
+//   try {
+//     // 1. Null / undefined / empty
+//     if (value === null || value === "" || value === "undefined") {
+//       return null;
+//     }
+
+//     // 2. PyScript PyProxy → convert to JS
+//     if (typeof value === "object" && typeof value.toJs === "function") {
+//       let jsValue = value.toJs();
+//       if (jsValue instanceof Map) {
+//         return Object.fromEntries(jsValue);
+//       }
+//       return jsValue;
+//     }
+
+//     // 3. Already a JS Map
+//     if (value instanceof Map) {
+//       return Object.fromEntries(value);
+//     }
+
+//     // 4. Already a JS object
+//     if (typeof value === "object") {
+//       return value;
+//     }
+
+//     // 5. Stringified Python dict → convert to JSON
+//     if (typeof value === "string") {
+//       const jsonStr = value
+//         .replace(/'/g, '"')
+//         .replace(/\bFalse\b/g, "false")
+//         .replace(/\bTrue\b/g, "true")
+//         .replace(/\bNone\b/g, "null");
+
+//       return JSON.parse(jsonStr);
+//     }
+
+//     // 6. Fallback
+//     return value;
+//   } catch (e) {
+//     console.warn("Py2Js failed:", e, value);
+//     return null;
+//   }
+// }
+
+function ft2meter(value) {
+  // Convert feet to meters
+  // 1 foot = 0.3048 meters
+  if (typeof value === "string") {
+    value = parseFloat(value);
   }
-
-  // Disable/enable fields based on the (now synced) state
-  if (depCheckbox.checked) {
-    document.getElementById("ARRIVAL_WEIGHT_PILOT").disabled = true;
-    document.getElementById("ARRIVAL_WEIGHT_COPILOT").disabled = true;
-    document.getElementById("ARRIVAL_WEIGHT_REAR_RIGHT").disabled = true;
-    document.getElementById("ARRIVAL_WEIGHT_REAR_LEFT").disabled = true;
-    document.getElementById("ARRIVAL_WEIGHT_BAGAGE").disabled = true;
-    document.getElementById("ARRIVAL_WEIGHT_FUEL_LITERS").disabled = true;
-    document.getElementById("ARRIVAL_BTN_WEIGHTS").disabled = true;
-
-    // Copy ARRIVAL weights into DEPARTURE weights
-    document.getElementById("ARRIVAL_WEIGHT_PILOT").value = document.getElementById("DEPARTURE_WEIGHT_PILOT").value;
-    document.getElementById("ARRIVAL_WEIGHT_COPILOT").value = document.getElementById("DEPARTURE_WEIGHT_COPILOT").value;
-    document.getElementById("ARRIVAL_WEIGHT_REAR_RIGHT").value = document.getElementById("DEPARTURE_WEIGHT_REAR_RIGHT").value;
-    document.getElementById("ARRIVAL_WEIGHT_REAR_LEFT").value = document.getElementById("DEPARTURE_WEIGHT_REAR_LEFT").value;
-    document.getElementById("ARRIVAL_WEIGHT_BAGAGE").value = document.getElementById("DEPARTURE_WEIGHT_BAGAGE").value;
-
-    // Compute the expected fuel
-    computeArrivalFuelPerLeg();
-  } else {
-    document.getElementById("ARRIVAL_WEIGHT_PILOT").disabled = false;
-    document.getElementById("ARRIVAL_WEIGHT_COPILOT").disabled = false;
-    document.getElementById("ARRIVAL_WEIGHT_REAR_RIGHT").disabled = false;
-    document.getElementById("ARRIVAL_WEIGHT_REAR_LEFT").disabled = false;
-    document.getElementById("ARRIVAL_WEIGHT_BAGAGE").disabled = false;
-    document.getElementById("ARRIVAL_WEIGHT_FUEL_LITERS").disabled = false;
-    document.getElementById("ARRIVAL_BTN_WEIGHTS").disabled = false;
-  }
+  return Math.round(value * 0.3048);
 }
 
-function Py2Js(dictString) {
+function meter2ft(value) {
+  if (typeof value === "string") {
+    value = parseFloat(value);
+  } // Convert meters to feet
+  // 1 meter = 3.28084 feet
+  return Math.round(value * 3.28084);
+}
+
+function Py2Js(value, seen = new WeakSet()) {
   try {
-    // Replace single quotes with double quotes, and False/True/None with JS equivalents
-    const jsonStr = dictString
-      .replace(/'/g, '"')
-      .replace(/\bFalse\b/g, "false")
-      .replace(/\bTrue\b/g, "true")
-      .replace(/\bNone\b/g, "null");
-    return JSON.parse(jsonStr);
+    // 1. Null / undefined / empty
+    if (value === null || value === "" || value === "undefined") {
+      return null;
+    }
+
+    // 2. Detect cycles
+    if (typeof value === "object" && value !== null) {
+      if (seen.has(value)) {
+        return "[Circular]"; // or null, or throw — your choice
+      }
+      seen.add(value);
+    }
+
+    // 3. PyScript PyProxy → convert to JS, then recurse
+    if (typeof value === "object" && typeof value.toJs === "function") {
+      return Py2Js(value.toJs(), seen);
+    }
+
+    // 4. JS Map → convert to object, then recurse
+    if (value instanceof Map) {
+      const obj = Object.fromEntries(value);
+      return Py2Js(obj, seen);
+    }
+
+    // 5. Array → recursively convert each element
+    if (Array.isArray(value)) {
+      return value.map((item) => Py2Js(item, seen));
+    }
+
+    // 6. Plain JS object → recursively convert each key
+    if (typeof value === "object") {
+      const result = {};
+      for (const [k, v] of Object.entries(value)) {
+        result[k] = Py2Js(v, seen);
+      }
+      return result;
+    }
+
+    // 7. Stringified Python dict → convert to JSON, then recurse
+    if (typeof value === "string") {
+      const jsonStr = value
+        .replace(/'/g, '"')
+        .replace(/\bFalse\b/g, "false")
+        .replace(/\bTrue\b/g, "true")
+        .replace(/\bNone\b/g, "null");
+
+      try {
+        return Py2Js(JSON.parse(jsonStr), seen);
+      } catch {
+        return value; // not a dict, return raw string
+      }
+    }
+
+    // 8. Primitive fallback
+    return value;
   } catch (e) {
-    console.warn("Failed to parse DEPARTURE_RUNWAY_PROPERTIES:", e, dictString);
+    console.warn("Py2Js failed:", e, value);
     return null;
   }
 }
-
 // Make helper functions globally accessible
 window.getCountryCode = getCountryCode;
 window.getFlagEmoji = getFlagEmoji;
@@ -536,7 +621,6 @@ window.populateAvailableCountries = populateAvailableCountries;
 // Make it globally accessible
 window.updateFlag = updateFlag;
 window.createDateTime = createDateTime;
-window.syncWeightCheckboxesAndFields = syncWeightCheckboxesAndFields;
 window.CreateLookupTableCountries = CreateLookupTableCountries;
 window.CreateLookupTableIcaoSelected = CreateLookupTableIcaoSelected;
 window.getIcaoInformation = getIcaoInformation;
@@ -544,3 +628,5 @@ window.moveCountries = moveCountries;
 window.filterCountry = filterCountry;
 window.populateDropdown = populateDropdown;
 window.Py2Js = Py2Js;
+window.ft2meter = ft2meter;
+window.meter2ft = meter2ft;

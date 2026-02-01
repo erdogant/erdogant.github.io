@@ -26,25 +26,36 @@ function calculateRunwayDistance(prefix, runwayType, distanceType = "distance") 
       type: prefix,
       runway_type: runwayType,
       distance_type: distanceType === "distance" ? "threshold" : "50 ft",
+      // correction_factor: undefined,
     },
   };
 
+  let distance;
   try {
+    // Step 0: Add runway distance
+    // let distance = getRunwayDistance(prefix, results);
+
     // Step 1: Get POH corrected distance
-    let distance = getPOHCorrectedDistance(prefix, runwayType, distanceType, results);
+    distance = getPOHCorrectedDistance(prefix, distanceType, runwayType, results);
 
     // Step 2: Wind correction
-    distance = applyWindCorrection(prefix, distance, runwayType, results);
+    distance = applyWindCorrection(prefix, distance, results);
 
     // Step 3: Runway surface correction
-    distance = applyRunwayCorrection(prefix, distance, results);
+    distance = applySurfaceCorrection(prefix, distance, results);
 
     // Step 4: Slope correction
     distance = applySlopeCorrection(prefix, distance, results);
 
     // Step 5: Safety factor
-    distance = applySafetyCorrection(prefix, distance, results);
+    distance = applyCorrectionFactor(prefix, distance, results);
 
+    // Step 6: Runway corrected length
+    applySafetyCorrection(prefix, results);
+
+    // Store
+    window.RUNWAY = results;
+    // Return
     return { distance, details: results };
   } catch (error) {
     console.error("Error in calculateRunwayDistance:", error);
@@ -52,11 +63,38 @@ function calculateRunwayDistance(prefix, runwayType, distanceType = "distance") 
   }
 }
 
+function applySafetyCorrection(prefix, results) {
+  // Safety correction (to be computed over the runway length)
+  const perfParams = getPerformanceParameters(prefix);
+  let runwayLength = parseFloat(document.getElementById(`${prefix}_RUNWAY_LENGTH`).value);
+  runwayLength = ft2meter(runwayLength);
+  const safety_correction = perfParams.safety_correction;
+  const runwayLengthCorrected = Math.round(runwayLength * safety_correction);
+  const message = `Runway length (${runwayLength}m.) with safety correction (${safety_correction}): ${runwayLengthCorrected}m`;
+
+  results.safety = {
+    message: message,
+    distance: runwayLengthCorrected,
+    correction_factor: safety_correction,
+  };
+}
+
+// RUNWAY DISTANCE
+// function getRunwayDistance(prefix, results) {
+//   // Add a 'default' (starting) entry capturing the POH-derived base distance
+//   results.default = {
+//     message: "Runway distance",
+//     distance: results.distance,
+//     correction_factor: undefined,
+//   };
+// }
+
 // ========================= POH CORRECTION =========================
 /**
  * Calculate distance based on POH data (altitude, temperature, weight)
  */
-function getPOHCorrectedDistance(prefix, runwayType, distanceType, results) {
+function getPOHCorrectedDistance(prefix, distanceType, runwayType, results) {
+  // POH table is defined based on the MTOW
   const modelKey = `${runwayType}_MODEL${distanceType === "50ft" ? "_50ft" : ""}`;
 
   // Get or create model
@@ -68,19 +106,25 @@ function getPOHCorrectedDistance(prefix, runwayType, distanceType, results) {
   const model = POH_MODELS[modelKey];
 
   // Get current conditions
-  const altitude = parseFloat(document.getElementById(`${prefix}_ELEVATION`)?.value || 0);
-  const temperature = parseFloat(document.getElementById(`${prefix}_TEMPERATURE`)?.value || 15);
-  const weight = parseFloat(document.getElementById(`${prefix}_total_weight`)?.value || 980);
+  let altitude = parseFloat(document.getElementById(`${prefix}_ELEVATION`).value);
+  const temperature = parseFloat(document.getElementById(`${prefix}_TEMPERATURE`).value);
+  // const weight = parseFloat(document.getElementById(`${prefix}_total_weight`).value);
+  const weight = window.flight_plan_data?.AIRCRAFT?.MTOW;
+
+  // Convert altitude elevation to meter
+  // if (altitude !== null && altitude !== "") {
+  //   altitude = meter2ft(altitude);
+  // }
+
+  // Make sure all distances are in meters
+  // console.log(`HERE: ${runwayType}`);
+  // console.log(results);
+  // console.log(model);
 
   // Calculate distance using linear model
   const distance = Math.max(model.minDistance, model.altitude * altitude + model.temperature * temperature + model.intercept);
-
-  // console.log("HERE4");
-  // console.log(model);
-  // console.log(distance);
-
-  const message = `Distance corrected for altitude (${altitude}m), temperature (${temperature}°C) and weight (${weight}kg): ${Math.round(distance)}m`;
-  console.log(message);
+  const message = `POH corrected distance for with altitude (${altitude}ft), temperature (${temperature}°C) and MTOW (${weight}kg): ${Math.round(distance)}m`;
+  console.log(`   >[${prefix}]` + message);
 
   if (results) {
     results.POH = {
@@ -89,6 +133,7 @@ function getPOHCorrectedDistance(prefix, runwayType, distanceType, results) {
       temperature,
       weight,
       distance,
+      correction_factor: undefined,
     };
   }
 
@@ -96,19 +141,18 @@ function getPOHCorrectedDistance(prefix, runwayType, distanceType, results) {
 }
 
 // ========================= WIND CORRECTION =========================
-/**
- * Apply wind correction based on headwind/tailwind component
- */
-function applyWindCorrection(prefix, distance, runwayType, results) {
-  const windDirection = parseFloat(document.getElementById(`${prefix}_WIND_DIRECTION`)?.value || 0);
-  const windStrength = parseFloat(document.getElementById(`${prefix}_WIND_STRENGTH`)?.value || 0);
-  const runwayNumber = document.getElementById(`${prefix}_RUNWAY_NR`)?.value || "09";
+function applyWindCorrection(prefix, distance, results) {
+  const windDirection = parseFloat(document.getElementById(`${prefix}_WIND_DIRECTION`)?.value);
+  const windStrength = parseFloat(document.getElementById(`${prefix}_WIND_STRENGTH`)?.value);
+  const runwayNumber = document.getElementById(`${prefix}_RUNWAY_NR`)?.value;
 
   // Convert runway number to heading (e.g., "09" -> 90, "27" -> 270)
-  const runwayDirection = parseInt(runwayNumber) * 10;
+  const runwayDirection = correctRunwayNumber_js(runwayNumber) * 10;
 
   // Calculate headwind component
   const headwind = calculateHeadwind(windDirection, windStrength, runwayDirection);
+  // const headwind = window.headwind(windDirection, windStrength, runwayDirection);
+  console.log("applyWindCorrection vars:", { windDirection, windStrength, runwayNumber, runwayDirection, headwind });
 
   let correctionFactor = 1;
   let windType = "windstill";
@@ -124,13 +168,14 @@ function applyWindCorrection(prefix, distance, runwayType, results) {
   } else {
     // Tailwind correction - increases required distance
     const tailwindInfluence = getPerformanceParam(prefix, "tailwind_influence");
+    console.log(tailwindInfluence);
     correctionFactor = 1 + (Math.abs(headwind) / tailwindInfluence[0][0]) * tailwindInfluence[0][1];
     windType = "tailwind";
   }
 
   const newDistance = distance * correctionFactor;
-  const message = `[${windType}] (${Math.round(headwind)}kt) correction for runway [${runwayNumber}]: ${correctionFactor.toFixed(2)}. New distance: ${Math.round(newDistance)}m`;
-  console.log(message);
+  const message = `Correction for runway [${runwayNumber}] with [${windType}] (${Math.round(headwind)}kt): ${correctionFactor.toFixed(2)}. New distance: ${Math.round(newDistance)}m`;
+  console.log(`   >[${prefix}]` + message);
 
   if (results) {
     results.wind = {
@@ -164,47 +209,59 @@ function calculateHeadwind(windDirection, windStrength, runwayDirection) {
   return headwind;
 }
 
-/**
- * Get wind correction value using linear interpolation
- */
 function getWindCorrectionValue(headwind, influenceData) {
+  /**
+   * Get wind correction value using linear interpolation
+   */
   if (!influenceData || influenceData.length === 0) return 1;
 
-  // Convert to numbers
-  const data = influenceData.map((row) => [parseFloat(row[0]), parseFloat(row[1])]);
+  // Convert to numbers and sort by headwind value
+  const data = influenceData.map((row) => [parseFloat(row[0]), parseFloat(row[1])]).sort((a, b) => a[0] - b[0]);
 
   // If headwind is less than minimum, return 1 (no correction)
-  if (headwind <= data[0][0]) return 1;
+  if (headwind < data[0][0]) return 1;
 
-  // Linear regression to get slope and intercept
-  const xValues = data.map((d) => d[0]);
-  const yValues = data.map((d) => d[1]);
+  // If headwind equals a data point exactly, return that value
+  const exactMatch = data.find((d) => d[0] === headwind);
+  if (exactMatch) return exactMatch[1];
 
-  const n = xValues.length;
-  const sumX = xValues.reduce((a, b) => a + b, 0);
-  const sumY = yValues.reduce((a, b) => a + b, 0);
-  const sumXY = xValues.reduce((sum, x, i) => sum + x * yValues[i], 0);
-  const sumX2 = xValues.reduce((sum, x) => sum + x * x, 0);
+  // Find the two points to interpolate between
+  let lowerPoint = data[0];
+  let upperPoint = data[data.length - 1];
 
-  const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
-  const intercept = (sumY - slope * sumX) / n;
+  for (let i = 0; i < data.length - 1; i++) {
+    if (headwind >= data[i][0] && headwind <= data[i + 1][0]) {
+      lowerPoint = data[i];
+      upperPoint = data[i + 1];
+      break;
+    }
+  }
 
-  return slope * headwind + intercept;
+  // Linear interpolation between the two points
+  const x0 = lowerPoint[0];
+  const y0 = lowerPoint[1];
+  const x1 = upperPoint[0];
+  const y1 = upperPoint[1];
+
+  // Handle case where both points are the same
+  if (x1 === x0) return y0;
+
+  return y0 + ((y1 - y0) * (headwind - x0)) / (x1 - x0);
 }
 
 // ========================= RUNWAY SURFACE CORRECTION =========================
 /**
  * Apply runway surface correction based on surface type and condition
  */
-function applyRunwayCorrection(prefix, distance, results) {
-  const surface = document.getElementById(`${prefix}_RUNWAY_SURFACE`)?.value || "hard";
-  const condition = document.getElementById(`${prefix}_RUNWAY_SLIPPERY`)?.value || "dry";
-
+function applySurfaceCorrection(prefix, distance, results) {
+  const surface = document.getElementById(`${prefix}_RUNWAY_SURFACE`)?.value;
+  const condition = document.getElementById(`${prefix}_RUNWAY_SLIPPERY`)?.value;
   const correctionFactor = getRunwayCorrectionFactor(prefix, surface, condition);
-  const newDistance = distance * correctionFactor;
 
+  // Apply the correction
+  const newDistance = distance * correctionFactor;
   const message = `Correction factor for surface type [${surface}] with [${condition}]: ${correctionFactor}. New distance: ${Math.round(newDistance)}m`;
-  console.log(message);
+  console.log(`   >[${prefix}]` + message);
 
   if (results) {
     results.runway = {
@@ -227,15 +284,15 @@ function getRunwayCorrectionFactor(prefix, surface, condition) {
 
   const key = `${surface}_${condition}`;
   const correctionMap = {
-    hard_dry: perfParams.hard_dry || 1.0,
-    hard_wet: perfParams.hard_wet || 1.15,
-    soft_dry: perfParams.soft_dry || 1.25,
-    soft_wet: perfParams.soft_wet || 1.4,
-    other_dry: perfParams.other_dry || 1.2,
-    other_wet: perfParams.other_wet || 1.35,
+    hard_dry: perfParams.hard_dry,
+    hard_wet: perfParams.hard_wet,
+    soft_dry: perfParams.soft_dry,
+    soft_wet: perfParams.soft_wet,
+    other_dry: perfParams.other_dry,
+    other_wet: perfParams.other_wet,
   };
 
-  return correctionMap[key] || 1.25;
+  return correctionMap[key];
 }
 
 // ========================= SLOPE CORRECTION =========================
@@ -243,26 +300,26 @@ function getRunwayCorrectionFactor(prefix, surface, condition) {
  * Apply slope correction
  */
 function applySlopeCorrection(prefix, distance, results) {
-  const slope = parseFloat(document.getElementById(`${prefix}_RUNWAY_SLOPE`)?.value || 0);
+  const slopePercentage = parseFloat(document.getElementById(`${prefix}_RUNWAY_SLOPE`)?.value);
   const perfParams = getPerformanceParameters(prefix);
-  const slopeFactor = perfParams.paved_slope || 0.1;
+  const slope_factor = perfParams.slope_factor;
 
   // Calculate slope correction
-  const slopeCorrection = slope * slopeFactor;
+  const slopeCorrection = slopePercentage * slope_factor;
   let newDistance = distance;
 
   if (slopeCorrection > 0) {
     newDistance = distance * (1 + slopeCorrection);
   }
 
-  const message = `Correction factor for slope [angle: ${slope}%, factor: ${slopeFactor}]: ${slopeCorrection.toFixed(3)}. New distance: ${Math.round(newDistance)}m`;
-  console.log(message);
+  const message = `Correction factor for slope [angle: ${slopePercentage}%, factor: ${slope_factor}]: ${slopeCorrection.toFixed(3)}. New distance: ${Math.round(newDistance)}m`;
+  console.log(`   >[${prefix}]` + message);
 
   if (results) {
     results.slope = {
       message,
-      slope_angle: slope,
-      slope_factor: slopeFactor,
+      slope_angle: slopePercentage,
+      slope_factor: slope_factor,
       correction_factor: slopeCorrection,
       distance: newDistance,
     };
@@ -275,23 +332,20 @@ function applySlopeCorrection(prefix, distance, results) {
 /**
  * Apply safety factor
  */
-function applySafetyCorrection(prefix, distance, results) {
+function applyCorrectionFactor(prefix, distance, results) {
   const perfParams = getPerformanceParameters(prefix);
-  const safetyFactor = perfParams.safety_correction || 1.25;
+  // Correction factor (to be computed over the final corrected length)
+  const correction_factor = perfParams.correction_factor;
 
-  const newDistance = distance * safetyFactor;
-  const message = `Correction factor for safety: ${safetyFactor}. New distance: ${Math.round(newDistance)}m`;
-  console.log(message);
+  const newDistance = distance * correction_factor;
+  const message = `Correction correction factor: ${correction_factor}. New distance: ${Math.round(newDistance)}m`;
+  console.log(`   >[${prefix}]` + message);
 
   if (results) {
-    results.safety = {
+    results.correction = {
       message,
-      correction_factor: safetyFactor,
+      correction_factor: correction_factor,
       distance: newDistance,
-    };
-
-    results.safety_runway = {
-      minimum_distance_available: perfParams.minimum_distance_available || 0.7,
     };
   }
 
@@ -304,39 +358,43 @@ function applySafetyCorrection(prefix, distance, results) {
  * Get performance parameters for the aircraft
  */
 function getPerformanceParameters(prefix) {
-  // This should get data from your aircraft configuration
-  // For now, returning defaults - you'll need to integrate with your data structure
-
   const runwayType = prefix === "DEPARTURE" ? "TAKEOFF" : "LANDING";
+
+  let POHdata;
+  if (runwayType === "TAKEOFF") {
+    POHdata = window.flight_plan_data?.AIRCRAFT?.TAKEOFF;
+  } else {
+    POHdata = window.flight_plan_data?.AIRCRAFT?.LANDING;
+  }
+
+  // console.log(`HERE5: ${runwayType}`);
+  // console.log(window.flight_plan_data?.AIRCRAFT?.MTOW);
+  // console.log(POHdata);
 
   return {
     // Surface corrections
-    hard_dry: 1.0,
-    hard_wet: 1.15,
-    soft_dry: 1.25,
-    soft_wet: 1.4,
-    other_dry: 1.2,
-    other_wet: 1.35,
-
+    hard_dry: POHdata.runway_hard_dry ?? 0,
+    hard_wet: POHdata.runway_hard_wet ?? 0,
+    soft_dry: POHdata.runway_soft_dry ?? 0,
+    soft_wet: POHdata.runway_soft_wet ?? 0,
+    other_dry: POHdata.runway_custom_dry ?? 0,
+    other_wet: POHdata.runway_custom_wet ?? 0,
     // Slope correction
-    paved_slope: 0.1,
-
-    // Safety correction
-    safety_correction: 1.25,
-
-    // Runway length correction
-    minimum_distance_available: runwayType === "LANDING" ? 0.7 : 1.0,
-
+    slope_factor: POHdata.runway_slope_paved ?? 0,
+    // Correction factor (to be computed over the final corrected length)
+    correction_factor: POHdata.runway_correction_factor ?? 0,
+    // Safety correction (to be computed over the original runway length)
+    safety_correction: POHdata.runway_safety_correction,
     // Wind influence (headwind kt, correction factor)
     headwind_influence: [
-      [0, 0.85],
-      [10, 0.85],
-      [20, 0.65],
-      [30, 0.55],
+      [POHdata.headwind_kts_0 ?? 0, POHdata.headwind_cor_0 ?? 0],
+      [POHdata.headwind_kts_1 ?? 0, POHdata.headwind_cor_1 ?? 0],
+      [POHdata.headwind_kts_2 ?? 0, POHdata.headwind_cor_2 ?? 0],
+      [POHdata.headwind_kts_3 ?? 0, POHdata.headwind_cor_3 ?? 0],
     ],
 
     // Tailwind influence (kt per unit, correction per unit)
-    tailwind_influence: [[10, 0.1]],
+    tailwind_influence: [[POHdata.tailwind_kts ?? 0, POHdata.tailwind_cor ?? 0]],
   };
 }
 
@@ -351,9 +409,14 @@ function getPerformanceParam(prefix, paramName) {
 /**
  * Get POH data for the aircraft
  */
-function getPOHData(runwayType) {
+function getPOHData(prefix) {
   // This should get POH data from your aircraft configuration
   // For now, returning example data for Robin 400
+  // altitude: ft
+  // temparture in degrees celcius
+  // distance in meters
+  // 50ft in meters
+  const runwayType = prefix === "DEPARTURE" ? "TAKEOFF" : "LANDING";
 
   if (runwayType === "TAKEOFF") {
     return {
@@ -492,9 +555,10 @@ function updateRunwayCalculationUI(prefix) {
  * Display calculation results in UI
  */
 function displayCalculationResults(prefix, resultThreshold, result50ft) {
-  const runwayLength = parseFloat(document.getElementById(`${prefix}_RUNWAY_LENGTH`)?.value || 0);
+  let runwayLength = parseFloat(document.getElementById(`${prefix}_RUNWAY_LENGTH`)?.value);
+  runwayLength = ft2meter(runwayLength);
   const perfParams = getPerformanceParameters(prefix);
-  const correctedRunwayLength = runwayLength * perfParams.minimum_distance_available;
+  const correctedRunwayLength = runwayLength * perfParams.safety_correction;
 
   // Create status message
   let statusHtml = '<div style="margin-top: 10px;">';
@@ -620,11 +684,11 @@ function load_performance_defaults(name) {
   defaults[`${name}_runway_custom_wet`] = 1.25;
 
   if (name === "landing") {
-    defaults[`${name}_runway_slope_correction`] = 1.43;
-    defaults[`${name}_runway_minimum_distance`] = 0.7;
+    defaults[`${name}_runway_correction_factor`] = 1.43;
+    defaults[`${name}_runway_safety_correction`] = 0.7;
   } else {
-    defaults[`${name}_runway_slope_correction`] = 1.25;
-    defaults[`${name}_runway_minimum_distance`] = 1;
+    defaults[`${name}_runway_correction_factor`] = 1.25;
+    defaults[`${name}_runway_safety_correction`] = 1;
   }
 
   for (const [id, value] of Object.entries(defaults)) {
@@ -634,6 +698,85 @@ function load_performance_defaults(name) {
     }
   }
 }
+
+function correctRunwayNumber_js(runwayDirection, format = false) {
+  // Normalize to string
+  let val = String(runwayDirection);
+
+  // Keep only digits
+  val = val.replace(/\D+/g, "");
+
+  // Convert to integer
+  const num = parseInt(val, 10);
+
+  // Validate runway range 0–36
+  if (isNaN(num) || num < 0 || num > 36) {
+    return runwayDirection;
+  }
+
+  // If format=false → return integer
+  if (!format) {
+    return num;
+  }
+
+  // If format=true → return 2-digit string
+  return num.toString().padStart(2, "0");
+}
+// function correctRunwayNumber_js(runwayDirection) {
+//   return formatRunwayNumber(String(runwayDirection));
+// }
+
+// function formatRunwayInput(input) {
+//   let val = input.value.toUpperCase();
+
+//   // Strip invalid characters immediately
+//   val = val.replace(/[^0-9LRC]/g, "");
+
+//   // Split numeric part and optional suffix
+//   let match = val.match(/^(\d{0,2})([LRC]?)$/);
+//   if (!match) {
+//     input.value = "";
+//     return;
+//   }
+
+//   let numStr = match[1];
+//   let suffix = match[2] || "";
+
+//   // Allow empty / partial input
+//   if (numStr === "") {
+//     input.value = suffix;
+//     return;
+//   }
+
+//   let num = parseInt(numStr, 10);
+
+//   // Hard clamp, but do NOT reformat while typing
+//   if (num > 36) {
+//     input.value = "36" + suffix;
+//     return;
+//   }
+
+//   input.value = numStr + suffix;
+// }
+
+// function finalizeRunwayInput(input) {
+//   input.value = formatRunwayNumber(input.value);
+// }
+
+// function formatRunwayNumber(value) {
+//   if (typeof value !== "string") value = String(value);
+
+//   const match = value
+//     .toUpperCase()
+//     .trim()
+//     .match(/^(\d{1,2})([LRC]?)$/);
+//   if (!match) return "";
+
+//   const num = parseInt(match[1], 10);
+//   if (num < 0 || num > 36) return "";
+
+//   return String(num).padStart(2, "0") + (match[2] || "");
+// }
 
 // ========================== BUILD RUNWAY SVG ==========================
 //
@@ -838,6 +981,7 @@ window.calculateRunwayDistance = calculateRunwayDistance;
 window.updateRunwayCalculationUI = updateRunwayCalculationUI;
 window.getPOHCorrectedDistance = getPOHCorrectedDistance;
 window.applyWindCorrection = applyWindCorrection;
-window.applyRunwayCorrection = applyRunwayCorrection;
+window.applySurfaceCorrection = applySurfaceCorrection;
 window.applySlopeCorrection = applySlopeCorrection;
-window.applySafetyCorrection = applySafetyCorrection;
+window.applyCorrectionFactor = applyCorrectionFactor;
+window.correctRunwayNumber_js = correctRunwayNumber_js;

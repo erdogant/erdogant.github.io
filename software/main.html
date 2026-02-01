@@ -432,7 +432,6 @@ For commercial licensing requests, contact:
                 <img id="DEPARTURE_VFR_ICON" src="" alt="" style="width:70px; height:auto; vertical-align:middle; margin-left:6px;">
                 <input type="text" id="DEPARTURE_ICAO" class="tile-value UPPERCASE_input sync-departure" placeholder="ICAO">
                 <button id="DEPARTURE_LOAD_ICAO" title="Load ICAO information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 0 8px 4px; flex: 0 0 auto; cursor: pointer;">🔄</button>
-                <!--<button onclick="window.save_aerodrome_to_json('DEPARTURE')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 4px 8px 0; flex: 0 0 auto; cursor: pointer; float: right;">💾</button>-->
             </div>
 
         </div>
@@ -445,7 +444,7 @@ For commercial licensing requests, contact:
             <div class="wind-grid">
                  <div class="tile">
                     <input id="DEPARTURE_WIND_DIRECTION" type="text" class="tile-value">
-                    <span class="tile-label">Wind angle (°)</span>
+                    <span class="tile-label">Wind direction (°)</span>
                 </div>
 
                 <div class="tile">
@@ -532,7 +531,7 @@ For commercial licensing requests, contact:
                     <input id="DEPARTURE_RUNWAY_NR"
                            type="text"
                            class="tile-value"
-                           title="Fill here the runway that is in use."
+                           title="Set the runway number."
                            style="font-size: 48px; font-family: 'Aeroport', 'Aviation', 'Consolas', 'Monaco', 'Menlo', 'Liberation Mono', 'Courier New', monospace; letter-spacing: 2px; text-align: center; height: 64px; line-height: 64px;">
                     <span class="tile-label">
                         Runway Nr.
@@ -756,77 +755,84 @@ For commercial licensing requests, contact:
 
 
         <!--RUNWAY DEPARTURE-->
-        <div class="collapsible" data-title="RUNWAY" data-section="DEPARTURE_RUNWAY">
-        <div class="collapsible-header"></div>
+        <div class="collapsible" data-title="RUNWAY">
+        <div class="collapsible-header" id="DEPARTURE_RUNWAY_MENU"></div>
         <div class="collapsible-content">
 
-           <div class="wind-grid">
-               <div class="tile" style="text-align: center;">
-                   <input id="DEPARTURE_RUNWAY_LENGTH" type="text" class="tile-value">
-                   <span class="tile-label" style="text-align: center;">Length (ft)</span>
-               </div>
-               <div class="tile" style="text-align: center;">
-                   <input id="DEPARTURE_RUNWAY_SLOPE" type="text" class="tile-value">
-                   <span class="tile-label" style="text-align: center;">Slope (°)</span>
-               </div>
-               <div class="tile">
-                   <input id="DEPARTURE_ELEVATION" type="text" class="tile-value" title="Elevation of the field in feet.">
-                   <span class="tile-label">Elevation (ft)</span>
-               </div>
-           </div>
+            <div class="wind-grid">
+                <div id="DEPARTURE_RUNWAY_MESSAGE"></div>
+            </div>
 
-           <div class="divider-general-section" style="background: #f5f5f5;"></div>
-
-           <div class="wind-grid">
-                <div class="tile" style="text-align: center;">
-                    <select id="DEPARTURE_RUNWAY_SURFACE" class="tile-value-dropdown" style="text-align: left; background: transparent; ">
-                        <option value="">Select</option>
-                        <option value="hard">Hard</option>
-                        <option value="soft">Soft</option>
-                        <option value="other">Other</option>
-                    </select>
-                    <span class="tile-label" style="text-align: center;">Surface</span>
+            <div class="border-round-eged">
+                <div class="wind-grid_3">
+                    <div class="tile" style="text-align: center;">
+                        <input id="DEPARTURE_RUNWAY_LENGTH" type="text" class="tile-value">
+                        <span class="tile-label" style="text-align: center;">Runway Length (ft)</span>
+                    </div>
+                    <div class="tile" style="text-align: center;">
+                        <input id="DEPARTURE_RUNWAY_SLOPE" type="text" class="tile-value">
+                        <span class="tile-label" style="text-align: center;">Slope (°)</span>
+                    </div>
+                    <div class="tile">
+                        <input id="DEPARTURE_ELEVATION" type="text" class="tile-value" title="Aerodrome elevation (ft).">
+                        <span class="tile-label">Elevation (ft)</span>
+                    </div>
                 </div>
-                <div class="tile" style="text-align: center;">
-                     <select id="DEPARTURE_RUNWAY_SLIPPERY" class="tile-value-dropdown" style="text-align: left; background: transparent; ">
-                         <option value="">Select</option>
-                         <option value="dry">Dry</option>
-                         <option value="wet">Wet</option>
-                     </select>
-                     <span class="tile-label" style="text-align: center;">Condition</span>
-                 </div>
+
+                <div class="wind-grid">
+                    <div class="tile" style="text-align: center;">
+                        <select id="DEPARTURE_RUNWAY_SURFACE" class="tile-value-dropdown" style="text-align: left; background: transparent; ">
+                            <option value="">Select</option>
+                            <option value="hard">Hard</option>
+                            <option value="soft">Soft</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <span class="tile-label" style="text-align: center;">Surface</span>
+                    </div>
+                    <div class="tile" style="text-align: center;">
+                        <select id="DEPARTURE_RUNWAY_SLIPPERY" class="tile-value-dropdown" style="text-align: left; background: transparent; ">
+                            <option value="">Select</option>
+                            <option value="dry">Dry</option>
+                            <option value="wet">Wet</option>
+                        </select>
+                        <span class="tile-label" style="text-align: center;">Condition</span>
+                    </div>
+                </div>
            </div>
 
-           <div class="divider-general-section" style="background: #ffffff;"></div>
-
-           <div class="wind-grid">
-               <div id="DEPARTURE_RUNWAY_MESSAGE"></div>
-           </div>
-           <div class="wind-grid">
-               <!--<div id="DEPARTURE_RUNWAY_MINDISTANCE"></div>-->
-               <div id="DEPARTURE_RUNWAY_THRESHOLD"></div>
-               <div id="DEPARTURE_RUNWAY_THRESHOLD_50ft"></div>
-           </div>
            <div class="border-round-eged">
-               <textarea id="DEPARTURE_RUNWAY_CONDITION" class="tile-value" title="Runway condition." style="background-color: transparent; font-size: 12px; font-weight: normal; resize: vertical; min-height: 32px; max-height: 80px; width: 100%; box-sizing: border-box; white-space: pre-wrap; word-break: break-word; overflow-wrap: break-word;"></textarea>
-               <div id="DEPARTURE_RUNWAY_BAR"></div>
+                <div class="wind-grid">
+                    <!--<div id="DEPARTURE_RUNWAY_MINDISTANCE"></div>-->
+                    <div id="DEPARTURE_RUNWAY_THRESHOLD"></div>
+                    <div id="DEPARTURE_RUNWAY_THRESHOLD_50ft"></div>
+                </div>
+
+                <div id="DEPARTURE_RUNWAY_PLOT"></div>
            </div>
-           <div class="wind-grid">
-               <div id="DEPARTURE_RUNWAY_DETAILS"></div>
+
+           <div class="border-round-eged">
+                <div class="wind-grid">
+                    <div id="DEPARTURE_RUNWAY_TABLE"></div>
+                </div>
+
            </div>
+
+           <textarea id="DEPARTURE_RUNWAY_CONDITION" class="tile-value" title="Runway condition." style="background-color: transparent; font-size: 12px; font-weight: normal; resize: vertical; min-height: 32px; max-height: 80px; width: 100%; box-sizing: border-box; white-space: pre-wrap; word-break: break-word; overflow-wrap: break-word;"></textarea>
+
            <!-- Add a button to calculate -->
            <button class="button" onclick="window.displayRunwayResultsDiv('DEPARTURE')">
                Calculate Runway Performance
            </button>
 
-           <button id="DEPARTURE_LOAD_DEFAULTS" onclick="window.setRunwaySurface('DEPARTURE', true); window.displayRunwayResultsDiv('DEPARTURE')"
-               title="Load the default runway information."
-               style="background-color: transparent; border: none; width: 10px; padding: 1px; cursor: pointer;">
-                   🔄
-           </button>
-           <button onclick="window.save_aerodrome_to_json('DEPARTURE')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 4px 8px 0; flex: 0 0 auto; cursor: pointer; float: right;">💾</button>
-       </div>
-       </div>
+            <button id="DEPARTURE_LOAD_DEFAULTS" onclick="window.setRunwaySurface('DEPARTURE', true); window.displayRunwayResultsDiv('DEPARTURE')"
+                title="Load the default runway information."
+                style="background-color: transparent; border: none; width: 10px; padding: 1px; cursor: pointer;">
+                    🔄
+            </button>
+            <button onclick="window.save_aerodrome_to_json('DEPARTURE')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 4px 8px 0; flex: 0 0 auto; cursor: pointer; float: right;">💾</button>
+
+        </div>
+        </div>
 
 
 
@@ -969,7 +975,7 @@ For commercial licensing requests, contact:
 
                 <div class="tile">
                     <input id="ARRIVAL_WIND_DIRECTION" type="text" class="tile-value">
-                    <span class="tile-label">Wind angle (°)</span>
+                    <span class="tile-label">Wind Direction</span>
                 </div>
 
                 <div class="tile">
@@ -1054,7 +1060,7 @@ For commercial licensing requests, contact:
                     <input id="ARRIVAL_RUNWAY_NR"
                            type="text"
                            class="tile-value"
-                           title="Fill here the runway that is in use."
+                           title="Set the runway number."
                            style="font-size: 48px; font-family: 'Aeroport', 'Aviation', 'Consolas', 'Monaco', 'Menlo', 'Liberation Mono', 'Courier New', monospace; letter-spacing: 2px; text-align: center; height: 64px; line-height: 64px;">
                     <span class="tile-label">
                         Runway Nr.
@@ -1275,92 +1281,85 @@ For commercial licensing requests, contact:
 
 
        <!--RUNWAY ARRIVAL-->
-       <div class="collapsible" data-title="RUNWAY" data-section="ARRIVAL_RUNWAY_RESULTS">
-       <div class="collapsible-header"></div>
+       <div class="collapsible" data-title="RUNWAY">
+       <div class="collapsible-header" id="ARRIVAL_RUNWAY_MENU"></div>
        <div class="collapsible-content">
 
-          <div class="wind-grid">
-              <div class="tile" style="text-align: center;">
-                  <input id="ARRIVAL_RUNWAY_LENGTH" type="text" class="tile-value">
-                  <span class="tile-label" style="text-align: center;">Length (ft)</span>
-              </div>
-              <div class="tile" style="text-align: center;">
-                  <input id="ARRIVAL_RUNWAY_SLOPE" type="text" class="tile-value">
-                  <span class="tile-label" style="text-align: center;">Slope (°)</span>
-              </div>
-              <div class="tile">
-                  <input id="ARRIVAL_ELEVATION" type="text" class="tile-value" title="Elevation of the field in feet.">
-                  <span class="tile-label">Elevation (ft)</span>
-              </div>
-          </div>
+           <div class="wind-grid">
+               <div id="ARRIVAL_RUNWAY_MESSAGE"></div>
+           </div>
 
-          <div class="divider-general-section" style="background: #f5f5f5;"></div>
-
-          <div class="wind-grid">
-               <div class="tile" style="text-align: center;">
-                   <select id="ARRIVAL_RUNWAY_SURFACE" class="tile-value-dropdown" style="text-align: left; background: transparent; ">
-                       <option value="">Select</option>
-                       <option value="hard">Hard</option>
-                       <option value="soft">Soft</option>
-                       <option value="other">Other</option>
-                   </select>
-                   <span class="tile-label" style="text-align: center;">Surface</span>
+           <div class="border-round-eged">
+               <div class="wind-grid_3">
+                   <div class="tile" style="text-align: center;">
+                       <input id="ARRIVAL_RUNWAY_LENGTH" type="text" class="tile-value">
+                       <span class="tile-label" style="text-align: center;">Runway Length (ft)</span>
+                   </div>
+                   <div class="tile" style="text-align: center;">
+                       <input id="ARRIVAL_RUNWAY_SLOPE" type="text" class="tile-value">
+                       <span class="tile-label" style="text-align: center;">Slope (°)</span>
+                   </div>
+                   <div class="tile">
+                       <input id="ARRIVAL_ELEVATION" type="text" class="tile-value" title="Aerodrome elevation (ft).">
+                       <span class="tile-label">Elevation (ft)</span>
+                   </div>
                </div>
-               <div class="tile" style="text-align: center;">
-                    <select id="ARRIVAL_RUNWAY_SLIPPERY" class="tile-value-dropdown" style="text-align: left; background: transparent; ">
-                        <option value="">Select</option>
-                        <option value="dry">Dry</option>
-                        <option value="wet">Wet</option>
-                    </select>
-                    <span class="tile-label" style="text-align: center;">Condition</span>
-                </div>
+
+               <div class="wind-grid">
+                   <div class="tile" style="text-align: center;">
+                       <select id="ARRIVAL_RUNWAY_SURFACE" class="tile-value-dropdown" style="text-align: left; background: transparent; ">
+                           <option value="">Select</option>
+                           <option value="hard">Hard</option>
+                           <option value="soft">Soft</option>
+                           <option value="other">Other</option>
+                       </select>
+                       <span class="tile-label" style="text-align: center;">Surface</span>
+                   </div>
+                   <div class="tile" style="text-align: center;">
+                       <select id="ARRIVAL_RUNWAY_SLIPPERY" class="tile-value-dropdown" style="text-align: left; background: transparent; ">
+                           <option value="">Select</option>
+                           <option value="dry">Dry</option>
+                           <option value="wet">Wet</option>
+                       </select>
+                       <span class="tile-label" style="text-align: center;">Condition</span>
+                   </div>
+               </div>
           </div>
 
-          <div class="divider-general-section" style="background: #ffffff;"></div>
-
-          <div class="wind-grid">
-              <div id="ARRIVAL_RUNWAY_MESSAGE"></div>
-          </div>
-          <div class="wind-grid">
-              <!--<div id="ARRIVAL_RUNWAY_MINDISTANCE"></div>-->
-              <div id="ARRIVAL_RUNWAY_THRESHOLD"></div>
-              <div id="ARRIVAL_RUNWAY_THRESHOLD_50ft"></div>
-          </div>
           <div class="border-round-eged">
-              <textarea id="ARRIVAL_RUNWAY_CONDITION" class="tile-value" title="Runway condition." style="background-color: transparent; font-size: 12px; font-weight: normal; resize: vertical; min-height: 32px; max-height: 80px; width: 100%; box-sizing: border-box; white-space: pre-wrap; word-break: break-word; overflow-wrap: break-word;"></textarea>
-              <div id="ARRIVAL_RUNWAY_BAR"></div>
+               <div class="wind-grid">
+                   <!--<div id="ARRIVAL_RUNWAY_MINDISTANCE"></div>-->
+                   <div id="ARRIVAL_RUNWAY_THRESHOLD"></div>
+                   <div id="ARRIVAL_RUNWAY_THRESHOLD_50ft"></div>
+               </div>
+
+               <div id="ARRIVAL_RUNWAY_PLOT"></div>
           </div>
-          <div class="wind-grid">
-              <div id="ARRIVAL_RUNWAY_DETAILS"></div>
+
+          <div class="border-round-eged">
+               <div class="wind-grid">
+                   <div id="ARRIVAL_RUNWAY_TABLE"></div>
+               </div>
+
           </div>
+
+          <textarea id="ARRIVAL_RUNWAY_CONDITION" class="tile-value" title="Runway condition." style="background-color: transparent; font-size: 12px; font-weight: normal; resize: vertical; min-height: 32px; max-height: 80px; width: 100%; box-sizing: border-box; white-space: pre-wrap; word-break: break-word; overflow-wrap: break-word;"></textarea>
+
           <!-- Add a button to calculate -->
           <button class="button" onclick="window.displayRunwayResultsDiv('ARRIVAL')">
               Calculate Runway Performance
           </button>
 
-          <!--<div class="divider-general-section" style="background: #f5f5f5;"></div>-->
-
-          <!-- Add a button to calculate -->
-          <!--<button class="button" onclick="window.displayRunwayResultsDiv('ARRIVAL')">
-              🔄 Calculate Runway Performance
-          </button>
-          <div class="border-round-eged">
-              <div id="ARRIVAL_RUNWAY_RESULTS"></div>
-          </div>-->
-
-          <!--<div class="border-round-eged">
-              <div id="ARRIVAL_RUNWAY_SVG"></div>
-          </div>-->
-
-          <button id="ARRIVAL_LOAD_DEFAULTS" onclick="window.setRunwaySurface('ARRIVAL', true); window.displayRunwayResultsDiv('ARRIVAL')"
-              title="Load the default runway information."
-              style="background-color: transparent; border: none; width: 10px; padding: 1px; cursor: pointer;">
-                  🔄
-          </button>
-          <button onclick="window.save_aerodrome_to_json('ARRIVAL')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 4px 8px 0; flex: 0 0 auto; cursor: pointer; float: right;">💾</button>
+           <button id="ARRIVAL_LOAD_DEFAULTS" onclick="window.setRunwaySurface('ARRIVAL', true); window.displayRunwayResultsDiv('ARRIVAL')"
+               title="Load the default runway information."
+               style="background-color: transparent; border: none; width: 10px; padding: 1px; cursor: pointer;">
+                   🔄
+           </button>
+           <button onclick="window.save_aerodrome_to_json('ARRIVAL')" title="Save custom aerodrome information" style="background-color: transparent; border: none; color: #666; width: 30px; min-width: 24px; height: 24px; padding: 0; margin: 8px 4px 8px 0; flex: 0 0 auto; cursor: pointer; float: right;">💾</button>
 
        </div>
        </div>
+
 
 
 
@@ -1904,7 +1903,7 @@ For commercial licensing requests, contact:
                 <button id="aircraft_clear_btn" onclick="aircraft_clean()" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Create New Aircraft">🧹</button>
                 <!-- Delete Button -->
                 <button id="aircraft_delete_btn" onclick="window.delete_item_from_spinner('aircraft_spinner', 'AIRCRAFT', 'aircraft_field')" style="display: flex; justify-content: center; align-items: center; background-color: transparent; border: none; color: #666; cursor: pointer; width: 30px; height: 30px;" title="Delete Aircraft">🗑️</button>
-                <!-- Spinner -->
+                <!-- Spinner, loaded from load_spinner_selection() -->
                 <select id="aircraft_spinner" class="tile-value-dropdown" style="flex: 1; font-size: 12px; font-weight: normal;">
                     <option value="">Select and Load</option>
                 </select>
@@ -1978,7 +1977,7 @@ For commercial licensing requests, contact:
 
             <div class="wind-grid">
                 <div class="tile">
-                    <select id="aircraft_fuel_type" class="tile-value-dropdown" title="Select the fuel type used by this aircraft" style="flex: 1; font-size: 12px; font-weight: normal;">
+                    <select id="aircraft_fuel_name" class="tile-value-dropdown" title="Select the fuel type used by this aircraft" style="flex: 1; font-size: 12px; font-weight: normal;">
                         <option value="">Fuel type</option>
                         <option value="avgas">Avgas</option>
                         <option value="mogas">Mogas (Automotive petrol)</option>
@@ -2280,14 +2279,14 @@ For commercial licensing requests, contact:
                 </div>
                 <div class="wind-grid">
                     <input type="number" id="takeoff_runway_slope_paved" value="" min="0" step="0.05">
-                    <input type="number" id="takeoff_runway_slope_correction" value="" min="0" step="0.05">
+                    <input type="number" id="takeoff_runway_correction_factor" value="" min="0" step="0.05">
                 </div>
 
                 <div class="wind-grid">
                     <div class="input-label" style="text-align: center;">Minimum Takeoff Distance (% runway)</div>
                 </div>
                 <div class="wind-grid">
-                    <input type="number" id="takeoff_runway_minimum_distance" value="" min="0" step="0.1">
+                    <input type="number" id="takeoff_runway_safety_correction" value="" min="0" step="0.1">
                 </div>
 
             </div>
@@ -2403,14 +2402,14 @@ For commercial licensing requests, contact:
                 </div>
                 <div class="wind-grid">
                     <input type="number" id="landing_runway_slope_paved" value="" min="0" step="0.05">
-                    <input type="number" id="landing_runway_slope_correction" value="" min="0" step="0.05">
+                    <input type="number" id="landing_runway_correction_factor" value="" min="0" step="0.05">
                 </div>
 
                 <div class="wind-grid">
                     <div class="input-label" style="text-align: center;">Minimum Landing Distance (% runway)</div>
                 </div>
                 <div class="wind-grid">
-                    <input type="number" id="landing_runway_minimum_distance" value="" min="0" step="0.1">
+                    <input type="number" id="landing_runway_safety_correction" value="" min="0" step="0.1">
                 </div>
 
             </div>
@@ -2813,61 +2812,61 @@ For commercial licensing requests, contact:
 
 
     /**
-     * Auto-update results when inputs change: NEED FIX!!!
+     * Auto-update for RUNWAY PLOT when inputs change
      */
-
      function AutoUpdateRunwayResults(elementOrEvent) {
-       console.log('> func: AutoUpdateRunwayResults()')
+       console.log('> func: AutoUpdateRunwayResults()');
        // Determine prefix based on the field's id
-       let element = elementOrEvent?.target || elementOrEvent;
+       let element = (elementOrEvent && elementOrEvent.target) ? elementOrEvent.target : elementOrEvent;
        let prefix = element.id.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
-       displayRunwayResultsDiv(prefix)
+       displayRunwayResultsDiv(prefix);
      }
 
      // Setup event listeners for RUNWAY fields
-     ['DEPARTURE_RUNWAY_LENGTH', 'DEPARTURE_RUNWAY_SLOPE', 'DEPARTURE_TEMPERATURE', 'DEPARTURE_ELEVATION', 'DEPARTURE_total_weight',
-       'DEPARTURE_WIND_DIRECTION', 'DEPARTURE_WIND_STRENGTH', 'DEPARTURE_RUNWAY_SURFACE', 'DEPARTURE_RUNWAY_SLIPPERY'].forEach(id => {
-         const field = document.getElementById(id);
-         if (!field) return;
+     [
+       'DEPARTURE_RUNWAY_LENGTH',
+       'DEPARTURE_RUNWAY_SLOPE',
+       'DEPARTURE_TEMPERATURE',
+       'DEPARTURE_ELEVATION',
+       'DEPARTURE_WEIGHT_FUEL_LITERS',
+       'DEPARTURE_WEIGHT_PILOT',
+       'DEPARTURE_WIND_DIRECTION',
+       'DEPARTURE_WIND_STRENGTH',
+       'DEPARTURE_RUNWAY_SURFACE',
+       'DEPARTURE_RUNWAY_SLIPPERY',
+       'ARRIVAL_RUNWAY_LENGTH',
+       // ARRIVAL FIELDS
+       'ARRIVAL_RUNWAY_SLOPE',
+       'ARRIVAL_TEMPERATURE',
+       'ARRIVAL_ELEVATION',
+       'ARRIVAL_WEIGHT_FUEL_LITERS',
+       'ARRIVAL_WEIGHT_PILOT',
+       'ARRIVAL_WIND_DIRECTION',
+       'ARRIVAL_WIND_STRENGTH',
+       'ARRIVAL_RUNWAY_SURFACE',
+       'ARRIVAL_RUNWAY_SLIPPERY'
+     ].forEach(function(id) {
+       const field = document.getElementById(id);
+       if (!field) return;
 
-         // Trigger on blur
-         field.addEventListener("blur", AutoUpdateRunwayResults);
-         // Trigger on Enter key
-         field.addEventListener('keydown', fieldEvent => {
-             if (fieldEvent.key === 'Enter') {
-                 // Determine prefix based on the field's id
-                 let prefix = field.id.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
-                 displayRunwayResultsDiv(prefix);
-             }
-         });
+       let prefix = field.id.startsWith('DEPARTURE') ? 'DEPARTURE' : 'ARRIVAL';
+       // Trigger on blur
+       field.addEventListener("blur", AutoUpdateRunwayResults);
+       // Trigger on Enter key
+       field.addEventListener('keydown', e => e.key === 'Enter' && displayRunwayResultsDiv(prefix));
+       // Trigger when value is increased/decreased using the button (arrow keys or spinner)
+       field.addEventListener('input', AutoUpdateRunwayResults);
+
+       // If the field is a select (dropbox), also trigger on change
+       if (
+         id === 'DEPARTURE_RUNWAY_SURFACE' ||
+         id === 'DEPARTURE_RUNWAY_SLIPPERY' ||
+         id === 'ARRIVAL_RUNWAY_SURFACE' ||
+         id === 'ARRIVAL_RUNWAY_SLIPPERY'
+       ) {
+         field.addEventListener('change', AutoUpdateRunwayResults);
+       }
      });
-
-    /**
-     * Auto-update results when inputs change
-     */
-    // function AutoUpdateRunwayResults(prefix, containerId, useCanvas = false) {
-    //   console.log(`>func: AutoUpdateRunwayResults(${prefix})`);
-    //   const updateFunc = useCanvas ? displayRunwayResults : displayRunwayResultsDiv;
-
-    //   const inputIds = [
-    //     `${prefix}_total_weight`,
-    //   ];
-
-    //   let timeout = null;
-
-    //   inputIds.forEach((id) => {
-    //     const element = document.getElementById(id);
-    //     if (element) {
-    //       element.addEventListener("change", () => {
-    //         clearTimeout(timeout);
-    //         timeout = setTimeout(() => updateFunc(prefix, containerId), 300);
-    //       });
-    //     }
-    //   });
-
-    //   // Initial display
-    //   updateFunc(prefix, containerId);
-    // }
 
     async function set_widget(prefix, widgetname) {
         console.log(`Retrieving ${widgetname} widget for ${prefix}`);
@@ -2971,7 +2970,7 @@ For commercial licensing requests, contact:
         }
     });
 
-    document.getElementById('aircraft_fuel_type')?.addEventListener('change', function() {
+    document.getElementById('aircraft_fuel_name')?.addEventListener('change', function() {
         const fuelDensities = {
             'avgas': 0.72,        // kg/L (typical range 0.68-0.72)
             'mogas': 0.76,        // kg/L (typical range 0.74-0.76)
@@ -3046,19 +3045,15 @@ For commercial licensing requests, contact:
                     'CACHENAME': '',
                     'TYPE': '',
                     'CALLSIGN': '',
-                    'CALLSIGN_SHORT': '',
                     'RULES': '',
                     'CRUISESPEED': 0,
                     'MTOW': 0,
                     'EMPTY_WEIGHT': 0,
                     'COSTS_PER_HOUR': 0,
-                    'FUEL': {'type': '', 'density': 0, 'consumption': 0},
+                    'FUEL': {'name': '', 'density': 0, 'consumption': 0},
                     'WEIGHT': {'fuel_liters': 0, 'pilot': 0, 'copilot': 0, 'passenger_left': 0, 'passenger_right': 0, 'bagage': 0},
                     'ARM': {'fuel': 0, 'empty_weight': 0, 'pilot': 0, 'copilot': 0, 'passenger_left': 0, 'passenger_right': 0, 'bagage': 0},
-                    'WEIGHT_BALANCE': {'moment': '', 'CG': ''},
                     'ENVELOPE': {'x1': 0, 'x2': 0, 'x3': 0, 'x4': 0, 'x5': 0, 'y1': 0, 'y2': 0, 'y3': 0, 'y4': 0, 'y5': 0},
-                    'POH_RUNWAY_TAKEOFF': {"altitude": '', "temperature": '', "weigth": '', 'distance': '', '50ft': ''},
-                    'POH_RUNWAY_LANDING': {"altitude": '', "temperature": '', "weigth": '', 'distance': '', '50ft': ''},
                     'TAKEOFF': {
                       'headwind_kts_0': '',
                       'headwind_kts_1': '',
@@ -3077,8 +3072,8 @@ For commercial licensing requests, contact:
                       'runway_custom_dry': '',
                       'runway_custom_wet': '',
                       'runway_slope_paved': '',
-                      'runway_slope_correction': '',
-                      'runway_minimum_distance': '',
+                      'runway_correction_factor': '',
+                      'runway_safety_correction': '',
                     },
                     'LANDING': {
                       'headwind_kts_0': '',
@@ -3098,8 +3093,8 @@ For commercial licensing requests, contact:
                       'runway_custom_dry': '',
                       'runway_custom_wet': '',
                       'runway_slope_paved': '',
-                      'runway_slope_correction': '',
-                      'runway_minimum_distance': '',
+                      'runway_correction_factor': '',
+                      'runway_safety_correction': '',
                     },
         }
 
@@ -3452,6 +3447,8 @@ For commercial licensing requests, contact:
         try:
             data_dict = json.loads(json_data)
             print(f"   >✅ Loaded {cacheName}: {len(data_dict)} fields for {elementId}")
+            print('> AIRCRAFT (from cache):')
+            print(data_dict)
 
             # Do stuff for the spinner
             if elementId == 'checklist_spinner':
@@ -3461,7 +3458,10 @@ For commercial licensing requests, contact:
             elif elementId == 'aircraft_spinner':
                 js.window.flight_plan_data['AIRCRAFT'] = data_dict
                 js.document.getElementById('aircraft_field').value = user_selection
-                js.window.aircraft_populate_js()
+                js.window.aircraft_populate_js();
+                js.window.calculateWeightBalance('SETTINGS');
+                js.window.displayRunwayResultsDiv('DEPARTURE')
+                js.window.displayRunwayResultsDiv('ARRIVAL')
 
             print(f"   >✅ [elementId] '{user_selection}' loaded successfully")
         except Exception as e:
@@ -3544,7 +3544,7 @@ For commercial licensing requests, contact:
           'aircraft_mtow': ['', 'MTOW'],
           'aircraft_costs_per_hour': ['', 'COSTS_PER_HOUR'],
 
-          'aircraft_fuel_type': ['FUEL', 'type'],
+          'aircraft_fuel_name': ['FUEL', 'name'],
           'aircraft_fuel_density': ['FUEL', 'density'],
           'aircraft_fuel_consumption': ['FUEL', 'consumption'],
 
@@ -3565,8 +3565,8 @@ For commercial licensing requests, contact:
           'takeoff_runway_custom_dry': ['TAKEOFF', 'runway_custom_dry'],
           'takeoff_runway_custom_wet': ['TAKEOFF', 'runway_custom_wet'],
           'takeoff_runway_slope_paved': ['TAKEOFF', 'runway_slope_paved'],
-          'takeoff_runway_slope_correction': ['TAKEOFF', 'runway_slope_correction'],
-          'takeoff_runway_minimum_distance': ['TAKEOFF', 'runway_minimum_distance'],
+          'takeoff_runway_correction_factor': ['TAKEOFF', 'runway_correction_factor'],
+          'takeoff_runway_safety_correction': ['TAKEOFF', 'runway_safety_correction'],
 
           'landing_headwind_kts_0': ['LANDING', 'headwind_kts_0'],
           'landing_headwind_kts_1': ['LANDING', 'headwind_kts_1'],
@@ -3585,8 +3585,8 @@ For commercial licensing requests, contact:
           'landing_runway_custom_dry': ['LANDING', 'runway_custom_dry'],
           'landing_runway_custom_wet': ['LANDING', 'runway_custom_wet'],
           'landing_runway_slope_paved': ['LANDING', 'runway_slope_paved'],
-          'landing_runway_slope_correction': ['LANDING', 'runway_slope_correction'],
-          'landing_runway_minimum_distance': ['TAKEOFF', 'runway_minimum_distance'],
+          'landing_runway_correction_factor': ['LANDING', 'runway_correction_factor'],
+          'landing_runway_safety_correction': ['LANDING', 'runway_safety_correction'],
 
         }
 
@@ -3602,6 +3602,9 @@ For commercial licensing requests, contact:
 
         # Populate aircraft with defaults
         js.window.aircraft_populate_js(updateGeneralTab=False)
+        js.window.calculateWeightBalance('SETTINGS')
+        js.window.remove_runway_plot_Js('DEPARTURE', 'empty')
+        js.window.remove_runway_plot_Js('ARRIVAL', 'empty')
 
         if verbose=='info':
             js.window.alert(f"ℹ️ Default aircraft specifications are loaded.")
@@ -3615,20 +3618,24 @@ For commercial licensing requests, contact:
         matching_pairs = aircraft_matching_pairs()
 
         # Go throught all matching keys to store in flight dict
-        for key in matching_pairs.keys():
-            cat, item = matching_pairs[key]
-            elementId = js.document.getElementById(key)
-            if not elementId: continue
+        try:
+            for key in matching_pairs.keys():
+                cat, item = matching_pairs[key]
+                elementId = js.document.getElementById(key)
+                if not elementId: continue
 
-            print(f"   >Update flightplan GUI [{key}] -> ['AIRCRAFT'][{cat}][{item}]")
-            if (cat == '') or (cat is None):
-                js.window.flight_plan_data['AIRCRAFT'][item] = elementId.value
-            else:
-                js.window.flight_plan_data['AIRCRAFT'][cat][item] = elementId.value
+                print(f"   >Update flightplan GUI [{key}] -> ['AIRCRAFT'][{cat}][{item}]: {elementId.value}")
+                if (cat == '') or (cat is None):
+                    js.window.flight_plan_data['AIRCRAFT'][item] = elementId.value
+                else:
+                    js.window.flight_plan_data['AIRCRAFT'][cat][item] = elementId.value
 
-        # Directly populate to all fields. This is required because some fields needs to be updated in General tab too.
-        js.window.aircraft_populate_js()
-
+            # Directly populate to all fields. This is required because some fields needs to be updated in General tab too.
+            js.window.aircraft_populate_js();
+            js.window.calculateWeightBalance('SETTINGS');
+        except Exception as e:
+            js.window.alert(f"⚠️ Ooops. An unexpected error. Please load and save and try again.")
+            print(f"Error saving aircraft for key '{key}': {e}")
 
     # ================================================
     # CHECKLIST
@@ -4174,7 +4181,6 @@ For commercial licensing requests, contact:
         # Return
         return icao_with_metar
 
-
     def remove_wind_envelope_plot(fname):
         print(f"> func: remove_wind_envelope_plot({fname})")
 
@@ -4183,7 +4189,6 @@ For commercial licensing requests, contact:
         element.innerHTML = ''
         element = js.document.getElementById(f'{fname}_WIND_ENVELOPE_PLOT')
         element.innerHTML = ''
-
 
     def remove_metar_widget(fname):
         """Remove METAR widget for the specified aerodrome if it exists"""
@@ -4466,45 +4471,40 @@ For commercial licensing requests, contact:
 
         # Store data
         CTR_BOOL = row_dict['AERODROME_CTR']
-        FREQ_TOWER_RADIO = row_dict['freqs.TOWER'] if CTR_BOOL else row_dict['freqs.RADIO']
 
         js.window.flight_plan_data[f"{fname}_ICAO"] = row_dict['icao']
         js.window.flight_plan_data[f"{fname}_ICAO_CITY"] = city_icao
         js.window.flight_plan_data[f"{fname}_CITY"] = str(row_dict['city']).upper()
-
         js.window.flight_plan_data[f"{fname}_RUNWAYS"] = rwy_list
         js.window.flight_plan_data[f"{fname}_RUNWAY_PROPERTIES"] = row_dict['runways']
         js.window.flight_plan_data[f"{fname}_RUNWAY_NR"] = clean_string(rwy_ids)
-        js.window.flight_plan_data[f"{fname}_RUNWAY_LENGTH"] = ''
-        js.window.flight_plan_data[f"{fname}_RUNWAY_SLOPE"] = ''
-        js.window.flight_plan_data[f"{fname}_RUNWAY_SURFACE"] = ''
-        js.window.flight_plan_data[f"{fname}_RUNWAY_CONDITION"] = ''
-        js.window.flight_plan_data[f"{fname}_RUNWAY_SLIPPERY"] = ''
+        # js.window.flight_plan_data[f"{fname}_RUNWAY_LENGTH"] = ''
+        # js.window.flight_plan_data[f"{fname}_RUNWAY_SLOPE"] = ''
+        # js.window.flight_plan_data[f"{fname}_RUNWAY_SURFACE"] = ''
+        # js.window.flight_plan_data[f"{fname}_RUNWAY_CONDITION"] = ''
+        # js.window.flight_plan_data[f"{fname}_RUNWAY_SLIPPERY"] = ''
         js.window.flight_plan_data[f"{fname}_ELEVATION"] = str(row_dict['elevation_aerodrome']).split('.')[0]
-
         js.window.flight_plan_data[f"{fname}_NAME"] = row_dict['name']
         js.window.flight_plan_data[f"{fname}_METAR"] = ''
         js.window.flight_plan_data[f"{fname}_METAR_ICAO"] = ''
         js.window.flight_plan_data[f"{fname}_WIND_ENVELOPE"] = ''
-
-        ctr_value = 'CTR' if CTR_BOOL else ''
-        js.window.flight_plan_data[f"{fname}_CTR"] = ctr_value
-        js.document.getElementById(f'{fname}_CTR').value = ctr_value
-        js.document.getElementById(f'{fname}_CTR').dispatchEvent(js.Event.new('change'))
-
+        js.window.flight_plan_data[f"{fname}_CTR"] = 'CTR' if CTR_BOOL else ''
         js.window.flight_plan_data[f"{fname}_COUNTRY"] = row_dict['country']
         js.window.flight_plan_data[f"{fname}_COUNTRY_CODE"] = row_dict['country_code']
         js.window.flight_plan_data[f"{fname}_IMAGE"] = row_dict.get('url.wikipedia.aerodrome.image', None)
         js.window.flight_plan_data[f"{fname}_URL_WEBSITE"] = row_dict.get('url.website', '')
         js.window.flight_plan_data[f"{fname}_URL_WIKIPEDIA"] = row_dict.get('url.wikipedia', '')
         js.window.flight_plan_data[f"{fname}_LATLON"] = [row_dict.get('lat', None), row_dict.get('lon', None)]
+        js.window.flight_plan_data[f"{fname}_TIMEZONE"] = row_dict.get('tz', None)
+        js.document.getElementById(f'{fname}_CTR').value = 'CTR' if CTR_BOOL else ''
+        js.document.getElementById(f'{fname}_CTR').dispatchEvent(js.Event.new('change'))
 
         # Update route map if both departure and arrival coordinates are available
         # if hasattr(js.window, 'updateRouteLine'): js.window.updateRouteLine()
-        js.window.flight_plan_data[f"{fname}_TIMEZONE"] = row_dict.get('tz', None)
 
         if fname == 'DEPARTURE':
             # Handle FREQ_TOWER_RADIO
+            FREQ_TOWER_RADIO = row_dict['freqs.TOWER'] if CTR_BOOL else row_dict['freqs.RADIO']
             js.window.flight_plan_data["DEPARTURE_ATC_TOWER"] = clean_string(FREQ_TOWER_RADIO)
 
             # MAPPING OF THE FREQUENCIES
@@ -4526,7 +4526,7 @@ For commercial licensing requests, contact:
               js.window.flight_plan_data[key] = freq_clean
               print(f"  {key}: {js.window.flight_plan_data[key]}")
 
-        # Update GUI fields for aerodrome
+        # Update GUI fields for aerodrome but not the aircraft fields
         update_aerodrome_gui_fields(fname, updateAircraftFields=False)
 
         # Update departime time and clock
@@ -4545,8 +4545,8 @@ For commercial licensing requests, contact:
         # Set runway surface
         js.window.setRunwaySurface(fname)
 
-        # Create runway image
-        # js.window.buildRunwayOverviewSvg(fname)
+        # Cleanly initialize runway plot
+        js.window.remove_runway_plot_Js(fname, 'empty')
 
         # Retrieve METAR
         await js.window.retrieve_metar(fname)
@@ -4733,6 +4733,11 @@ For commercial licensing requests, contact:
                         # Do this trick to make sure the length of both cities are similar to keep the GUI alignment
                         #element.textContent = str(value[:15].ljust(15, ' '))
                         element.textContent = str(value)
+                    elif field_id == f'{fname}_RUNWAY_LENGTH':
+                        #print('HERE')
+                        #print(f"  ✓ Updated {field_id}: {str(value)}")
+                        #value = js.window.ft2meter(value)
+                        element.value = str(value)
                     else:
                         element.value = str(value)
 
@@ -4757,6 +4762,10 @@ For commercial licensing requests, contact:
           # Show city name when loading the ICAO with a maximum of 10 chars
             label = element_label.textContent
             element_label.textContent = f'{label}'
+
+        # Update weight and balance
+        if updateAircraftFields:
+            js.window.calculateWeightBalance(fname)
 
         print(f"   >✅ Updated {updated_count} GUI fields")
 
@@ -4913,6 +4922,8 @@ For commercial licensing requests, contact:
         remove_metar_widget(fname)
         # Remove wind envelope
         remove_wind_envelope_plot(fname)
+        # Remove runway image
+        js.window.remove_runway_plot_Js(fname, 'empty')
         # Remove flag
         js.window.updateFlag(fname, 'remove')
         # Remove VFR icon
@@ -4922,6 +4933,9 @@ For commercial licensing requests, contact:
         js.window.highlightDropdownMenus()
         # Stop animations
         js.window.animations(fname, "stop")
+        # Update weight and balance
+        if clearAircraftFields:
+            js.window.calculateWeightBalance(fname)
 
         # Clear selectionbox (WARNING: CAN NOT BE CLEARED HERE BECAUSE THE ICOA SELECTIONS WILL BE RESET AFTER SELECTION)
         # select = js.document.getElementById(f'{fname}_ICAO_CITY')
@@ -5009,7 +5023,7 @@ For commercial licensing requests, contact:
         """Compute the wind envelope based on the METAR data and runway number.
 
         The wind envelope can be used to visually see whether the crosswind/headwind remains within the limits
-        with variable winds. To compute this, the wind strenghts is kept constant but the wind angle is varied
+        with variable winds. To compute this, the wind strenghts is kept constant but the wind direction is varied
         from 0-360 degrees. If the red line (the present wind conditions) crosses the the blue line
         (the maximum wind limits), it indicates that certain wind angles can push the aircraft outside the maximum
         crosswind/headwind limits.
@@ -5153,9 +5167,11 @@ For commercial licensing requests, contact:
 
     def correctRunwayNumber(runway_direction):
         """Correct the runway number by extracting the first two characters from the provided runway direction."""
-        if isinstance(runway_direction, str) and len(runway_direction) > 1:
-            runway_direction = runway_direction[0:2]
-            runway_direction = int(runway_direction)
+        runway_direction = js.window.correctRunwayNumber_js(runway_direction)
+
+        #if isinstance(runway_direction, str) and len(runway_direction) > 1:
+        #    runway_direction = runway_direction[0:2]
+        #    runway_direction = int(runway_direction)
         return runway_direction
 
     def runway_headwind(wind_direction, wind_strength, runway_direction):
@@ -5414,14 +5430,6 @@ For commercial licensing requests, contact:
         checklist_clean(verbose='silent')
         aircraft_clean(verbose='silent')
 
-        # Remove METAR widget
-        # remove_metar_widget('DEPARTURE')
-        # remove_metar_widget('ARRIVAL')
-
-        # Remove wind envelope
-        # remove_wind_envelope_plot('DEPARTURE')
-        # remove_wind_envelope_plot('ARRIVAL')
-
         select = js.document.getElementById('DEPARTURE_ICAO_CITY')
         select.innerHTML = '<option value="">Select ICAO</option>'
         select = js.document.getElementById('ARRIVAL_ICAO_CITY')
@@ -5433,6 +5441,7 @@ For commercial licensing requests, contact:
         js.window.airspaces = {}
         js.window.waypoints = []
         js.window.leginfo = {}
+        js.window.RUNWAY = {}
         js.window.METAR_DEPARTURE = ''
         js.window.METAR_ARRIVAL = ''
 
@@ -5660,6 +5669,7 @@ For commercial licensing requests, contact:
             # Initialize empty waypoints array
             js.window.waypoints = []
             js.window.leginfo = {}
+            js.window.RUNWAY = {}
 
             # Fill the flight_plan_data dictionary from the loaded JSON data
             for key, value in flight_plan_dict.items():
@@ -5678,9 +5688,9 @@ For commercial licensing requests, contact:
             js.window.updateFlag('DEPARTURE', 'remove')
             js.window.updateFlag('ARRIVAL', 'remove')
 
-            # Clean runway info
-            js.window.displayRunwayResultsDiv('DEPARTURE', 'remove')
-            js.window.displayRunwayResultsDiv('ARRIVAL', 'remove')
+            # Cleanly initialize new runway plot
+            js.window.remove_runway_plot_Js('DEPARTURE', 'empty')
+            js.window.remove_runway_plot_Js('ARRIVAL', 'empty')
 
             # Update VFR icon
             js.window.updateFlightCatagoryIcon('DEPARTURE', remove=True)
@@ -5703,6 +5713,7 @@ For commercial licensing requests, contact:
             checklist_populate()
             # Populate aircraft settings
             js.window.aircraft_populate_js(False)
+            js.window.calculateWeightBalance('SETTINGS')
 
             # Update METAR
             js.window.retrieve_metar('DEPARTURE', verbose='silent')
@@ -5905,7 +5916,7 @@ For commercial licensing requests, contact:
 
         # Overwrite the keys in the flight_plan_data dictionary from the loaded JSON data
         for key, value in fname_dict.items():
-            print(f"Key: {key}, Value: {value}")
+            # print(f"Key: {key}, Value: {value}")
             js.window.flight_plan_data[key] = value
 
         # Update GUI fields
@@ -5933,8 +5944,8 @@ For commercial licensing requests, contact:
         # Remove wind envelope
         remove_wind_envelope_plot(fname)
 
-        # Remove runway plot
-        js.window.displayRunwayResultsDiv(fname, 'remove')
+        # Remove runway plot (initialize newly)
+        js.window.remove_runway_plot_Js(fname, 'empty')
 
         # Retrieve METAR data during loading of the aerodrome
         await js.window.retrieve_metar(fname, verbose=verbose)
@@ -5946,6 +5957,8 @@ For commercial licensing requests, contact:
 
         js.window.waypoints = to_js([])
         js.window.leginfo = to_js({})
+        js.window.RUNWAY = to_js({})
+
         if icao_dep.value != '':
             js.window.addWaypoints([to_js(js.window.flight_plan_data['DEPARTURE_LATLON'])])
         if icao_arr.value != '':
@@ -7141,38 +7154,43 @@ For commercial licensing requests, contact:
       btn.addEventListener("click", async () => {
         // This listeren is tab switch/ swith tabs
         // Get the tab we're switching TO
-        const targetTab = btn.getAttribute("data-tab");
-
+        const targetTab = btn.getAttribute("data-tab").toUpperCase();
         // Get the CURRENT active tab (before switching)
         const elementActiveTab = document.querySelector(".tablinks.active");
-        const currentTab = elementActiveTab ? elementActiveTab.getAttribute("data-tab") : null;
+        const currentTab = elementActiveTab ? elementActiveTab.getAttribute("data-tab").toUpperCase() : null;
 
         console.log(`>Tab switch from: ${currentTab}, to ${targetTab}`)
 
         // SAVE ON TAB CHANGE SWITCHING TO ATC. THIS IS NEEDED BECAUSE THE DATA IS GATHERED FROM FLIGHTPLAN DICT.
         // if (pyscriptReady && window.save_flightplan && (targetTab === "ATC") || ) {
-        if (pyscriptReady && window.save_flightplan) {
+        if (pyscriptReady) {
             window.save_flightplan(true, false);
         }
 
         // Calculate Weight and Balance and Departure tab
-        if (targetTab.toUpperCase() === 'DEPARTURE' || targetTab.toUpperCase() === 'ARRIVAL'){
+        if (targetTab === 'DEPARTURE') {
           // Sync checkboxes and fields on startup
-           syncWeightCheckboxesAndFields(`${targetTab.toUpperCase()}_WEIGHT_CHECKBOX`);
-           window.calculateWeightBalance(targetTab.toUpperCase());
+           syncWeightCheckboxesAndFields(`ARRIVAL_WEIGHT_CHECKBOX`);
+           window.calculateWeightBalance(targetTab);
+        }
+        // Calculate Weight and Balance and Departure tab
+        if (targetTab === 'ARRIVAL') {
+          // Sync checkboxes and fields on startup
+           syncWeightCheckboxesAndFields(`DEPARTURE_WEIGHT_CHECKBOX`);
+           window.calculateWeightBalance(targetTab);
         }
 
         // WHEN THE TAB MAP IS CLICKED, UPDATE THE MAP WITH THE ROUTE AND FILL WINDOW.WAYPOINTS
-        if (targetTab.toUpperCase() === "MAP") {
+        if (targetTab === "MAP") {
           initRouteMap(true);
           updateRoute(true); // Add all waypoints
         }
         //  CHECKLIST TAB: UPDATE CHECKLISTS
-        if (targetTab.toUpperCase() === "CHECKLIST") {
+        if (targetTab === "CHECKLIST") {
           checklist_populate()
         }
 
-        // if (targetTab.toUpperCase() === "CONFIG") {
+        // if (targetTab === "CONFIG") {
         //   populateAvailableCountries()
         // }
 
@@ -7239,6 +7257,11 @@ For commercial licensing requests, contact:
         input.value = input.value.toUpperCase();
         });
     });
+
+    // document.querySelectorAll('.RUNWAYFORMAT').forEach(input => {
+    //   input.addEventListener('input', () => { formatRunwayInput(input); });
+    //   input.addEventListener('blur', () => { finalizeRunwayInput(input); });
+    // });
 
     // Make transparent for all fields with class="TRANSPARENT_input"
     // document.querySelectorAll('.TRANSPARENT_input').forEach(input => {
@@ -7326,11 +7349,12 @@ For commercial licensing requests, contact:
         console.log("> func: checkPyScriptReady()");
         console.log("   >Default data is initialized.");
 
-        // METAR defaults
+        // global dictionaries
         window.METAR_DEPARTURE = '';
         window.METAR_ARRIVAL = '';
         window.waypoints = [];
         window.leginfo = {};
+        window.RUNWAY = {};
         // window.COUNTRIES_SELECTED = ['Netherlands'];
 
         // Get default settings
@@ -7385,9 +7409,10 @@ For commercial licensing requests, contact:
         // Load from previously stored countries from cache
         const uniqueCountries = LoadCountriesOfInterest();
         // Set the multibox items
-        console.log(uniqueCountries)
         moveCountries('available-countries', 'selected-countries', 'initialize', uniqueCountries)
-
+        // Clean runway plot at startup
+        remove_runway_plot_Js('DEPARTURE', 'empty')
+        remove_runway_plot_Js('ARRIVAL', 'empty')
         // All env. variables are initialized
         console.log("   >Environmental variables are initialized.");
 
@@ -7845,7 +7870,6 @@ For commercial licensing requests, contact:
     });
 
 
-
     function update_aerodrome_weights_js(prefix) {
         console.log('> func: update_aerodrome_weights_js()');
         // Access the flight plan data
@@ -7858,7 +7882,7 @@ For commercial licensing requests, contact:
                 const value = window.flight_plan_data['AIRCRAFT'][cat][item];
                 const element = document.getElementById(keyTarget);
                 if (element) element.value = value;
-                console.log(`   >Populate GUI field: [${keyTarget}] <- ['AIRCRAFT'][${cat}][${item}]: ${window.flight_plan_data['AIRCRAFT'][cat][item]}`);
+                // console.log(`   >Populate GUI field: [${keyTarget}] <- ['AIRCRAFT'][${cat}][${item}]: ${window.flight_plan_data['AIRCRAFT'][cat][item]}`);
             }
         }
         // Calculate weight and balance
@@ -7888,6 +7912,7 @@ For commercial licensing requests, contact:
             document.getElementById('CALLSIGN').value = aircraft_js['CALLSIGN'];
         }
 
+        console.log(aircraft_js)
         // Populate the GUI
         for (const key in matching_pairs) {
             const [cat, item] = matching_pairs[key];
@@ -7895,21 +7920,19 @@ For commercial licensing requests, contact:
             if (!element) continue;
 
             if ((cat === '' || cat === null || cat === undefined) && item !== '' && item !== null && item !== undefined) {
-                console.log(`   >Populate GUI field: [${key}] <- ['AIRCRAFT'][${item}]: ${aircraft_js[item]}`);
+                // console.log(`   >Populate GUI field: [${key}] <- ['AIRCRAFT'][${item}]: ${aircraft_js[item]}`);
                 element.value = aircraft_js[item];
+                // console.log(aircraft_js[item])
             } else if (item !== '' && item !== null && item !== undefined) {
-                console.log(`   >Populate GUI field: [${key}] <- ['AIRCRAFT'][${cat}][${item}]: ${aircraft_js[cat]?.[item]}`);
+                // console.log(`   >Populate GUI field: [${key}] <- ['AIRCRAFT'][${cat}][${item}]: ${aircraft_js[cat]?.[item]}`);
                 element.value = aircraft_js[cat][item];
+                // console.log(aircraft_js[cat][item])
             }
         }
-        // Calculate weight and balance
-        window.calculateWeightBalance('SETTINGS');
+        // Calculate weight and balance NOTE: THIS FUNCTION IS REFACTORED OUTSIDE THE FUNCTION!
+        // window.calculateWeightBalance('SETTINGS');
     }
 
-    // Find the Aircraft specificatoins matching with the callsign
-    // document.getElementById("CALLSIGN")?.addEventListener('change', () => {
-    //     handleRegistrationClick();
-    // });
     document.getElementById("CALLSIGN")?.addEventListener("blur", handleRegistrationClick);
     document.getElementById("CALLSIGN")?.addEventListener("keydown", e => {
       if (e.key === "Enter") handleRegistrationClick();
@@ -7956,10 +7979,13 @@ For commercial licensing requests, contact:
 
                 // Populate aerodromes and aircraft settings
                 aircraft_populate_js();
+                calculateWeightBalance('SETTINGS');
                 update_aerodrome_weights_js("DEPARTURE");
                 update_aerodrome_weights_js("ARRIVAL");
                 highlightMissingFields();
                 computeArrivalFuelPerLeg();
+                displayRunwayResultsDiv("DEPARTURE");
+                displayRunwayResultsDiv("ARRIVAL");
 
             } catch (err) {
                 console.error("Invalid aircraft data in localStorage", err);
@@ -8411,7 +8437,7 @@ For commercial licensing requests, contact:
 
             // THE RUNWAY FIELDS
             'ARRIVAL_RUNWAY_LENGTH': {
-                element: document.getElementById('DEPARTURE_RUNWAY_LENGTH'),
+                element: document.getElementById('ARRIVAL_RUNWAY_LENGTH'),
                 name: 'Runway Length (arrival)',
                 color_empty: '',
                 color_filled: 'transparent',
@@ -8421,7 +8447,7 @@ For commercial licensing requests, contact:
             },
 
             'ARRIVAL_RUNWAY_SLOPE': {
-                element: document.getElementById('DEPARTURE_RUNWAY_SLOPE'),
+                element: document.getElementById('ARRIVAL_RUNWAY_SLOPE'),
                 name: 'Runway Slope (arrival)',
                 color_empty: '',
                 color_filled: 'transparent',
@@ -8431,7 +8457,7 @@ For commercial licensing requests, contact:
             },
 
             'ARRIVAL_RUNWAY_SURFACE': {
-                element: document.getElementById('DEPARTURE_RUNWAY_SURFACE'),
+                element: document.getElementById('ARRIVAL_RUNWAY_SURFACE'),
                 name: 'Runway Surface (arrival)',
                 color_empty: '',
                 color_filled: 'transparent',
@@ -8440,8 +8466,8 @@ For commercial licensing requests, contact:
                 required_atc_enroute: false,
             },
 
-            'ARRIVAL_RUNWAY_SLIPPERY': {
-                element: document.getElementById('DEPARTURE_RUNWAY_SLIPPERY'),
+            'ARRIVAL_RUNWAY_SURFACE': {
+                element: document.getElementById('ARRIVAL_RUNWAY_SURFACE'),
                 name: 'Runway Condition (arrival)',
                 color_empty: '',
                 color_filled: 'transparent',
@@ -8451,7 +8477,7 @@ For commercial licensing requests, contact:
             },
 
             'ARRIVAL_RUNWAY_SLIPPERY': {
-                element: document.getElementById('DEPARTURE_RUNWAY_SLIPPERY'),
+                element: document.getElementById('ARRIVAL_RUNWAY_SLIPPERY'),
                 name: 'Runway Condition (arrival)',
                 color_empty: '',
                 color_filled: 'transparent',
@@ -8940,20 +8966,18 @@ For commercial licensing requests, contact:
             }
         });
 
-        // Populate fields when ICAO city is selected
+        // populate fields when ICAO city is selected. searchwords: icao selection, icao dropbox, icao spinner
         document.getElementById(`${fname}_ICAO_CITY`).addEventListener('change', async function() {
+            // Get ICAO
             const city_icao = this.value;
-
             // Clear all aerodrome fields first to prevent data leakage
-            if (window.clear_aerodrome_fields) {
-                await window.clear_aerodrome_fields(fname);
-            }
+            await window.clear_aerodrome_fields(fname, false);
             // Clear all enroute fields first to prevent data leakage
-            if (fname === 'DEPARTURE' && window.clear_enroute_fields) {
+            if (fname === 'DEPARTURE') {
                 await window.clear_enroute_fields();
             }
 
-            if (city_icao && window.populate_aerodrome_fields_from_icao) {
+            if (city_icao) {
                 // Call PyScript function to populate fields
                 await window.populate_aerodrome_fields_from_icao(fname, city_icao);
                 // Update missing fields
@@ -9112,7 +9136,7 @@ For commercial licensing requests, contact:
         }
       };
 
-      const runwayDirection = correctRunwayNumber(runwayNumberField.value);
+      const runwayDirection = correctRunwayNumber_js(runwayNumberField.value);
       const windDirection = evalStrValue(windDirectionField.value);
       const windStrength = evalStrValue(windSpeedField.value);
       const windGust = evalStrValue(windGustField.value);
@@ -9276,7 +9300,7 @@ For commercial licensing requests, contact:
         icon = '⚠';
         color = "#ffeb3b";
       } else if (results.line_intersection === 'intersection') {
-        results.message = `⚠ Warning: Wind angle and direction is within the limits for runway ${runwayDirection}. However, in case the wind directions changes, it strays beyond the limit boundaries for runway ${runwayDirection}.`;
+        results.message = `⚠ Warning: Wind direction is within the limits for runway ${runwayDirection}. However, in case the wind directions changes, it strays beyond the limit boundaries for runway ${runwayDirection}.`;
         results.xy = [x, y];
         icon = '⚠';
         color = "#ffeb3b";

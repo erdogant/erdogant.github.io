@@ -2,6 +2,50 @@ let ARRIVAL_weightBalanceChart = null;
 let DEPARTURE_weightBalanceChart = null;
 let SETTINGS_weightBalanceChart = null;
 
+// Function to synchronize weight checkboxes and fields
+function syncWeightCheckboxesAndFields(triggerId) {
+  console.log("> func: syncWeightCheckboxesAndFields()");
+  const depCheckbox = document.getElementById("DEPARTURE_WEIGHT_CHECKBOX");
+  const arrCheckbox = document.getElementById("ARRIVAL_WEIGHT_CHECKBOX");
+
+  // Sync the other checkbox to match the one that was clicked
+  if (triggerId === "DEPARTURE_WEIGHT_CHECKBOX") {
+    arrCheckbox.checked = depCheckbox.checked;
+  } else if (triggerId === "ARRIVAL_WEIGHT_CHECKBOX") {
+    depCheckbox.checked = arrCheckbox.checked;
+  }
+
+  // Disable/enable fields based on the (now synced) state
+  if (depCheckbox.checked) {
+    document.getElementById("ARRIVAL_WEIGHT_FUEL_LITERS").disabled = true;
+    document.getElementById("ARRIVAL_WEIGHT_PILOT").disabled = true;
+    document.getElementById("ARRIVAL_WEIGHT_COPILOT").disabled = true;
+    document.getElementById("ARRIVAL_WEIGHT_REAR_RIGHT").disabled = true;
+    document.getElementById("ARRIVAL_WEIGHT_REAR_LEFT").disabled = true;
+    document.getElementById("ARRIVAL_WEIGHT_BAGAGE").disabled = true;
+    document.getElementById("ARRIVAL_BTN_WEIGHTS").disabled = true;
+
+    // Copy ARRIVAL weights into DEPARTURE weights. Note that ARRIVAL_WEIGHT_FUEL_LITERS fuel will be updated (in computeArrivalFuelPerLeg) with remaining fuel when arrival icao is selected.
+    document.getElementById("ARRIVAL_WEIGHT_FUEL_LITERS").value = document.getElementById("DEPARTURE_WEIGHT_FUEL_LITERS").value;
+    document.getElementById("ARRIVAL_WEIGHT_PILOT").value = document.getElementById("DEPARTURE_WEIGHT_PILOT").value;
+    document.getElementById("ARRIVAL_WEIGHT_COPILOT").value = document.getElementById("DEPARTURE_WEIGHT_COPILOT").value;
+    document.getElementById("ARRIVAL_WEIGHT_REAR_RIGHT").value = document.getElementById("DEPARTURE_WEIGHT_REAR_RIGHT").value;
+    document.getElementById("ARRIVAL_WEIGHT_REAR_LEFT").value = document.getElementById("DEPARTURE_WEIGHT_REAR_LEFT").value;
+    document.getElementById("ARRIVAL_WEIGHT_BAGAGE").value = document.getElementById("DEPARTURE_WEIGHT_BAGAGE").value;
+
+    // Compute the expected fuel
+    computeArrivalFuelPerLeg();
+  } else {
+    document.getElementById("ARRIVAL_WEIGHT_FUEL_LITERS").disabled = false;
+    document.getElementById("ARRIVAL_WEIGHT_PILOT").disabled = false;
+    document.getElementById("ARRIVAL_WEIGHT_COPILOT").disabled = false;
+    document.getElementById("ARRIVAL_WEIGHT_REAR_RIGHT").disabled = false;
+    document.getElementById("ARRIVAL_WEIGHT_REAR_LEFT").disabled = false;
+    document.getElementById("ARRIVAL_WEIGHT_BAGAGE").disabled = false;
+    document.getElementById("ARRIVAL_BTN_WEIGHTS").disabled = false;
+  }
+}
+
 function calculateWeightBalance(prefix) {
   console.log(`> func: calculateWeightBalance(${prefix})`);
   if (prefix === null) {
@@ -97,15 +141,15 @@ function showEnvelopeMessage(isInside, pointX, pointY, messageId) {
   messageDiv.style.display = "block";
 
   if (isInside) {
-    messageDiv.style.background = "#d4edda";
-    messageDiv.style.color = "#155724";
-    messageDiv.style.border = "1px solid #c3e6cb";
+    messageDiv.style.background = GOODCOLOR; //"#d4edda";
+    messageDiv.style.color = GOODCOLORTEXT; // "#155724";
+    messageDiv.style.border = `1px solid ${GOODCOLORDARK}`;
     messageDiv.innerHTML =
       `✓ Aircraft weight is WITHIN the envelope<br>` + `<small>CG: ${pointX.toFixed(0)} mm, Weight: ${pointY.toFixed(0)} kg</small>`;
   } else {
-    messageDiv.style.background = "#f8d7da";
-    messageDiv.style.color = "#721c24";
-    messageDiv.style.border = "1px solid #f5c6cb";
+    messageDiv.style.background = WARNINGCOLOR; // "#f8d7da";
+    messageDiv.style.color = WARNINGCOLORTEXT; //"#721c24";
+    messageDiv.style.border = `1px solid ${WARNINGCOLORDARK}`;
     messageDiv.innerHTML =
       `⚠ Aircraft weight is OUTSIDE the envelope<br>` + `<small>CG: ${pointX.toFixed(0)} mm, Weight: ${pointY.toFixed(0)} kg</small>`;
   }
@@ -197,8 +241,35 @@ function updateWeightBalancePlot(prefix, canvasId, messageId, showCG = true, mar
   });
 }
 
+function colorWeightBalanceMenu(prefix) {
+  const elementWB = document.getElementById(`${prefix}_WB_MENU`);
+  const messageDivFuel = document.getElementById(`${prefix}_fuelMessage`);
+  const messageDivWB = document.getElementById(`${prefix}_envelopeMessage`);
+  let icon = "";
+  let color = "#E9E9E9";
+
+  if (messageDivWB && messageDivWB.innerHTML.toLowerCase().includes("outside")) {
+    icon = "⚠";
+    color = "#ffeb3b";
+  }
+  if (messageDivFuel && messageDivFuel.innerHTML.toLowerCase().includes("insufficient")) {
+    icon = icon + "⛽";
+    color = "#ffeb3b";
+  } else if (messageDivFuel && messageDivFuel.innerHTML.toLowerCase().includes("below")) {
+    icon = icon + "⛽";
+    color = "#ffeb3b";
+  }
+
+  if (elementWB) {
+    elementWB.style.backgroundColor = color;
+    elementWB.textContent = `${icon} WEIGHT AND BALANCE`;
+  }
+}
+
 /* =========================
    GLOBAL EXPORTS
 ========================= */
 
 window.calculateWeightBalance = calculateWeightBalance;
+window.colorWeightBalanceMenu = colorWeightBalanceMenu;
+window.syncWeightCheckboxesAndFields = syncWeightCheckboxesAndFields;

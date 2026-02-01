@@ -86,8 +86,8 @@ function computeLegInfo({ lat1, lon1, lat2, lon2, cruiseSpeedKt, fuelConsumption
 
 function computeArrivalFuelPerLeg() {
   console.log("> func: computeArrivalFuelPerLeg()");
-
   const fuelDeparture = parseFloat(document.getElementById("DEPARTURE_WEIGHT_FUEL_LITERS")?.value) || 0;
+  const arrCheckbox = document.getElementById("ARRIVAL_WEIGHT_CHECKBOX");
 
   const aircraft = window.flight_plan_data?.AIRCRAFT;
   if (!aircraft) {
@@ -188,7 +188,6 @@ function computeArrivalFuelPerLeg() {
   // Compute remaining fuell
   const fuelRemaining = fuelDeparture - totalFuelBurned;
   // Store remaining fuel into Arrival if the checkbox is not set
-  const arrCheckbox = document.getElementById("ARRIVAL_WEIGHT_CHECKBOX");
   if (arrCheckbox.checked) {
     document.getElementById("ARRIVAL_WEIGHT_FUEL_LITERS").value = Math.max(0, fuelRemaining).toFixed(0);
   }
@@ -205,31 +204,6 @@ function computeArrivalFuelPerLeg() {
     fuelRemaining: fuelRemaining,
     flightTimeH: totalTimeH,
   };
-}
-
-function colorWeightBalanceMenu(prefix) {
-  const elementWB = document.getElementById(`${prefix}_WB_MENU`);
-  const messageDivFuel = document.getElementById(`${prefix}_fuelMessage`);
-  const messageDivWB = document.getElementById(`${prefix}_envelopeMessage`);
-  let icon = "";
-  let color = "#E9E9E9";
-
-  if (messageDivWB && messageDivWB.innerHTML.toLowerCase().includes("outside")) {
-    icon = "⚠";
-    color = "#ffeb3b";
-  }
-  if (messageDivFuel && messageDivFuel.innerHTML.toLowerCase().includes("insufficient")) {
-    icon = icon + "⛽";
-    color = "#ffeb3b";
-  } else if (messageDivFuel && messageDivFuel.innerHTML.toLowerCase().includes("below")) {
-    icon = icon + "⛽";
-    color = "#ffeb3b";
-  }
-
-  if (elementWB) {
-    elementWB.style.backgroundColor = color;
-    elementWB.textContent = `${icon} WEIGHT AND BALANCE`;
-  }
 }
 
 function showFuelMessage(messageId, totalFuelBurned, fuelRemaining, totalTimeH, fuelConsumption) {
@@ -404,4 +378,3 @@ function computeFlightInfo(waypoints, departureTimeHHMM = null, speedKt = 105) {
 // window.computeArrivalFuel = computeArrivalFuel;
 window.computeArrivalFuelPerLeg = computeArrivalFuelPerLeg;
 window.computeFlightInfo = computeFlightInfo;
-window.colorWeightBalanceMenu = colorWeightBalanceMenu;
