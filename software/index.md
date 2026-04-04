@@ -27,9 +27,9 @@ I love coffee 😊 and you decide how much to contribute.
 
 ## SkyWalk
 * **The Tool For Flight Preparations.**
-* Read the blog over [here](https://erdogant.medium.com/skywalk-the-tool-for-flight-preparations-51c52d5a1ac0)
-* Checkout the documentation pages over [here](https://erdogant.github.io/skywalk-docs)
-* [Go to the Skywalk Application](https://skywalk.streamlit.app/) ![Skywalk Logo](/images/skywalk_logo.png){: style="width: 100px;" }
+* Read the blog over [here](https://erdogant.medium.com)
+* Checkout the documentation pages over [here](https://skywalk-aviation.github.io/docs/)
+* [Go to the Skywalk Application](https://skywalk-aviation.github.io/app/) ![Skywalk Logo](/images/skywalk_logo.png){: style="width: 100px;" }
 
 <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 2em;">
   <div style="flex: 1; min-width: 250px;">
