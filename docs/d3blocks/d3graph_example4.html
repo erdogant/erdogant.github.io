@@ -4,6 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <title>d3graph</title>
+
+    <script async src='https://media.ethicalads.io/media/client/ethicalads.min.js'></script>
+<div data-ea-publisher='erdogantgithubio' data-ea-type='text' data-ea-style='stickybox'></div>
+
     <style type="text/css">
         .node text {
   font-size: 10px;
@@ -24,7 +28,136 @@ h3 {
   font-size: 14px;
   font-family: "Helvetica";
 }
+
+/* Sticky / fixed node indicator: dashed outline ring — works for all shape types */
+.node .node-shape.node-fixed {
+  stroke-dasharray: 4, 2;
+  stroke-width: 2.5px;
+}
+
+/* Shared pointer cursor for all node shapes */
+.node .node-shape {
+  cursor: pointer;
+}
+
+/* Zoom-linked label visibility (performance): when zoomed far out, node and
+   edge labels are unreadable anyway, so they're hidden via this single class
+   toggle instead of being permanently removed. Placed after .node text so it
+   wins on specificity ties. */
+.labels-hidden text {
+  display: none;
+}
+
+/* Master edges on/off switch (SVG mode). Canvas mode is handled purely in JS
+   (skips drawing / clears the canvas) since there's no DOM to toggle. */
+.edges-hidden .link,
+.edges-hidden .link-text {
+  display: none;
+}
+        .dark-mode {
+            background-color: #222 !important;
+            color: #eee !important;
+        }
+        .dark-mode #graphContainer {
+            background-color: #222 !important;
+        }
+        .dark-mode .button-switch {
+            background: #333;
+            color: #eee;
+            border: 1px solid #555;
+        }
+        .button-switch {
+            display: inline-block;
+            margin: 8px 4px;
+            padding: 6px 16px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            background: #fff;
+            color: #222;
+            cursor: pointer;
+            font-size: 1em;
+            font-family: inherit, Arial, sans-serif;
+            transition: background 0.2s, color 0.2s;
+        }
+        .top-panel {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 8px;
+            padding: 10px;
+        }
+        .slider-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 12px 0;
+        }
+        .slider-label {
+            margin: 0 8px;
+            font-size: 1em;
+            font-family: inherit, Arial, sans-serif;
+        }
+        .styled-slider {
+            -webkit-appearance: none;
+            width: 180px;
+            height: 8px;
+            background: #eee;
+            border-radius: 5px;
+            outline: none;
+            transition: background 0.2s;
+            margin: 0 8px;
+        }
+        .styled-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid #888;
+            cursor: pointer;
+            box-shadow: 0 0 2px #888;
+        }
+        .styled-slider::-moz-range-thumb {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid #888;
+            cursor: pointer;
+            box-shadow: 0 0 2px #888;
+        }
+        .styled-slider:focus {
+            background: #ddd;
+        }
+        .dark-mode .styled-slider {
+            background: #444;
+        }
+        .dark-mode .styled-slider::-webkit-slider-thumb {
+            background: #222;
+            border: 2px solid #eee;
+        }
+        .dark-mode .styled-slider::-moz-range-thumb {
+            background: #222;
+            border: 2px solid #eee;
+        }
     </style>
+</head>
+<body style="background-color: #FFFFFF;">
+
+<!-- Top right panel with dark mode and save buttons -->
+<div class="top-panel">
+    <button id="darkModeSwitch" class="button-switch">🌙 Dark Mode</button>
+    <button id="edgeToggleButton" class="button-switch">Hide Edges</button>
+    <button id="densityToggleButton" class="button-switch">Show Density</button>
+    <button id="saveButton" class="button-switch">Save</button>
+</div>
+
+<!-- Create save button (removed old location) -->
+
+    <!-- Save button now in top-panel -->
+
+
     <script>
         !function() {
   var d3 = {
@@ -9580,104 +9713,629 @@ h3 {
   });
   if (typeof define === "function" && define.amd) this.d3 = d3, define(d3); else if (typeof module === "object" && module.exports) module.exports = d3; else this.d3 = d3;
 }();
-        
-function d3graphscript(config = {
+        function d3graphscript(config = {
     // Default values
     width: 800,
     height: 600,
     charge: -250,
     distance: 0,
     directed: false,
-    collision: 0.5
+    collision: 0.5,
+    link_tension: 1,
+    sticky: false,
+    background_color: '#FFFFFF',
+    node_text_inside: false,
+    max_ticks: 300,
+    label_zoom_threshold: 0.6,
+    canvas_edge_threshold: 2000,
+    density_grid_size: 40,
+    density_blur: 8,
+    density_opacity: 0.6,
+    show_density: false,
+    dark_mode: false,
     }) {
+    
+    //Constants for the SVG
+    var width = config.width;
+    var height = config.height;
+    var background_color = config.background_color || '#FFFFFF';
+    var sticky = config.sticky || false;
+    // Cap how many simulation ticks run before auto-stopping, instead of
+    // letting a large graph's force layout cool down naturally over
+    // thousands of ticks (each one re-running collision detection over
+    // every node). Restarting the simulation (drag, slider changes) resets
+    // this counter so it still settles again after each change.
+    var maxTicks = (config.max_ticks !== undefined && config.max_ticks !== null) ? config.max_ticks : 300;
+    var tickCount = 0;
+    // Below this zoom scale, labels are unreadable anyway — hide them (via a
+    // single CSS class, not per-element work) instead of rendering thousands
+    // of illegible <text> nodes. They reappear once zoomed back in past it.
+    var labelZoomThreshold = (config.label_zoom_threshold !== undefined && config.label_zoom_threshold !== null) ? config.label_zoom_threshold : 0.6;
+    // Above this many visible edges, draw links on a <canvas> instead of as
+    // SVG <line> elements. SVG per-element overhead (DOM node creation,
+    // layout, GC) is what makes tens of thousands of edges freeze the page;
+    // canvas just issues draw calls into a single bitmap each frame, so cost
+    // stays flat regardless of edge count. Nodes stay SVG either way (far
+    // fewer of them, and it keeps drag/click/tooltip interactivity simple).
+    var canvasEdgeThreshold = (config.canvas_edge_threshold !== undefined && config.canvas_edge_threshold !== null) ? config.canvas_edge_threshold : 2000;
+    var useCanvasEdges = false;
+    var canvasEl, ctx;
+    var currentTransform = { scale: 1, translate: [0, 0] };
+    // Master on/off switch for edges (independent of the weight/component
+    // sliders) — lets the user clear visual clutter on large graphs to see
+    // node structure/clustering without redrawing or refiltering anything.
+    var edgesVisible = true;
 
-  // console.log('d3graphscript config = ', config);
+    // ---- DENSITY (clustering heatmap) LAYER ----
+    // Grid-binned node density, drawn on its own canvas beneath the edges and
+    // nodes. Recomputed from live node positions every tick it's visible, so
+    // it tracks the force layout as nodes settle/move — cheap since it's a
+    // single O(nodes) pass, unlike the edge count this was never the
+    // bottleneck. Color scheme adapts to dark mode (updated live via
+    // window.d3graphSetDarkMode, called from the dark-mode toggle).
+    var densityGridSize = (config.density_grid_size !== undefined && config.density_grid_size !== null) ? config.density_grid_size : 40;
+    var densityBlur = (config.density_blur !== undefined && config.density_blur !== null) ? config.density_blur : 8;
+    var densityOpacity = (config.density_opacity !== undefined && config.density_opacity !== null) ? config.density_opacity : 0.6;
+    var densityVisible = config.show_density || false;
+    var darkMode = config.dark_mode || false;
+    var densityCanvasEl, densityCtx, densityOffscreen;
+    
+    // Set the body background color
+    document.body.style.backgroundColor = background_color;
+    
+    //Set up the colour scale
+    var color = d3.scale.category20();
+    
+    var force = d3.layout.force()
+      .charge(config.charge)
+      .linkDistance((d) => d.edge_distance || config.distance)
+      //.linkDistance((d) => config.distance > 0 ? config.distance : d.edge_weight)
+      .linkStrength(config.link_tension !== undefined ? config.link_tension : 1)
+      .size([width, height]);
+    
+    // ---- DRAGGING ----
+    // Sticky mode: dragstart fixes the node so the simulation stops pulling it.
+    //   dragend keeps it pinned (dashed stroke indicator).
+    //   Right-click a pinned node to release it back into the simulation.
+    // Normal mode: standard free-drag behaviour is preserved.
+    
+    function dragstarted(d) {
+      d3.event.sourceEvent.stopPropagation();
+      d3.select(this).classed("dragging", true);
+      if (sticky) {
+        d.fixed = true;
+        tickCount = 0;
+        force.start();
+      }
+    }
+    
+    function dragged(d) {
+      if (sticky) {
+        d.x = d.px = d3.event.x;
+        d.y = d.py = d3.event.y;
+      } else {
+        d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+      }
+      if (densityVisible) drawDensityLayer();
+    }
+    
+    function dragended(d) {
+      d3.select(this).classed("dragging", false);
+      if (sticky) {
+        // Keep the node fixed and apply a visual "pinned" cue (dashed border)
+        d.fixed = true;
+        d3.select(this).select(".node-shape")
+          .style("stroke-dasharray", "4,2")
+          .style("stroke-width", function(d) { return Math.max(parseFloat(d.node_size_edge) || 1, 2); });
+      }
+    }
+    
+    var drag = force.drag()
+      .origin(function(d) { return d; })
+      .on("dragstart", dragstarted)
+      .on("drag", dragged)
+      .on("dragend", dragended);
+    
+    // ---- END DRAGGING ----
 
-  //Constants for the SVG
-  var width = config.width;
-  var height = config.height;
+    // =====================================================================
+    // ---- SHAPE RENDERING ------------------------------------------------
+    // Supported node_marker values:
+    //   'circle'                        – SVG <circle>  (default)
+    //   'ellipse'                       – SVG <ellipse> (wider than tall)
+    //   'square'                        – square via <path>
+    //   'rectangle'                     – wide rectangle via <path>
+    //   'triangle' / 'triangle-up'      – upward equilateral triangle
+    //   'triangle-down'                 – downward triangle
+    //   'diamond'                       – rotated square
+    //   'star'                          – 5-pointed star
+    //   'hexagon'                       – regular hexagon
+    //   'pentagon'                      – regular pentagon
+    // =====================================================================
 
-  //Set up the colour scale
-  var color = d3.scale.category20();
+    /**
+     * Returns an SVG path `d` string for polygon/star shapes, centred at (0,0).
+     * Returns null for 'circle' and 'ellipse' (handled as native SVG elements).
+     */
+    function shapePathD(marker, r) {
+      r = parseFloat(r) || 8;
+      var m = (marker || 'circle').toLowerCase();
+      switch (m) {
 
-  var force = d3.layout.force()
-    .charge(config.charge)
-    .linkDistance((d) => config.distance > 0 ? config.distance : d.edge_weight)
-    .size([width, height]);
+        case 'triangle':
+        case 'triangle-up': {
+          var h = r * Math.sqrt(3);
+          return 'M 0,' + (-r) +
+                 ' L ' + (h / 2) + ',' + (r / 2) +
+                 ' L ' + (-h / 2) + ',' + (r / 2) + ' Z';
+        }
+
+        case 'triangle-down': {
+          var h = r * Math.sqrt(3);
+          return 'M 0,' + r +
+                 ' L ' + (h / 2) + ',' + (-r / 2) +
+                 ' L ' + (-h / 2) + ',' + (-r / 2) + ' Z';
+        }
+
+        case 'square': {
+          var s = r * 1.4;
+          return 'M ' + (-s) + ',' + (-s) +
+                 ' L ' +   s + ',' + (-s) +
+                 ' L ' +   s + ',' +   s  +
+                 ' L ' + (-s) + ',' +   s  + ' Z';
+        }
+
+        case 'rect':
+        case 'rectangle': {
+          var w = r * 2.0, h = r * 1.0;
+          return 'M ' + (-w) + ',' + (-h) +
+                 ' L ' +   w + ',' + (-h) +
+                 ' L ' +   w + ',' +   h  +
+                 ' L ' + (-w) + ',' +   h  + ' Z';
+        }
+
+        case 'diamond': {
+          var rx = r * 1.0, ry = r * 1.4;
+          return 'M 0,' + (-ry) +
+                 ' L '  + rx + ',0' +
+                 ' L 0,' + ry +
+                 ' L ' + (-rx) + ',0 Z';
+        }
+
+        case 'star': {
+          var outerR = r * 1.3, innerR = r * 0.5, pts = [];
+          for (var i = 0; i < 10; i++) {
+            var angle = (Math.PI / 5) * i - Math.PI / 2;
+            var rad   = (i % 2 === 0) ? outerR : innerR;
+            pts.push(+(rad * Math.cos(angle)).toFixed(3) + ',' + +(rad * Math.sin(angle)).toFixed(3));
+          }
+          return 'M ' + pts.join(' L ') + ' Z';
+        }
+
+        case 'hexagon': {
+          var pts = [];
+          for (var i = 0; i < 6; i++) {
+            var angle = (Math.PI / 3) * i - Math.PI / 6;
+            pts.push(+(r * 1.1 * Math.cos(angle)).toFixed(3) + ',' + +(r * 1.1 * Math.sin(angle)).toFixed(3));
+          }
+          return 'M ' + pts.join(' L ') + ' Z';
+        }
+
+        case 'pentagon': {
+          var pts = [];
+          for (var i = 0; i < 5; i++) {
+            var angle = (2 * Math.PI / 5) * i - Math.PI / 2;
+            pts.push(+(r * 1.15 * Math.cos(angle)).toFixed(3) + ',' + +(r * 1.15 * Math.sin(angle)).toFixed(3));
+          }
+          return 'M ' + pts.join(' L ') + ' Z';
+        }
+
+        default:
+          return null; // circle or ellipse — caller uses native SVG element
+      }
+    }
+
+    /**
+     * Appends the correct SVG shape child to every node <g>.
+     * All shapes receive the CSS class "node-shape" for uniform selection.
+     *   circle / ellipse  →  native SVG elements positioned via cx/cy in tick
+     *   everything else   →  <path> positioned via transform="translate()" in tick
+     */
+    function appendShape(nodeSelection) {
+      nodeSelection.each(function(d) {
+        var g      = d3.select(this);
+        var marker = (d.node_marker || 'circle').toLowerCase();
+        var r      = parseFloat(d.node_size) || 8;
+        var shape;
+
+        if (marker === 'ellipse') {
+          shape = g.append('ellipse')
+            .attr('class', 'node-shape')
+            .attr('rx', r * 1.6)
+            .attr('ry', r);
+        } else if (marker === 'circle' || shapePathD(marker, r) === null) {
+          shape = g.append('circle')
+            .attr('class', 'node-shape')
+            .attr('r', r);
+        } else {
+          shape = g.append('path')
+            .attr('class', 'node-shape')
+            .attr('d', shapePathD(marker, r));
+        }
+
+        shape
+          .style('fill',         d.node_color)
+          .style('opacity',      d.node_opacity)
+          .style('stroke-width', d.node_size_edge)
+          .style('stroke',       d.node_color_edge);
+      });
+    }
+
+    // ---- END SHAPE RENDERING ----
+
+    // Layered container: canvas (background + edges, used only above
+    // canvasEdgeThreshold) sits under a transparent SVG (nodes always render
+    // here, for drag/click/tooltip interactivity). The background color lives
+    // on the container so it shows through the transparent SVG either way.
+    var container = d3.select("body").append("div")
+      .attr("id", "graphContainer")
+      .style("position", "relative")
+      .style("width", width + "px")
+      .style("height", height + "px")
+      .style("background-color", background_color);
+
+    // Density (clustering heatmap) layer — created first so it stacks
+    // beneath both the edge canvas and the SVG node layer.
+    densityCanvasEl = container.append("canvas")
+      .attr("width", width)
+      .attr("height", height)
+      .style("position", "absolute")
+      .style("top", 0)
+      .style("left", 0)
+      .style("pointer-events", "none")
+      .style("display", densityVisible ? null : "none")
+      .node();
+    densityCtx = densityCanvasEl.getContext("2d");
+
+    canvasEl = container.append("canvas")
+      .attr("width", width)
+      .attr("height", height)
+      .style("position", "absolute")
+      .style("top", 0)
+      .style("left", 0)
+      .style("pointer-events", "none")
+      .node();
+    ctx = canvasEl.getContext("2d");
+
+    //Append a SVG to the container. Assign this SVG as an object to svg
+    var svg = container.append("svg")
+      .attr("width", width)
+      .attr("height", height)
+      .style("position", "absolute")
+      .style("top", 0)
+      .style("left", 0)
+      .style("background-color", "transparent")
+      .call(d3.behavior.zoom().on("zoom", function () {
+        svg.attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")");
+        // Single class toggle (cheap) rather than iterating every label on
+        // every zoom/pan event — CSS handles hiding all descendant <text>.
+        svg.classed("labels-hidden", d3.event.scale < labelZoomThreshold);
+        currentTransform.scale = d3.event.scale;
+        currentTransform.translate = d3.event.translate;
+        drawCanvasEdges();
+        drawDensityLayer();
+      }))
+      .on("dblclick.zoom", null)
+      .append("g")
+
+    // Draws all links onto the canvas layer, matching the SVG group's current
+    // pan/zoom transform. No-ops when the graph is small enough to stay on SVG.
+    function drawCanvasEdges() {
+      if (!useCanvasEdges || !ctx || !edgesVisible) return;
+      ctx.save();
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+      ctx.setTransform(currentTransform.scale, 0, 0, currentTransform.scale, currentTransform.translate[0], currentTransform.translate[1]);
+      for (var i = 0; i < graph.links.length; i++) {
+        var d = graph.links[i];
+        if (!d.source || !d.target || typeof d.source.x !== 'number') continue;
+        ctx.beginPath();
+        ctx.moveTo(d.source.x, d.source.y);
+        ctx.lineTo(d.target.x, d.target.y);
+        ctx.strokeStyle = d.edge_color || '#999';
+        ctx.globalAlpha = (d.edge_opacity !== undefined && d.edge_opacity !== null) ? d.edge_opacity : 0.6;
+        ctx.lineWidth = d.edge_width || 1;
+        ctx.setLineDash(d.edge_style === 'dashed' ? [6, 3] : d.edge_style === 'dotted' ? [1.5, 3] : []);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    // Bins the currently visible nodes' live (x, y) positions into a coarse
+    // grid over their bounding box. O(nodes) — cheap enough to recompute
+    // every tick, unlike the edge count this was never the bottleneck.
+    function computeDensityGrid() {
+      var nodesData = node.data();
+      if (!nodesData.length) return null;
+
+      var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+      for (var i = 0; i < nodesData.length; i++) {
+        var nx = nodesData[i].x, ny = nodesData[i].y;
+        if (typeof nx !== 'number' || typeof ny !== 'number') continue;
+        if (nx < minX) minX = nx;
+        if (nx > maxX) maxX = nx;
+        if (ny < minY) minY = ny;
+        if (ny > maxY) maxY = ny;
+      }
+      if (minX === Infinity) return null;
+
+      var padX = (maxX - minX) * 0.05 || 20;
+      var padY = (maxY - minY) * 0.05 || 20;
+      minX -= padX; maxX += padX; minY -= padY; maxY += padY;
+
+      var w = (maxX - minX) || 1;
+      var h = (maxY - minY) || 1;
+      var cellsX, cellsY;
+      if (w >= h) {
+        cellsX = densityGridSize;
+        cellsY = Math.max(1, Math.round(densityGridSize * h / w));
+      } else {
+        cellsY = densityGridSize;
+        cellsX = Math.max(1, Math.round(densityGridSize * w / h));
+      }
+      var cellW = w / cellsX;
+      var cellH = h / cellsY;
+
+      var grid = new Float32Array(cellsX * cellsY);
+      var maxCount = 0;
+      for (var j = 0; j < nodesData.length; j++) {
+        var d = nodesData[j];
+        if (typeof d.x !== 'number' || typeof d.y !== 'number') continue;
+        var cx = Math.min(cellsX - 1, Math.max(0, Math.floor((d.x - minX) / cellW)));
+        var cy = Math.min(cellsY - 1, Math.max(0, Math.floor((d.y - minY) / cellH)));
+        var idx = cy * cellsX + cx;
+        grid[idx] += 1;
+        if (grid[idx] > maxCount) maxCount = grid[idx];
+      }
+
+      return { grid: grid, cellsX: cellsX, cellsY: cellsY, cellW: cellW, cellH: cellH, minX: minX, minY: minY, maxCount: maxCount };
+    }
+
+    // t in [0, 1] (relative density) -> fill color. Light mode: yellow -> red
+    // heat gradient. Dark mode: single-hue blue, so it reads well against a
+    // dark background instead of clashing with it.
+    function densityColor(t) {
+      if (darkMode) {
+        var l = 25 + t * 45; // 25%..70% lightness
+        return 'hsl(210, 90%, ' + l + '%)';
+      }
+      var hue = 60 - t * 60; // 60=yellow -> 0=red
+      return 'hsl(' + hue + ', 100%, 50%)';
+    }
+
+    // Draws the heatmap: unblurred cells go to an offscreen buffer first,
+    // then get composited onto the visible canvas with a single blurred
+    // drawImage — much cheaper than blurring each cell individually.
+    function drawDensityLayer() {
+      if (!densityVisible || !densityCtx) return;
+      densityCtx.save();
+      densityCtx.setTransform(1, 0, 0, 1, 0, 0);
+      densityCtx.clearRect(0, 0, densityCanvasEl.width, densityCanvasEl.height);
+
+      var data = computeDensityGrid();
+      if (!data || data.maxCount <= 0) { densityCtx.restore(); return; }
+
+      if (!densityOffscreen) densityOffscreen = document.createElement('canvas');
+      densityOffscreen.width = densityCanvasEl.width;
+      densityOffscreen.height = densityCanvasEl.height;
+      var offCtx = densityOffscreen.getContext('2d');
+      offCtx.clearRect(0, 0, densityOffscreen.width, densityOffscreen.height);
+      offCtx.setTransform(currentTransform.scale, 0, 0, currentTransform.scale, currentTransform.translate[0], currentTransform.translate[1]);
+
+      for (var cy = 0; cy < data.cellsY; cy++) {
+        for (var cx = 0; cx < data.cellsX; cx++) {
+          var count = data.grid[cy * data.cellsX + cx];
+          if (count <= 0) continue;
+          var t = count / data.maxCount;
+          offCtx.fillStyle = densityColor(t);
+          offCtx.globalAlpha = densityOpacity * t;
+          offCtx.fillRect(data.minX + cx * data.cellW, data.minY + cy * data.cellH, data.cellW, data.cellH);
+        }
+      }
+
+      densityCtx.filter = 'blur(' + densityBlur + 'px)';
+      densityCtx.drawImage(densityOffscreen, 0, 0);
+      densityCtx.filter = 'none';
+      densityCtx.restore();
+    }
 
 
-  //Append a SVG to the body of the html page. Assign this SVG as an object to svg
-  var svg = d3.select("body").append("svg")
-    .attr("width", width)
-    .attr("height", height)
-  //.on("dblclick", threshold); // EXPLODE ALL CONNECTED POINTS
+    function applyEdgeVisibility() {
+      svg.classed("edges-hidden", !edgesVisible);
+      if (useCanvasEdges) {
+        if (edgesVisible) {
+          d3.select(canvasEl).style("display", null);
+          drawCanvasEdges();
+        } else {
+          if (ctx) ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+          d3.select(canvasEl).style("display", "none");
+        }
+      } else {
+        d3.select(canvasEl).style("display", "none");
+      }
+    }
 
-  graphRec = JSON.parse(JSON.stringify(graph));
+    // Builds (or tears down) the SVG <line>/<text> elements for links, or
+    // switches to canvas rendering, based on the current edge count. Shared
+    // by the initial render and by restart() (slider-driven updates), so the
+    // threshold is re-evaluated every time the visible edge set changes.
+    function renderLinks() {
+      useCanvasEdges = graph.links.length > canvasEdgeThreshold;
 
-  //Creates the graph data structure out of the json data
-  force.nodes(graph.nodes)
-    .links(graph.links)
-    .start();
+      if (useCanvasEdges) {
+        // Canvas takes over — drop any SVG link/link-text DOM entirely.
+        link = link.data([]);
+        link.exit().remove();
+        linkText = linkText.data([]);
+        linkText.exit().remove();
+      } else {
+        if (ctx) ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
 
-  // Create all the line svgs but without locations yet
-  var link = svg.selectAll(".link")
-    .data(graph.links)
-    .enter().append("line")
-    .attr("class", "link")
-    .attr('marker-start', function(d){ return 'url(#marker_' + d.marker_start + ')' })
-	.attr("marker-end", function(d) {
-		if (config.directed) {return 'url(#marker_' + d.marker_end + ')' }})
-    .style("stroke-width", function(d) {return d.edge_width;})          // LINK-WIDTH
-    .style("stroke", function(d) {return d.color;})                     // EDGE-COLORS
-//  .style("stroke-width", 1); // WIDTH OF THE LINKS
-  ;
+        link = link.data(graph.links);
+        link.exit().remove();
+        var linkEnter = link.enter().insert("line", ".node")
+          .attr("class", "link")
+          .attr('marker-start', function(d) { return 'url(#marker_' + d.marker_start + ')' });
+        linkEnter.append("title").text(function(d) { return d.tooltip; });
+        link.attr("marker-end", function(d) {
+          if (config.directed) { return 'url(#marker_' + d.marker_end + ')' } });
+        link.style("stroke-width", function(d) { return d.edge_width; });
+        link.style("stroke", function(d) { return d.edge_color; });
+        link.style("stroke-dasharray", function(d) { return d.edge_style; });
+        link.style("opacity", function(d) { return d.edge_opacity; });
 
-  //Do the same with the circles for the nodes
-  var node = svg.selectAll(".node")
-    .data(graph.nodes)
-    .enter().append("g")
-    .attr("class", "node")
-    .call(force.drag)
-    .on('dblclick', connectedNodes); // HIGHLIGHT ON/OFF
+        linkText = linkText.data(graph.links);
+        linkText.exit().remove();
+        linkText.enter().append("text")
+          .attr("class", "link-text")
+          .attr("font-size", function(d) { return d.label_fontsize + "px"; })
+          .style("fill", function(d) { return d.label_color; })
+          .style("font-family", "Arial")
+          .text(function(d) { return d.label; });
+      }
 
-  node.append("circle")
-    .attr("r", function(d) { return d.node_size; })					// NODE SIZE
-    .style("fill", function(d) {return d.node_color;})				// NODE-COLOR
-    .style("stroke-width", function(d) {return d.node_size_edge;})	// NODE-EDGE-SIZE
-    .style("stroke", function(d) {return d.node_color_edge;})		// NODE-COLOR-EDGE
-  //  .style("stroke", '#000')										// NODE-EDGE-COLOR (all black)
+      applyEdgeVisibility();
+    }
+    
+    graphRec = JSON.parse(JSON.stringify(graph));   // Full, unfiltered copy — used by the slider to restore edges later
 
-  // Text in nodes
-  node.append("text")
-    .attr("dx", 10)
-    .attr("dy", ".35em")
-    .text(function(d) {return d.node_name}) // NODE-TEXT
-  //  .style("stroke", "gray");
+    // Apply the initial slider threshold BEFORE building any DOM elements.
+    // Without this, the browser would create a <line>/<title>/<text> for every
+    // single edge (e.g. 100,000+) and immediately delete most of them once the
+    // slider filter ran — doubling the work and freezing the page in the meantime.
+    (function applyInitialThreshold() {
+      var initialThresh = 0;
+      graph.links = graph.links.filter(function(d) { return d.edge_weight > initialThresh; });
+    })();
 
-  let showInHover = ["node_tooltip"]; // Tooltip
-  node.append("title")
-      .text((d) => Object.keys(d)
-          .filter((key) => showInHover.indexOf(key) !== -1)
-          .map((key) => `${d[key]}`)
-          .join('\n')
-      )
+    //Creates the graph data structure out of the json data
+    force.nodes(graph.nodes)
+      .links(graph.links)
+      .start();
+    
+    // Create empty node/link/link-text selections. renderLinks(), called
+    // below, decides whether links go to SVG or canvas and populates
+    // link/linkText accordingly.
+    var link = svg.selectAll(".link").data([]);
+    var linkText = svg.selectAll(".link-text").data([]);
+    renderLinks();
 
-  //Now we are giving the SVGs co-ordinates - the force layout is generating the co-ordinates which this code is using to update the attributes of the SVG elements
-  force.on("tick", function() {
-    link.attr("x1", function(d) { return d.source.x; })
-      .attr("y1", function(d) { return d.source.y; })
-      .attr("x2", function(d) { return d.target.x; })
-      .attr("y2", function(d) { return d.target.y; });
-    d3.selectAll("circle").attr("cx", function(d) { return d.x; })
-      .attr("cy", function(d) { return d.y; });
-    d3.selectAll("text").attr("x", function(d) { return d.x; })
-      .attr("y", function(d) { return d.y; });
+    //Do the same with the circles for the nodes
+    var node = svg.selectAll(".node")
+      .data(graph.nodes)
+      .enter().append("g")
+      .attr("class", "node")
+      .call(drag)
+      .on('dblclick', connectedNodes); // HIGHLIGHT ON/OFF
+    
+    // Right-click handler: release a pinned node back into the simulation (sticky mode only)
+    if (sticky) {
+      node.on('contextmenu', function(d) {
+        d3.event.preventDefault();
+        d.fixed = false;
+        // Remove pinned visual cue
+        d3.select(this).select(".node-shape")
+          .style("stroke-dasharray", null)
+          .style("stroke-width", function(d) { return d.node_size_edge; });
+        tickCount = 0;
+        force.resume();
+      });
+    }
+    
+     node.on('click', color_on_click); // ON CLICK HANDLER
 
-    node.each(collide(config.collision)); //COLLISION DETECTION. High means a big fight to get untouchable nodes (default=0.5)
+    // Append the correct shape per node (circle, ellipse, rect, triangle, etc.)
+    appendShape(node);
+    
+    // Text in nodes
+    node.append("text")
+      .attr("dx",  function(d) { return config.node_text_inside ? 0 : 10; })
+      .attr("dy", ".35em")
+      .attr("text-anchor", function(d) { return config.node_text_inside ? "middle" : "start"; })
+      .text(function(d) { return d.node_name; }) // NODE-TEXT
+      .style("font-size", function(d) {
+        if (config.node_text_inside) {
+          // Auto-shrink font so the label fits within the circle diameter
+          var r = parseFloat(d.node_size) || 8;
+          var label = d.node_name || "";
+          // Approximate: 0.6 * fontsize ≈ char width; fit label in 2*r with some padding
+          var maxFontSize = parseFloat(d.node_fontsize) || 12;
+          var fitSize = Math.min(maxFontSize, (1.8 * r) / Math.max(label.length * 0.6, 1));
+          return Math.max(fitSize, 6) + "px";
+        }
+        return d.node_fontsize + "px"; // NODE FONT SIZE
+      })
+      .style("fill", function(d) {return d.node_fontcolor;}) // NODE FONT COLOR
+      .style("font-family", "monospace")
+      .style("pointer-events", "none");
+    
+    let showInHover = ["node_tooltip"]; // Tooltip
+    node.append("title")
+        .text((d) => Object.keys(d)
+            .filter((key) => showInHover.indexOf(key) !== -1)
+            .map((key) => `${d[key]}`)
+            .join('\n')
+        )
+    
+    //Now we are giving the SVGs co-ordinates - the force layout is generating the co-ordinates which this code is using to update the attributes of the SVG elements
+    force.on("tick", function() {
+      // Auto-stop after maxTicks so a large graph doesn't keep re-running
+      // collision detection / layout math for thousands of frames while
+      // settling. maxTicks <= 0 disables the cap (run to natural cooldown).
+      if (maxTicks > 0 && ++tickCount > maxTicks) {
+        force.stop();
+        return;
+      }
+
+      if (useCanvasEdges) {
+        drawCanvasEdges();
+      } else {
+        link.attr("x1", function(d) { return d.source.x; })
+          .attr("y1", function(d) { return d.source.y; })
+          .attr("x2", function(d) { return d.target.x; })
+          .attr("y2", function(d) { return d.target.y; });
+      }
+
+      // Position each shape according to its SVG element type:
+      //   circle / ellipse  →  cx / cy attributes
+      //   path              →  transform translate(x, y)
+      // Scoped to the bound `node` selection instead of re-querying the
+      // entire DOM every tick (was: d3.selectAll(".node-shape")).
+      node.select(".node-shape").each(function(d) {
+        var el  = d3.select(this);
+        var tag = this.tagName.toLowerCase();
+        if (tag === 'circle' || tag === 'ellipse') {
+          el.attr("cx", d.x).attr("cy", d.y);
+        } else {
+          el.attr("transform", "translate(" + d.x + "," + d.y + ")");
+        }
+      });
+
+      // Scoped to node labels only (was: d3.selectAll("text"), which also
+      // re-matched every link-text element on every tick).
+      node.select("text").attr("x", function(d) { return d.x; })
+        .attr("y", function(d) { return d.y; })
+      linkText.attr("x", function(d) { return (d.source.x + d.target.x) / 2; })  // ADD TEXT ON THE EDGES (PART 2/2)
+        .attr("y", function(d) { return (d.source.y + d.target.y) / 2; })
+        .attr("text-anchor", "middle");
+    
+      node.each(collide(config.collision)); //COLLISION DETECTION. High means a big fight to get untouchable nodes (default=0.5)
+
+      if (densityVisible) drawDensityLayer();
 
   });
 
-  // --------- MARKER -----------
+  // --------- MARKER FOR EDGE ENDINGS -----------
 
   var data_marker = [
     { id: 0, name: 'circle', path: 'M 0, 0  m -5, 0  a 5,5 0 1,0 10,0  a 5,5 0 1,0 -10,0', viewbox: '-6 -6 12 12' }
@@ -9686,8 +10344,6 @@ function d3graphscript(config = {
   , { id: 3, name: 'stub', path: 'M 0,0 m -1,-5 L 1,-5 L 1,5 L -1,5 Z', viewbox: '-1 -5 2 10' }
   ]
 
-  //console.log(JSON.stringify(link))
-
   svg.append("defs").selectAll("marker")
     .data(data_marker)
     .enter()
@@ -9695,21 +10351,17 @@ function d3graphscript(config = {
       .attr('id', function(d){ return 'marker_' + d.name})
       .attr('markerHeight', 10)
       .attr('markerWidth', 10)
-      //.attr('markerUnits', 'strokeWidth')
       .attr("markerUnits", "userSpaceOnUse")                   // Fix marker width
       .attr('orient', 'auto')
-      //.attr('refX', -15)                                     // Offset marker-start
       .attr('refX', 15)                                        // Offset marker-end
       .attr('refY', 0)
       .attr('viewBox', function(d){ return d.viewbox })
       .append('svg:path')
-	    //.attr("transform", "rotate(180)")                    // Marker-start mirrored
         .attr('d', function(d){ return d.path })               // Marker type
-        //.style("fill", function(d) {return d.marker_color;}) // Marker color
         .style("fill", '#808080')                              // Marker color
         .style("stroke", '#808080')                            // Marker edge-color
-        .style("opacity", "1")                                 // Marker opacity
-        .style("stroke-width", '1');                           // Marker edge thickness
+        .style("opacity", 0.95)                                // Marker opacity
+        .style("stroke-width", 1);                             // Marker edge thickness
 
   // --------- END MARKER -----------
 
@@ -9747,7 +10399,7 @@ function d3graphscript(config = {
   // collision detection end
 
 
-  //Toggle stores whether the highlighting is on **********************
+  //Toggle stores whether the highlighting is on
   var toggle = 0;
   //Create an array logging what is connected to what
   var linkedByIndex = {};
@@ -9762,6 +10414,54 @@ function d3graphscript(config = {
     return linkedByIndex[a.index + "," + b.index];
   }
 
+
+  // COLOR ON CLICK
+  function color_on_click() {
+    // Reset all nodes to their original styles
+    d3.selectAll(".node")
+    .select(".node-shape")
+    .style("fill", function(d) {return d.node_color;})
+    .style("opacity", function(d) {return d.node_opacity;})
+    .style("stroke", function(d) {return d.node_color_edge;})
+    .style("stroke-width", function(d) {return d.node_size_edge;})
+    // Restore pinned cue on still-fixed nodes
+    .style("stroke-dasharray", function(d) { return (sticky && d.fixed) ? "4,2" : null; });
+
+    // Reset circle radii
+    d3.selectAll(".node").select("circle.node-shape")
+      .attr("r", function(d) { return d.node_size; });
+
+    // Apply click styling to the selected node's shape
+    var clickedShape = d3.select(this).select(".node-shape");
+    clickedShape
+      .style("fill", function(d) {return d.node_color;})
+      .style("stroke", "black")
+      .style("stroke-width", 3);
+
+    // Scale up the shape — strategy depends on element type
+    var shapeNode = clickedShape.node();
+    if (!shapeNode) return;
+    var tag = shapeNode.tagName.toLowerCase();
+    if (tag === 'circle') {
+      clickedShape.attr("r", function(d) { return d.node_size * 1.3; });
+    } else if (tag === 'ellipse') {
+      clickedShape.each(function(d) {
+        var r = parseFloat(d.node_size) || 8;
+        d3.select(this)
+          .attr("rx", r * 1.6 * 1.3)
+          .attr("ry", r * 1.3);
+      });
+    } else {
+      // <path>: re-compute path with a scaled radius
+      clickedShape.each(function(d) {
+        var r = (parseFloat(d.node_size) || 8) * 1.3;
+        d3.select(this).attr("d", shapePathD(d.node_marker, r));
+      });
+    }
+  }
+
+
+
   function connectedNodes() {
     if (toggle == 0) {
       //Reduce the opacity of all but the neighbouring nodes
@@ -9772,25 +10472,24 @@ function d3graphscript(config = {
       link.style("opacity", function(o) {
         return d.index == o.source.index | d.index == o.target.index ? 1 : 0.1;
       });
-      //Reduce the op
       toggle = 1;
     } else {
       //Put them back to opacity=1
-      node.style("opacity", 1);
+      node.style("opacity", 0.95);
       link.style("opacity", 1);
 
       toggle = 0;
     }
   }
-  //*************************************************************
 
 
   //adjust threshold
   function threshold() {
     let thresh = this.value;
 
-    // console.log('Setting threshold', thresh)
     graph.links.splice(0, graph.links.length);
+    linkText = linkText.data([]);   // CLEAR EDGE-LABELS: Clear the linkText selection
+    linkText.exit().remove();       // CLEAR EDGE-LABELS: Clear the linkText elements from the DOM
 
     for (var i = 0; i < graphRec.links.length; i++) {
       if (graphRec.links[i].edge_weight > thresh) {
@@ -9800,54 +10499,144 @@ function d3graphscript(config = {
     restart();
   }
 
+  // Set the initial value of the slider to the user-defined threshold
+  document.getElementById('thresholdSlider').value = 0;
+  // Call the threshold function to set the network state
+  threshold.call(document.getElementById('thresholdSlider'));
+
   d3.select("#thresholdSlider").on("change", threshold);
+
+  // Master edges on/off toggle — independent of the weight slider, purely
+  // visual, doesn't touch the underlying filtered data.
+  var edgeToggleBtn = document.getElementById('edgeToggleButton');
+  if (edgeToggleBtn) {
+    edgeToggleBtn.addEventListener('click', function() {
+      edgesVisible = !edgesVisible;
+      edgeToggleBtn.textContent = edgesVisible ? 'Hide Edges' : 'Show Edges';
+      applyEdgeVisibility();
+    });
+  }
+
+  // Density (clustering heatmap) layer toggle.
+  var densityToggleBtn = document.getElementById('densityToggleButton');
+  if (densityToggleBtn) {
+    densityToggleBtn.addEventListener('click', function() {
+      densityVisible = !densityVisible;
+      densityToggleBtn.textContent = densityVisible ? 'Hide Density' : 'Show Density';
+      d3.select(densityCanvasEl).style("display", densityVisible ? null : "none");
+      if (densityVisible) {
+        drawDensityLayer();
+      } else {
+        densityCtx.setTransform(1, 0, 0, 1, 0, 0);
+        densityCtx.clearRect(0, 0, densityCanvasEl.width, densityCanvasEl.height);
+      }
+    });
+  }
+
+  // Called from the dark-mode toggle (outside this function's scope, in the
+  // page's own script) so the density color scheme switches live instead of
+  // only reflecting whatever mode the page loaded in.
+  window.d3graphSetDarkMode = function(isDark) {
+    darkMode = !!isDark;
+    if (densityVisible) drawDensityLayer();
+  };
 
   //Restart the visualisation after any node and link changes
   function restart() {
 
-    link = link.data(graph.links);
-    link.exit().remove();
-    link.enter().insert("line", ".node").attr("class", "link");
-    link.style("stroke-width", function(d) {return d.edge_width;});           // LINK-WIDTH AFTER BREAKING WITH SLIDER
-    //link.style('marker-start', function(d){ return 'url(#marker_' + d.marker_start  + ')' })
-	link.style("marker-end", function(d) {                                    // Include the markers.
-		if (config.directed) {return 'url(#marker_' + d.marker_end + ')' }})
-    link.style("stroke", function(d) {return d.color;});                      // EDGE-COLOR AFTER BREAKING WITH SLIDER
+    renderLinks();
 
     node = node.data(graph.nodes);
     node.enter().insert("circle", ".cursor").attr("class", "node").attr("r", 5).call(force.drag);
+    tickCount = 0;
     force.start();
   }
+
 }
 
-        graph = {"links":[{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":81.144,"color":"#808080","edge_width":0.9605,"edge_weight":81.144,"source":0,"target":1,"source_label":"Bio-conversion","target_label":"Gas"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":0.597,"color":"#808080","edge_width":0.5027,"edge_weight":0.597,"source":0,"target":2,"source_label":"Bio-conversion","target_label":"Liquid"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":26.862,"color":"#808080","edge_width":0.652,"edge_weight":26.862,"source":0,"target":3,"source_label":"Bio-conversion","target_label":"Losses"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":280.322,"color":"#808080","edge_width":2.0928,"edge_weight":280.322,"source":0,"target":4,"source_label":"Bio-conversion","target_label":"Solid"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":2.096,"color":"#808080","edge_width":0.5112,"edge_weight":2.096,"source":1,"target":11,"source_label":"Gas","target_label":"Agriculture"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":0.129,"color":"#808080","edge_width":0.5,"edge_weight":0.129,"source":1,"target":7,"source_label":"Gas","target_label":"Heating_and_cooling_-_commercial"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":48.58,"color":"#808080","edge_width":0.7754,"edge_weight":48.58,"source":1,"target":9,"source_label":"Gas","target_label":"Industry"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":1.401,"color":"#808080","edge_width":0.5072,"edge_weight":1.401,"source":1,"target":3,"source_label":"Gas","target_label":"Losses"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":151.891,"color":"#808080","edge_width":1.3627,"edge_weight":151.891,"source":1,"target":18,"source_label":"Gas","target_label":"Thermal_generation"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":3.64,"color":"#808080","edge_width":0.52,"edge_weight":3.64,"source":2,"target":11,"source_label":"Liquid","target_label":"Agriculture"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":14.458,"color":"#808080","edge_width":0.5815,"edge_weight":14.458,"source":2,"target":20,"source_label":"Liquid","target_label":"Domestic_aviation"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":121.066,"color":"#808080","edge_width":1.1875,"edge_weight":121.066,"source":2,"target":9,"source_label":"Liquid","target_label":"Industry"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":206.267,"color":"#808080","edge_width":1.6718,"edge_weight":206.267,"source":2,"target":21,"source_label":"Liquid","target_label":"International_aviation"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":128.69,"color":"#808080","edge_width":1.2308,"edge_weight":128.69,"source":2,"target":22,"source_label":"Liquid","target_label":"International_shipping"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":33.218,"color":"#808080","edge_width":0.6881,"edge_weight":33.218,"source":2,"target":23,"source_label":"Liquid","target_label":"National_navigation"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":4.413,"color":"#808080","edge_width":0.5244,"edge_weight":4.413,"source":2,"target":16,"source_label":"Liquid","target_label":"Rail_transport"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":135.835,"color":"#808080","edge_width":1.2714,"edge_weight":135.835,"source":2,"target":17,"source_label":"Liquid","target_label":"Road_transport"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":0.882,"color":"#808080","edge_width":0.5043,"edge_weight":0.882,"source":4,"target":11,"source_label":"Solid","target_label":"Agriculture"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":46.477,"color":"#808080","edge_width":0.7635,"edge_weight":46.477,"source":4,"target":9,"source_label":"Solid","target_label":"Industry"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":400.12,"color":"#808080","edge_width":2.7737,"edge_weight":400.12,"source":4,"target":18,"source_label":"Solid","target_label":"Thermal_generation"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":75.571,"color":"#808080","edge_width":0.9288,"edge_weight":75.571,"source":5,"target":4,"source_label":"Coal","target_label":"Solid"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":22.505,"color":"#808080","edge_width":0.6272,"edge_weight":22.505,"source":6,"target":7,"source_label":"District_heating","target_label":"Heating_and_cooling_-_commercial"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":46.184,"color":"#808080","edge_width":0.7618,"edge_weight":46.184,"source":6,"target":8,"source_label":"District_heating","target_label":"Heating_and_cooling_-_homes"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":10.639,"color":"#808080","edge_width":0.5597,"edge_weight":10.639,"source":6,"target":9,"source_label":"District_heating","target_label":"Industry"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":4.412,"color":"#808080","edge_width":0.5243,"edge_weight":4.412,"source":10,"target":11,"source_label":"Electricity_grid","target_label":"Agriculture"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":27.14,"color":"#808080","edge_width":0.6535,"edge_weight":27.14,"source":10,"target":12,"source_label":"Electricity_grid","target_label":"H2_conversion"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":40.858,"color":"#808080","edge_width":0.7315,"edge_weight":40.858,"source":10,"target":7,"source_label":"Electricity_grid","target_label":"Heating_and_cooling_-_commercial"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":113.726,"color":"#808080","edge_width":1.1457,"edge_weight":113.726,"source":10,"target":8,"source_label":"Electricity_grid","target_label":"Heating_and_cooling_-_homes"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":342.165,"color":"#808080","edge_width":2.4443,"edge_weight":342.165,"source":10,"target":9,"source_label":"Electricity_grid","target_label":"Industry"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":90.008,"color":"#808080","edge_width":1.0109,"edge_weight":90.008,"source":10,"target":13,"source_label":"Electricity_grid","target_label":"Lighting_&_appliances_-_commercial"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":93.494,"color":"#808080","edge_width":1.0307,"edge_weight":93.494,"source":10,"target":14,"source_label":"Electricity_grid","target_label":"Lighting_&_appliances_-_homes"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":56.691,"color":"#808080","edge_width":0.8215,"edge_weight":56.691,"source":10,"target":3,"source_label":"Electricity_grid","target_label":"Losses"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":104.453,"color":"#808080","edge_width":1.093,"edge_weight":104.453,"source":10,"target":15,"source_label":"Electricity_grid","target_label":"Over_generation_/_exports"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":7.863,"color":"#808080","edge_width":0.544,"edge_weight":7.863,"source":10,"target":16,"source_label":"Electricity_grid","target_label":"Rail_transport"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":37.797,"color":"#808080","edge_width":0.7141,"edge_weight":37.797,"source":10,"target":17,"source_label":"Electricity_grid","target_label":"Road_transport"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":20.897,"color":"#808080","edge_width":0.6181,"edge_weight":20.897,"source":12,"target":19,"source_label":"H2_conversion","target_label":"H2"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":6.242,"color":"#808080","edge_width":0.5347,"edge_weight":6.242,"source":12,"target":3,"source_label":"H2_conversion","target_label":"Losses"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":79.329,"color":"#808080","edge_width":0.9502,"edge_weight":79.329,"source":18,"target":6,"source_label":"Thermal_generation","target_label":"District_heating"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":525.531,"color":"#808080","edge_width":3.4866,"edge_weight":525.531,"source":18,"target":10,"source_label":"Thermal_generation","target_label":"Electricity_grid"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":787.129,"color":"#808080","edge_width":4.9737,"edge_weight":787.129,"source":18,"target":3,"source_label":"Thermal_generation","target_label":"Losses"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":20.897,"color":"#808080","edge_width":0.6181,"edge_weight":20.897,"source":19,"target":17,"source_label":"H2","target_label":"Road_transport"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":122.952,"color":"#808080","edge_width":1.1982,"edge_weight":122.952,"source":24,"target":1,"source_label":"Ngas","target_label":"Gas"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":611.99,"color":"#808080","edge_width":3.9781,"edge_weight":611.99,"source":25,"target":2,"source_label":"Oil","target_label":"Liquid"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":59.901,"color":"#808080","edge_width":0.8398,"edge_weight":59.901,"source":26,"target":10,"source_label":"Solar_PV","target_label":"Electricity_grid"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":19.263,"color":"#808080","edge_width":0.6088,"edge_weight":19.263,"source":27,"target":8,"source_label":"Solar_Thermal","target_label":"Heating_and_cooling_-_homes"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":124.729,"color":"#808080","edge_width":1.2083,"edge_weight":124.729,"source":28,"target":0,"source_label":"Agricultural_waste","target_label":"Bio-conversion"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":35.0,"color":"#808080","edge_width":0.6982,"edge_weight":35.0,"source":29,"target":2,"source_label":"Biofuel_imports","target_label":"Liquid"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":35.0,"color":"#808080","edge_width":0.6982,"edge_weight":35.0,"source":30,"target":4,"source_label":"Biomass_imports","target_label":"Solid"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":11.606,"color":"#808080","edge_width":0.5652,"edge_weight":11.606,"source":31,"target":5,"source_label":"Coal_imports","target_label":"Coal"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":63.965,"color":"#808080","edge_width":0.8629,"edge_weight":63.965,"source":32,"target":5,"source_label":"Coal_reserves","target_label":"Coal"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":40.719,"color":"#808080","edge_width":0.7307,"edge_weight":40.719,"source":33,"target":24,"source_label":"Gas_imports","target_label":"Ngas"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":82.233,"color":"#808080","edge_width":0.9667,"edge_weight":82.233,"source":34,"target":24,"source_label":"Gas_reserves","target_label":"Ngas"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":7.013,"color":"#808080","edge_width":0.5391,"edge_weight":7.013,"source":35,"target":10,"source_label":"Geothermal","target_label":"Electricity_grid"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":6.995,"color":"#808080","edge_width":0.539,"edge_weight":6.995,"source":36,"target":10,"source_label":"Hydro","target_label":"Electricity_grid"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":4.375,"color":"#808080","edge_width":0.5241,"edge_weight":4.375,"source":37,"target":0,"source_label":"Marine_algae","target_label":"Bio-conversion"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":839.978,"color":"#808080","edge_width":5.2741,"edge_weight":839.978,"source":38,"target":18,"source_label":"Nuclear","target_label":"Thermal_generation"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":504.287,"color":"#808080","edge_width":3.3659,"edge_weight":504.287,"source":39,"target":25,"source_label":"Oil_imports","target_label":"Oil"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":107.703,"color":"#808080","edge_width":1.1115,"edge_weight":107.703,"source":40,"target":25,"source_label":"Oil_reserves","target_label":"Oil"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":77.81,"color":"#808080","edge_width":0.9416,"edge_weight":77.81,"source":41,"target":0,"source_label":"Other_waste","target_label":"Bio-conversion"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":56.587,"color":"#808080","edge_width":0.8209,"edge_weight":56.587,"source":41,"target":4,"source_label":"Other_waste","target_label":"Solid"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":70.672,"color":"#808080","edge_width":0.901,"edge_weight":70.672,"source":42,"target":7,"source_label":"Pumped_heat","target_label":"Heating_and_cooling_-_commercial"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":193.026,"color":"#808080","edge_width":1.5965,"edge_weight":193.026,"source":42,"target":8,"source_label":"Pumped_heat","target_label":"Heating_and_cooling_-_homes"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":59.901,"color":"#808080","edge_width":0.8398,"edge_weight":59.901,"source":43,"target":26,"source_label":"Solar","target_label":"Solar_PV"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":19.263,"color":"#808080","edge_width":0.6088,"edge_weight":19.263,"source":43,"target":27,"source_label":"Solar","target_label":"Solar_Thermal"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":9.452,"color":"#808080","edge_width":0.553,"edge_weight":9.452,"source":44,"target":10,"source_label":"Tidal","target_label":"Electricity_grid"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":182.01,"color":"#808080","edge_width":1.5339,"edge_weight":182.01,"source":45,"target":0,"source_label":"UK_land_based_bioenergy","target_label":"Bio-conversion"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":19.013,"color":"#808080","edge_width":0.6073,"edge_weight":19.013,"source":46,"target":10,"source_label":"Wave","target_label":"Electricity_grid"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","weight":289.366,"color":"#808080","edge_width":2.1442,"edge_weight":289.366,"source":47,"target":10,"source_label":"Wind","target_label":"Electricity_grid"}],"nodes":[{"name":"Bio-conversion","group":"0","node_name":"Bio-conversion","node_tooltip":"Bio-conversion","node_color":"#e41a1c","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Gas","group":"4","node_name":"Gas","node_tooltip":"Gas","node_color":"#f781bf","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Liquid","group":"3","node_name":"Liquid","node_tooltip":"Liquid","node_color":"#ffff33","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Losses","group":"5","node_name":"Losses","node_tooltip":"Losses","node_color":"#999999","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Solid","group":"0","node_name":"Solid","node_tooltip":"Solid","node_color":"#e41a1c","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Coal","group":"0","node_name":"Coal","node_tooltip":"Coal","node_color":"#e41a1c","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"District_heating","group":"1","node_name":"District_heating","node_tooltip":"District_heating","node_color":"#377eb8","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Heating_and_cooling_-_commercial","group":"1","node_name":"Heating_and_cooling_-_commercial","node_tooltip":"Heating_and_cooling_-_commercial","node_color":"#377eb8","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Heating_and_cooling_-_homes","group":"1","node_name":"Heating_and_cooling_-_homes","node_tooltip":"Heating_and_cooling_-_homes","node_color":"#377eb8","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Industry","group":"2","node_name":"Industry","node_tooltip":"Industry","node_color":"#984ea3","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Electricity_grid","group":"2","node_name":"Electricity_grid","node_tooltip":"Electricity_grid","node_color":"#984ea3","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Agriculture","group":"4","node_name":"Agriculture","node_tooltip":"Agriculture","node_color":"#f781bf","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"H2_conversion","group":"2","node_name":"H2_conversion","node_tooltip":"H2_conversion","node_color":"#984ea3","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Lighting_&_appliances_-_commercial","group":"2","node_name":"Lighting_&_appliances_-_commercial","node_tooltip":"Lighting_&_appliances_-_commercial","node_color":"#984ea3","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Lighting_&_appliances_-_homes","group":"2","node_name":"Lighting_&_appliances_-_homes","node_tooltip":"Lighting_&_appliances_-_homes","node_color":"#984ea3","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Over_generation_/_exports","group":"2","node_name":"Over_generation_/_exports","node_tooltip":"Over_generation_/_exports","node_color":"#984ea3","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Rail_transport","group":"2","node_name":"Rail_transport","node_tooltip":"Rail_transport","node_color":"#984ea3","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Road_transport","group":"3","node_name":"Road_transport","node_tooltip":"Road_transport","node_color":"#ffff33","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Thermal_generation","group":"5","node_name":"Thermal_generation","node_tooltip":"Thermal_generation","node_color":"#999999","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"H2","group":"2","node_name":"H2","node_tooltip":"H2","node_color":"#984ea3","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Domestic_aviation","group":"3","node_name":"Domestic_aviation","node_tooltip":"Domestic_aviation","node_color":"#ffff33","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"International_aviation","group":"3","node_name":"International_aviation","node_tooltip":"International_aviation","node_color":"#ffff33","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"International_shipping","group":"3","node_name":"International_shipping","node_tooltip":"International_shipping","node_color":"#ffff33","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"National_navigation","group":"3","node_name":"National_navigation","node_tooltip":"National_navigation","node_color":"#ffff33","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Ngas","group":"4","node_name":"Ngas","node_tooltip":"Ngas","node_color":"#f781bf","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Oil","group":"3","node_name":"Oil","node_tooltip":"Oil","node_color":"#ffff33","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Solar_PV","group":"2","node_name":"Solar_PV","node_tooltip":"Solar_PV","node_color":"#984ea3","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Solar_Thermal","group":"2","node_name":"Solar_Thermal","node_tooltip":"Solar_Thermal","node_color":"#984ea3","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Agricultural_waste","group":"0","node_name":"Agricultural_waste","node_tooltip":"Agricultural_waste","node_color":"#e41a1c","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Biofuel_imports","group":"3","node_name":"Biofuel_imports","node_tooltip":"Biofuel_imports","node_color":"#ffff33","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Biomass_imports","group":"0","node_name":"Biomass_imports","node_tooltip":"Biomass_imports","node_color":"#e41a1c","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Coal_imports","group":"0","node_name":"Coal_imports","node_tooltip":"Coal_imports","node_color":"#e41a1c","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Coal_reserves","group":"0","node_name":"Coal_reserves","node_tooltip":"Coal_reserves","node_color":"#e41a1c","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Gas_imports","group":"4","node_name":"Gas_imports","node_tooltip":"Gas_imports","node_color":"#f781bf","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Gas_reserves","group":"4","node_name":"Gas_reserves","node_tooltip":"Gas_reserves","node_color":"#f781bf","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Geothermal","group":"2","node_name":"Geothermal","node_tooltip":"Geothermal","node_color":"#984ea3","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Hydro","group":"2","node_name":"Hydro","node_tooltip":"Hydro","node_color":"#984ea3","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Marine_algae","group":"0","node_name":"Marine_algae","node_tooltip":"Marine_algae","node_color":"#e41a1c","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Nuclear","group":"5","node_name":"Nuclear","node_tooltip":"Nuclear","node_color":"#999999","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Oil_imports","group":"3","node_name":"Oil_imports","node_tooltip":"Oil_imports","node_color":"#ffff33","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Oil_reserves","group":"3","node_name":"Oil_reserves","node_tooltip":"Oil_reserves","node_color":"#ffff33","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Other_waste","group":"0","node_name":"Other_waste","node_tooltip":"Other_waste","node_color":"#e41a1c","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Pumped_heat","group":"1","node_name":"Pumped_heat","node_tooltip":"Pumped_heat","node_color":"#377eb8","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Solar","group":"2","node_name":"Solar","node_tooltip":"Solar","node_color":"#984ea3","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Tidal","group":"2","node_name":"Tidal","node_tooltip":"Tidal","node_color":"#984ea3","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"UK_land_based_bioenergy","group":"0","node_name":"UK_land_based_bioenergy","node_tooltip":"UK_land_based_bioenergy","node_color":"#e41a1c","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Wave","group":"2","node_name":"Wave","node_tooltip":"Wave","node_color":"#984ea3","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"},{"name":"Wind","group":"2","node_name":"Wind","node_tooltip":"Wind","node_color":"#984ea3","node_size":"10","node_size_edge":"1","node_color_edge":"#000000"}]}
+        graph = {"links":[{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.6476,"weight":81.144,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"81.144","edge_width":0.9476,"edge_distance":54.7547,"edge_style":0,"edge_weight":81.144,"source":0,"target":1,"source_label":"Bio-conversion","target_label":"Gas"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.3429,"weight":26.862,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"26.862","edge_width":0.6429,"edge_distance":51.5181,"edge_style":0,"edge_weight":26.862,"source":0,"target":2,"source_label":"Bio-conversion","target_label":"Losses"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":1.0,"weight":280.322,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"280.322","edge_width":2.0657,"edge_distance":66.6306,"edge_style":0,"edge_weight":280.322,"source":0,"target":3,"source_label":"Bio-conversion","target_label":"Solid"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.2039,"weight":2.096,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"2.096","edge_width":0.5039,"edge_distance":50.0414,"edge_style":0,"edge_weight":2.096,"source":1,"target":10,"source_label":"Gas","target_label":"Agriculture"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.4648,"weight":48.58,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"48.58","edge_width":0.7648,"edge_distance":52.813,"edge_style":0,"edge_weight":48.58,"source":1,"target":8,"source_label":"Gas","target_label":"Industry"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.2,"weight":1.401,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"1.401","edge_width":0.5,"edge_distance":50.0,"edge_style":0,"edge_weight":1.401,"source":1,"target":2,"source_label":"Gas","target_label":"Losses"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":1.0,"weight":151.891,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"151.891","edge_width":1.3447,"edge_distance":58.9729,"edge_style":0,"edge_weight":151.891,"source":1,"target":17,"source_label":"Gas","target_label":"Thermal_generation"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.453,"weight":46.477,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"46.477","edge_width":0.753,"edge_distance":52.6876,"edge_style":0,"edge_weight":46.477,"source":3,"target":8,"source_label":"Solid","target_label":"Industry"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":1.0,"weight":400.12,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"400.12","edge_width":2.7381,"edge_distance":73.7735,"edge_style":0,"edge_weight":400.12,"source":3,"target":17,"source_label":"Solid","target_label":"Thermal_generation"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.6163,"weight":75.571,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"75.571","edge_width":0.9163,"edge_distance":54.4224,"edge_style":0,"edge_weight":75.571,"source":4,"target":3,"source_label":"Coal","target_label":"Solid"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.3185,"weight":22.505,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"22.505","edge_width":0.6185,"edge_distance":51.2583,"edge_style":0,"edge_weight":22.505,"source":5,"target":6,"source_label":"District_heating","target_label":"Heating_and_cooling_-_commercial"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.4514,"weight":46.184,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"46.184","edge_width":0.7514,"edge_distance":52.6702,"edge_style":0,"edge_weight":46.184,"source":5,"target":7,"source_label":"District_heating","target_label":"Heating_and_cooling_-_homes"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.2519,"weight":10.639,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"10.639","edge_width":0.5519,"edge_distance":50.5508,"edge_style":0,"edge_weight":10.639,"source":5,"target":8,"source_label":"District_heating","target_label":"Industry"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.2169,"weight":4.412,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"4.412","edge_width":0.5169,"edge_distance":50.1795,"edge_style":0,"edge_weight":4.412,"source":9,"target":10,"source_label":"Electricity_grid","target_label":"Agriculture"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.3445,"weight":27.14,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"27.14","edge_width":0.6445,"edge_distance":51.5347,"edge_style":0,"edge_weight":27.14,"source":9,"target":11,"source_label":"Electricity_grid","target_label":"H2_conversion"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.4215,"weight":40.858,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"40.858","edge_width":0.7215,"edge_distance":52.3526,"edge_style":0,"edge_weight":40.858,"source":9,"target":6,"source_label":"Electricity_grid","target_label":"Heating_and_cooling_-_commercial"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.8305,"weight":113.726,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"113.726","edge_width":1.1305,"edge_distance":56.6974,"edge_style":0,"edge_weight":113.726,"source":9,"target":7,"source_label":"Electricity_grid","target_label":"Heating_and_cooling_-_homes"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":1.0,"weight":342.165,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"342.165","edge_width":2.4128,"edge_distance":70.318,"edge_style":0,"edge_weight":342.165,"source":9,"target":8,"source_label":"Electricity_grid","target_label":"Industry"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.6974,"weight":90.008,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"90.008","edge_width":0.9974,"edge_distance":55.2832,"edge_style":0,"edge_weight":90.008,"source":9,"target":12,"source_label":"Electricity_grid","target_label":"Lighting_&_appliances_-_commercial"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.7169,"weight":93.494,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"93.494","edge_width":1.0169,"edge_distance":55.491,"edge_style":0,"edge_weight":93.494,"source":9,"target":13,"source_label":"Electricity_grid","target_label":"Lighting_&_appliances_-_homes"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.5104,"weight":56.691,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"56.691","edge_width":0.8104,"edge_distance":53.2967,"edge_style":0,"edge_weight":56.691,"source":9,"target":2,"source_label":"Electricity_grid","target_label":"Losses"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.7785,"weight":104.453,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"104.453","edge_width":1.0785,"edge_distance":56.1445,"edge_style":0,"edge_weight":104.453,"source":9,"target":14,"source_label":"Electricity_grid","target_label":"Over_generation_/_exports"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.2363,"weight":7.863,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"7.863","edge_width":0.5363,"edge_distance":50.3853,"edge_style":0,"edge_weight":7.863,"source":9,"target":15,"source_label":"Electricity_grid","target_label":"Rail_transport"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.4043,"weight":37.797,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"37.797","edge_width":0.7043,"edge_distance":52.1701,"edge_style":0,"edge_weight":37.797,"source":9,"target":16,"source_label":"Electricity_grid","target_label":"Road_transport"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.3094,"weight":20.897,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"20.897","edge_width":0.6094,"edge_distance":51.1624,"edge_style":0,"edge_weight":20.897,"source":11,"target":18,"source_label":"H2_conversion","target_label":"H2"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.2272,"weight":6.242,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"6.242","edge_width":0.5272,"edge_distance":50.2886,"edge_style":0,"edge_weight":6.242,"source":11,"target":2,"source_label":"H2_conversion","target_label":"Losses"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.6374,"weight":79.329,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"79.329","edge_width":0.9374,"edge_distance":54.6464,"edge_style":0,"edge_weight":79.329,"source":17,"target":5,"source_label":"Thermal_generation","target_label":"District_heating"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":1.0,"weight":525.531,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"525.531","edge_width":3.4421,"edge_distance":81.2512,"edge_style":0,"edge_weight":525.531,"source":17,"target":9,"source_label":"Thermal_generation","target_label":"Electricity_grid"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":1.0,"weight":787.129,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"787.129","edge_width":4.9105,"edge_distance":96.8489,"edge_style":0,"edge_weight":787.129,"source":17,"target":2,"source_label":"Thermal_generation","target_label":"Losses"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.3094,"weight":20.897,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"20.897","edge_width":0.6094,"edge_distance":51.1624,"edge_style":0,"edge_weight":20.897,"source":18,"target":16,"source_label":"H2","target_label":"Road_transport"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.2126,"weight":3.64,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"3.64","edge_width":0.5126,"edge_distance":50.1335,"edge_style":0,"edge_weight":3.64,"source":19,"target":10,"source_label":"Liquid","target_label":"Agriculture"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.2733,"weight":14.458,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"14.458","edge_width":0.5733,"edge_distance":50.7785,"edge_style":0,"edge_weight":14.458,"source":19,"target":20,"source_label":"Liquid","target_label":"Domestic_aviation"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.8717,"weight":121.066,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"121.066","edge_width":1.1717,"edge_distance":57.135,"edge_style":0,"edge_weight":121.066,"source":19,"target":8,"source_label":"Liquid","target_label":"Industry"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":1.0,"weight":206.267,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"206.267","edge_width":1.65,"edge_distance":62.2151,"edge_style":0,"edge_weight":206.267,"source":19,"target":21,"source_label":"Liquid","target_label":"International_aviation"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.9145,"weight":128.69,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"128.69","edge_width":1.2145,"edge_distance":57.5896,"edge_style":0,"edge_weight":128.69,"source":19,"target":22,"source_label":"Liquid","target_label":"International_shipping"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.3786,"weight":33.218,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"33.218","edge_width":0.6786,"edge_distance":51.8971,"edge_style":0,"edge_weight":33.218,"source":19,"target":23,"source_label":"Liquid","target_label":"National_navigation"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.2169,"weight":4.413,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"4.413","edge_width":0.5169,"edge_distance":50.1796,"edge_style":0,"edge_weight":4.413,"source":19,"target":15,"source_label":"Liquid","target_label":"Rail_transport"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.9546,"weight":135.835,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"135.835","edge_width":1.2546,"edge_distance":58.0156,"edge_style":0,"edge_weight":135.835,"source":19,"target":16,"source_label":"Liquid","target_label":"Road_transport"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.8823,"weight":122.952,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"122.952","edge_width":1.1823,"edge_distance":57.2475,"edge_style":0,"edge_weight":122.952,"source":24,"target":1,"source_label":"Ngas","target_label":"Gas"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":1.0,"weight":611.99,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"611.99","edge_width":3.9274,"edge_distance":86.4063,"edge_style":0,"edge_weight":611.99,"source":25,"target":19,"source_label":"Oil","target_label":"Liquid"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.5284,"weight":59.901,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"59.901","edge_width":0.8284,"edge_distance":53.4881,"edge_style":0,"edge_weight":59.901,"source":26,"target":9,"source_label":"Solar_PV","target_label":"Electricity_grid"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.3003,"weight":19.263,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"19.263","edge_width":0.6003,"edge_distance":51.065,"edge_style":0,"edge_weight":19.263,"source":27,"target":7,"source_label":"Solar_Thermal","target_label":"Heating_and_cooling_-_homes"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.8923,"weight":124.729,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"124.729","edge_width":1.1923,"edge_distance":57.3534,"edge_style":0,"edge_weight":124.729,"source":28,"target":0,"source_label":"Agricultural_waste","target_label":"Bio-conversion"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.3886,"weight":35.0,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"35.0","edge_width":0.6886,"edge_distance":52.0033,"edge_style":0,"edge_weight":35.0,"source":29,"target":19,"source_label":"Biofuel_imports","target_label":"Liquid"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.3886,"weight":35.0,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"35.0","edge_width":0.6886,"edge_distance":52.0033,"edge_style":0,"edge_weight":35.0,"source":30,"target":3,"source_label":"Biomass_imports","target_label":"Solid"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.2573,"weight":11.606,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"11.606","edge_width":0.5573,"edge_distance":50.6085,"edge_style":0,"edge_weight":11.606,"source":31,"target":4,"source_label":"Coal_imports","target_label":"Coal"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.5512,"weight":63.965,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"63.965","edge_width":0.8512,"edge_distance":53.7304,"edge_style":0,"edge_weight":63.965,"source":32,"target":4,"source_label":"Coal_reserves","target_label":"Coal"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.4207,"weight":40.719,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"40.719","edge_width":0.7207,"edge_distance":52.3443,"edge_style":0,"edge_weight":40.719,"source":33,"target":24,"source_label":"Gas_imports","target_label":"Ngas"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.6537,"weight":82.233,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"82.233","edge_width":0.9537,"edge_distance":54.8196,"edge_style":0,"edge_weight":82.233,"source":34,"target":24,"source_label":"Gas_reserves","target_label":"Ngas"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.2315,"weight":7.013,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"7.013","edge_width":0.5315,"edge_distance":50.3346,"edge_style":0,"edge_weight":7.013,"source":35,"target":9,"source_label":"Geothermal","target_label":"Electricity_grid"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.2314,"weight":6.995,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"6.995","edge_width":0.5314,"edge_distance":50.3335,"edge_style":0,"edge_weight":6.995,"source":36,"target":9,"source_label":"Hydro","target_label":"Electricity_grid"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.2167,"weight":4.375,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"4.375","edge_width":0.5167,"edge_distance":50.1773,"edge_style":0,"edge_weight":4.375,"source":37,"target":0,"source_label":"Marine_algae","target_label":"Bio-conversion"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":1.0,"weight":839.978,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"839.978","edge_width":5.2072,"edge_distance":100.0,"edge_style":0,"edge_weight":839.978,"source":38,"target":17,"source_label":"Nuclear","target_label":"Thermal_generation"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":1.0,"weight":504.287,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"504.287","edge_width":3.3229,"edge_distance":79.9845,"edge_style":0,"edge_weight":504.287,"source":39,"target":25,"source_label":"Oil_imports","target_label":"Oil"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.7967,"weight":107.703,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"107.703","edge_width":1.0967,"edge_distance":56.3382,"edge_style":0,"edge_weight":107.703,"source":40,"target":25,"source_label":"Oil_reserves","target_label":"Oil"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.6289,"weight":77.81,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"77.81","edge_width":0.9289,"edge_distance":54.5559,"edge_style":0,"edge_weight":77.81,"source":41,"target":0,"source_label":"Other_waste","target_label":"Bio-conversion"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.5098,"weight":56.587,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"56.587","edge_width":0.8098,"edge_distance":53.2905,"edge_style":0,"edge_weight":56.587,"source":41,"target":3,"source_label":"Other_waste","target_label":"Solid"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.5888,"weight":70.672,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"70.672","edge_width":0.8888,"edge_distance":54.1303,"edge_style":0,"edge_weight":70.672,"source":42,"target":6,"source_label":"Pumped_heat","target_label":"Heating_and_cooling_-_commercial"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":1.0,"weight":193.026,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"193.026","edge_width":1.5757,"edge_distance":61.4256,"edge_style":0,"edge_weight":193.026,"source":42,"target":7,"source_label":"Pumped_heat","target_label":"Heating_and_cooling_-_homes"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.5284,"weight":59.901,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"59.901","edge_width":0.8284,"edge_distance":53.4881,"edge_style":0,"edge_weight":59.901,"source":43,"target":26,"source_label":"Solar","target_label":"Solar_PV"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.3003,"weight":19.263,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"19.263","edge_width":0.6003,"edge_distance":51.065,"edge_style":0,"edge_weight":19.263,"source":43,"target":27,"source_label":"Solar","target_label":"Solar_Thermal"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.2452,"weight":9.452,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"9.452","edge_width":0.5452,"edge_distance":50.48,"edge_style":0,"edge_weight":9.452,"source":44,"target":9,"source_label":"Tidal","target_label":"Electricity_grid"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":1.0,"weight":182.01,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"182.01","edge_width":1.5138,"edge_distance":60.7688,"edge_style":0,"edge_weight":182.01,"source":45,"target":0,"source_label":"UK_land_based_bioenergy","target_label":"Bio-conversion"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":0.2989,"weight":19.013,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"19.013","edge_width":0.5989,"edge_distance":51.0501,"edge_style":0,"edge_weight":19.013,"source":46,"target":9,"source_label":"Wave","target_label":"Electricity_grid"},{"marker_color":"#808080","marker_start":"","marker_end":"arrow","edge_color":"#808080","edge_opacity":1.0,"weight":289.366,"label":"","label_color":"#808080","label_fontsize":8,"tooltip":"289.366","edge_width":2.1164,"edge_distance":67.1699,"edge_style":0,"edge_weight":289.366,"source":47,"target":9,"source_label":"Wind","target_label":"Electricity_grid"}],"nodes":[{"name":"Bio-conversion","group":"0","node_name":"Bio-conversion","node_marker":"circle","node_tooltip":"Bio-conversion","node_color":"#e41a1c","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#e41a1c","node_fontsize":"12"},{"name":"Gas","group":"0","node_name":"Gas","node_marker":"circle","node_tooltip":"Gas","node_color":"#f781bf","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#f781bf","node_fontsize":"12"},{"name":"Losses","group":"0","node_name":"Losses","node_marker":"circle","node_tooltip":"Losses","node_color":"#999999","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#999999","node_fontsize":"12"},{"name":"Solid","group":"0","node_name":"Solid","node_marker":"circle","node_tooltip":"Solid","node_color":"#e41a1c","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#e41a1c","node_fontsize":"12"},{"name":"Coal","group":"0","node_name":"Coal","node_marker":"circle","node_tooltip":"Coal","node_color":"#e41a1c","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#e41a1c","node_fontsize":"12"},{"name":"District_heating","group":"0","node_name":"District_heating","node_marker":"circle","node_tooltip":"District_heating","node_color":"#377eb8","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#377eb8","node_fontsize":"12"},{"name":"Heating_and_cooling_-_commercial","group":"0","node_name":"Heating_and_cooling_-_commercial","node_marker":"circle","node_tooltip":"Heating_and_cooling_-_commercial","node_color":"#377eb8","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#377eb8","node_fontsize":"12"},{"name":"Heating_and_cooling_-_homes","group":"0","node_name":"Heating_and_cooling_-_homes","node_marker":"circle","node_tooltip":"Heating_and_cooling_-_homes","node_color":"#377eb8","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#377eb8","node_fontsize":"12"},{"name":"Industry","group":"0","node_name":"Industry","node_marker":"circle","node_tooltip":"Industry","node_color":"#984ea3","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#984ea3","node_fontsize":"12"},{"name":"Electricity_grid","group":"0","node_name":"Electricity_grid","node_marker":"circle","node_tooltip":"Electricity_grid","node_color":"#984ea3","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#984ea3","node_fontsize":"12"},{"name":"Agriculture","group":"0","node_name":"Agriculture","node_marker":"circle","node_tooltip":"Agriculture","node_color":"#f781bf","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#f781bf","node_fontsize":"12"},{"name":"H2_conversion","group":"0","node_name":"H2_conversion","node_marker":"circle","node_tooltip":"H2_conversion","node_color":"#984ea3","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#984ea3","node_fontsize":"12"},{"name":"Lighting_&_appliances_-_commercial","group":"0","node_name":"Lighting_&_appliances_-_commercial","node_marker":"circle","node_tooltip":"Lighting_&_appliances_-_commercial","node_color":"#984ea3","node_opacity":"0.35","node_size":"8.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#984ea3","node_fontsize":"12"},{"name":"Lighting_&_appliances_-_homes","group":"0","node_name":"Lighting_&_appliances_-_homes","node_marker":"circle","node_tooltip":"Lighting_&_appliances_-_homes","node_color":"#984ea3","node_opacity":"0.35","node_size":"8.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#984ea3","node_fontsize":"12"},{"name":"Over_generation_/_exports","group":"0","node_name":"Over_generation_/_exports","node_marker":"circle","node_tooltip":"Over_generation_/_exports","node_color":"#984ea3","node_opacity":"0.35","node_size":"8.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#984ea3","node_fontsize":"12"},{"name":"Rail_transport","group":"0","node_name":"Rail_transport","node_marker":"circle","node_tooltip":"Rail_transport","node_color":"#984ea3","node_opacity":"0.6857","node_size":"10.6227","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#984ea3","node_fontsize":"12"},{"name":"Road_transport","group":"0","node_name":"Road_transport","node_marker":"circle","node_tooltip":"Road_transport","node_color":"#ffff33","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#ffff33","node_fontsize":"12"},{"name":"Thermal_generation","group":"0","node_name":"Thermal_generation","node_marker":"circle","node_tooltip":"Thermal_generation","node_color":"#999999","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#999999","node_fontsize":"12"},{"name":"H2","group":"0","node_name":"H2","node_marker":"circle","node_tooltip":"H2","node_color":"#984ea3","node_opacity":"0.6857","node_size":"10.6227","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#984ea3","node_fontsize":"12"},{"name":"Liquid","group":"0","node_name":"Liquid","node_marker":"circle","node_tooltip":"Liquid","node_color":"#ffff33","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#ffff33","node_fontsize":"12"},{"name":"Domestic_aviation","group":"0","node_name":"Domestic_aviation","node_marker":"circle","node_tooltip":"Domestic_aviation","node_color":"#ffff33","node_opacity":"0.35","node_size":"8.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#ffff33","node_fontsize":"12"},{"name":"International_aviation","group":"0","node_name":"International_aviation","node_marker":"circle","node_tooltip":"International_aviation","node_color":"#ffff33","node_opacity":"0.35","node_size":"8.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#ffff33","node_fontsize":"12"},{"name":"International_shipping","group":"0","node_name":"International_shipping","node_marker":"circle","node_tooltip":"International_shipping","node_color":"#ffff33","node_opacity":"0.35","node_size":"8.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#ffff33","node_fontsize":"12"},{"name":"National_navigation","group":"0","node_name":"National_navigation","node_marker":"circle","node_tooltip":"National_navigation","node_color":"#ffff33","node_opacity":"0.35","node_size":"8.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#ffff33","node_fontsize":"12"},{"name":"Ngas","group":"0","node_name":"Ngas","node_marker":"circle","node_tooltip":"Ngas","node_color":"#f781bf","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#f781bf","node_fontsize":"12"},{"name":"Oil","group":"0","node_name":"Oil","node_marker":"circle","node_tooltip":"Oil","node_color":"#ffff33","node_opacity":"0.99","node_size":"13.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#ffff33","node_fontsize":"12"},{"name":"Solar_PV","group":"0","node_name":"Solar_PV","node_marker":"circle","node_tooltip":"Solar_PV","node_color":"#984ea3","node_opacity":"0.6857","node_size":"10.6227","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#984ea3","node_fontsize":"12"},{"name":"Solar_Thermal","group":"0","node_name":"Solar_Thermal","node_marker":"circle","node_tooltip":"Solar_Thermal","node_color":"#984ea3","node_opacity":"0.6857","node_size":"10.6227","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#984ea3","node_fontsize":"12"},{"name":"Agricultural_waste","group":"0","node_name":"Agricultural_waste","node_marker":"circle","node_tooltip":"Agricultural_waste","node_color":"#e41a1c","node_opacity":"0.35","node_size":"8.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#e41a1c","node_fontsize":"12"},{"name":"Biofuel_imports","group":"0","node_name":"Biofuel_imports","node_marker":"circle","node_tooltip":"Biofuel_imports","node_color":"#ffff33","node_opacity":"0.35","node_size":"8.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#ffff33","node_fontsize":"12"},{"name":"Biomass_imports","group":"0","node_name":"Biomass_imports","node_marker":"circle","node_tooltip":"Biomass_imports","node_color":"#e41a1c","node_opacity":"0.35","node_size":"8.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#e41a1c","node_fontsize":"12"},{"name":"Coal_imports","group":"0","node_name":"Coal_imports","node_marker":"circle","node_tooltip":"Coal_imports","node_color":"#e41a1c","node_opacity":"0.35","node_size":"8.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#e41a1c","node_fontsize":"12"},{"name":"Coal_reserves","group":"0","node_name":"Coal_reserves","node_marker":"circle","node_tooltip":"Coal_reserves","node_color":"#e41a1c","node_opacity":"0.35","node_size":"8.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#e41a1c","node_fontsize":"12"},{"name":"Gas_imports","group":"0","node_name":"Gas_imports","node_marker":"circle","node_tooltip":"Gas_imports","node_color":"#f781bf","node_opacity":"0.35","node_size":"8.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#f781bf","node_fontsize":"12"},{"name":"Gas_reserves","group":"0","node_name":"Gas_reserves","node_marker":"circle","node_tooltip":"Gas_reserves","node_color":"#f781bf","node_opacity":"0.35","node_size":"8.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#f781bf","node_fontsize":"12"},{"name":"Geothermal","group":"0","node_name":"Geothermal","node_marker":"circle","node_tooltip":"Geothermal","node_color":"#984ea3","node_opacity":"0.35","node_size":"8.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#984ea3","node_fontsize":"12"},{"name":"Hydro","group":"0","node_name":"Hydro","node_marker":"circle","node_tooltip":"Hydro","node_color":"#984ea3","node_opacity":"0.35","node_size":"8.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#984ea3","node_fontsize":"12"},{"name":"Marine_algae","group":"0","node_name":"Marine_algae","node_marker":"circle","node_tooltip":"Marine_algae","node_color":"#e41a1c","node_opacity":"0.35","node_size":"8.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#e41a1c","node_fontsize":"12"},{"name":"Nuclear","group":"0","node_name":"Nuclear","node_marker":"circle","node_tooltip":"Nuclear","node_color":"#999999","node_opacity":"0.35","node_size":"8.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#999999","node_fontsize":"12"},{"name":"Oil_imports","group":"0","node_name":"Oil_imports","node_marker":"circle","node_tooltip":"Oil_imports","node_color":"#ffff33","node_opacity":"0.35","node_size":"8.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#ffff33","node_fontsize":"12"},{"name":"Oil_reserves","group":"0","node_name":"Oil_reserves","node_marker":"circle","node_tooltip":"Oil_reserves","node_color":"#ffff33","node_opacity":"0.35","node_size":"8.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#ffff33","node_fontsize":"12"},{"name":"Other_waste","group":"0","node_name":"Other_waste","node_marker":"circle","node_tooltip":"Other_waste","node_color":"#e41a1c","node_opacity":"0.6857","node_size":"10.6227","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#e41a1c","node_fontsize":"12"},{"name":"Pumped_heat","group":"0","node_name":"Pumped_heat","node_marker":"circle","node_tooltip":"Pumped_heat","node_color":"#377eb8","node_opacity":"0.6857","node_size":"10.6227","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#377eb8","node_fontsize":"12"},{"name":"Solar","group":"0","node_name":"Solar","node_marker":"circle","node_tooltip":"Solar","node_color":"#FF0000","node_opacity":"0.6857","node_size":"30","node_size_edge":"5","node_color_edge":"#000000","node_fontcolor":"#984ea3","node_fontsize":"12"},{"name":"Tidal","group":"0","node_name":"Tidal","node_marker":"circle","node_tooltip":"Tidal","node_color":"#984ea3","node_opacity":"0.35","node_size":"8.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#984ea3","node_fontsize":"12"},{"name":"UK_land_based_bioenergy","group":"0","node_name":"UK_land_based_bioenergy","node_marker":"circle","node_tooltip":"UK_land_based_bioenergy","node_color":"#e41a1c","node_opacity":"0.35","node_size":"8.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#e41a1c","node_fontsize":"12"},{"name":"Wave","group":"0","node_name":"Wave","node_marker":"circle","node_tooltip":"Wave","node_color":"#984ea3","node_opacity":"0.35","node_size":"8.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#984ea3","node_fontsize":"12"},{"name":"Wind","group":"0","node_name":"Wind","node_marker":"circle","node_tooltip":"Wind","node_color":"#984ea3","node_opacity":"0.35","node_size":"8.0","node_size_edge":"1","node_color_edge":"#000000","node_fontcolor":"#984ea3","node_fontsize":"12"}]}
 
         window.addEventListener('DOMContentLoaded', function () {
             d3graphscript({
                 width: 700,
-                height: 700,
-                charge: -250,
-                distance: 30,
-                directed: false,
-                collision: 0.5
+                height: 500,
+                charge: -400,
+                distance: 50,
+                directed: true,
+                collision: 0.5,
+                link_tension: 1,
+                sticky: true,
+                background_color: '#FFFFFF',
+                node_text_inside: false,
+                max_ticks: 300,
+                canvas_edge_threshold: 2000,
+                label_zoom_threshold: 0.4,
+                density_grid_size: 60,
+                density_blur: 10,
+                density_opacity: 0.6,
+                show_density: false,
+                dark_mode: false,
             })
         });
+
+        // Dark mode toggle logic
+        const darkSwitch = document.getElementById('darkModeSwitch');
+        let darkMode = false;
+        let originalBg = document.body.style.backgroundColor;
+        function setDarkMode(on) {
+            if (on) {
+                document.body.classList.add('dark-mode');
+                document.body.style.backgroundColor = '#222';
+                document.body.style.color = '#eee';
+                let graphBg = document.getElementById('graphContainer');
+                if (graphBg) graphBg.style.backgroundColor = '#222';
+                darkSwitch.textContent = '☀ Light Mode';
+            } else {
+                document.body.classList.remove('dark-mode');
+                document.body.style.backgroundColor = originalBg;
+                document.body.style.color = '';
+                let graphBg = document.getElementById('graphContainer');
+                if (graphBg) graphBg.style.backgroundColor = originalBg;
+                darkSwitch.textContent = '🌙 Dark Mode';
+            }
+            if (window.d3graphSetDarkMode) window.d3graphSetDarkMode(on);
+        }
+        // Set initial mode
+        setDarkMode(darkMode);
+        darkSwitch.addEventListener('click', function () {
+            darkMode = !darkMode;
+            setDarkMode(darkMode);
+        });
+
+        // Save image to svg
+        // Note: when the graph is large enough to switch to canvas-rendered edges
+        // (see canvas_edge_threshold), this export will include nodes but not edges,
+        // since edges live on a separate <canvas> element, not in the SVG DOM.
+        document.getElementById('saveButton').addEventListener('click', function () {
+            var svgData = document.querySelector('svg').outerHTML;
+            var blob = new Blob([svgData], {type: "image/svg+xml;charset=utf-8"});
+            var url = URL.createObjectURL(blob);
+            var link = document.createElement('a');
+            link.href = url;
+            link.download = 'd3graph.svg';
+            link.click();
+        });
+        
+        
     </script>
-</head>
-<body>
+
+
 
 <!-- SLIDER -->
 
 
     
-	<div style="max-width:700px;">
-        <form>
-            <h3>
-                Edge Threshold
-                0
-                <input type="range" autocomplete="off" id="thresholdSlider" value="0" min="0" max="840">
-                840
-            </h3>
+	<div style="max-width:700px;" class="slider-container">
+        <form style="margin:0;">
+            <span class="slider-label">Edge Threshold</span>
+            <span class="slider-label">0</span>
+            <input type="range" autocomplete="off" id="thresholdSlider" value="0" min="0" max="840" class="styled-slider">
+            <span class="slider-label">840</span>
         </form>
 	</div>
     
