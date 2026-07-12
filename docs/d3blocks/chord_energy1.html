@@ -1,3 +1,12 @@
+<!--
+Library     : d3blocks
+Author      : E.Taskesen, O.Verver
+Mail        : erdogant@gmail.com, oliver@sensibly.nl
+Github      : https://github.com/d3blocks/d3blocks
+Licensed    : GPL3
+Forked      : Mike Bostock; https://observablehq.com/@d3/directed-chord-diagram
+-->
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -5,6 +14,12 @@
     <title>Chord - D3blocks</title>
 </head>
 <body>
+
+<!-- Create save button -->
+
+    <div style="max-width:900px;">
+        <center><button id="saveButton">Save</button></center>
+    </div>
 
 
 <script>
@@ -1742,18 +1757,39 @@
     return arc;
   }
 
-  function generateChord({data, width= 954, height = width}) {
-      const names = Array.from(new Set(data.flatMap(d => [d.source, d.target]))).sort(ascending);
-      const color = ordinal().domain(names).range(schemeTableau10); // TODO wut??
-
-      const innerRadius = Math.min(width, height) * 0.5 - 150;
+  function generateChord({data, nodes, width= 954, height = width, margin = 150, textOffset = 5}) {
+      const names = Array.from(new Set(data.flatMap(d => [d.source, d.target]))).sort(ascending)
+      // const color_func = ordinal().domain(names).range(schemeTableau10); // TODO wut??
+      const node_colors = new Map(nodes.map(n => [n.name, n.color]));       // GET NODE COLORS
+      const node_opacity = new Map(nodes.map(n => [n.name, n.opacity]));    // GET NODE OPACITY
+      const innerRadius = Math.min(width, height) * 0.5 - margin;
       const outerRadius = innerRadius + 10;
-
       const index = new Map(names.map((name, i) => [name, i]));
       let matrix = Array.from(index, () => new Array(names.length).fill(0));
+  
+      function link_color(source, target){
+          const source_name = names[source]
+          const target_name = names[target]
+          return data.find(d => d.source === source_name && d.target === target_name).color
+	  }
+
+      function link_opacity(source, target){
+          const source_name = names[source]
+          const target_name = names[target]
+          return data.find(d => d.source === source_name && d.target === target_name).opacity
+	  }
+
+      
+//      for (const {source, target, value} of data) {
+//          matrix[index.get(source)][index.get(target)] += value;
+//      }
+
       for (const {source, target, value} of data) {
-          matrix[index.get(source)][index.get(target)] += value;
-      }
+          if(index.has(source) && index.has(target)) {
+              matrix[index.get(source)][index.get(target)] += value;
+            }
+        }
+
 
       const arc = d3Arc()
           .innerRadius(innerRadius)
@@ -1775,6 +1811,42 @@
           .radius(innerRadius - 1)
           .padAngle(1 / innerRadius);
 
+      // Container for the per-link gradients (source-color -> target-color).
+      const defs = svg.append("defs");
+      const gradientRadius = innerRadius - 1;
+
+      function link_gradient_id(i) {
+          return `chord-link-gradient-${i}`;
+      }
+
+      function create_link_gradient(d, i) {
+          const gradId = link_gradient_id(i);
+          const sourceColor = node_colors.get(names[d.source.index]);
+          const targetColor = node_colors.get(names[d.target.index]);
+
+          // Position the gradient stops at the mid-angle of the source and
+          // target arcs so the color transitions across the ribbon.
+          const sourceAngle = (d.source.startAngle + d.source.endAngle) / 2 - Math.PI / 2;
+          const targetAngle = (d.target.startAngle + d.target.endAngle) / 2 - Math.PI / 2;
+          const x1 = gradientRadius * Math.cos(sourceAngle);
+          const y1 = gradientRadius * Math.sin(sourceAngle);
+          const x2 = gradientRadius * Math.cos(targetAngle);
+          const y2 = gradientRadius * Math.sin(targetAngle);
+
+          const gradient = defs.append("linearGradient")
+              .attr("id", gradId)
+              .attr("gradientUnits", "userSpaceOnUse")
+              .attr("x1", x1)
+              .attr("y1", y1)
+              .attr("x2", x2)
+              .attr("y2", y2);
+
+          gradient.append("stop").attr("offset", "0%").attr("stop-color", sourceColor);
+          gradient.append("stop").attr("offset", "100%").attr("stop-color", targetColor);
+
+          return `url(#${gradId})`;
+      }
+
       const group = svg.append("g")
           .attr("font-size", 10)
           .attr("font-family", "sans-serif")
@@ -1783,7 +1855,11 @@
           .join("g");
 
       group.append("path")
-          .attr("fill", d => color(names[d.index]))
+          //.attr("fill", d => color_func(names[d.index]))
+          //.attr("debug", d => JSON.stringify(d))                     // DEBUG
+          .attr("fill", d => node_colors.get(names[d.index]))          // NODE COLOR
+          .attr("fill-opacity", d => node_opacity.get(names[d.index])) // NODE OPACITY
+          //.attr("fill-opacity", 0.75)                                // NODE OPACITY (CONSTANT)
           .attr("d", arc);
 
       group.append("text")
@@ -1791,55 +1867,106 @@
           .attr("dy", "0.35em")
           .attr("transform", d => `
         rotate(${(d.angle * 180 / Math.PI - 90)})
-        translate(${outerRadius + 5})
+        translate(${outerRadius + textOffset})
         ${d.angle > Math.PI ? "rotate(180)" : ""}
       `)
           .attr("text-anchor", d => d.angle > Math.PI ? "end" : null)
           .text(d => names[d.index]);
 
       group.append("title")
-          .text(d => `${names[d.index]}
-${sum(chords, c => (c.source.index === d.index) * c.source.value)} outgoing →
-${sum(chords, c => (c.target.index === d.index) * c.source.value)} incoming ←`);
-
+        .text(d => `${names[d.index]}
+        ${sum(chords, c => (c.source.index === d.index) * c.source.value)} outgoing →
+        ${sum(chords, c => (c.target.index === d.index) * c.source.value)} incoming ←`);
+    
+    // console.log(data)
+    
       svg.append("g")
-          .attr("fill-opacity", 0.75)
+          //.attr("fill-opacity", 0.75) // OPACITY OF LINES
           .selectAll("path")
           .data(chords)
           .join("path")
           .style("mix-blend-mode", "multiply")
-          .attr("fill", d => color(names[d.target.index]))
+          //.attr("fill", d => color_func(names[d.target.index]))
+          //.attr("fill", d => link_color(d.source.index, d.target.index))             // COLORS LINKS (FLAT, deprecated)
+          .attr("fill", (d, i) => create_link_gradient(d, i))                          // COLORS LINKS (GRADIENT: source -> target)
+          .attr("fill-opacity", d => link_opacity(d.source.index, d.target.index))    // OPACITY LINKS
           .attr("d", ribbon)
           .append("title")
-          .text(d => `${names[d.source.index]} → ${names[d.target.index]} ${d.source.value}`);
+          .text(d => `${names[d.source.index]} → ${names[d.target.index]} ${d.source.value}`)
+//		  .on("mouseover", mousover)
+//		  .on("mouseout", mouseout)
+          ;
+
+//	  function mousover(event, d) {
+//		link.style("mix-blend-mode", null);
+//		d3.select(this).attr("font-weight", "bold");
+//		d3.selectAll(d.incoming.map(d => d.path)).attr("stroke", "#00f").raise();
+//		d3.selectAll(d.incoming.map(([d]) => d.text)).attr("fill", "#00f").attr("font-weight", "bold");
+//		d3.selectAll(d.outgoing.map(d => d.path)).attr("stroke", "#f00").raise();
+//		d3.selectAll(d.outgoing.map(([, d]) => d.text)).attr("fill", "#f00").attr("font-weight", "bold");
+//	  }
+//
+//	  function mouseout(event, d) {
+//		link.style("mix-blend-mode", "multiply");
+//		d3.select(this).attr("font-weight", null);
+//		d3.selectAll(d.incoming.map(d => d.path)).attr("stroke", null);
+//		d3.selectAll(d.incoming.map(([d]) => d.text)).attr("fill", null).attr("font-weight", null);
+//		d3.selectAll(d.outgoing.map(d => d.path)).attr("stroke", null);
+//		d3.selectAll(d.outgoing.map(([, d]) => d.text)).attr("fill", null).attr("font-weight", null);
+//	  }
+
 
       return svg.node();
   }
 
-  window.Chord = function ({data, width, height}) {
-      const svg = generateChord({data, width, height});
+  window.Chord = function ({data, nodes, width, height, margin, textOffset}) {
+      const svg = generateChord({data, nodes, width, height, margin, textOffset});
       document.body.append(svg);
   };
 
 })();
-    
-    const jsonData = {"nodes":[{"name":"Agricultural waste"},{"name":"Agriculture"},{"name":"Bio-conversion"},{"name":"Biofuel imports"},{"name":"Biomass imports"},{"name":"Coal"},{"name":"Coal imports"},{"name":"Coal reserves"},{"name":"District heating"},{"name":"Domestic aviation"},{"name":"Electricity grid"},{"name":"Gas"},{"name":"Gas imports"},{"name":"Gas reserves"},{"name":"Geothermal"},{"name":"H2"},{"name":"H2 conversion"},{"name":"Heating and cooling - commercial"},{"name":"Heating and cooling - homes"},{"name":"Hydro"},{"name":"Industry"},{"name":"International aviation"},{"name":"International shipping"},{"name":"Lighting & appliances - commercial"},{"name":"Lighting & appliances - homes"},{"name":"Liquid"},{"name":"Losses"},{"name":"Marine algae"},{"name":"National navigation"},{"name":"Ngas"},{"name":"Nuclear"},{"name":"Oil"},{"name":"Oil imports"},{"name":"Oil reserves"},{"name":"Other waste"},{"name":"Over generation / exports"},{"name":"Pumped heat"},{"name":"Rail transport"},{"name":"Road transport"},{"name":"Solar"},{"name":"Solar PV"},{"name":"Solar Thermal"},{"name":"Solid"},{"name":"Thermal generation"},{"name":"Tidal"},{"name":"UK land based bioenergy"},{"name":"Wave"},{"name":"Wind"}], "links":[{"source":0,"target":2,"value":124.729},{"source":2,"target":25,"value":0.597},{"source":2,"target":26,"value":26.862},{"source":2,"target":42,"value":280.322},{"source":2,"target":11,"value":81.144},{"source":3,"target":25,"value":35.0},{"source":4,"target":42,"value":35.0},{"source":6,"target":5,"value":11.606},{"source":7,"target":5,"value":63.965},{"source":5,"target":42,"value":75.571},{"source":8,"target":20,"value":10.639},{"source":8,"target":17,"value":22.505},{"source":8,"target":18,"value":46.184},{"source":10,"target":35,"value":104.453},{"source":10,"target":18,"value":113.726},{"source":10,"target":16,"value":27.14},{"source":10,"target":20,"value":342.165},{"source":10,"target":38,"value":37.797},{"source":10,"target":1,"value":4.412},{"source":10,"target":17,"value":40.858},{"source":10,"target":26,"value":56.691},{"source":10,"target":37,"value":7.863},{"source":10,"target":23,"value":90.008},{"source":10,"target":24,"value":93.494},{"source":12,"target":29,"value":40.719},{"source":13,"target":29,"value":82.233},{"source":11,"target":17,"value":0.129},{"source":11,"target":26,"value":1.401},{"source":11,"target":43,"value":151.891},{"source":11,"target":1,"value":2.096},{"source":11,"target":20,"value":48.58},{"source":14,"target":10,"value":7.013},{"source":16,"target":15,"value":20.897},{"source":16,"target":26,"value":6.242},{"source":15,"target":38,"value":20.897},{"source":19,"target":10,"value":6.995},{"source":25,"target":20,"value":121.066},{"source":25,"target":22,"value":128.69},{"source":25,"target":38,"value":135.835},{"source":25,"target":9,"value":14.458},{"source":25,"target":21,"value":206.267},{"source":25,"target":1,"value":3.64},{"source":25,"target":28,"value":33.218},{"source":25,"target":37,"value":4.413},{"source":27,"target":2,"value":4.375},{"source":29,"target":11,"value":122.952},{"source":30,"target":43,"value":839.978},{"source":32,"target":31,"value":504.287},{"source":33,"target":31,"value":107.703},{"source":31,"target":25,"value":611.99},{"source":34,"target":42,"value":56.587},{"source":34,"target":2,"value":77.81},{"source":36,"target":18,"value":193.026},{"source":36,"target":17,"value":70.672},{"source":40,"target":10,"value":59.901},{"source":41,"target":18,"value":19.263},{"source":39,"target":41,"value":19.263},{"source":39,"target":40,"value":59.901},{"source":42,"target":1,"value":0.882},{"source":42,"target":43,"value":400.12},{"source":42,"target":20,"value":46.477},{"source":43,"target":10,"value":525.531},{"source":43,"target":26,"value":787.129},{"source":43,"target":8,"value":79.329},{"source":44,"target":10,"value":9.452},{"source":45,"target":2,"value":182.01},{"source":46,"target":10,"value":19.013},{"source":47,"target":10,"value":289.366}]};
 
-    const data = jsonData.links.map(({source, target, value}) => ({
+    const jsonData = {"nodes":[{"name":"Agricultural waste","color":"#1f77b4","opacity":0.8}, {"name":"Bio-conversion","color":"#1f77b4","opacity":0.8}, {"name":"Liquid","color":"#1f77b4","opacity":0.8}, {"name":"Losses","color":"#aec7e8","opacity":0.8}, {"name":"Solid","color":"#aec7e8","opacity":0.8}, {"name":"Gas","color":"#ff7f0e","opacity":0.8}, {"name":"Biofuel imports","color":"#ff7f0e","opacity":0.8}, {"name":"Biomass imports","color":"#ff7f0e","opacity":0.8}, {"name":"Coal imports","color":"#ffbb78","opacity":0.8}, {"name":"Coal","color":"#ffbb78","opacity":0.8}, {"name":"Coal reserves","color":"#2ca02c","opacity":0.8}, {"name":"District heating","color":"#2ca02c","opacity":0.8}, {"name":"Industry","color":"#98df8a","opacity":0.8}, {"name":"Heating and cooling - commercial","color":"#98df8a","opacity":0.8}, {"name":"Heating and cooling - homes","color":"#98df8a","opacity":0.8}, {"name":"Electricity grid","color":"#d62728","opacity":0.8}, {"name":"Over generation / exports","color":"#d62728","opacity":0.8}, {"name":"H2 conversion","color":"#ff9896","opacity":0.8}, {"name":"Road transport","color":"#ff9896","opacity":0.8}, {"name":"Agriculture","color":"#9467bd","opacity":0.8}, {"name":"Rail transport","color":"#9467bd","opacity":0.8}, {"name":"Lighting & appliances - commercial","color":"#9467bd","opacity":0.8}, {"name":"Lighting & appliances - homes","color":"#c5b0d5","opacity":0.8}, {"name":"Gas imports","color":"#c5b0d5","opacity":0.8}, {"name":"Ngas","color":"#8c564b","opacity":0.8}, {"name":"Gas reserves","color":"#8c564b","opacity":0.8}, {"name":"Thermal generation","color":"#c49c94","opacity":0.8}, {"name":"Geothermal","color":"#c49c94","opacity":0.8}, {"name":"H2","color":"#c49c94","opacity":0.8}, {"name":"Hydro","color":"#e377c2","opacity":0.8}, {"name":"International shipping","color":"#e377c2","opacity":0.8}, {"name":"Domestic aviation","color":"#f7b6d2","opacity":0.8}, {"name":"International aviation","color":"#f7b6d2","opacity":0.8}, {"name":"National navigation","color":"#7f7f7f","opacity":0.8}, {"name":"Marine algae","color":"#7f7f7f","opacity":0.8}, {"name":"Nuclear","color":"#7f7f7f","opacity":0.8}, {"name":"Oil imports","color":"#c7c7c7","opacity":0.8}, {"name":"Oil","color":"#c7c7c7","opacity":0.8}, {"name":"Oil reserves","color":"#bcbd22","opacity":0.8}, {"name":"Other waste","color":"#bcbd22","opacity":0.8}, {"name":"Pumped heat","color":"#dbdb8d","opacity":0.8}, {"name":"Solar PV","color":"#dbdb8d","opacity":0.8}, {"name":"Solar Thermal","color":"#dbdb8d","opacity":0.8}, {"name":"Solar","color":"#17becf","opacity":0.8}, {"name":"Tidal","color":"#17becf","opacity":0.8}, {"name":"UK land based bioenergy","color":"#9edae5","opacity":0.8}, {"name":"Wave","color":"#9edae5","opacity":0.8}, {"name":"Wind","color":"#9edae5","opacity":0.8},], "links":[{"source":0,"target":1,"value":124.729,"opacity":0.8,"color":"#1f77b4"},{"source":1,"target":5,"value":81.144,"opacity":0.8,"color":"#1f77b4"},{"source":1,"target":2,"value":0.597,"opacity":0.8,"color":"#1f77b4"},{"source":1,"target":3,"value":26.862,"opacity":0.8,"color":"#1f77b4"},{"source":1,"target":4,"value":280.322,"opacity":0.8,"color":"#1f77b4"},{"source":6,"target":2,"value":35.0,"opacity":0.8,"color":"#ff7f0e"},{"source":7,"target":4,"value":35.0,"opacity":0.8,"color":"#ff7f0e"},{"source":9,"target":4,"value":75.571,"opacity":0.8,"color":"#ffbb78"},{"source":8,"target":9,"value":11.606,"opacity":0.8,"color":"#ffbb78"},{"source":10,"target":9,"value":63.965,"opacity":0.8,"color":"#2ca02c"},{"source":11,"target":13,"value":22.505,"opacity":0.8,"color":"#2ca02c"},{"source":11,"target":14,"value":46.184,"opacity":0.8,"color":"#2ca02c"},{"source":11,"target":12,"value":10.639,"opacity":0.8,"color":"#2ca02c"},{"source":15,"target":19,"value":4.412,"opacity":0.8,"color":"#d62728"},{"source":15,"target":17,"value":27.14,"opacity":0.8,"color":"#d62728"},{"source":15,"target":13,"value":40.858,"opacity":0.8,"color":"#d62728"},{"source":15,"target":14,"value":113.726,"opacity":0.8,"color":"#d62728"},{"source":15,"target":12,"value":342.165,"opacity":0.8,"color":"#d62728"},{"source":15,"target":21,"value":90.008,"opacity":0.8,"color":"#d62728"},{"source":15,"target":22,"value":93.494,"opacity":0.8,"color":"#d62728"},{"source":15,"target":3,"value":56.691,"opacity":0.8,"color":"#d62728"},{"source":15,"target":16,"value":104.453,"opacity":0.8,"color":"#d62728"},{"source":15,"target":20,"value":7.863,"opacity":0.8,"color":"#d62728"},{"source":15,"target":18,"value":37.797,"opacity":0.8,"color":"#d62728"},{"source":5,"target":19,"value":2.096,"opacity":0.8,"color":"#ff7f0e"},{"source":5,"target":13,"value":0.129,"opacity":0.8,"color":"#ff7f0e"},{"source":5,"target":12,"value":48.58,"opacity":0.8,"color":"#ff7f0e"},{"source":5,"target":3,"value":1.401,"opacity":0.8,"color":"#ff7f0e"},{"source":5,"target":26,"value":151.891,"opacity":0.8,"color":"#ff7f0e"},{"source":23,"target":24,"value":40.719,"opacity":0.8,"color":"#c5b0d5"},{"source":25,"target":24,"value":82.233,"opacity":0.8,"color":"#8c564b"},{"source":27,"target":15,"value":7.013,"opacity":0.8,"color":"#c49c94"},{"source":28,"target":18,"value":20.897,"opacity":0.8,"color":"#c49c94"},{"source":17,"target":28,"value":20.897,"opacity":0.8,"color":"#ff9896"},{"source":17,"target":3,"value":6.242,"opacity":0.8,"color":"#ff9896"},{"source":29,"target":15,"value":6.995,"opacity":0.8,"color":"#e377c2"},{"source":2,"target":19,"value":3.64,"opacity":0.8,"color":"#1f77b4"},{"source":2,"target":31,"value":14.458,"opacity":0.8,"color":"#1f77b4"},{"source":2,"target":12,"value":121.066,"opacity":0.8,"color":"#1f77b4"},{"source":2,"target":32,"value":206.267,"opacity":0.8,"color":"#1f77b4"},{"source":2,"target":30,"value":128.69,"opacity":0.8,"color":"#1f77b4"},{"source":2,"target":33,"value":33.218,"opacity":0.8,"color":"#1f77b4"},{"source":2,"target":20,"value":4.413,"opacity":0.8,"color":"#1f77b4"},{"source":2,"target":18,"value":135.835,"opacity":0.8,"color":"#1f77b4"},{"source":34,"target":1,"value":4.375,"opacity":0.8,"color":"#7f7f7f"},{"source":24,"target":5,"value":122.952,"opacity":0.8,"color":"#8c564b"},{"source":35,"target":26,"value":839.978,"opacity":0.8,"color":"#7f7f7f"},{"source":37,"target":2,"value":611.99,"opacity":0.8,"color":"#c7c7c7"},{"source":36,"target":37,"value":504.287,"opacity":0.8,"color":"#c7c7c7"},{"source":38,"target":37,"value":107.703,"opacity":0.8,"color":"#bcbd22"},{"source":39,"target":1,"value":77.81,"opacity":0.8,"color":"#bcbd22"},{"source":39,"target":4,"value":56.587,"opacity":0.8,"color":"#bcbd22"},{"source":40,"target":13,"value":70.672,"opacity":0.8,"color":"#dbdb8d"},{"source":40,"target":14,"value":193.026,"opacity":0.8,"color":"#dbdb8d"},{"source":43,"target":41,"value":59.901,"opacity":0.8,"color":"#17becf"},{"source":43,"target":42,"value":19.263,"opacity":0.8,"color":"#17becf"},{"source":41,"target":15,"value":59.901,"opacity":0.8,"color":"#dbdb8d"},{"source":42,"target":14,"value":19.263,"opacity":0.8,"color":"#dbdb8d"},{"source":4,"target":19,"value":0.882,"opacity":0.8,"color":"#aec7e8"},{"source":4,"target":12,"value":46.477,"opacity":0.8,"color":"#aec7e8"},{"source":4,"target":26,"value":400.12,"opacity":0.8,"color":"#aec7e8"},{"source":26,"target":11,"value":79.329,"opacity":0.8,"color":"#c49c94"},{"source":26,"target":15,"value":525.531,"opacity":0.8,"color":"#c49c94"},{"source":26,"target":3,"value":787.129,"opacity":0.8,"color":"#c49c94"},{"source":44,"target":15,"value":9.452,"opacity":0.8,"color":"#17becf"},{"source":45,"target":1,"value":182.01,"opacity":0.8,"color":"#9edae5"},{"source":46,"target":15,"value":19.013,"opacity":0.8,"color":"#9edae5"},{"source":47,"target":15,"value":289.366,"opacity":0.8,"color":"#9edae5"}]};
+
+    const data = jsonData.links.map(({source, target, value, opacity, color}) => ({
         source: jsonData.nodes[source].name,
         target: jsonData.nodes[target].name,
-        value
+        value,
+        opacity,
+        color,
     }))
 
     document.addEventListener('DOMContentLoaded', function () {
         window.Chord({
             data,
-            width: 700,
-            height: 700,
+			nodes: jsonData.nodes,
+            width: 900,
+            height: 900,
+            margin: 150,
+            textOffset: 5,
         });
     });
 
+
+    
+        // SAVE CHART TO SVG
+        document.getElementById('saveButton').addEventListener('click', function () {
+            var svgData = document.querySelector('svg').outerHTML;
+            var blob = new Blob([svgData], {type: 'image/svg+xml;charset=utf-8'});
+            var url = URL.createObjectURL(blob);
+            var link = document.createElement('a');
+            link.href = url;
+            link.download = 'Chord - D3blocks.svg';
+            link.click();
+        });
+        
+
+
 </script>
 <div id="chart"></div>
+
+<script async src='https://media.ethicalads.io/media/client/ethicalads.min.js'></script>
+<div data-ea-publisher='erdogantgithubio' data-ea-type='text' data-ea-style='stickybox'></div>
+
 </body>
 </html>
