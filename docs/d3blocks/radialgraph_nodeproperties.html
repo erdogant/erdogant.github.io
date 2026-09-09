@@ -24,6 +24,9 @@
     --ring-stroke: #fff;
     --section-label: rgba(220, 221, 222, 0.45);
     --transition: background 0.35s, color 0.25s, border-color 0.25s;
+    --accent: #1ABC9C;
+    --panel-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+    --topbar-bg: rgba(18, 20, 28, 0.55);
   }
   body.light {
     --bg: #e4e6ec;
@@ -41,6 +44,9 @@
     --ghost-stroke: #555;
     --ring-stroke: #333;
     --section-label: rgba(44, 44, 46, 0.4);
+    --accent: #1ABC9C;
+    --panel-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    --topbar-bg: rgba(228, 230, 236, 0.6);
   }
   html, body {
     margin: 0; height: 100%;
@@ -307,11 +313,18 @@
 .stats-panel .stats-panel-title {
   font-weight: bold;
   margin-bottom: 6px;
-  cursor: pointer;
+  cursor: grab;
   user-select: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+.stats-panel .stats-panel-title:active { cursor: grabbing; }
+
+/* Drop-target highlight while dragging a panel over another one. */
+.stats-panel.drag-over {
+  outline: 2px dashed var(--accent);
+  outline-offset: 2px;
 }
 
 /* Collapsed panels have no body margin left behind, and the title itself
@@ -553,9 +566,18 @@
   align-items: center;
   gap: 12px;
   z-index: 1200;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: var(--topbar-bg);
+  box-shadow: var(--panel-shadow);
+  transition: var(--transition);
   pointer-events: none; /* let individual controls opt-in */
 }
-.top-panel .top-panel-left { pointer-events: none; }
+.top-panel .top-panel-left {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+}
 .top-panel .top-panel-center {
   pointer-events: auto;
   display: flex;
@@ -570,6 +592,14 @@
   justify-self: end;
 }
 .top-panel .button-switch { margin: 0; }
+/* Theme toggle sits at the very right end of the group, set apart from the
+   other action buttons with a small divider so it reads as a distinct,
+   always-in-the-same-place control rather than just another action. */
+.top-panel-right #themeBtn {
+  margin-left: 6px;
+  padding-left: 14px;
+  border-left: 1px solid var(--btn-border);
+}
 .top-search { width: 440px; max-width: 60vw; }
 .top-search .search-input { width: 100%; }
 
@@ -591,8 +621,13 @@
 </head>
 <body>
 
+
 <div class="top-panel" role="toolbar" aria-label="Top controls">
-<div class="top-panel-left"></div>
+<div class="top-panel-left">
+    <a href="https://d3blocks.github.io/d3blocks/" title="D3Blocks" target="_blank" rel="noopener noreferrer">
+        <img src="" alt="D3Blocks" style="width:150px;height:auto;display:block;pointer-events:auto" />
+    </a>
+</div>
 <div class="top-panel-center">
   <div class="search-wrap top-search">
     <input class="search-input" id="searchInput" type="search" placeholder="Find a node…" autocomplete="off" spellcheck="false" />
@@ -600,9 +635,9 @@
   </div>
 </div>
 <div class="top-panel-right">
-  <button class="button-switch" id="themeBtn" type="button">Theme: Dark</button>
   <button class="button-switch" id="flowDiffButton" type="button">Flow diffusion</button>
   <button class="button-switch" id="rippleBtnTop" type="button">Ripple expand</button>
+  <button class="button-switch" id="themeBtn" type="button" title="Theme: Dark">🌙</button>
 </div>
 <!-- Hidden anchor button with the id expected by the main script. The visible
      top-panel 'Ripple expand' button will forward clicks to this so the
@@ -611,7 +646,7 @@
 </div>
 
 <div class="stats-panel collapsed" id="exportPanel">
-  <div class="stats-panel-title">Export<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Export<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
     <button id="exportDataButton" class="button-switch">Export Data</button>
     <button id="saveButton" class="button-switch">Save</button>
@@ -619,7 +654,7 @@
 </div>
 
 <div class="stats-panel collapsed" id="layoutPanel">
-  <div class="stats-panel-title">Layout<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Layout<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
     <label><input type="radio" name="layoutMode" value="rings" checked> Rings (radial)</label>
     <label><input type="radio" name="layoutMode" value="global"> Global (force)</label>
@@ -636,12 +671,22 @@
       <input type="range" id="rippleDelaySlider" min="0" max="3000" step="50" value="900" />
     </div>
 
+    <div class="physics-control">
+      <label for="nodeSizeMultSlider">Node Size <span id="nodeSizeMultVal">1.0</span>×</label>
+      <input type="range" id="nodeSizeMultSlider" min="0.1" max="5" step="0.1" value="1" />
+    </div>
+
+    <div class="physics-control">
+      <label for="edgeWidthMultSlider">Edge Width <span id="edgeWidthMultVal">1.0</span>×</label>
+      <input type="range" id="edgeWidthMultSlider" min="0.1" max="5" step="0.1" value="1" />
+    </div>
+
   </div>
 </div>
 
 
 <div class="stats-panel collapsed" id="statsPanel">
-  <div class="stats-panel-title">Network Statistic<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Network Statistic<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
     <label><input type="radio" name="statMetric" value="user_default" checked> Default</label>
     <label><input type="radio" name="statMetric" value="node_proba"> Significance</label>
@@ -657,7 +702,7 @@
 
 
 <div class="stats-panel collapsed" id="edgeStatPanel">
-  <div class="stats-panel-title">Edge Statistics<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Edge Statistics<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
     <label><input type="radio" name="edgeStatMode" value="default" checked> Default</label>
     <label><input type="radio" name="edgeStatMode" value="community"> Community</label>
@@ -665,7 +710,7 @@
   </div>
 </div>
 <div class="stats-panel collapsed" id="edgeFilterPanel">
-  <div class="stats-panel-title">Edge Filters<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
+  <div class="stats-panel-title" draggable="true" title="Drag to reorder panels">Edge Filters<span class="stats-panel-toggle" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg></span></div>
   <div class="stats-panel-body">
     <label><input type="checkbox" id="crossLinksToggle" checked> Show cross-links</label>
     <label><input type="checkbox" name="edgeDirFilter" value="outbound" checked> Outbound</label>
@@ -718,81 +763,13 @@
     },
     {
       "id": "Bio-conversion",
-      "color": "#66c2a5",
-      "baseColor": "#66c2a5",
-      "size": 13.0,
-      "baseSize": 13.0,
-      "opacity": 0.99,
-      "tooltip": "Bio-conversion",
-      "label": "Bio-conversion",
-      "shape": "circle",
-      "depth": 4,
-      "fontcolor": "#66c2a5",
-      "fontsize": 12.0,
-      "edge_color": "#000000",
-      "edge_size": 1.0,
-      "node_proba": NaN
-    },
-    {
-      "id": "Liquid",
-      "color": "#a6d854",
-      "baseColor": "#a6d854",
-      "size": 13.0,
-      "baseSize": 13.0,
-      "opacity": 0.99,
-      "tooltip": "Liquid",
-      "label": "Liquid",
-      "shape": "circle",
-      "depth": 4,
-      "fontcolor": "#a6d854",
-      "fontsize": 12.0,
-      "edge_color": "#000000",
-      "edge_size": 1.0,
-      "node_proba": NaN
-    },
-    {
-      "id": "Losses",
-      "color": "#e5c494",
-      "baseColor": "#e5c494",
-      "size": 13.0,
-      "baseSize": 13.0,
-      "opacity": 0.99,
-      "tooltip": "Losses",
-      "label": "Losses",
-      "shape": "circle",
-      "depth": 3,
-      "fontcolor": "#e5c494",
-      "fontsize": 12.0,
-      "edge_color": "#000000",
-      "edge_size": 1.0,
-      "node_proba": NaN
-    },
-    {
-      "id": "Solid",
-      "color": "#66c2a5",
-      "baseColor": "#66c2a5",
-      "size": 13.0,
-      "baseSize": 13.0,
-      "opacity": 0.99,
-      "tooltip": "Solid",
-      "label": "Solid",
-      "shape": "circle",
-      "depth": 4,
-      "fontcolor": "#66c2a5",
-      "fontsize": 12.0,
-      "edge_color": "#000000",
-      "edge_size": 1.0,
-      "node_proba": NaN
-    },
-    {
-      "id": "Gas",
       "color": "#fc8d62",
       "baseColor": "#fc8d62",
       "size": 13.0,
       "baseSize": 13.0,
       "opacity": 0.99,
-      "tooltip": "Gas",
-      "label": "Gas",
+      "tooltip": "Bio-conversion",
+      "label": "Bio-conversion",
       "shape": "circle",
       "depth": 4,
       "fontcolor": "#fc8d62",
@@ -802,16 +779,33 @@
       "node_proba": NaN
     },
     {
-      "id": "Biofuel imports",
+      "id": "Liquid",
+      "color": "#b3b3b3",
+      "baseColor": "#b3b3b3",
+      "size": 13.0,
+      "baseSize": 13.0,
+      "opacity": 0.99,
+      "tooltip": "Liquid",
+      "label": "Liquid",
+      "shape": "circle",
+      "depth": 4,
+      "fontcolor": "#b3b3b3",
+      "fontsize": 12.0,
+      "edge_color": "#000000",
+      "edge_size": 1.0,
+      "node_proba": NaN
+    },
+    {
+      "id": "Losses",
       "color": "#a6d854",
       "baseColor": "#a6d854",
-      "size": 8.0,
-      "baseSize": 8.0,
-      "opacity": 0.35,
-      "tooltip": "Biofuel_imports",
-      "label": "Biofuel_imports",
+      "size": 13.0,
+      "baseSize": 13.0,
+      "opacity": 0.99,
+      "tooltip": "Losses",
+      "label": "Losses",
       "shape": "circle",
-      "depth": null,
+      "depth": 3,
       "fontcolor": "#a6d854",
       "fontsize": 12.0,
       "edge_color": "#000000",
@@ -819,9 +813,60 @@
       "node_proba": NaN
     },
     {
+      "id": "Solid",
+      "color": "#fc8d62",
+      "baseColor": "#fc8d62",
+      "size": 13.0,
+      "baseSize": 13.0,
+      "opacity": 0.99,
+      "tooltip": "Solid",
+      "label": "Solid",
+      "shape": "circle",
+      "depth": 4,
+      "fontcolor": "#fc8d62",
+      "fontsize": 12.0,
+      "edge_color": "#000000",
+      "edge_size": 1.0,
+      "node_proba": NaN
+    },
+    {
+      "id": "Gas",
+      "color": "#e5c494",
+      "baseColor": "#e5c494",
+      "size": 13.0,
+      "baseSize": 13.0,
+      "opacity": 0.99,
+      "tooltip": "Gas",
+      "label": "Gas",
+      "shape": "circle",
+      "depth": 4,
+      "fontcolor": "#e5c494",
+      "fontsize": 12.0,
+      "edge_color": "#000000",
+      "edge_size": 1.0,
+      "node_proba": NaN
+    },
+    {
+      "id": "Biofuel imports",
+      "color": "#b3b3b3",
+      "baseColor": "#b3b3b3",
+      "size": 8.0,
+      "baseSize": 8.0,
+      "opacity": 0.35,
+      "tooltip": "Biofuel_imports",
+      "label": "Biofuel_imports",
+      "shape": "circle",
+      "depth": null,
+      "fontcolor": "#b3b3b3",
+      "fontsize": 12.0,
+      "edge_color": "#000000",
+      "edge_size": 1.0,
+      "node_proba": NaN
+    },
+    {
       "id": "Biomass imports",
-      "color": "#66c2a5",
-      "baseColor": "#66c2a5",
+      "color": "#fc8d62",
+      "baseColor": "#fc8d62",
       "size": 8.0,
       "baseSize": 8.0,
       "opacity": 0.35,
@@ -829,7 +874,7 @@
       "label": "Biomass_imports",
       "shape": "circle",
       "depth": null,
-      "fontcolor": "#66c2a5",
+      "fontcolor": "#fc8d62",
       "fontsize": 12.0,
       "edge_color": "#000000",
       "edge_size": 1.0,
@@ -837,8 +882,8 @@
     },
     {
       "id": "Coal imports",
-      "color": "#66c2a5",
-      "baseColor": "#66c2a5",
+      "color": "#fc8d62",
+      "baseColor": "#fc8d62",
       "size": 8.0,
       "baseSize": 8.0,
       "opacity": 0.35,
@@ -846,7 +891,7 @@
       "label": "Coal_imports",
       "shape": "circle",
       "depth": null,
-      "fontcolor": "#66c2a5",
+      "fontcolor": "#fc8d62",
       "fontsize": 12.0,
       "edge_color": "#000000",
       "edge_size": 1.0,
@@ -854,8 +899,8 @@
     },
     {
       "id": "Coal",
-      "color": "#66c2a5",
-      "baseColor": "#66c2a5",
+      "color": "#fc8d62",
+      "baseColor": "#fc8d62",
       "size": 13.0,
       "baseSize": 13.0,
       "opacity": 0.99,
@@ -863,7 +908,7 @@
       "label": "Coal",
       "shape": "circle",
       "depth": 5,
-      "fontcolor": "#66c2a5",
+      "fontcolor": "#fc8d62",
       "fontsize": 12.0,
       "edge_color": "#000000",
       "edge_size": 1.0,
@@ -871,8 +916,8 @@
     },
     {
       "id": "Coal reserves",
-      "color": "#66c2a5",
-      "baseColor": "#66c2a5",
+      "color": "#fc8d62",
+      "baseColor": "#fc8d62",
       "size": 8.0,
       "baseSize": 8.0,
       "opacity": 0.35,
@@ -880,7 +925,7 @@
       "label": "Coal_reserves",
       "shape": "circle",
       "depth": null,
-      "fontcolor": "#66c2a5",
+      "fontcolor": "#fc8d62",
       "fontsize": 12.0,
       "edge_color": "#000000",
       "edge_size": 1.0,
@@ -888,8 +933,8 @@
     },
     {
       "id": "District heating",
-      "color": "#b3b3b3",
-      "baseColor": "#b3b3b3",
+      "color": "#66c2a5",
+      "baseColor": "#66c2a5",
       "size": 13.0,
       "baseSize": 13.0,
       "opacity": 0.99,
@@ -897,7 +942,7 @@
       "label": "District_heating",
       "shape": "circle",
       "depth": null,
-      "fontcolor": "#b3b3b3",
+      "fontcolor": "#66c2a5",
       "fontsize": 12.0,
       "edge_color": "#000000",
       "edge_size": 1.0,
@@ -922,8 +967,8 @@
     },
     {
       "id": "Heating and cooling - commercial",
-      "color": "#b3b3b3",
-      "baseColor": "#b3b3b3",
+      "color": "#66c2a5",
+      "baseColor": "#66c2a5",
       "size": 13.0,
       "baseSize": 13.0,
       "opacity": 0.99,
@@ -931,7 +976,7 @@
       "label": "Heating_and_cooling_-_commercial",
       "shape": "circle",
       "depth": null,
-      "fontcolor": "#b3b3b3",
+      "fontcolor": "#66c2a5",
       "fontsize": 12.0,
       "edge_color": "#000000",
       "edge_size": 1.0,
@@ -939,8 +984,8 @@
     },
     {
       "id": "Heating and cooling - homes",
-      "color": "#b3b3b3",
-      "baseColor": "#b3b3b3",
+      "color": "#66c2a5",
+      "baseColor": "#66c2a5",
       "size": 13.0,
       "baseSize": 13.0,
       "opacity": 0.99,
@@ -948,7 +993,7 @@
       "label": "Heating_and_cooling_-_homes",
       "shape": "circle",
       "depth": null,
-      "fontcolor": "#b3b3b3",
+      "fontcolor": "#66c2a5",
       "fontsize": 12.0,
       "edge_color": "#000000",
       "edge_size": 1.0,
@@ -1007,8 +1052,8 @@
     },
     {
       "id": "Road transport",
-      "color": "#a6d854",
-      "baseColor": "#a6d854",
+      "color": "#b3b3b3",
+      "baseColor": "#b3b3b3",
       "size": 13.0,
       "baseSize": 13.0,
       "opacity": 0.99,
@@ -1016,7 +1061,7 @@
       "label": "Road_transport",
       "shape": "circle",
       "depth": null,
-      "fontcolor": "#a6d854",
+      "fontcolor": "#b3b3b3",
       "fontsize": 12.0,
       "edge_color": "#000000",
       "edge_size": 1.0,
@@ -1024,8 +1069,8 @@
     },
     {
       "id": "Agriculture",
-      "color": "#fc8d62",
-      "baseColor": "#fc8d62",
+      "color": "#e5c494",
+      "baseColor": "#e5c494",
       "size": 13.0,
       "baseSize": 13.0,
       "opacity": 0.99,
@@ -1033,7 +1078,7 @@
       "label": "Agriculture",
       "shape": "circle",
       "depth": 3,
-      "fontcolor": "#fc8d62",
+      "fontcolor": "#e5c494",
       "fontsize": 12.0,
       "edge_color": "#000000",
       "edge_size": 1.0,
@@ -1092,8 +1137,8 @@
     },
     {
       "id": "Gas imports",
-      "color": "#fc8d62",
-      "baseColor": "#fc8d62",
+      "color": "#e5c494",
+      "baseColor": "#e5c494",
       "size": 8.0,
       "baseSize": 8.0,
       "opacity": 0.35,
@@ -1101,7 +1146,7 @@
       "label": "Gas_imports",
       "shape": "circle",
       "depth": null,
-      "fontcolor": "#fc8d62",
+      "fontcolor": "#e5c494",
       "fontsize": 12.0,
       "edge_color": "#000000",
       "edge_size": 1.0,
@@ -1109,8 +1154,8 @@
     },
     {
       "id": "Ngas",
-      "color": "#fc8d62",
-      "baseColor": "#fc8d62",
+      "color": "#e5c494",
+      "baseColor": "#e5c494",
       "size": 13.0,
       "baseSize": 13.0,
       "opacity": 0.99,
@@ -1118,7 +1163,7 @@
       "label": "Ngas",
       "shape": "circle",
       "depth": 5,
-      "fontcolor": "#fc8d62",
+      "fontcolor": "#e5c494",
       "fontsize": 12.0,
       "edge_color": "#000000",
       "edge_size": 1.0,
@@ -1126,8 +1171,8 @@
     },
     {
       "id": "Gas reserves",
-      "color": "#fc8d62",
-      "baseColor": "#fc8d62",
+      "color": "#e5c494",
+      "baseColor": "#e5c494",
       "size": 8.0,
       "baseSize": 8.0,
       "opacity": 0.35,
@@ -1135,7 +1180,7 @@
       "label": "Gas_reserves",
       "shape": "circle",
       "depth": null,
-      "fontcolor": "#fc8d62",
+      "fontcolor": "#e5c494",
       "fontsize": 12.0,
       "edge_color": "#000000",
       "edge_size": 1.0,
@@ -1143,8 +1188,8 @@
     },
     {
       "id": "Thermal generation",
-      "color": "#e5c494",
-      "baseColor": "#e5c494",
+      "color": "#a6d854",
+      "baseColor": "#a6d854",
       "size": 13.0,
       "baseSize": 13.0,
       "opacity": 0.99,
@@ -1152,7 +1197,7 @@
       "label": "Thermal_generation",
       "shape": "circle",
       "depth": null,
-      "fontcolor": "#e5c494",
+      "fontcolor": "#a6d854",
       "fontsize": 12.0,
       "edge_color": "#000000",
       "edge_size": 1.0,
@@ -1211,8 +1256,8 @@
     },
     {
       "id": "International shipping",
-      "color": "#a6d854",
-      "baseColor": "#a6d854",
+      "color": "#b3b3b3",
+      "baseColor": "#b3b3b3",
       "size": 8.0,
       "baseSize": 8.0,
       "opacity": 0.35,
@@ -1220,7 +1265,7 @@
       "label": "International_shipping",
       "shape": "circle",
       "depth": null,
-      "fontcolor": "#a6d854",
+      "fontcolor": "#b3b3b3",
       "fontsize": 12.0,
       "edge_color": "#000000",
       "edge_size": 1.0,
@@ -1228,8 +1273,8 @@
     },
     {
       "id": "Domestic aviation",
-      "color": "#a6d854",
-      "baseColor": "#a6d854",
+      "color": "#b3b3b3",
+      "baseColor": "#b3b3b3",
       "size": 8.0,
       "baseSize": 8.0,
       "opacity": 0.35,
@@ -1237,7 +1282,7 @@
       "label": "Domestic_aviation",
       "shape": "circle",
       "depth": null,
-      "fontcolor": "#a6d854",
+      "fontcolor": "#b3b3b3",
       "fontsize": 12.0,
       "edge_color": "#000000",
       "edge_size": 1.0,
@@ -1245,8 +1290,8 @@
     },
     {
       "id": "International aviation",
-      "color": "#a6d854",
-      "baseColor": "#a6d854",
+      "color": "#b3b3b3",
+      "baseColor": "#b3b3b3",
       "size": 8.0,
       "baseSize": 8.0,
       "opacity": 0.35,
@@ -1254,7 +1299,7 @@
       "label": "International_aviation",
       "shape": "circle",
       "depth": null,
-      "fontcolor": "#a6d854",
+      "fontcolor": "#b3b3b3",
       "fontsize": 12.0,
       "edge_color": "#000000",
       "edge_size": 1.0,
@@ -1262,8 +1307,8 @@
     },
     {
       "id": "National navigation",
-      "color": "#a6d854",
-      "baseColor": "#a6d854",
+      "color": "#b3b3b3",
+      "baseColor": "#b3b3b3",
       "size": 8.0,
       "baseSize": 8.0,
       "opacity": 0.35,
@@ -1271,7 +1316,7 @@
       "label": "National_navigation",
       "shape": "circle",
       "depth": null,
-      "fontcolor": "#a6d854",
+      "fontcolor": "#b3b3b3",
       "fontsize": 12.0,
       "edge_color": "#000000",
       "edge_size": 1.0,
@@ -1279,8 +1324,8 @@
     },
     {
       "id": "Marine algae",
-      "color": "#66c2a5",
-      "baseColor": "#66c2a5",
+      "color": "#fc8d62",
+      "baseColor": "#fc8d62",
       "size": 8.0,
       "baseSize": 8.0,
       "opacity": 0.35,
@@ -1288,7 +1333,7 @@
       "label": "Marine_algae",
       "shape": "circle",
       "depth": null,
-      "fontcolor": "#66c2a5",
+      "fontcolor": "#fc8d62",
       "fontsize": 12.0,
       "edge_color": "#000000",
       "edge_size": 1.0,
@@ -1296,8 +1341,8 @@
     },
     {
       "id": "Nuclear",
-      "color": "#e5c494",
-      "baseColor": "#e5c494",
+      "color": "#a6d854",
+      "baseColor": "#a6d854",
       "size": 8.0,
       "baseSize": 8.0,
       "opacity": 0.35,
@@ -1305,7 +1350,7 @@
       "label": "Nuclear",
       "shape": "circle",
       "depth": 4,
-      "fontcolor": "#e5c494",
+      "fontcolor": "#a6d854",
       "fontsize": 12.0,
       "edge_color": "#000000",
       "edge_size": 1.0,
@@ -1313,8 +1358,8 @@
     },
     {
       "id": "Oil imports",
-      "color": "#a6d854",
-      "baseColor": "#a6d854",
+      "color": "#b3b3b3",
+      "baseColor": "#b3b3b3",
       "size": 8.0,
       "baseSize": 8.0,
       "opacity": 0.35,
@@ -1322,7 +1367,7 @@
       "label": "Oil_imports",
       "shape": "circle",
       "depth": null,
-      "fontcolor": "#a6d854",
+      "fontcolor": "#b3b3b3",
       "fontsize": 12.0,
       "edge_color": "#000000",
       "edge_size": 1.0,
@@ -1330,8 +1375,8 @@
     },
     {
       "id": "Oil",
-      "color": "#a6d854",
-      "baseColor": "#a6d854",
+      "color": "#b3b3b3",
+      "baseColor": "#b3b3b3",
       "size": 13.0,
       "baseSize": 13.0,
       "opacity": 0.99,
@@ -1339,7 +1384,7 @@
       "label": "Oil",
       "shape": "circle",
       "depth": 5,
-      "fontcolor": "#a6d854",
+      "fontcolor": "#b3b3b3",
       "fontsize": 12.0,
       "edge_color": "#000000",
       "edge_size": 1.0,
@@ -1347,8 +1392,8 @@
     },
     {
       "id": "Oil reserves",
-      "color": "#a6d854",
-      "baseColor": "#a6d854",
+      "color": "#b3b3b3",
+      "baseColor": "#b3b3b3",
       "size": 8.0,
       "baseSize": 8.0,
       "opacity": 0.35,
@@ -1356,7 +1401,7 @@
       "label": "Oil_reserves",
       "shape": "circle",
       "depth": null,
-      "fontcolor": "#a6d854",
+      "fontcolor": "#b3b3b3",
       "fontsize": 12.0,
       "edge_color": "#000000",
       "edge_size": 1.0,
@@ -1364,8 +1409,8 @@
     },
     {
       "id": "Other waste",
-      "color": "#66c2a5",
-      "baseColor": "#66c2a5",
+      "color": "#fc8d62",
+      "baseColor": "#fc8d62",
       "size": 10.5,
       "baseSize": 10.5,
       "opacity": 0.67,
@@ -1373,7 +1418,7 @@
       "label": "Other_waste",
       "shape": "circle",
       "depth": null,
-      "fontcolor": "#66c2a5",
+      "fontcolor": "#fc8d62",
       "fontsize": 12.0,
       "edge_color": "#000000",
       "edge_size": 1.0,
@@ -1381,8 +1426,8 @@
     },
     {
       "id": "Pumped heat",
-      "color": "#b3b3b3",
-      "baseColor": "#b3b3b3",
+      "color": "#66c2a5",
+      "baseColor": "#66c2a5",
       "size": 10.5,
       "baseSize": 10.5,
       "opacity": 0.67,
@@ -1390,7 +1435,7 @@
       "label": "Pumped_heat",
       "shape": "circle",
       "depth": null,
-      "fontcolor": "#b3b3b3",
+      "fontcolor": "#66c2a5",
       "fontsize": 12.0,
       "edge_color": "#000000",
       "edge_size": 1.0,
@@ -1466,8 +1511,8 @@
     },
     {
       "id": "UK land based bioenergy",
-      "color": "#66c2a5",
-      "baseColor": "#66c2a5",
+      "color": "#fc8d62",
+      "baseColor": "#fc8d62",
       "size": 8.0,
       "baseSize": 8.0,
       "opacity": 0.35,
@@ -1475,7 +1520,7 @@
       "label": "UK_land_based_bioenergy",
       "shape": "circle",
       "depth": null,
-      "fontcolor": "#66c2a5",
+      "fontcolor": "#fc8d62",
       "fontsize": 12.0,
       "edge_color": "#000000",
       "edge_size": 1.0,
@@ -2552,6 +2597,8 @@ class LayoutEngine {
 class Renderer {
   constructor({ container, width, height, onEnterNode }) {
     this.onEnterNode = onEnterNode;
+    this.edgeWidthMult = 1.0;  // updated by the Edge Width slider
+    this.nodeSizeMult  = 1.0;  // updated by the Node Size slider
     this.svg = d3
       .select(container)
       .append("svg")
@@ -2595,7 +2642,7 @@ class Renderer {
     this.nodeById = new Map(nodes.map((n) => [n.id, n]));
 
     const linkClass = (d) => "radialgraph-link glow " + (d.relation === "mutual" ? "mutual" : "oneway");
-    const finalWidth = (d) => (d.edgeWidth != null ? d.edgeWidth : d.relation === "mutual" ? 2.2 : 1.4);
+    const finalWidth = (d) => (d.edgeWidth != null ? d.edgeWidth : d.relation === "mutual" ? 2.2 : 1.4) * this.edgeWidthMult;
     const finalOpacity = (d) => (d.edgeOpacity != null ? d.edgeOpacity : d.relation === "mutual" ? 0.7 : 0.5);
     const targetId = (d) => (typeof d.target === "object" ? d.target.id : d.target);
     const strokeColor = (d) => {
@@ -2656,18 +2703,16 @@ class Renderer {
         if (inner.empty()) inner = g.append("g").attr("class", "radialgraph-node-inner");
         inner.selectAll("rect, circle").remove();
         const hasHidden = hasHiddenNeighbors(d.id);
-        // Node border ("edge" in d3graph vocabulary). An explicit per-node
-        // edge_color / edge_size always wins; otherwise fall back to the
-        // implicit hint-ring that marks nodes with hidden neighbors.
         const borderColor = d.edge_color != null ? d.edge_color : hasHidden ? ringStroke : "none";
         const borderWidth = d.edge_size != null ? d.edge_size : 1.5;
+        const sz = (d.size || 6) * this.nodeSizeMult;  // scaled size
         if (d.shape === "square") {
           inner
             .append("rect")
-            .attr("x", -d.size)
-            .attr("y", -d.size)
-            .attr("width", d.size * 2)
-            .attr("height", d.size * 2)
+            .attr("x", -sz)
+            .attr("y", -sz)
+            .attr("width", sz * 2)
+            .attr("height", sz * 2)
             .attr("rx", 2)
             .attr("fill", d.color)
             .attr("fill-opacity", d.opacity != null ? d.opacity : 1)
@@ -2676,42 +2721,37 @@ class Renderer {
         } else {
           inner
             .append("circle")
-            .attr("r", d.size)
+            .attr("r", sz)
             .attr("fill", d.color)
             .attr("fill-opacity", d.opacity != null ? d.opacity : 1)
             .attr("stroke", borderColor)
             .attr("stroke-width", borderWidth);
         }
-        // "Has hidden neighbors" affordance. Previously this was the node's
-        // own stroke, but that collides with a user-set edge_color; draw it
-        // as a thin outer ring instead so both can coexist.
         inner.selectAll(".hidden-hint-ring").remove();
         if (hasHidden && d.edge_color != null) {
           inner
             .append("circle")
             .attr("class", "hidden-hint-ring")
-            .attr("r", (d.size || 6) + (d.edge_size != null ? d.edge_size : 1.5) + 2)
+            .attr("r", sz + (d.edge_size != null ? d.edge_size : 1.5) + 2)
             .attr("fill", "none")
             .attr("stroke", ringStroke)
             .attr("stroke-width", 1.2)
             .attr("stroke-opacity", 0.75);
         }
-        // Ensure label attributes are kept in sync with node props
         const label = g.select(".radialgraph-label");
         if (!label.empty()) {
           label
-            .attr("x", (d.size || 6) + 4)
+            .attr("x", sz + 4)
             .attr("fill", d.fontcolor || "#dcddde")
             .style("font-size", d.fontsize ? d.fontsize + "px" : "10px");
         }
-        // Search highlight rings (shown via .search-hit CSS)
         let rings = g.select(".search-rings");
         if (rings.empty()) {
           rings = g.insert("g", ":first-child").attr("class", "search-rings");
           rings.append("circle").attr("class", "search-ring search-ring-border");
           rings.append("circle").attr("class", "search-ring search-ring-yellow");
         }
-        rings.selectAll("circle").attr("r", (d.size || 6) + 12);
+        rings.selectAll("circle").attr("r", sz + 12);
       });
     };
 
@@ -2802,7 +2842,7 @@ class Renderer {
     if (!this.linkSel || this.linkSel.empty()) return;
     this.linkSel
       .attr("stroke", (d) => d.edgeColor || "#888")
-      .attr("stroke-width", (d) => (d.edgeWidth != null ? d.edgeWidth : 1.4))
+      .attr("stroke-width", (d) => (d.edgeWidth != null ? d.edgeWidth : 1.4) * this.edgeWidthMult)
       .attr("stroke-opacity", (d) => (d.edgeOpacity != null ? d.edgeOpacity : 0.5))
       .style("filter", (d) => (d.edgeGlow ? "url(#edge-flow-glow)" : null))
       .classed("glow", (d) => !!d.edgeGlow);
@@ -4250,6 +4290,8 @@ function computeNetworkMetrics(nodeIds, edges) {
   let rippleActive = false;
 
   let showCrossLinks = true;
+  let nodeSizeMult  = 1.0;   // driven by Node Size slider
+  let edgeWidthMult = 1.0;   // driven by Edge Width slider
   // Independent checkboxes: any combination of 'outbound' / 'inbound' /
   // 'bidirectional' may be active at once. Default: all checked (full network).
   let edgeDirFilter = new Set(["outbound", "inbound", "bidirectional"]);
@@ -4308,7 +4350,7 @@ function computeNetworkMetrics(nodeIds, edges) {
   // Resting stroke width / opacity for a link — the same fallbacks the
   // Renderer uses, so clearing a highlight restores the exact base look.
   function restingLinkWidth(d) {
-    return d.edgeWidth != null ? d.edgeWidth : d.relation === "mutual" ? 2.2 : 1.4;
+    return (d.edgeWidth != null ? d.edgeWidth : d.relation === "mutual" ? 2.2 : 1.4) * edgeWidthMult;
   }
   function restingLinkOpacity(d) {
     return d.edgeOpacity != null ? d.edgeOpacity : d.relation === "mutual" ? 0.7 : 0.5;
@@ -4614,7 +4656,8 @@ function computeNetworkMetrics(nodeIds, edges) {
   // —— Theme (button + T key) ——
   function toggleTheme() {
     const isLight = document.body.classList.toggle("light");
-    themeBtn.textContent = isLight ? "Theme: Light" : "Theme: Dark";
+    themeBtn.textContent = isLight ? "☀" : "🌙";
+    themeBtn.title = isLight ? "Theme: Light" : "Theme: Dark";
     const { nodes, links } = getRenderGraph();
     applyNodeColors(nodes);
     applyNodeSizes(nodes);
@@ -4795,6 +4838,40 @@ function computeNetworkMetrics(nodeIds, edges) {
 
   syncRingSpacingControls();
 
+  // —— Node Size & Edge Width multiplier sliders ——
+  function applyVisualScaleMultipliers() {
+    if (renderer.nodeSel && !renderer.nodeSel.empty()) update();
+    if (renderer.linkSel && !renderer.linkSel.empty()) {
+      renderer.linkSel.attr("stroke-width", restingLinkWidth);
+    }
+    applyNeighborHighlight();
+  }
+
+  const nodeSizeMultSlider  = document.getElementById("nodeSizeMultSlider");
+  const nodeSizeMultVal     = document.getElementById("nodeSizeMultVal");
+  const edgeWidthMultSlider = document.getElementById("edgeWidthMultSlider");
+  const edgeWidthMultVal    = document.getElementById("edgeWidthMultVal");
+
+  if (nodeSizeMultSlider) {
+    nodeSizeMultSlider.addEventListener("input", () => {
+      nodeSizeMult = +nodeSizeMultSlider.value;
+      renderer.nodeSizeMult = nodeSizeMult;
+      if (nodeSizeMultVal) nodeSizeMultVal.textContent = nodeSizeMult.toFixed(1);
+      update();
+    });
+  }
+  if (edgeWidthMultSlider) {
+    edgeWidthMultSlider.addEventListener("input", () => {
+      edgeWidthMult = +edgeWidthMultSlider.value;
+      renderer.edgeWidthMult = edgeWidthMult;
+      if (edgeWidthMultVal) edgeWidthMultVal.textContent = edgeWidthMult.toFixed(1);
+      // Re-select directly from DOM — guarantees we hit all live <line> elements
+      // even if renderer.linkSel is a stale join reference.
+      renderer.linkLayer.selectAll("line").interrupt().attr("stroke-width", restingLinkWidth);
+      applyNeighborHighlight();
+    });
+  }
+
   // —— Expand all / collapse all ——
   if (expandAllBtn)
     expandAllBtn.addEventListener("click", () => {
@@ -4941,12 +5018,58 @@ function positionSidePanels() {
 	}
 	document.querySelectorAll(".stats-panel-title").forEach(function (title) {
 	  title.addEventListener("click", function () {
+	    if (title.dataset.justDragged === '1') { title.dataset.justDragged = '0'; return; }
 	    var panel = title.parentElement, collapsing = !panel.classList.contains("collapsed");
 	    if (collapsing) { if (panel.style.height) panel.dataset.expandedHeight = panel.style.height; panel.style.height = ""; }
 	    else if (panel.dataset.expandedHeight) panel.style.height = panel.dataset.expandedHeight;
 	    panel.classList.toggle("collapsed"); positionSidePanels();
 	  });
 	});
+
+	// —— Drag-and-drop panel reordering ——————————————————————————
+	// Unlike scatter/sankey, positionSidePanels() here stacks panels by
+	// querying document.querySelectorAll(".stats-panel") in DOM order
+	// (rather than a separate order array), so reordering is done by
+	// physically moving the panel node in the DOM via insertBefore, then
+	// reflowing -- no separate order list to keep in sync.
+	(function setupPanelReordering() {
+	  document.querySelectorAll(".stats-panel").forEach(function (panel) {
+	    var title = panel.querySelector(".stats-panel-title");
+	    if (!title) return;
+	    title.addEventListener("dragstart", function (e) {
+	      e.dataTransfer.setData("text/plain", panel.id);
+	      e.dataTransfer.effectAllowed = "move";
+	    });
+	    title.addEventListener("dragend", function () {
+	      title.dataset.justDragged = "1";
+	      setTimeout(function () { title.dataset.justDragged = "0"; }, 0);
+	    });
+	    panel.addEventListener("dragover", function (e) {
+	      e.preventDefault();
+	      e.dataTransfer.dropEffect = "move";
+	      panel.classList.add("drag-over");
+	    });
+	    panel.addEventListener("dragleave", function () {
+	      panel.classList.remove("drag-over");
+	    });
+	    panel.addEventListener("drop", function (e) {
+	      e.preventDefault();
+	      panel.classList.remove("drag-over");
+	      var draggedId = e.dataTransfer.getData("text/plain");
+	      if (!draggedId || draggedId === panel.id) return;
+	      var draggedEl = document.getElementById(draggedId);
+	      if (!draggedEl || !panel.parentNode) return;
+	      panel.parentNode.insertBefore(draggedEl, panel);
+	      positionSidePanels();
+	    });
+	  });
+	})();
+
+	// —— Theme button: 🌙/☀ instead of text ——————————————————————
+	// Now handled directly in d3_radialgraph.js's toggleTheme() (it sets
+	// themeBtn.textContent based on document.body's 'light' class, not by
+	// reading prior text, so it was safe to change there directly) and via
+	// the initial Jinja-rendered emoji above. Nothing else needed here.
 
 	// —— Node panel resizer: drag to change height, double-click to toggle collapsed ——
 	(function () {
